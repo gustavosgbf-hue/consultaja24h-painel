@@ -639,7 +639,7 @@ function renderEstado() {
     empty.style.display = 'none';
   } else {
     offline.style.display = 'none';
-    empty.style.display = 'flex';
+    empty.style.display = filaData.length === 0 ? 'flex' : 'none';
   }
 }
 
