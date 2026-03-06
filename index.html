@@ -687,8 +687,12 @@ function iniciarChatMedico() {
   ultimaMsgId = 0;
   chatAtivo = true;
   clearInterval(chatInterval);
-  buscarMensagensMedico();
-  chatInterval = setInterval(buscarMensagensMedico, 3000);
+
+  // 1ª carga: histórico completo (ambos os lados)
+  carregarHistoricoMedico().then(() => {
+    // Só depois inicia polling de mensagens novas
+    chatInterval = setInterval(buscarMensagensNovasMedico, 3000);
+  });
 
   const ta = document.getElementById('chat-medico-textarea');
   ta.addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,100)+'px'; });
@@ -697,19 +701,40 @@ function iniciarChatMedico() {
   });
 }
 
-async function buscarMensagensMedico() {
+async function carregarHistoricoMedico() {
+  if (!atendimentoAtual) return;
+  try {
+    const res = await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
+    const data = await res.json();
+    if (!data.ok) return;
+    const container = document.getElementById('chat-medico-msgs');
+    const msgs = data.mensagens || [];
+    if (msgs.length > 0) {
+      // Limpa placeholder "aguardando"
+      const vazio = container.querySelector('.chat-vazio');
+      if (vazio) vazio.remove();
+      // Renderiza todo o histórico (paciente e médico)
+      msgs.forEach(m => {
+        adicionarMsgMedico(m.autor, m.texto, m.criado_em);
+        ultimaMsgId = m.id;
+      });
+    }
+  } catch(e) {}
+}
+
+async function buscarMensagensNovasMedico() {
   if (!atendimentoAtual || !chatAtivo) return;
   try {
     const res = await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
     const data = await res.json();
     if (!data.ok) return;
-    const novas = data.mensagens.filter(m => m.id > ultimaMsgId);
+    const novas = (data.mensagens || []).filter(m => m.id > ultimaMsgId);
     if (novas.length > 0) {
       const container = document.getElementById('chat-medico-msgs');
-      // limpa "aguardando" na primeira mensagem
       const vazio = container.querySelector('.chat-vazio');
       if (vazio) vazio.remove();
       novas.forEach(m => {
+        // No polling só renderiza paciente (médico já foi adicionado otimisticamente ao enviar)
         if (m.autor === 'paciente') {
           adicionarMsgMedico(m.autor, m.texto, m.criado_em);
         }
