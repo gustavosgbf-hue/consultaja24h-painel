@@ -557,36 +557,44 @@ function selecionarPaciente(id) {
 async function assumirAtendimento(id, evt) {
   evt.stopPropagation();
 
+  if (!medico || !medico.id || !medico.nome) {
+    mostrarToast('Dados do médico não carregados. Faça login novamente.', 'error');
+    return;
+  }
+
   try {
+    const payload = {
+      filaId: Number(id),
+      medicoId: Number(medico.id),
+      medicoNome: medico.nome
+    };
+
     const res = await fetch(`${API}/api/atendimento/assumir`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${getToken()}`
       },
-      body: JSON.stringify({ id })
+      body: JSON.stringify(payload)
     });
 
     const data = await res.json();
 
     if (!res.ok || !data.ok) {
       mostrarToast(data.error || 'Este paciente já foi assumido.', 'error');
-      buscarFila();
+      await buscarFila();
       return;
     }
 
-    const paciente = filaData.find(p => p.id === id);
-    if (paciente) {
-      paciente.status = 'assumido';
-      atendimentoAtual = paciente;
-      timerSegundos = 0;
-      iniciarTimer();
-      renderFila();
-      renderPainelAtendimento();
-      renderEstado();
-      mostrarToast('Atendimento assumido!', 'success');
-    }
+    atendimentoAtual = data.atendimento || filaData.find(p => String(p.id) === String(id));
+    timerSegundos = 0;
+    iniciarTimer();
+    await buscarFila();
+    renderPainelAtendimento();
+    renderEstado();
+    mostrarToast('Atendimento assumido!', 'success');
   } catch(e) {
+    console.error('Erro ao assumir:', e);
     mostrarToast('Erro ao assumir atendimento.', 'error');
   }
 }
