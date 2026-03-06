@@ -517,27 +517,40 @@ function renderFila() {
     return;
   }
 
-  lista.innerHTML = filaData.map(p => {
-    const mins = Math.floor((Date.now() - new Date(p.timestamp_criacao)) / 60000);
-    const tempoClass = mins >= 10 ? 'critico' : mins >= 5 ? 'urgente' : '';
-    const isAtual = atendimentoAtual && atendimentoAtual.id === p.id;
-    const assumido = p.status === 'assumido' && !isAtual;
-    return `
-    <div class="paciente-card ${isAtual ? 'active' : ''} ${assumido ? 'assumido' : ''}">
-      <div class="pc-header">
-        <div class="pc-nome">${p.paciente_nome.split(' ').slice(0,2).join(' ')}</div>
-        <span class="pc-tipo ${p.tipo_consulta}">${p.tipo_consulta === 'video' ? '📹 Vídeo' : '💬 WhatsApp'}</span>
-      </div>
-      <div class="pc-queixa">${p.queixa || '—'}</div>
-      <div class="pc-footer">
-        <div class="pc-tempo ${tempoClass}">${mins}min atrás</div>
-        ${p.status === 'aguardando'
-          ? `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`
-          : `<span class="pc-status-badge">Em atendimento</span>`
-        }
-      </div>
-    </div>`;
-  }).join('');
+  try {
+    lista.innerHTML = filaData.map(p => {
+      const nome = p.paciente_nome || p.nome || 'Paciente';
+      const tipo = p.tipo_consulta || p.tipo || 'whatsapp';
+      const criado = p.timestamp_criacao || p.criado_em || new Date().toISOString();
+      const triagem = p.triagem || '—';
+      const mins = Math.floor((Date.now() - new Date(criado)) / 60000);
+      const tempoClass = mins >= 10 ? 'critico' : mins >= 5 ? 'urgente' : '';
+      const isAtual = atendimentoAtual && String(atendimentoAtual.id) === String(p.id);
+      const assumido = p.status === 'assumido' && !isAtual;
+      return `
+      <div class="paciente-card ${isAtual ? 'active' : ''} ${assumido ? 'assumido' : ''}" onclick="selecionarPaciente('${p.id}')">
+        <div class="pc-header">
+          <div class="pc-nome">${String(nome).split(' ').slice(0,2).join(' ')}</div>
+          <span class="pc-tipo ${tipo}">${tipo === 'video' ? '📹 Vídeo' : '💬 WhatsApp'}</span>
+        </div>
+        <div class="pc-queixa">${triagem}</div>
+        <div class="pc-footer">
+          <div class="pc-tempo ${tempoClass}">${mins}min atrás</div>
+          ${p.status === 'aguardando'
+            ? `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`
+            : `<span class="pc-status-badge">Em atendimento</span>`
+          }
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('Erro ao renderizar fila:', e, filaData);
+    lista.innerHTML = '<div class="fila-vazia"><p>Erro ao renderizar pacientes</p></div>';
+  }
+}
+
+function selecionarPaciente(id) {
+  // reservado para visualização futura
 }
 
 // ── ASSUMIR ──────────────────────────────────────────────
@@ -582,22 +595,26 @@ function renderPainelAtendimento() {
   const p = atendimentoAtual;
   if (!p) return;
 
-  document.getElementById('atend-nome').textContent = p.paciente_nome;
+  const nome = p.paciente_nome || p.nome || '—';
+  const tel = p.paciente_tel || p.tel || '';
+  const tipo = p.tipo_consulta || p.tipo || 'whatsapp';
+  const triagem = p.triagem || '—';
+
+  document.getElementById('atend-nome').textContent = nome;
 
   const tipoTag = document.getElementById('atend-tipo-tag');
-  tipoTag.textContent = p.tipo_consulta === 'video' ? '📹 Consulta por vídeo' : '💬 Consulta por WhatsApp';
-  tipoTag.className = 'atend-tag ' + p.tipo_consulta;
-  document.getElementById('atend-crm-tag').textContent = 'CRM ' + medico.crm;
-  document.getElementById('btn-wpp').href = 'https://wa.me/55' + (p.paciente_tel || '').replace(/\D/g,'');
+  tipoTag.textContent = tipo === 'video' ? '📹 Consulta por vídeo' : '💬 Consulta por WhatsApp';
+  tipoTag.className = 'atend-tag ' + tipo;
+  document.getElementById('atend-crm-tag').textContent = 'CRM ' + (medico.crm || '—');
+  document.getElementById('btn-wpp').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
 
-  document.getElementById('tr-idade').textContent = p.idade || '—';
-  document.getElementById('tr-sexo').textContent = p.sexo || '—';
-  document.getElementById('tr-alergias').textContent = p.alergias || 'Nenhuma';
-  document.getElementById('tr-cronicas').textContent = p.cronicas || 'Nenhuma';
-  document.getElementById('tr-medicacoes').textContent = p.medicacoes || 'Nenhuma';
-  const sol = [p.quer_atestado && 'Atestado', p.quer_receita && 'Receita'].filter(Boolean).join(', ') || 'Nada especificado';
-  document.getElementById('tr-solicita').textContent = sol;
-  document.getElementById('tr-queixa').textContent = p.queixa || '—';
+  document.getElementById('tr-idade').textContent = '—';
+  document.getElementById('tr-sexo').textContent = '—';
+  document.getElementById('tr-alergias').textContent = '—';
+  document.getElementById('tr-cronicas').textContent = '—';
+  document.getElementById('tr-medicacoes').textContent = '—';
+  document.getElementById('tr-solicita').textContent = '—';
+  document.getElementById('tr-queixa').textContent = triagem;
 
   ['s','o','a','p'].forEach(l => document.getElementById('soap-' + l).value = '');
   document.querySelectorAll('.doc-check').forEach(d => d.classList.remove('checked'));
@@ -645,19 +662,20 @@ function toggleDoc(el) { el.classList.toggle('checked'); }
 function gerarProntuario() {
   const p = atendimentoAtual;
   if (!p) return;
-  const agora = new Date().toLocaleString('pt-BR');
-
-  const texto = [
+  const nome = p.paciente_nome || p.nome || '—';
+  const tel = p.paciente_tel || p.tel || '—';
+  const tipo = p.tipo_consulta || p.tipo || 'whatsapp';
+  const triagem = p.triagem || '—';
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     'PRONTUÁRIO DE TELEMEDICINA',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     '',
     'Data/Hora : ' + agora,
-    'Paciente  : ' + p.paciente_nome,
-    'Telefone  : ' + p.paciente_tel,
+    'Paciente  : ' + nome,
+    'Telefone  : ' + tel,
     'Médico    : ' + medico.nome,
     'CRM       : ' + medico.crm,
-    'Tipo      : ' + (p.tipo_consulta === 'video' ? 'Teleconsulta por vídeo' : 'Teleconsulta por WhatsApp'),
+    'Tipo      : ' + (tipo === 'video' ? 'Teleconsulta por vídeo' : 'Teleconsulta por WhatsApp'),
     '',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     'TRIAGEM',
@@ -667,7 +685,7 @@ function gerarProntuario() {
     'Alergias      : ' + (p.alergias || 'Nenhuma'),
     'Crônicas      : ' + (p.cronicas || 'Nenhuma'),
     'Medicações    : ' + (p.medicacoes || 'Nenhuma'),
-    'Queixa        : ' + (p.queixa || '—'),
+    'Queixa        : ' + triagem,
     '',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     'S — SUBJETIVO',
