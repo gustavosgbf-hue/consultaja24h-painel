@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Painel Médico · ConsultaJá24h</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;height:100%}
+body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.9);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+
+:root{
+  --g1:#b4e05a;--g2:#5ee0a0;
+  --red:#ff5f57;--amber:#ffbd2e;
+  --line:rgba(255,255,255,.08);
+  --line2:rgba(255,255,255,.05);
+  --muted:rgba(255,255,255,.45);
+  --card:rgba(255,255,255,.03);
+  --card2:rgba(255,255,255,.055);
+  --nav-h:60px;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+
+/* ── BG ── */
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70vw 60vh at 0% 0%,rgba(94,224,160,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 50vw 40vh at 100% 80%,rgba(180,224,90,.04) 0%,transparent 50%)}
+
+/* ════════════════════════════════════════
+   LOGIN
+════════════════════════════════════════ */
+#screen-login{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:#07100d}
+.login-card{width:100%;max-width:400px;padding:48px 40px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.03);backdrop-filter:blur(20px);position:relative;z-index:1}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;justify-content:center}
+.login-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite}
+.login-logo span{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;font-weight:700}
+.login-logo .c1{color:rgba(255,255,255,.9)}
+.login-logo .c2{background:linear-gradient(135deg,#b4e05a,#5ee0a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-logo .tag{font-family:'Outfit',sans-serif;font-style:normal;font-size:.65rem;font-weight:500;color:rgba(255,255,255,.3);-webkit-text-fill-color:rgba(255,255,255,.3);background:none;-webkit-background-clip:unset;background-clip:unset;margin-left:2px}
+.login-title{font-size:1.3rem;font-weight:600;margin-bottom:6px;text-align:center}
+.login-sub{font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:32px;font-weight:300}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:.75rem;font-weight:500;color:rgba(255,255,255,.5);margin-bottom:7px;letter-spacing:.04em;text-transform:uppercase}
+.field input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:rgba(255,255,255,.9);font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
+.field input:focus{border-color:rgba(94,224,160,.35)}
+.field input::placeholder{color:rgba(255,255,255,.2)}
+.btn-login{width:100%;padding:13px;border-radius:10px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:8px}
+.btn-login:hover{opacity:.92;transform:translateY(-1px)}
+.login-err{font-size:.78rem;color:#ff7b72;text-align:center;margin-top:12px;display:none}
+
+/* ════════════════════════════════════════
+   NAV
+════════════════════════════════════════ */
+#screen-app{display:none;min-height:100vh;position:relative;z-index:1}
+.nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(7,16,13,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:20px}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.nav-brand span{font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;font-weight:700}
+.nav-brand .c1{color:rgba(255,255,255,.9)}
+.nav-brand .c2{background:linear-gradient(135deg,#b4e05a,#5ee0a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(94,224,160,.5)}50%{opacity:.8;box-shadow:0 0 0 5px rgba(94,224,160,0)}}
+.nav-spacer{flex:1}
+.nav-medico{font-size:.8rem;font-weight:500;color:var(--muted);flex-shrink:0}
+.nav-medico strong{color:rgba(255,255,255,.85);font-weight:600}
+
+/* PLANTÃO TOGGLE */
+.plantao-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;transition:all .2s;flex-shrink:0}
+.plantao-btn.offline{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid var(--line)}
+.plantao-btn.offline:hover{background:rgba(94,224,160,.1);border-color:rgba(94,224,160,.3);color:var(--g2)}
+.plantao-btn.online{background:rgba(94,224,160,.12);color:var(--g2);border:1px solid rgba(94,224,160,.3)}
+.plantao-btn.online:hover{background:rgba(255,95,87,.1);color:#ff8080;border-color:rgba(255,95,87,.3)}
+.plantao-indicator{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.plantao-btn.offline .plantao-indicator{background:rgba(255,255,255,.3)}
+.plantao-btn.online .plantao-indicator{background:var(--g2);animation:pulse 2s ease-in-out infinite}
+
+.nav-logout{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.75rem;cursor:pointer;transition:all .2s;flex-shrink:0}
+.nav-logout:hover{border-color:rgba(255,95,87,.3);color:#ff8080}
+
+/* ════════════════════════════════════════
+   LAYOUT
+════════════════════════════════════════ */
+.app-body{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - var(--nav-h));gap:0}
+@media(max-width:900px){.app-body{grid-template-columns:1fr}}
+
+/* ── SIDEBAR — FILA ── */
+.sidebar{border-right:1px solid var(--line);padding:24px 20px;overflow-y:auto;max-height:calc(100vh - var(--nav-h));position:sticky;top:var(--nav-h)}
+.sidebar-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.fila-count{background:rgba(180,224,90,.15);color:var(--g1);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.fila-vazia{text-align:center;padding:40px 16px;color:var(--muted);font-size:.82rem;font-weight:300;line-height:1.7}
+.fila-vazia svg{margin-bottom:12px;opacity:.3}
+
+/* CARD PACIENTE */
+.paciente-card{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
+.paciente-card:hover{border-color:rgba(180,224,90,.25);background:rgba(180,224,90,.04)}
+.paciente-card.active{border-color:rgba(94,224,160,.4);background:rgba(94,224,160,.06)}
+.paciente-card.assumido{opacity:.45;cursor:default;pointer-events:none}
+.pc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pc-nome{font-size:.88rem;font-weight:600;color:rgba(255,255,255,.9)}
+.pc-tipo{font-size:.65rem;font-weight:600;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+.pc-tipo.video{background:rgba(94,224,160,.12);color:var(--g2)}
+.pc-tipo.whatsapp{background:rgba(37,211,102,.12);color:#25d366}
+.pc-queixa{font-size:.78rem;font-weight:300;color:var(--muted);margin-bottom:10px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc-footer{display:flex;align-items:center;justify-content:space-between}
+.pc-tempo{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:rgba(255,255,255,.3)}
+.pc-tempo.urgente{color:#ffbd2e}
+.pc-tempo.critico{color:#ff5f57}
+.btn-assumir{padding:6px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:opacity .15s}
+.btn-assumir:hover{opacity:.85}
+.pc-status-badge{font-size:.65rem;font-weight:600;padding:3px 8px;border-radius:999px;background:rgba(255,189,46,.1);color:#ffbd2e}
+
+/* ── MAIN — CONTEÚDO ── */
+.main{padding:28px 32px;overflow-y:auto}
+@media(max-width:900px){.main{padding:20px 16px}}
+
+/* ESTADO VAZIO */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:16px}
+.empty-state svg{opacity:.2}
+.empty-state h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:500;color:rgba(255,255,255,.4)}
+.empty-state p{font-size:.85rem;font-weight:300;color:rgba(255,255,255,.25);max-width:320px;line-height:1.7}
+
+/* OFFLINE STATE */
+.offline-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:16px}
+.offline-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.8rem;font-weight:500;color:var(--muted)}
+
+/* ── PAINEL DE ATENDIMENTO ── */
+.atend-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.atend-paciente{display:flex;flex-direction:column;gap:4px}
+.atend-nome{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:500}
+.atend-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.atend-tag{font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+.atend-tag.video{background:rgba(94,224,160,.12);color:var(--g2);border:1px solid rgba(94,224,160,.2)}
+.atend-tag.whatsapp{background:rgba(37,211,102,.12);color:#25d366;border:1px solid rgba(37,211,102,.2)}
+.atend-tag.crm{background:var(--card);color:var(--muted);border:1px solid var(--line);font-family:'JetBrains Mono',monospace}
+.atend-actions{display:flex;align-items:center;gap:10px}
+.btn-wpp{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid rgba(37,211,102,.25);background:rgba(37,211,102,.08);color:#25d366;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-wpp:hover{background:rgba(37,211,102,.15);border-color:rgba(37,211,102,.4)}
+.btn-encerrar{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,95,87,.2);background:rgba(255,95,87,.06);color:#ff8080;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-encerrar:hover{background:rgba(255,95,87,.12);border-color:rgba(255,95,87,.35)}
+
+/* TRIAGEM RESUMO */
+.triagem-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:24px}
+.triagem-box-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1);margin-bottom:14px}
+.triagem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.triagem-item{display:flex;flex-direction:column;gap:3px}
+.triagem-item label{font-size:.65rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.triagem-item span{font-size:.82rem;font-weight:400;color:rgba(255,255,255,.8)}
+.triagem-queixa{grid-column:1/-1;margin-top:4px;padding-top:14px;border-top:1px solid var(--line2)}
+.triagem-queixa label{font-size:.65rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);display:block;margin-bottom:6px}
+.triagem-queixa span{font-size:.9rem;font-weight:400;color:rgba(255,255,255,.88);line-height:1.6}
+
+/* SOAP */
+.soap-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+@media(max-width:700px){.soap-grid{grid-template-columns:1fr}}
+.soap-field{display:flex;flex-direction:column;gap:8px}
+.soap-field.full{grid-column:1/-1}
+.soap-label{display:flex;align-items:center;gap:8px}
+.soap-letter{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,rgba(180,224,90,.15),rgba(94,224,160,.08));border:1px solid rgba(180,224,90,.2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:var(--g1);flex-shrink:0}
+.soap-label-text{display:flex;flex-direction:column}
+.soap-label-text strong{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.8)}
+.soap-label-text span{font-size:.68rem;font-weight:300;color:var(--muted)}
+textarea.soap-input{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;color:rgba(255,255,255,.88);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:300;line-height:1.6;padding:12px 14px;resize:vertical;min-height:90px;outline:none;transition:border-color .2s;width:100%}
+textarea.soap-input:focus{border-color:rgba(94,224,160,.3)}
+textarea.soap-input::placeholder{color:rgba(255,255,255,.18)}
+
+/* DOCUMENTOS */
+.docs-section{margin-bottom:24px}
+.docs-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.docs-grid{display:flex;flex-wrap:wrap;gap:10px}
+.doc-check{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s;user-select:none}
+.doc-check input{display:none}
+.doc-check.checked{border-color:rgba(180,224,90,.35);background:rgba(180,224,90,.06)}
+.doc-check .dc-icon{font-size:.95rem}
+.doc-check .dc-text{font-size:.8rem;font-weight:500;color:rgba(255,255,255,.7)}
+.doc-check.checked .dc-text{color:rgba(255,255,255,.9)}
+
+/* PRONTUÁRIO */
+.pront-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:24px}
+.pront-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.pront-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1)}
+.pront-actions{display:flex;gap:8px}
+.btn-gerar{padding:8px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;transition:opacity .15s}
+.btn-gerar:hover{opacity:.85}
+.btn-copiar{padding:8px 16px;border-radius:8px;border:1px solid rgba(94,224,160,.25);background:rgba(94,224,160,.06);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;display:none}
+.btn-copiar:hover{background:rgba(94,224,160,.12)}
+.btn-copiar.copied{border-color:rgba(180,224,90,.4);background:rgba(180,224,90,.1);color:var(--g1)}
+.pront-output{background:rgba(0,0,0,.3);border:1px solid var(--line2);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.8;color:rgba(255,255,255,.7);white-space:pre-wrap;display:none;max-height:340px;overflow-y:auto}
+
+/* MODAL ENCERRAR */
+.modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#0d1f18;border:1px solid var(--line);border-radius:20px;padding:32px;width:100%;max-width:440px}
+.modal-title{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+.modal-sub{font-size:.8rem;font-weight:300;color:var(--muted);margin-bottom:24px}
+.modal-field{margin-bottom:18px}
+.modal-field label{display:block;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.radio-group{display:flex;flex-direction:column;gap:8px}
+.radio-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s}
+.radio-opt input{display:none}
+.radio-opt.selected{border-color:rgba(94,224,160,.35);background:rgba(94,224,160,.06)}
+.radio-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);flex-shrink:0;transition:all .2s}
+.radio-opt.selected .radio-dot{border-color:var(--g2);background:var(--g2)}
+.radio-text{font-size:.82rem;font-weight:500;color:rgba(255,255,255,.7)}
+.radio-opt.selected .radio-text{color:rgba(255,255,255,.9)}
+.check-group{display:flex;flex-wrap:wrap;gap:8px}
+.check-opt{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.6)}
+.check-opt.selected{border-color:rgba(180,224,90,.3);background:rgba(180,224,90,.06);color:rgba(255,255,255,.9)}
+.modal-actions{display:flex;gap:10px;margin-top:24px}
+.btn-cancel{flex:1;padding:11px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+.btn-cancel:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
+.btn-confirm{flex:1;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:opacity .15s}
+.btn-confirm:hover{opacity:.88}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:500;padding:12px 20px;border-radius:12px;font-size:.82rem;font-weight:500;color:#fff;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:rgba(94,224,160,.15);border:1px solid rgba(94,224,160,.3);color:var(--g2)}
+.toast.error{background:rgba(255,95,87,.12);border:1px solid rgba(255,95,87,.25);color:#ff8080}
+.toast.info{background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
+
+/* DIVIDER */
+.sec-divider{height:1px;background:var(--line);margin:24px 0}
+
+/* SECTION TITLE */
+.sec-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+
+/* TIMER ATENDIMENTO */
+.atend-timer{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.atend-timer svg{opacity:.5}
+
+@media(max-width:600px){
+  .atend-header{flex-direction:column}
+  .atend-actions{flex-wrap:wrap}
+  .modal{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+<div class="bg-mesh" aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════
+     LOGIN
+══════════════════════════════════════ -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="dot"></div>
+      <span><span class="c1">Consulta</span><span class="c2">Já</span><span class="tag">· Painel Médico</span></span>
+    </div>
+    <div class="login-title">Acesso restrito</div>
+    <div class="login-sub">Entre com suas credenciais para acessar o painel</div>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" onclick="fazerLogin()">Entrar no painel</button>
+    <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APP
+══════════════════════════════════════ -->
+<div id="screen-app">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="#" class="nav-brand">
+      <div class="live-dot" id="nav-dot"></div>
+      <span><span class="c1">Consulta</span><span class="c2">Já</span></span>
+    </a>
+    <div class="nav-spacer"></div>
+    <div class="nav-medico">Olá, <strong id="nav-nome"></strong></div>
+    <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()">
+      <div class="plantao-indicator"></div>
+      <span id="plantao-txt">Entrar em plantão</span>
+    </button>
+    <button class="nav-logout" onclick="logout()">Sair</button>
+  </nav>
+
+  <!-- BODY -->
+  <div class="app-body">
+
+    <!-- SIDEBAR — FILA -->
+    <aside class="sidebar">
+      <div class="sidebar-title">
+        Fila de pacientes
+        <span class="fila-count" id="fila-count">0</span>
+      </div>
+      <div id="fila-lista">
+        <div class="fila-vazia">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <p>Nenhum paciente<br>aguardando atendimento</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" id="main-content">
+
+      <!-- OFFLINE -->
+      <div class="offline-state" id="state-offline">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity:.2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <h2>Você está offline</h2>
+        <p>Entre em plantão para receber e visualizar pacientes na fila.</p>
+        <div class="offline-badge">
+          <div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
+          Plantão inativo
+        </div>
+      </div>
+
+      <!-- EMPTY ONLINE -->
+      <div class="empty-state" id="state-empty" style="display:none">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <h2>Fila vazia</h2>
+        <p>Nenhum paciente aguardando no momento. Aguarde novos atendimentos.</p>
+      </div>
+
+      <!-- PAINEL ATENDIMENTO -->
+      <div id="state-atend" style="display:none">
+
+        <div class="atend-header">
+          <div class="atend-paciente">
+            <div class="atend-nome" id="atend-nome">—</div>
+            <div class="atend-meta">
+              <span class="atend-tag" id="atend-tipo-tag">—</span>
+              <span class="atend-tag crm" id="atend-crm-tag">—</span>
+              <div class="atend-timer">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="atend-timer">00:00</span>
+              </div>
+            </div>
+          </div>
+          <div class="atend-actions">
+            <a href="#" class="btn-wpp" id="btn-wpp" target="_blank">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+              Chamar no WhatsApp
+            </a>
+            <button class="btn-encerrar" onclick="abrirModalEncerrar()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Encerrar atendimento
+            </button>
+          </div>
+        </div>
+
+        <!-- TRIAGEM -->
+        <div class="triagem-box">
+          <div class="triagem-box-title">Triagem do paciente</div>
+          <div class="triagem-grid">
+            <div class="triagem-item">
+              <label>Idade</label>
+              <span id="tr-idade">—</span>
+            </div>
+            <div class="triagem-item">
+              <label>Sexo</label>
+              <span id="tr-sexo">—</span>
+            </div>
+            <div class="triagem-item">
+              <label>Alergias</label>
+              <span id="tr-alergias">—</span>
+            </div>
+            <div class="triagem-item">
+              <label>Doenças crônicas</label>
+              <span id="tr-cronicas">—</span>
+            </div>
+            <div class="triagem-item">
+              <label>Medicações em uso</label>
+              <span id="tr-medicacoes">—</span>
+            </div>
+            <div class="triagem-item">
+              <label>Solicita</label>
+              <span id="tr-solicita">—</span>
+            </div>
+            <div class="triagem-queixa">
+              <label>Queixa principal</label>
+              <span id="tr-queixa">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOAP -->
+        <div class="sec-title">Avaliação médica (SOAP)</div>
+        <div class="soap-grid">
+          <div class="soap-field">
+            <div class="soap-label">
+              <div class="soap-letter">S</div>
+              <div class="soap-label-text">
+                <strong>Subjetivo</strong>
+                <span>História do paciente</span>
+              </div>
+            </div>
+            <textarea class="soap-input" id="soap-s" placeholder="Relato do paciente, queixa principal, história da doença atual..."></textarea>
+          </div>
+          <div class="soap-field">
+            <div class="soap-label">
+              <div class="soap-letter">O</div>
+              <div class="soap-label-text">
+                <strong>Objetivo</strong>
+                <span>Observação por telemedicina</span>
+              </div>
+            </div>
+            <textarea class="soap-input" id="soap-o" placeholder="Aparência geral, dados vitais informados, achados observados..."></textarea>
+          </div>
+          <div class="soap-field">
+            <div class="soap-label">
+              <div class="soap-letter">A</div>
+              <div class="soap-label-text">
+                <strong>Avaliação</strong>
+                <span>Hipótese diagnóstica</span>
+              </div>
+            </div>
+            <textarea class="soap-input" id="soap-a" placeholder="Impressão diagnóstica, hipóteses, CID se aplicável..."></textarea>
+          </div>
+          <div class="soap-field">
+            <div class="soap-label">
+              <div class="soap-letter">P</div>
+              <div class="soap-label-text">
+                <strong>Plano</strong>
+                <span>Conduta</span>
+              </div>
+            </div>
+            <textarea class="soap-input" id="soap-p" placeholder="Prescrição, orientações, encaminhamentos, retorno..."></textarea>
+          </div>
+        </div>
+
+        <!-- DOCUMENTOS -->
+        <div class="docs-section">
+          <div class="docs-title">Documentos a emitir via Memed</div>
+          <div class="docs-grid">
+            <label class="doc-check" onclick="toggleDoc(this)">
+              <input type="checkbox" value="receita">
+              <span class="dc-icon">💊</span>
+              <span class="dc-text">Receita médica</span>
+            </label>
+            <label class="doc-check" onclick="toggleDoc(this)">
+              <input type="checkbox" value="atestado">
+              <span class="dc-icon">📋</span>
+              <span class="dc-text">Atestado médico</span>
+            </label>
+            <label class="doc-check" onclick="toggleDoc(this)">
+              <input type="checkbox" value="exames">
+              <span class="dc-icon">🔬</span>
+              <span class="dc-text">Pedido de exames</span>
+            </label>
+            <label class="doc-check" onclick="toggleDoc(this)">
+              <input type="checkbox" value="renovacao">
+              <span class="dc-icon">🔄</span>
+              <span class="dc-text">Renovação de receita</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="sec-divider"></div>
+
+        <!-- PRONTUÁRIO -->
+        <div class="pront-section">
+          <div class="pront-header">
+            <div class="pront-title">Prontuário — copiar para Memed</div>
+            <div class="pront-actions">
+              <button class="btn-gerar" onclick="gerarProntuario()">Gerar prontuário</button>
+              <button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()">Copiar</button>
+            </div>
+          </div>
+          <div class="pront-output" id="pront-output"></div>
+        </div>
+
+      </div><!-- /state-atend -->
+
+    </main>
+  </div><!-- /app-body -->
+</div><!-- /screen-app -->
+
+<!-- MODAL ENCERRAR -->
+<div class="modal-overlay" id="modal-encerrar">
+  <div class="modal">
+    <div class="modal-title">Encerrar atendimento</div>
+    <div class="modal-sub">Registre o resultado antes de finalizar.</div>
+
+    <div class="modal-field">
+      <label>Status do atendimento</label>
+      <div class="radio-group" id="rg-status">
+        <div class="radio-opt" onclick="selectRadio(this,'status')">
+          <div class="radio-dot"></div>
+          <span class="radio-text">✅ Atendido</span>
+        </div>
+        <div class="radio-opt" onclick="selectRadio(this,'status')">
+          <div class="radio-dot"></div>
+          <span class="radio-text">❌ Cancelado</span>
+        </div>
+        <div class="radio-opt" onclick="selectRadio(this,'status')">
+          <div class="radio-dot"></div>
+          <span class="radio-text">🔇 Sem resposta do paciente</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>Documentos emitidos</label>
+      <div class="check-group" id="cg-docs">
+        <div class="check-opt" onclick="toggleCheck(this)">💊 Receita</div>
+        <div class="check-opt" onclick="toggleCheck(this)">📋 Atestado</div>
+        <div class="check-opt" onclick="toggleCheck(this)">🔬 Exames</div>
+        <div class="check-opt" onclick="toggleCheck(this)">🔄 Renovação</div>
+        <div class="check-opt" onclick="toggleCheck(this)">🚫 Nenhum</div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="confirmarEncerramento()">Confirmar encerramento</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// CONFIG — substitua pela URL do Render
+// ══════════════════════════════════════
+const API = 'https://triagem-api.onrender.com';
+
+// ══════════════════════════════════════
+// ESTADO LOCAL
+// ══════════════════════════════════════
+let medico = null;
+let plantaoAtivo = false;
+let atendimentoAtual = null;
+let timerInterval = null;
+let timerSegundos = 0;
+let filaInterval = null;
+
+// Dados demo para funcionar sem backend
+const DEMO_MEDICOS = [
+  { id: 1, nome: 'Dr. Gustavo Fonseca', email: 'gustavo@consultaja24h.com.br', senha: '123456', crm: '14325-MA' },
+  { id: 2, nome: 'Dra. Ana Lima', email: 'ana@consultaja24h.com.br', senha: '123456', crm: '98765-SP' }
+];
+
+// Fila demo simulada
+let FILA_DEMO = [
+  {
+    id: 'PA001',
+    nome: 'Maria da Silva Santos',
+    tel: '98999990001',
+    tipo: 'video',
+    status: 'aguardando',
+    timestamp_criacao: new Date(Date.now() - 4*60000).toISOString(),
+    triagem: {
+      idade: '34 anos', sexo: 'Feminino',
+      queixa: 'Dor de cabeça intensa há 2 dias, pior pela manhã, sem febre.',
+      alergias: 'Dipirona', cronicas: 'Enxaqueca', medicacoes: 'Amitriptilina 25mg',
+      quer_atestado: true, quer_receita: true
+    }
+  },
+  {
+    id: 'PA002',
+    nome: 'João Carlos Pereira',
+    tel: '98999990002',
+    tipo: 'whatsapp',
+    status: 'aguardando',
+    timestamp_criacao: new Date(Date.now() - 1*60000).toISOString(),
+    triagem: {
+      idade: '28 anos', sexo: 'Masculino',
+      queixa: 'Tosse seca há 4 dias, leve cansaço, sem febre.',
+      alergias: 'Nenhuma', cronicas: 'Nenhuma', medicacoes: 'Nenhuma',
+      quer_atestado: true, quer_receita: false
+    }
+  }
+];
+
+// ══════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════
+function fazerLogin() {
+  const email = document.getElementById('inp-email').value.trim();
+  const senha = document.getElementById('inp-senha').value;
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+
+  const found = DEMO_MEDICOS.find(m => m.email === email && m.senha === senha);
+  if (!found) {
+    err.style.display = 'block';
+    return;
+  }
+
+  medico = found;
+  sessionStorage.setItem('medico', JSON.stringify(medico));
+  entrarApp();
+}
+
+document.getElementById('inp-senha').addEventListener('keydown', e => {
+  if (e.key === 'Enter') fazerLogin();
+});
+
+function entrarApp() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-app').style.display = 'block';
+  document.getElementById('nav-nome').textContent = medico.nome;
+  renderEstado();
+  mostrarToast('Bem-vindo, ' + medico.nome.split(' ')[0] + '!', 'success');
+}
+
+function logout() {
+  if (plantaoAtivo) sairPlantao();
+  sessionStorage.removeItem('medico');
+  medico = null;
+  document.getElementById('screen-app').style.display = 'none';
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('inp-email').value = '';
+  document.getElementById('inp-senha').value = '';
+}
+
+// ══════════════════════════════════════
+// PLANTÃO
+// ══════════════════════════════════════
+function togglePlantao() {
+  if (plantaoAtivo) sairPlantao();
+  else entrarPlantao();
+}
+
+function entrarPlantao() {
+  plantaoAtivo = true;
+  const btn = document.getElementById('btn-plantao');
+  btn.className = 'plantao-btn online';
+  document.getElementById('plantao-txt').textContent = 'Sair do plantão';
+  document.getElementById('nav-dot').style.background = 'var(--g2)';
+  renderEstado();
+  iniciarPollingFila();
+  mostrarToast('Você entrou em plantão', 'success');
+  // POST /api/plantao/entrar
+}
+
+function sairPlantao() {
+  plantaoAtivo = false;
+  const btn = document.getElementById('btn-plantao');
+  btn.className = 'plantao-btn offline';
+  document.getElementById('plantao-txt').textContent = 'Entrar em plantão';
+  pararPollingFila();
+  if (!atendimentoAtual) renderEstado();
+  mostrarToast('Você saiu do plantão', 'info');
+  // POST /api/plantao/sair
+}
+
+// ══════════════════════════════════════
+// FILA — POLLING
+// ══════════════════════════════════════
+function iniciarPollingFila() {
+  renderFila();
+  filaInterval = setInterval(renderFila, 15000);
+}
+
+function pararPollingFila() {
+  clearInterval(filaInterval);
+  renderFila();
+}
+
+function renderFila() {
+  const lista = document.getElementById('fila-lista');
+  const count = document.getElementById('fila-count');
+  const disponiveis = FILA_DEMO.filter(p => p.status === 'aguardando');
+  count.textContent = disponiveis.length;
+
+  if (!plantaoAtivo && !atendimentoAtual) {
+    lista.innerHTML = '<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>';
+    return;
+  }
+
+  if (FILA_DEMO.length === 0) {
+    lista.innerHTML = '<div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Fila vazia</p></div>';
+    return;
+  }
+
+  lista.innerHTML = FILA_DEMO.map(p => {
+    const mins = Math.floor((Date.now() - new Date(p.timestamp_criacao)) / 60000);
+    const tempoClass = mins >= 10 ? 'critico' : mins >= 5 ? 'urgente' : '';
+    const isAtual = atendimentoAtual && atendimentoAtual.id === p.id;
+    const assumido = p.status === 'assumido' && !isAtual;
+    return `
+    <div class="paciente-card ${isAtual ? 'active' : ''} ${assumido ? 'assumido' : ''}" onclick="selecionarPaciente('${p.id}')">
+      <div class="pc-header">
+        <div class="pc-nome">${p.nome.split(' ').slice(0,2).join(' ')}</div>
+        <span class="pc-tipo ${p.tipo}">${p.tipo === 'video' ? '📹 Vídeo' : '💬 WhatsApp'}</span>
+      </div>
+      <div class="pc-queixa">${p.triagem.queixa}</div>
+      <div class="pc-footer">
+        <div class="pc-tempo ${tempoClass}">${mins}min atrás</div>
+        ${p.status === 'aguardando'
+          ? `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`
+          : `<span class="pc-status-badge">Em atendimento</span>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// ATENDIMENTO
+// ══════════════════════════════════════
+function assumirAtendimento(id, evt) {
+  evt.stopPropagation();
+  const paciente = FILA_DEMO.find(p => p.id === id);
+  if (!paciente || paciente.status !== 'aguardando') {
+    mostrarToast('Este paciente já foi assumido por outro médico.', 'error');
+    return;
+  }
+  // Simula UPDATE atômico — em prod faz POST /api/atendimento/assumir
+  paciente.status = 'assumido';
+  atendimentoAtual = paciente;
+  timerSegundos = 0;
+  iniciarTimer();
+  renderFila();
+  renderPainelAtendimento();
+  renderEstado();
+  mostrarToast('Atendimento assumido!', 'success');
+}
+
+function selecionarPaciente(id) {
+  if (atendimentoAtual && atendimentoAtual.id === id) return;
+  const p = FILA_DEMO.find(p => p.id === id);
+  if (!p) return;
+  // só visualiza se for o atual
+}
+
+function renderPainelAtendimento() {
+  const p = atendimentoAtual;
+  if (!p) return;
+
+  document.getElementById('atend-nome').textContent = p.nome;
+
+  const tipoTag = document.getElementById('atend-tipo-tag');
+  tipoTag.textContent = p.tipo === 'video' ? '📹 Consulta por vídeo' : '💬 Consulta por WhatsApp';
+  tipoTag.className = 'atend-tag ' + p.tipo;
+
+  document.getElementById('atend-crm-tag').textContent = 'CRM ' + medico.crm;
+
+  // WhatsApp
+  document.getElementById('btn-wpp').href = 'https://wa.me/55' + p.tel.replace(/\D/g,'');
+
+  // Triagem
+  const t = p.triagem;
+  document.getElementById('tr-idade').textContent = t.idade || '—';
+  document.getElementById('tr-sexo').textContent = t.sexo || '—';
+  document.getElementById('tr-alergias').textContent = t.alergias || 'Nenhuma';
+  document.getElementById('tr-cronicas').textContent = t.cronicas || 'Nenhuma';
+  document.getElementById('tr-medicacoes').textContent = t.medicacoes || 'Nenhuma';
+  const sol = [t.quer_atestado && 'Atestado', t.quer_receita && 'Receita'].filter(Boolean).join(', ') || 'Nada especificado';
+  document.getElementById('tr-solicita').textContent = sol;
+  document.getElementById('tr-queixa').textContent = t.queixa || '—';
+
+  // Limpa SOAP
+  ['s','o','a','p'].forEach(l => document.getElementById('soap-' + l).value = '');
+  document.querySelectorAll('.doc-check').forEach(d => d.classList.remove('checked'));
+  document.getElementById('pront-output').style.display = 'none';
+  document.getElementById('btn-copiar').style.display = 'none';
+}
+
+function renderEstado() {
+  const offline = document.getElementById('state-offline');
+  const empty = document.getElementById('state-empty');
+  const atend = document.getElementById('state-atend');
+
+  if (atendimentoAtual) {
+    offline.style.display = 'none';
+    empty.style.display = 'none';
+    atend.style.display = 'block';
+    return;
+  }
+  atend.style.display = 'none';
+  if (!plantaoAtivo) {
+    offline.style.display = 'flex';
+    empty.style.display = 'none';
+  } else {
+    offline.style.display = 'none';
+    empty.style.display = 'flex';
+  }
+}
+
+// ══════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════
+function iniciarTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSegundos++;
+    const m = String(Math.floor(timerSegundos/60)).padStart(2,'0');
+    const s = String(timerSegundos%60).padStart(2,'0');
+    const el = document.getElementById('atend-timer');
+    if (el) el.textContent = m + ':' + s;
+  }, 1000);
+}
+
+// ══════════════════════════════════════
+// DOCS
+// ══════════════════════════════════════
+function toggleDoc(el) {
+  el.classList.toggle('checked');
+}
+
+// ══════════════════════════════════════
+// PRONTUÁRIO
+// ══════════════════════════════════════
+function gerarProntuario() {
+  const p = atendimentoAtual;
+  if (!p) return;
+  const agora = new Date().toLocaleString('pt-BR');
+
+  const texto = [
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'PRONTUÁRIO DE TELEMEDICINA',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '',
+    'Data/Hora : ' + agora,
+    'Paciente  : ' + p.nome,
+    'Telefone  : ' + p.tel,
+    'Médico    : ' + medico.nome,
+    'CRM       : ' + medico.crm,
+    'Tipo      : ' + (p.tipo === 'video' ? 'Teleconsulta por vídeo' : 'Teleconsulta por WhatsApp'),
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'TRIAGEM',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'Idade         : ' + p.triagem.idade,
+    'Sexo          : ' + p.triagem.sexo,
+    'Alergias      : ' + (p.triagem.alergias || 'Nenhuma'),
+    'Crônicas      : ' + (p.triagem.cronicas || 'Nenhuma'),
+    'Medicações    : ' + (p.triagem.medicacoes || 'Nenhuma'),
+    'Queixa        : ' + p.triagem.queixa,
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'S — SUBJETIVO',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    document.getElementById('soap-s').value || '(não preenchido)',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'O — OBJETIVO',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    document.getElementById('soap-o').value || '(não preenchido)',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'A — AVALIAÇÃO',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    document.getElementById('soap-a').value || '(não preenchido)',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'P — PLANO',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    document.getElementById('soap-p').value || '(não preenchido)',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'Atendimento realizado via telemedicina (Res. CFM 2.314/2022)',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+  ].join('\n');
+
+  const out = document.getElementById('pront-output');
+  out.textContent = texto;
+  out.style.display = 'block';
+
+  const btnCopiar = document.getElementById('btn-copiar');
+  btnCopiar.style.display = 'inline-flex';
+  btnCopiar.classList.remove('copied');
+  btnCopiar.textContent = 'Copiar';
+
+  mostrarToast('Prontuário gerado — copie para o Memed', 'success');
+}
+
+function copiarProntuario() {
+  const texto = document.getElementById('pront-output').textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    const btn = document.getElementById('btn-copiar');
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copiado!';
+    mostrarToast('Prontuário copiado — cole no Memed', 'success');
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'Copiar'; }, 3000);
+  });
+}
+
+// ══════════════════════════════════════
+// MODAL ENCERRAR
+// ══════════════════════════════════════
+function abrirModalEncerrar() {
+  document.getElementById('modal-encerrar').classList.add('open');
+  // reset
+  document.querySelectorAll('#rg-status .radio-opt').forEach(r => r.classList.remove('selected'));
+  document.querySelectorAll('#cg-docs .check-opt').forEach(c => c.classList.remove('selected'));
+}
+
+function fecharModal() {
+  document.getElementById('modal-encerrar').classList.remove('open');
+}
+
+function selectRadio(el, group) {
+  el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('selected');
+}
+
+function confirmarEncerramento() {
+  const statusEl = document.querySelector('#rg-status .radio-opt.selected');
+  if (!statusEl) {
+    mostrarToast('Selecione o status do atendimento.', 'error');
+    return;
+  }
+
+  const status = statusEl.querySelector('.radio-text').textContent;
+  const docs = [...document.querySelectorAll('#cg-docs .check-opt.selected')].map(el => el.textContent.trim()).join(', ') || 'Nenhum';
+
+  // Em prod: POST /api/atendimento/encerrar com { id, status, documentos_emitidos }
+
+  clearInterval(timerInterval);
+  // Remove da fila
+  FILA_DEMO = FILA_DEMO.filter(p => p.id !== atendimentoAtual.id);
+  atendimentoAtual = null;
+
+  fecharModal();
+  renderFila();
+  renderEstado();
+  mostrarToast('Atendimento encerrado com sucesso', 'success');
+}
+
+// ══════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════
+let toastTimer = null;
+function mostrarToast(msg, tipo = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + tipo + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+(function init() {
+  const saved = sessionStorage.getItem('medico');
+  if (saved) {
+    medico = JSON.parse(saved);
+    entrarApp();
+  }
+})();
+</script>
+</body>
+</html>
