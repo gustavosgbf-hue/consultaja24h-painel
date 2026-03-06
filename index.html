@@ -246,7 +246,7 @@ textarea.clinic-input.tall{min-height:100px}
   <nav class="nav">
     <a href="#" class="nav-brand">
       <div class="live-dot" id="nav-dot"></div>
-      <span><span class="c1">Consulta</span><span class="c2">Já</span></span>
+      <span><span class="c1">Consulta</span><span class="c2">Já</span><span class="tag">24h</span></span>
     </a>
     <div class="nav-spacer"></div>
     <div class="nav-medico">Olá, <strong id="nav-nome"></strong></div>
@@ -269,6 +269,11 @@ textarea.clinic-input.tall{min-height:100px}
           <p>Nenhum paciente<br>aguardando atendimento</p>
         </div>
       </div>
+      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">
+        📅 Agendamentos
+        <span class="fila-count" id="agend-count">0</span>
+      </div>
+      <div id="agend-lista" style="display:none"></div>
     </aside>
 
     <main class="main" id="main-content">
@@ -313,9 +318,16 @@ textarea.clinic-input.tall{min-height:100px}
           </div>
         </div>
 
-        <!-- TRIAGEM -->
+        <!-- DADOS DO PACIENTE + TRIAGEM -->
         <div class="triagem-box">
-          <div class="triagem-box-title">Dados da triagem</div>
+          <div class="triagem-box-title">Dados do paciente</div>
+          <div class="triagem-grid" style="margin-bottom:12px">
+            <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">—</span></div>
+            <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">—</span></div>
+            <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">—</span></div>
+            <div class="triagem-item"><label>Tel. documentos (SMS)</label><span id="tr-teldoc-pac">—</span></div>
+          </div>
+          <div class="triagem-box-title" style="margin-top:8px">Dados da triagem</div>
           <div class="triagem-grid">
             <div class="triagem-item"><label>Idade</label><span id="tr-idade">—</span></div>
             <div class="triagem-item"><label>Sexo</label><span id="tr-sexo">—</span></div>
@@ -500,16 +512,23 @@ document.getElementById('inp-senha').addEventListener('keydown', e => {
 
 function getToken() { return sessionStorage.getItem('token') || ''; }
 
+let agendInterval = null;
+
 function entrarApp() {
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-app').style.display = 'block';
   document.getElementById('nav-nome').textContent = medico.nome;
   renderEstado();
+  buscarFila();
+  buscarAgendamentos();
+  clearInterval(agendInterval);
+  agendInterval = setInterval(buscarAgendamentos, 60000);
   mostrarToast('Bem-vindo, ' + medico.nome.split(' ')[0] + '!', 'success');
 }
 
 function logout() {
   if (plantaoAtivo) sairPlantao();
+  clearInterval(agendInterval); agendInterval = null;
   sessionStorage.clear(); medico = null;
   document.getElementById('screen-app').style.display = 'none';
   document.getElementById('screen-login').style.display = 'flex';
@@ -624,7 +643,6 @@ function renderPainelAtendimento() {
   const nome = p.nome || '—';
   const tel = p.tel || '';
   const tipo = p.tipo || 'chat';
-  const triagem = p.triagem || '—';
 
   document.getElementById('atend-nome').textContent = nome;
   const tipoTag = document.getElementById('atend-tipo-tag');
@@ -634,22 +652,33 @@ function renderPainelAtendimento() {
   document.getElementById('btn-wpp').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
   document.getElementById('btn-wpp-consulta').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
 
+  // Dados completos do paciente
+  document.getElementById('tr-nome-pac').textContent = nome;
+  document.getElementById('tr-cpf-pac').textContent = p.cpf || '—';
+  document.getElementById('tr-tel-pac').textContent = p.tel || '—';
+  document.getElementById('tr-teldoc-pac').textContent = p.tel_documentos || p.tel || '—';
+
+  // Dados estruturados da triagem
   document.getElementById('tr-idade').textContent = p.idade || '—';
   document.getElementById('tr-sexo').textContent = p.sexo || '—';
   document.getElementById('tr-alergias').textContent = p.alergias || '—';
   document.getElementById('tr-cronicas').textContent = p.cronicas || '—';
   document.getElementById('tr-medicacoes').textContent = p.medicacoes || '—';
-  document.getElementById('tr-solicita').textContent = '—';
-  document.getElementById('tr-queixa').textContent = triagem;
+  document.getElementById('tr-solicita').textContent = p.solicita || '—';
+  document.getElementById('tr-queixa').textContent = p.queixa || p.triagem || '—';
 
-  ['cl-hda','cl-comorbidades','cl-medicacoes','cl-alergias','cl-obs','cl-conduta'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
+  // Pré-preenche campos clínicos com dados da triagem
+  if (p.alergias) document.getElementById('cl-alergias').value = p.alergias;
+  if (p.cronicas) document.getElementById('cl-comorbidades').value = p.cronicas;
+  if (p.medicacoes) document.getElementById('cl-medicacoes').value = p.medicacoes;
+  if (p.queixa) document.getElementById('cl-hda').value = p.queixa;
+  document.getElementById('cl-obs').value = '';
+  document.getElementById('cl-conduta').value = '';
   document.querySelectorAll('.doc-check').forEach(d => d.classList.remove('checked'));
   document.getElementById('pront-output').style.display = 'none';
   document.getElementById('btn-copiar').style.display = 'none';
 
-  // mostrar seção correta na tab consulta
+  // Mostrar seção correta na tab consulta
   document.getElementById('meet-section').style.display = 'none';
   document.getElementById('chat-section').style.display = 'none';
   document.getElementById('wpp-consulta-section').style.display = 'none';
@@ -828,8 +857,10 @@ function gerarProntuario() {
   if (!p) return;
   const nome = p.nome || '—';
   const tel = p.tel || '—';
+  const telDoc = p.tel_documentos || p.tel || '—';
+  const cpf = p.cpf || '—';
   const tipo = p.tipo || 'chat';
-  const triagem = p.triagem || '—';
+  const queixa = p.queixa || p.triagem || '—';
   const hda = document.getElementById('cl-hda').value.trim() || '(não preenchido)';
   const comorbidades = document.getElementById('cl-comorbidades').value.trim() || 'Nega comorbidades referidas';
   const medicacoes = document.getElementById('cl-medicacoes').value.trim() || 'Nega uso contínuo de medicações';
@@ -846,14 +877,19 @@ function gerarProntuario() {
     sep, '',
     `Data/Hora: ${dataFormatada}`,
     `Paciente: ${nome}`,
-    `Telefone: ${tel}`,
+    `CPF: ${cpf}`,
+    `WhatsApp: ${tel}`,
+    `Tel. documentos: ${telDoc}`,
     `Médico: ${medico.nome}`,
     `CRM: ${medico.crm}`,
     `Modalidade: ${modalidadeTexto}`,
     '', sep,
     'TRIAGEM', '',
     'Queixa inicial:',
-    triagem,
+    queixa,
+    ...(p.idade ? [`Idade: ${p.idade}`] : []),
+    ...(p.sexo ? [`Sexo: ${p.sexo}`] : []),
+    ...(p.solicita ? [`Solicita: ${p.solicita}`] : []),
     '', sep,
     'AVALIAÇÃO CLÍNICA', '',
     'HDA (História da Doença Atual)',
@@ -926,6 +962,55 @@ async function confirmarEncerramento() {
   fecharModal();
   renderFila(); renderEstado();
   mostrarToast('Atendimento encerrado', 'success');
+}
+
+// ── AGENDAMENTOS ──
+let agendData = [];
+let agendVisible = false;
+
+async function buscarAgendamentos() {
+  try {
+    const res = await fetch(`${API}/api/agendamentos`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const data = await res.json();
+    if (!data.ok) return;
+    agendData = data.agendamentos || [];
+    document.getElementById('agend-count').textContent = agendData.length;
+    if (agendVisible) renderAgendamentos();
+  } catch(e) {}
+}
+
+function toggleAgendamentos() {
+  agendVisible = !agendVisible;
+  document.getElementById('agend-lista').style.display = agendVisible ? 'block' : 'none';
+  if (agendVisible) renderAgendamentos();
+}
+
+function renderAgendamentos() {
+  const container = document.getElementById('agend-lista');
+  if (!agendData.length) {
+    container.innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum agendamento próximo</p></div>';
+    return;
+  }
+  container.innerHTML = agendData.map(a => {
+    const h = a.horario_agendado ? new Date(a.horario_agendado).toLocaleString('pt-BR', {
+      timeZone: 'America/Fortaleza', weekday: 'short', day: '2-digit', month: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    }) : '—';
+    const tipoIcon = a.modalidade === 'video' ? '🎥' : '💬';
+    return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,244,.25)">
+      <div class="fc-top">
+        <span class="fc-nome">${a.nome || '—'}</span>
+        <span class="fc-tempo" style="color:#4285f4">📅</span>
+      </div>
+      <div class="fc-meta">
+        <span class="fc-tag" style="background:rgba(66,133,244,.12);color:#4285f4">${tipoIcon}</span>
+        <span class="fc-tag" style="color:rgba(255,255,255,.4);font-size:.72rem">${h}</span>
+      </div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel || '—'} · CPF: ${a.cpf || '—'}</div>
+    </div>`;
+  }).join('');
 }
 
 // ── TOAST ──
