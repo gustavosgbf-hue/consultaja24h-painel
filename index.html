@@ -666,6 +666,9 @@ function gerarProntuario() {
   const tel = p.paciente_tel || p.tel || '—';
   const tipo = p.tipo_consulta || p.tipo || 'whatsapp';
   const triagem = p.triagem || '—';
+  const agora = new Date().toLocaleString('pt-BR');
+
+  const texto = [
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     'PRONTUÁRIO DE TELEMEDICINA',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
