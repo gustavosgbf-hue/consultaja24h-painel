@@ -614,28 +614,49 @@ function gerarProntuario() {
   const conduta = document.getElementById('cl-conduta').value.trim() || '(não preenchido)';
   const docs = [...document.querySelectorAll('.doc-check.checked')].map(d => d.querySelector('.dc-text').textContent).join(', ') || 'Nenhum';
 
-  const sep = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+  const sep = '────────────────────────────────────────';
+  const modalidadeTexto = tipo === 'video' ? 'Consulta por vídeo' : 'Consulta por chat';
+  const dataFormatada = new Date().toLocaleString('pt-BR', { timeZone: 'America/Fortaleza', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
   const linhas = [
-    sep, 'PRONTUÁRIO DE TELEMEDICINA', sep, '',
-    `Data/Hora     : ${agora}`,
-    `Paciente      : ${nome}`,
-    `Telefone      : ${tel}`,
-    `Médico        : ${medico.nome}`,
-    `CRM           : ${medico.crm}`,
-    `Modalidade    : ${tipo === 'video' ? 'Teleconsulta por vídeo' : 'Teleconsulta por WhatsApp'}`,
-    '', sep, 'DADOS DA TRIAGEM', sep,
+    'PRONTUÁRIO DE TELEMEDICINA',
+    'Consulta realizada por telemedicina conforme Resolução CFM 2.314/2022',
+    sep, '',
+    `Data/Hora: ${dataFormatada}`,
+    `Paciente: ${nome}`,
+    `Telefone: ${tel}`,
+    `Médico: ${medico.nome}`,
+    `CRM: ${medico.crm}`,
+    `Modalidade: ${modalidadeTexto}`,
+    '', sep,
+    'TRIAGEM', '',
+    'Queixa inicial:',
     triagem,
-    '', sep, 'AVALIAÇÃO CLÍNICA', sep, '',
-    'Queixa principal / HDA:', hda, '',
-    `Comorbidades: ${comorbidades}`, '',
-    `Medicações em uso: ${medicacoes}`, '',
-    `Alergias: ${alergias}`,
+    '', sep,
+    'AVALIAÇÃO CLÍNICA', '',
+    'HDA (História da Doença Atual)',
+    hda, '',
+    'Antecedentes / Comorbidades',
+    comorbidades, '',
+    'Medicações em uso',
+    medicacoes, '',
+    'Alergias',
+    alergias,
   ];
 
-  if (obs) { linhas.push(''); linhas.push(`Observações / exame em telemedicina: ${obs}`); }
+  if (obs) { linhas.push('', 'Observações em telemedicina', obs); }
 
-  linhas.push('', sep, 'CONDUTA', sep, conduta, '', `Documentos emitidos: ${docs}`, '',
-    sep, 'Atendimento realizado via telemedicina conforme Resolução CFM nº 2.314/2022.', sep);
+  linhas.push(
+    '', sep,
+    'CONDUTA', '',
+    conduta, '',
+    `Documentos emitidos: ${docs}`,
+    '', sep,
+    `${medico.nome}`,
+    `CRM ${medico.crm}`,
+    '',
+    'Documento gerado eletronicamente em plataforma de telemedicina.',
+    'Registro de atendimento conforme Resolução CFM 2.314/2022.'
+  );
 
   const out = document.getElementById('pront-output');
   out.textContent = linhas.join('\n');
