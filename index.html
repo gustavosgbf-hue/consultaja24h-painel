@@ -52,6 +52,17 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .plantao-indicator{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s}
 .plantao-btn.offline .plantao-indicator{background:rgba(255,255,255,.3)}
 .plantao-btn.online .plantao-indicator{background:var(--g2);animation:pulse 2s ease-in-out infinite}
+.btn-iniciar-agora{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.btn-iniciar-agora:hover{opacity:.85}
+.admin-badge{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,189,46,.12);border:1px solid rgba(255,189,46,.25);color:#ffbd2e;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-left:8px}
+.medico-card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.medico-card-nome{font-weight:600;font-size:.92rem;margin-bottom:4px}
+.medico-card-meta{font-size:.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6}
+.medico-card-btns{display:flex;gap:8px}
+.btn-aprovar{padding:6px 16px;border-radius:8px;border:none;background:rgba(94,224,160,.12);border:1px solid rgba(94,224,160,.25);color:#5ee0a0;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-aprovar:hover{background:rgba(94,224,160,.22)}
+.btn-rejeitar{padding:6px 16px;border-radius:8px;border:none;background:rgba(255,95,87,.08);border:1px solid rgba(255,95,87,.2);color:#ff8080;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-rejeitar:hover{background:rgba(255,95,87,.16)}
 .nav-logout{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s;flex-shrink:0}
 .nav-logout:hover{border-color:rgba(255,95,87,.3);color:#ff8080}
 .app-body{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - var(--nav-h));gap:0}
@@ -236,7 +247,14 @@ textarea.clinic-input.tall{min-height:100px}
       <label>Senha</label>
       <input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/>
     </div>
+    <div class="field" id="field-admin-pwd" style="display:none">
+      <label style="color:rgba(255,189,46,.7)">Senha admin (opcional)</label>
+      <input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off"/>
+    </div>
     <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar no painel</button>
+    <div style="text-align:center;margin-top:10px">
+      <button onclick="toggleAdminField()" style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.72rem;cursor:pointer;font-family:inherit">Sou administrador</button>
+    </div>
     <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
   </div>
 </div>
@@ -274,6 +292,11 @@ textarea.clinic-input.tall{min-height:100px}
         <span class="fila-count" id="agend-count">0</span>
       </div>
       <div id="agend-lista" style="display:none"></div>
+      <div class="sidebar-title" id="admin-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleAdmin()">
+        👥 Médicos pendentes
+        <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e">0</span>
+      </div>
+      <div id="admin-medicos-lista" style="display:none"></div>
     </aside>
 
     <main class="main" id="main-content">
@@ -497,6 +520,8 @@ async function fazerLogin() {
     medico = data.medico;
     sessionStorage.setItem('medico', JSON.stringify(medico));
     sessionStorage.setItem('token', data.token || '');
+    const adminPwd = document.getElementById('inp-admin-pwd').value;
+    if (adminPwd) sessionStorage.setItem('adminPwd', adminPwd);
     entrarApp();
   } catch(e) {
     err.textContent = 'Erro ao conectar com o servidor.';
@@ -514,6 +539,11 @@ function getToken() { return sessionStorage.getItem('token') || ''; }
 
 let agendInterval = null;
 
+function toggleAdminField() {
+  const f = document.getElementById('field-admin-pwd');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
 function entrarApp() {
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-app').style.display = 'block';
@@ -523,6 +553,8 @@ function entrarApp() {
   buscarAgendamentos();
   clearInterval(agendInterval);
   agendInterval = setInterval(buscarAgendamentos, 60000);
+  // Tenta carregar médicos pendentes (só aparece se tiver senha admin)
+  if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
   mostrarToast('Bem-vindo, ' + medico.nome.split(' ')[0] + '!', 'success');
 }
 
@@ -1009,8 +1041,118 @@ function renderAgendamentos() {
         <span class="fc-tag" style="color:rgba(255,255,255,.4);font-size:.72rem">${h}</span>
       </div>
       <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel || '—'} · CPF: ${a.cpf || '—'}</div>
+      <button class="btn-iniciar-agora" onclick="iniciarAgendamento(${a.id}, '${a.nome}', '${a.tel}')">▶ Iniciar consulta agora</button>
     </div>`;
   }).join('');
+}
+
+// ── ADMIN: MÉDICOS PENDENTES ──
+let adminVisible = false;
+let adminData = [];
+
+async function carregarMedicosPendentes() {
+  try {
+    const res = await fetch(`${API}/api/admin/medicos/pendentes`, {
+      headers: { 'x-admin-password': sessionStorage.getItem('adminPwd') || '' }
+    });
+    if (!res.ok) return; // não é admin
+    const data = await res.json();
+    adminData = data.medicos || [];
+    const count = adminData.length;
+    const tabBtn = document.getElementById('admin-tab-btn');
+    const countEl = document.getElementById('admin-pendente-count');
+    if (count > 0) {
+      tabBtn.style.display = 'flex';
+      countEl.textContent = count;
+    } else {
+      tabBtn.style.display = 'none';
+    }
+    if (adminVisible) renderMedicosPendentes();
+  } catch(e) {}
+}
+
+function toggleAdmin() {
+  adminVisible = !adminVisible;
+  const lista = document.getElementById('admin-medicos-lista');
+  lista.style.display = adminVisible ? 'block' : 'none';
+  if (adminVisible) renderMedicosPendentes();
+}
+
+function renderMedicosPendentes() {
+  const container = document.getElementById('admin-medicos-lista');
+  if (!adminData.length) {
+    container.innerHTML = '<div class="fila-vazia" style="padding:12px"><p>Nenhum médico pendente</p></div>';
+    return;
+  }
+  container.innerHTML = adminData.map(m => {
+    const dt = m.created_at ? new Date(m.created_at).toLocaleString('pt-BR', { timeZone: 'America/Fortaleza', day:'2-digit', month:'2-digit', year:'numeric' }) : '—';
+    return `<div class="medico-card">
+      <div class="medico-card-nome">${m.nome || '—'}</div>
+      <div class="medico-card-meta">
+        CRM ${m.crm || '—'}/${m.uf || '—'}${m.especialidade ? ' · ' + m.especialidade : ''}<br>
+        ${m.email || '—'} · 📱 ${m.telefone || '—'}<br>
+        Cadastro: ${dt}
+      </div>
+      <div class="medico-card-btns">
+        <button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button>
+        <button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function aprovarMedico(id, btn) {
+  const pwd = sessionStorage.getItem('adminPwd') || '';
+  btn.disabled = true; btn.textContent = 'Aprovando...';
+  try {
+    const res = await fetch(`${API}/api/admin/medico/${id}/aprovar`, {
+      method: 'PATCH', headers: { 'x-admin-password': pwd }
+    });
+    const d = await res.json();
+    if (d.ok) {
+      adminData = adminData.filter(m => m.id !== id);
+      renderMedicosPendentes();
+      document.getElementById('admin-pendente-count').textContent = adminData.length;
+      if (!adminData.length) document.getElementById('admin-tab-btn').style.display = 'none';
+      mostrarToast('Médico aprovado com sucesso', 'success');
+    } else { mostrarToast(d.error || 'Erro ao aprovar', 'error'); btn.disabled = false; btn.textContent = '✓ Aprovar'; }
+  } catch(e) { mostrarToast('Erro de conexão', 'error'); btn.disabled = false; btn.textContent = '✓ Aprovar'; }
+}
+
+async function rejeitarMedico(id, btn) {
+  if (!confirm('Rejeitar este médico?')) return;
+  const pwd = sessionStorage.getItem('adminPwd') || '';
+  btn.disabled = true; btn.textContent = 'Rejeitando...';
+  try {
+    const res = await fetch(`${API}/api/admin/medico/${id}/rejeitar`, {
+      method: 'PATCH', headers: { 'x-admin-password': pwd }
+    });
+    const d = await res.json();
+    if (d.ok) {
+      adminData = adminData.filter(m => m.id !== id);
+      renderMedicosPendentes();
+      document.getElementById('admin-pendente-count').textContent = adminData.length;
+      if (!adminData.length) document.getElementById('admin-tab-btn').style.display = 'none';
+      mostrarToast('Médico rejeitado', 'info');
+    } else { mostrarToast(d.error || 'Erro ao rejeitar', 'error'); btn.disabled = false; btn.textContent = '✕ Rejeitar'; }
+  } catch(e) { mostrarToast('Erro de conexão', 'error'); btn.disabled = false; btn.textContent = '✕ Rejeitar'; }
+}
+
+// ── INICIAR AGENDAMENTO ANTECIPADO ──
+async function iniciarAgendamento(agendId, nome, tel) {
+  if (!confirm(`Iniciar consulta de ${nome} agora (antes do horário)?`)) return;
+  try {
+    const res = await fetch(`${API}/api/agendamento/${agendId}/iniciar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
+    });
+    const d = await res.json();
+    if (d.ok) {
+      mostrarToast('Consulta iniciada! Paciente notificado.', 'success');
+      await buscarFila();
+      await buscarAgendamentos();
+    } else { mostrarToast(d.error || 'Erro ao iniciar', 'error'); }
+  } catch(e) { mostrarToast('Erro de conexão', 'error'); }
 }
 
 // ── TOAST ──
