@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Instruções — ConsultaJá24h</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{--bg:#060d0b;--box:#0d1a14;--g1:#b4e05a;--g2:#5ee0a0;--line:rgba(255,255,255,.08);--muted:rgba(255,255,255,.45)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:#fff;padding:32px 16px;line-height:1.65}
+  .wrap{max-width:620px;margin:0 auto}
+  .logo{font-size:1.1rem;font-weight:700;color:var(--g1);margin-bottom:32px;text-align:center}
+  .logo span{color:rgba(255,255,255,.4);font-weight:300}
+  h1{font-size:1.4rem;font-weight:700;margin-bottom:6px}
+  .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:36px}
+  .step{display:flex;gap:16px;margin-bottom:28px;align-items:flex-start}
+  .step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));color:#051208;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+  .step-body h3{font-size:1rem;font-weight:600;margin-bottom:6px}
+  .step-body p{font-size:.88rem;color:rgba(255,255,255,.75);margin-bottom:8px}
+  .step-body p:last-child{margin-bottom:0}
+  .highlight{background:rgba(180,224,90,.08);border:1px solid rgba(180,224,90,.2);border-radius:10px;padding:12px 16px;font-size:.85rem;color:var(--g1);margin-top:8px}
+  .highlight strong{color:#fff}
+  .box{background:var(--box);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:28px}
+  .box-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;font-weight:600}
+  .item{display:flex;gap:10px;margin-bottom:10px;font-size:.88rem;align-items:flex-start}
+  .item:last-child{margin-bottom:0}
+  .item .dot{width:6px;height:6px;border-radius:50%;background:var(--g2);flex-shrink:0;margin-top:7px}
+  .divider{border:none;border-top:1px solid var(--line);margin:32px 0}
+  .tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.72rem;font-weight:600}
+  .tag.chat{background:rgba(94,224,160,.1);color:#5ee0a0;border:1px solid rgba(94,224,160,.2)}
+  .tag.video{background:rgba(66,133,244,.1);color:#4285f4;border:1px solid rgba(66,133,244,.2)}
+  .footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
+  a{color:var(--g2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .alert{background:rgba(255,189,46,.06);border:1px solid rgba(255,189,46,.2);border-radius:10px;padding:14px 16px;font-size:.85rem;color:#ffdd80;margin-bottom:28px}
+  .alert strong{color:#ffbd2e}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="logo">ConsultaJá<span>24h</span></div>
+
+  <h1>Bem-vindo à plataforma! 👋</h1>
+  <p class="subtitle">Leia com atenção — isso explica tudo que você precisa saber para começar a atender.</p>
+
+  <div class="alert">
+    <strong>⚠️ Importante:</strong> Faça o cadastro com o mesmo e-mail que você usa no dia a dia. É nele que você vai receber os avisos de pacientes novos.
+  </div>
+
+  <!-- PASSO 1 -->
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h3>Fazer o cadastro</h3>
+      <p>Acesse o link abaixo e preencha seus dados:</p>
+      <div class="highlight">
+        <strong>🔗 </strong><a href="https://painel.consultaja24h.com.br/medico-cadastro.html">painel.consultaja24h.com.br/medico-cadastro.html</a>
+      </div>
+      <p style="margin-top:12px">Preencha:</p>
+      <div class="item"><div class="dot"></div><span><strong>Nome completo</strong> — seu nome real</span></div>
+      <div class="item"><div class="dot"></div><span><strong>Nome de exibição</strong> — como quer aparecer no painel. Ex: <em>Dra. Marta Campos</em></span></div>
+      <div class="item"><div class="dot"></div><span><strong>E-mail</strong> — use o que você acessa todo dia</span></div>
+      <div class="item"><div class="dot"></div><span><strong>Senha</strong> — você mesmo cria, mínimo 6 caracteres</span></div>
+      <div class="item"><div class="dot"></div><span><strong>CRM e UF</strong></span></div>
+      <div class="item"><div class="dot"></div><span><strong>Telefone / WhatsApp</strong></span></div>
+      <div class="item"><div class="dot"></div><span><strong>Especialidade</strong> — opcional</span></div>
+      <p style="margin-top:12px">No final, marque a declaração e clique em <strong>Solicitar cadastro</strong>.</p>
+      <div class="highlight" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.1)">
+        Após enviar, aparecerá a mensagem: <strong style="color:var(--g2)">"Cadastro recebido. Seu perfil será analisado..."</strong><br/>
+        Você ainda não consegue entrar — aguarde a aprovação.
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSO 2 -->
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h3>Avisar que concluiu o cadastro</h3>
+      <p>Depois de enviar o formulário, <strong>avise pelo WhatsApp</strong> que concluiu o cadastro. Assim a equipe aprova seu acesso rapidinho.</p>
+    </div>
+  </div>
+
+  <!-- PASSO 3 -->
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h3>Aguardar a aprovação</h3>
+      <p>Após a aprovação, você recebe confirmação e já consegue entrar no painel com seu e-mail e senha.</p>
+      <div class="highlight">
+        <strong>🔗 Painel: </strong><a href="https://painel.consultaja24h.com.br">painel.consultaja24h.com.br</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSO 4 -->
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h3>Entrar em plantão</h3>
+      <p>Quando estiver disponível para atender, clique no botão <strong>"Entrar em plantão"</strong> no canto superior do painel.</p>
+      <p>Isso sinaliza que você está disponível. Quando quiser parar, clique de novo para sair do plantão.</p>
+      <div class="highlight">
+        <strong>📧 Você não precisa ficar com o painel aberto o tempo todo.</strong><br/><br/>
+        Quando chegar um paciente novo, você recebe um <strong>e-mail automático</strong> com o nome, queixa e dados dele — mesmo que esteja com o celular no bolso.<br/><br/>
+        Só abre o painel quando quiser atender.
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- COMO FUNCIONA -->
+  <div class="box">
+    <div class="box-title">Como funciona quando chega um paciente</div>
+
+    <div class="item"><div class="dot"></div><span>O paciente acessa o site, paga e faz uma triagem com a IA</span></div>
+    <div class="item"><div class="dot"></div><span>Assim que a triagem termina, <strong>você recebe um e-mail</strong> com o nome, queixa e dados do paciente</span></div>
+    <div class="item"><div class="dot"></div><span>No e-mail tem um botão para chamar o paciente no WhatsApp diretamente</span></div>
+    <div class="item"><div class="dot"></div><span>Você entra no painel, vê o paciente na fila e clica em <strong>"Assumir"</strong></span></div>
+    <div class="item"><div class="dot"></div><span>O atendimento começa — por chat ou por vídeo, dependendo do que o paciente escolheu</span></div>
+  </div>
+
+  <!-- CHAT vs VIDEO -->
+  <div class="box">
+    <div class="box-title">Tipos de atendimento</div>
+
+    <div class="item" style="margin-bottom:14px">
+      <div class="dot" style="background:#5ee0a0"></div>
+      <span>
+        <span class="tag chat">💬 Chat</span>
+        <span style="display:block;margin-top:6px;color:rgba(255,255,255,.7)">Conversa por texto dentro do próprio painel. Você digita, o paciente responde em tempo real na tela dele.</span>
+      </span>
+    </div>
+    <div class="item">
+      <div class="dot" style="background:#4285f4"></div>
+      <span>
+        <span class="tag video">🎥 Vídeo</span>
+        <span style="display:block;margin-top:6px;color:rgba(255,255,255,.7)">Consulta por chamada de vídeo. Você cria uma sala no Google Meet, cola o link no painel e o paciente recebe para entrar.</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- PASSO 5 -->
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <h3>Durante o atendimento</h3>
+      <p>No painel você vê a triagem completa do paciente antes de começar — queixa, sintomas, alergias, medicações em uso.</p>
+      <p>Ao final, clique em <strong>"Encerrar atendimento"</strong>. O sistema registra tudo automaticamente.</p>
+    </div>
+  </div>
+
+  <!-- PASSO 6 -->
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <h3>Agendamentos</h3>
+      <p>Pacientes também podem agendar consultas para um horário específico. Quando isso acontecer, você recebe um e-mail com os dados do agendamento.</p>
+      <p>No painel, os agendamentos aparecem em uma seção separada. Se quiser iniciar antes do horário marcado, tem o botão <strong>"Iniciar consulta agora"</strong>.</p>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="box">
+    <div class="box-title">Resumo rápido</div>
+    <div class="item"><div class="dot"></div><span>Cadastro → <a href="https://painel.consultaja24h.com.br/medico-cadastro.html">painel.consultaja24h.com.br/medico-cadastro.html</a></span></div>
+    <div class="item"><div class="dot"></div><span>Painel → <a href="https://painel.consultaja24h.com.br">painel.consultaja24h.com.br</a></span></div>
+    <div class="item"><div class="dot"></div><span>Use o e-mail do dia a dia no cadastro</span></div>
+    <div class="item"><div class="dot"></div><span>Avise pelo WhatsApp após concluir o cadastro</span></div>
+    <div class="item"><div class="dot"></div><span>Aguarde a aprovação antes de tentar entrar</span></div>
+    <div class="item"><div class="dot"></div><span>Quando chegar paciente, você recebe e-mail com todos os dados</span></div>
+  </div>
+
+  <div class="footer">
+    ConsultaJá24h · Qualquer dúvida, chama no WhatsApp
+  </div>
+
+</div>
+</body>
+</html>
