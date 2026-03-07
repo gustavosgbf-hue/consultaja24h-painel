@@ -30,11 +30,14 @@
   .tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.72rem;font-weight:600}
   .tag.chat{background:rgba(94,224,160,.1);color:#5ee0a0;border:1px solid rgba(94,224,160,.2)}
   .tag.video{background:rgba(66,133,244,.1);color:#4285f4;border:1px solid rgba(66,133,244,.2)}
+  .tag.memed{background:rgba(180,224,90,.1);color:#b4e05a;border:1px solid rgba(180,224,90,.2)}
   .footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
   a{color:var(--g2);text-decoration:none}
   a:hover{text-decoration:underline}
   .alert{background:rgba(255,189,46,.06);border:1px solid rgba(255,189,46,.2);border-radius:10px;padding:14px 16px;font-size:.85rem;color:#ffdd80;margin-bottom:28px}
   .alert strong{color:#ffbd2e}
+  .note{background:rgba(94,224,160,.05);border:1px solid rgba(94,224,160,.15);border-radius:10px;padding:12px 16px;font-size:.83rem;color:rgba(255,255,255,.6);margin-top:8px}
+  .note strong{color:rgba(255,255,255,.85)}
 </style>
 </head>
 <body>
@@ -118,7 +121,7 @@
 
     <div class="item"><div class="dot"></div><span>O paciente acessa o site, paga e faz uma triagem com a IA</span></div>
     <div class="item"><div class="dot"></div><span>Assim que a triagem termina, <strong>você recebe um e-mail</strong> com o nome, queixa e dados do paciente</span></div>
-    <div class="item"><div class="dot"></div><span>No e-mail tem um botão para chamar o paciente no WhatsApp diretamente</span></div>
+    <div class="item"><div class="dot"></div><span>No e-mail há um botão para contato direto pelo WhatsApp do paciente, caso precise — <strong>mas o atendimento em si acontece todo dentro do painel</strong></span></div>
     <div class="item"><div class="dot"></div><span>Você entra no painel, vê o paciente na fila e clica em <strong>"Assumir"</strong></span></div>
     <div class="item"><div class="dot"></div><span>O atendimento começa — por chat ou por vídeo, dependendo do que o paciente escolheu</span></div>
   </div>
@@ -149,7 +152,40 @@
     <div class="step-body">
       <h3>Durante o atendimento</h3>
       <p>No painel você vê a triagem completa do paciente antes de começar — queixa, sintomas, alergias, medicações em uso.</p>
-      <p>Ao final, clique em <strong>"Encerrar atendimento"</strong>. O sistema registra tudo automaticamente.</p>
+      <p>Ao final, preencha os dados do atendimento no painel, clique em <strong>"Gerar para o Memed"</strong> e depois em <strong>"Copiar"</strong>. Em seguida, acesse o Memed para emitir os documentos.</p>
+      <div class="note">
+        <strong>📋 Como usar o Memed:</strong>
+
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+
+          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px">
+            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">1 · Cadastrar o paciente</div>
+            <span style="color:rgba(255,255,255,.75);font-size:.84rem">Clique em <strong style="color:#fff">Cadastrar paciente</strong> e preencha apenas <strong style="color:#fff">nome completo</strong> e <strong style="color:#fff">CPF</strong> — são os únicos campos obrigatórios. Depois clique em <strong style="color:#fff">Criar paciente</strong>.</span>
+          </div>
+
+          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px">
+            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">2 · Criar o documento</div>
+            <span style="color:rgba(255,255,255,.75);font-size:.84rem">Com o paciente aberto, clique em <strong style="color:#fff">Novo documento</strong> e escolha o tipo:</span>
+            <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+              <span style="background:rgba(94,224,160,.08);border:1px solid rgba(94,224,160,.2);border-radius:6px;padding:3px 10px;font-size:.78rem;color:#5ee0a0">Prescrição</span>
+              <span style="background:rgba(94,224,160,.08);border:1px solid rgba(94,224,160,.2);border-radius:6px;padding:3px 10px;font-size:.78rem;color:#5ee0a0">Pedido de exames</span>
+              <span style="background:rgba(94,224,160,.08);border:1px solid rgba(94,224,160,.2);border-radius:6px;padding:3px 10px;font-size:.78rem;color:#5ee0a0">Outros documentos</span>
+              <span style="background:rgba(94,224,160,.08);border:1px solid rgba(94,224,160,.2);border-radius:6px;padding:3px 10px;font-size:.78rem;color:#5ee0a0">Anotação</span>
+            </div>
+          </div>
+
+          <div style="background:rgba(180,224,90,.06);border:1px solid rgba(180,224,90,.15);border-radius:8px;padding:10px 12px">
+            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">3 · Registrar a ficha clínica (primeiro atendimento)</div>
+            <span style="color:rgba(255,255,255,.75);font-size:.84rem">Se for o primeiro atendimento do paciente, clique em <strong style="color:#fff">+ Criar nova anotação</strong> e cole o texto copiado do nosso painel. É só uma sugestão — fique à vontade para editar, complementar ou reescrever como preferir.</span>
+          </div>
+
+          <div style="background:rgba(255,189,46,.05);border:1px solid rgba(255,189,46,.2);border-radius:8px;padding:10px 12px">
+            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">💡 Dica — Atestado médico</div>
+            <span style="color:rgba(255,255,255,.75);font-size:.84rem">Atestado médico é feito dentro de <strong style="color:#fff">Prescrição</strong>. No campo de busca de medicamento, digite <strong style="color:#fff">Atestado Médico</strong> — vai aparecer a opção. Selecione e, no campo <strong style="color:#fff">Texto livre</strong>, escreva o restante: <em style="color:rgba(255,255,255,.55)">"Atesto, para os devidos fins, que..."</em>. Adicione o CID se quiser.</span>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 
@@ -173,6 +209,8 @@
     <div class="item"><div class="dot"></div><span>Avise pelo WhatsApp após concluir o cadastro</span></div>
     <div class="item"><div class="dot"></div><span>Aguarde a aprovação antes de tentar entrar</span></div>
     <div class="item"><div class="dot"></div><span>Quando chegar paciente, você recebe e-mail com todos os dados</span></div>
+    <div class="item"><div class="dot"></div><span>Todo o atendimento (chat ou vídeo) acontece dentro do painel</span></div>
+    <div class="item"><div class="dot"></div><span>Use o botão Memed no painel para emitir documentos com assinatura digital</span></div>
   </div>
 
   <div class="footer">
