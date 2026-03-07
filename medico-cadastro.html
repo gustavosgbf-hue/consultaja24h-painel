@@ -52,7 +52,13 @@
 
   <div class="field">
     <label>Nome completo</label>
-    <input type="text" id="nome" placeholder="Dr. João Silva" autocomplete="name"/>
+    <input type="text" id="nome" placeholder="João Silva" autocomplete="name"/>
+  </div>
+
+  <div class="field">
+    <label>Nome de exibição no painel</label>
+    <input type="text" id="nome_exibicao" placeholder="Dr. João Silva ou Dra. Marta Campos"/>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:5px">Como vai aparecer para pacientes e no painel</div>
   </div>
 
   <div class="field">
@@ -160,6 +166,7 @@ async function cadastrar() {
   }
 
   var especialidade = document.getElementById('especialidade').value.trim();
+  var nome_exibicao = document.getElementById('nome_exibicao').value.trim() || nome;
   var btn = document.getElementById('btnCadastrar');
   btn.disabled = true; btn.textContent = 'Enviando...';
 
@@ -167,14 +174,14 @@ async function cadastrar() {
     var res = await fetch(API + '/api/medico/cadastro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, email, senha, crm, uf, telefone, especialidade })
+      body: JSON.stringify({ nome, nome_exibicao, email, senha, crm, uf, telefone, especialidade })
     });
     var d = await res.json();
     if (d.ok) {
       btn.style.display = 'none';
       mostrarMsg('✓ Cadastro recebido! Seu perfil será analisado pela equipe da plataforma. Você receberá um retorno em breve.', 'ok');
       // Limpa campos
-      ['nome','email','senha','senha2','crm','telefone'].forEach(function(id){
+      ['nome','nome_exibicao','email','senha','senha2','crm','telefone'].forEach(function(id){
         document.getElementById(id).value = '';
       });
       document.getElementById('uf').value = '';
