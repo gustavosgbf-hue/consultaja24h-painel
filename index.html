@@ -1,491 +1,3 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Painel Médico · ConsultaJá24h</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;height:100%}
-body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.9);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
-:root{--g1:#b4e05a;--g2:#5ee0a0;--red:#ff5f57;--amber:#ffbd2e;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.05);--muted:rgba(255,255,255,.45);--card:rgba(255,255,255,.03);--card2:rgba(255,255,255,.055);--nav-h:60px}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70vw 60vh at 0% 0%,rgba(94,224,160,.06) 0%,transparent 55%),radial-gradient(ellipse 50vw 40vh at 100% 80%,rgba(180,224,90,.04) 0%,transparent 50%)}
-/* LOGIN */
-#screen-login{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:#07100d}
-.login-card{width:100%;max-width:400px;padding:48px 40px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.03);backdrop-filter:blur(20px);position:relative;z-index:1}
-.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;justify-content:center}
-.login-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite}
-.login-logo span{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;font-weight:700}
-.login-logo .c1{color:rgba(255,255,255,.9)}.login-logo .c2{background:linear-gradient(135deg,#b4e05a,#5ee0a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.login-logo .tag{font-family:'Outfit',sans-serif;font-style:normal;font-size:.65rem;font-weight:500;color:rgba(255,255,255,.3);-webkit-text-fill-color:rgba(255,255,255,.3);background:none;-webkit-background-clip:unset;background-clip:unset;margin-left:2px}
-.login-title{font-size:1.3rem;font-weight:600;margin-bottom:6px;text-align:center}
-.login-sub{font-size:.85rem;color:var(--muted);text-align:center;margin-bottom:32px;font-weight:300}
-.field{margin-bottom:18px}
-.field label{display:block;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.5);margin-bottom:7px;letter-spacing:.04em;text-transform:uppercase}
-.field input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:rgba(255,255,255,.9);font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s}
-.field input:focus{border-color:rgba(94,224,160,.35)}
-.field input::placeholder{color:rgba(255,255,255,.2)}
-.btn-login{width:100%;padding:13px;border-radius:10px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:8px}
-.btn-login:hover{opacity:.92;transform:translateY(-1px)}
-.btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.login-err{font-size:.8rem;color:#ff7b72;text-align:center;margin-top:12px;display:none}
-/* APP */
-#screen-app{display:none;min-height:100vh;position:relative;z-index:1}
-.nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(7,16,13,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:20px}
-.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
-.nav-brand span{font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;font-weight:700}
-.nav-brand .c1{color:rgba(255,255,255,.9)}.nav-brand .c2{background:linear-gradient(135deg,#b4e05a,#5ee0a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(94,224,160,.5)}50%{opacity:.8;box-shadow:0 0 0 5px rgba(94,224,160,0)}}
-.nav-spacer{flex:1}
-.nav-medico{font-size:.82rem;font-weight:500;color:var(--muted);flex-shrink:0}
-.nav-medico strong{color:rgba(255,255,255,.85);font-weight:600}
-.plantao-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;transition:all .2s;flex-shrink:0}
-.plantao-btn.offline{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid var(--line)}
-.plantao-btn.offline:hover{background:rgba(94,224,160,.1);border-color:rgba(94,224,160,.3);color:var(--g2)}
-.plantao-btn.online{background:rgba(94,224,160,.12);color:var(--g2);border:1px solid rgba(94,224,160,.3)}
-.plantao-btn.online:hover{background:rgba(255,95,87,.1);color:#ff8080;border-color:rgba(255,95,87,.3)}
-.plantao-indicator{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s}
-.plantao-btn.offline .plantao-indicator{background:rgba(255,255,255,.3)}
-.plantao-btn.online .plantao-indicator{background:var(--g2);animation:pulse 2s ease-in-out infinite}
-.btn-iniciar-agora{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s}
-.btn-iniciar-agora:hover{opacity:.85}
-.admin-badge{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,189,46,.12);border:1px solid rgba(255,189,46,.25);color:#ffbd2e;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-left:8px}
-.medico-card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
-.medico-card-nome{font-weight:600;font-size:.92rem;margin-bottom:4px}
-.medico-card-meta{font-size:.78rem;color:var(--muted);margin-bottom:10px;line-height:1.6}
-.medico-card-btns{display:flex;gap:8px}
-.btn-aprovar{padding:6px 16px;border-radius:8px;border:none;background:rgba(94,224,160,.12);border:1px solid rgba(94,224,160,.25);color:#5ee0a0;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s}
-.btn-aprovar:hover{background:rgba(94,224,160,.22)}
-.btn-rejeitar{padding:6px 16px;border-radius:8px;border:none;background:rgba(255,95,87,.08);border:1px solid rgba(255,95,87,.2);color:#ff8080;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s}
-.btn-rejeitar:hover{background:rgba(255,95,87,.16)}
-.nav-logout{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s;flex-shrink:0}
-.nav-logout:hover{border-color:rgba(255,95,87,.3);color:#ff8080}
-.app-body{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - var(--nav-h));gap:0}
-@media(max-width:900px){.app-body{grid-template-columns:1fr}}
-.sidebar{border-right:1px solid var(--line);padding:20px 16px;overflow-y:auto;max-height:calc(100vh - var(--nav-h));position:sticky;top:var(--nav-h)}
-.sidebar-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
-.fila-count{background:rgba(180,224,90,.15);color:var(--g1);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:999px}
-.fila-vazia{text-align:center;padding:40px 16px;color:var(--muted);font-size:.85rem;font-weight:300;line-height:1.7}
-.fila-vazia svg{margin-bottom:12px;opacity:.3}
-.paciente-card{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
-.paciente-card:hover{border-color:rgba(180,224,90,.25);background:rgba(180,224,90,.04)}
-.paciente-card.active{border-color:rgba(94,224,160,.4);background:rgba(94,224,160,.06)}
-.paciente-card.assumido{opacity:.45;cursor:default;pointer-events:none}
-.pc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.pc-nome{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.9)}
-.pc-tipo{font-size:.67rem;font-weight:600;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
-.pc-tipo.video{background:rgba(94,224,160,.12);color:var(--g2)}
-.pc-tipo.chat{background:rgba(37,211,102,.12);color:#25d366}
-.pc-tipo.whatsapp{background:rgba(37,211,102,.12);color:#25d366}
-.pc-queixa{font-size:.82rem;font-weight:300;color:var(--muted);margin-bottom:10px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pc-footer{display:flex;align-items:center;justify-content:space-between}
-.pc-tempo{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.3)}
-.pc-tempo.urgente{color:#ffbd2e}.pc-tempo.critico{color:#ff5f57}
-.btn-assumir{padding:7px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;transition:opacity .15s}
-.btn-assumir:hover{opacity:.85}
-.pc-status-badge{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:999px;background:rgba(255,189,46,.1);color:#ffbd2e}
-/* MAIN */
-.main{padding:28px 32px;overflow-y:auto}
-@media(max-width:900px){.main{padding:20px 16px}}
-.empty-state,.offline-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:16px}
-.empty-state svg,.offline-state svg{opacity:.2}
-.empty-state h2,.offline-state h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:500;color:rgba(255,255,255,.4)}
-.empty-state p,.offline-state p{font-size:.88rem;font-weight:300;color:rgba(255,255,255,.25);max-width:320px;line-height:1.7}
-.offline-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.82rem;font-weight:500;color:var(--muted)}
-/* ATENDIMENTO */
-.atend-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-.atend-paciente{display:flex;flex-direction:column;gap:5px}
-.atend-nome{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:500}
-.atend-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.atend-tag{font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
-.atend-tag.video{background:rgba(94,224,160,.12);color:var(--g2);border:1px solid rgba(94,224,160,.2)}
-.atend-tag.chat{background:rgba(37,211,102,.12);color:#25d366;border:1px solid rgba(37,211,102,.2)}
-.atend-tag.whatsapp{background:rgba(37,211,102,.12);color:#25d366;border:1px solid rgba(37,211,102,.2)}
-.atend-tag.crm{background:var(--card);color:var(--muted);border:1px solid var(--line);font-family:'JetBrains Mono',monospace}
-.atend-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.btn-wpp{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid rgba(37,211,102,.25);background:rgba(37,211,102,.08);color:#25d366;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
-.btn-wpp:hover{background:rgba(37,211,102,.15)}
-.btn-encerrar{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,95,87,.2);background:rgba(255,95,87,.06);color:#ff8080;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-encerrar:hover{background:rgba(255,95,87,.12);border-color:rgba(255,95,87,.35)}
-.triagem-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:24px}
-.triagem-box-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1);margin-bottom:14px}
-.triagem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.triagem-item{display:flex;flex-direction:column;gap:4px}
-.triagem-item label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.triagem-item span{font-size:.88rem;font-weight:400;color:rgba(255,255,255,.8)}
-.triagem-queixa{grid-column:1/-1;margin-top:4px;padding-top:14px;border-top:1px solid var(--line2)}
-.triagem-queixa label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);display:block;margin-bottom:8px}
-.triagem-queixa span{font-size:.95rem;font-weight:400;color:rgba(255,255,255,.88);line-height:1.6}
-/* TABS */
-.tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
-.tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
-.tab.active{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-/* CHAT MÉDICO */
-.chat-medico-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:24px}
-.chat-medico-header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.chat-medico-header h3{font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:8px}
-.chat-online-dot{width:6px;height:6px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite}
-.chat-medico-msgs{height:320px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent}
-.chat-medico-msgs::-webkit-scrollbar{width:3px}
-.chat-medico-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
-.cmsg{display:flex;gap:8px;align-items:flex-end;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.cmsg.medico{flex-direction:row-reverse}
-.cmsg .av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
-.cmsg .bub-wrap{display:flex;flex-direction:column;max-width:78%}
-.cmsg.medico .bub-wrap{align-items:flex-end}
-.cmsg .bub{padding:10px 14px;border-radius:14px;font-size:.875rem;font-weight:300;line-height:1.6}
-.cmsg.paciente .bub{background:rgba(255,255,255,.06);border:1px solid var(--line);border-bottom-left-radius:4px;color:rgba(255,255,255,.88)}
-.cmsg.medico .bub{background:linear-gradient(135deg,rgba(180,224,90,.2),rgba(94,224,160,.15));border:1px solid rgba(180,224,90,.25);border-bottom-right-radius:4px;color:rgba(255,255,255,.9)}
-.cmsg .ts{font-size:.62rem;color:rgba(255,255,255,.2);margin-top:3px;padding:0 2px}
-.chat-vazio{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.83rem;font-weight:300;text-align:center;flex-direction:column;gap:8px;opacity:.6}
-.chat-medico-input{padding:12px 14px;border-top:1px solid var(--line);display:flex;gap:10px;background:rgba(0,0,0,.2)}
-.chat-medico-input textarea{flex:1;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#fff;font-family:'Outfit',sans-serif;font-size:.875rem;font-weight:300;resize:none;outline:none;min-height:42px;max-height:100px;line-height:1.5;transition:border-color .2s}
-.chat-medico-input textarea:focus{border-color:rgba(94,224,160,.3)}
-.chat-medico-input textarea::placeholder{color:rgba(255,255,255,.2)}
-.chat-medico-send{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .12s}
-.chat-medico-send:hover{transform:scale(1.08)}
-/* MEET */
-.meet-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:24px}
-.meet-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);margin-bottom:14px}
-.meet-input-row{display:flex;gap:10px}
-.meet-input{flex:1;padding:11px 14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#fff;font-family:'Outfit',sans-serif;font-size:.875rem;outline:none;transition:border-color .2s}
-.meet-input:focus{border-color:rgba(94,224,160,.35)}
-.meet-input::placeholder{color:rgba(255,255,255,.2)}
-.btn-meet-save{padding:11px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:opacity .15s;white-space:nowrap}
-.btn-meet-save:hover{opacity:.85}
-.meet-link-atual{margin-top:10px;font-size:.78rem;color:var(--muted);font-weight:300}
-.meet-link-atual a{color:var(--g2);text-decoration:none}
-/* CLINIC */
-.clinic-section{margin-bottom:24px}
-.clinic-section-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.clinic-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:700px){.clinic-grid{grid-template-columns:1fr}}
-.clinic-field{display:flex;flex-direction:column;gap:8px}
-.clinic-field.full{grid-column:1/-1}
-.clinic-label{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.55)}
-textarea.clinic-input{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;color:rgba(255,255,255,.88);font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:300;line-height:1.65;padding:12px 14px;resize:vertical;min-height:80px;outline:none;transition:border-color .2s;width:100%}
-textarea.clinic-input:focus{border-color:rgba(94,224,160,.3)}
-textarea.clinic-input::placeholder{color:rgba(255,255,255,.15)}
-textarea.clinic-input.tall{min-height:100px}
-.docs-section{margin-bottom:24px}
-.docs-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-.docs-grid{display:flex;flex-wrap:wrap;gap:8px}
-.doc-check{display:flex;align-items:center;gap:7px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s;user-select:none}
-.doc-check input{display:none}
-.doc-check.checked{border-color:rgba(180,224,90,.35);background:rgba(180,224,90,.06)}
-.dc-icon{font-size:.95rem}.dc-text{font-size:.83rem;font-weight:500;color:rgba(255,255,255,.7)}
-.doc-check.checked .dc-text{color:rgba(255,255,255,.95)}
-.sec-divider{height:1px;background:var(--line);margin:24px 0}
-.pront-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:24px}
-.pront-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
-.pront-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1)}
-.pront-actions{display:flex;gap:8px}
-.btn-gerar{padding:9px 18px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:opacity .15s}
-.btn-gerar:hover{opacity:.85}
-.btn-copiar{padding:9px 18px;border-radius:8px;border:1px solid rgba(94,224,160,.25);background:rgba(94,224,160,.06);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;display:none}
-.btn-copiar:hover{background:rgba(94,224,160,.12)}
-.btn-copiar.copied{border-color:rgba(180,224,90,.4);background:rgba(180,224,90,.1);color:var(--g1)}
-.pront-output{background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:10px;padding:18px;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.9;color:rgba(255,255,255,.75);white-space:pre-wrap;display:none;max-height:400px;overflow-y:auto}
-.atend-timer{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px}
-.atend-timer svg{opacity:.5}
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:#0d1f18;border:1px solid var(--line);border-radius:20px;padding:32px;width:100%;max-width:440px}
-.modal-title{font-size:1.15rem;font-weight:600;margin-bottom:6px}
-.modal-sub{font-size:.83rem;font-weight:300;color:var(--muted);margin-bottom:24px}
-.modal-field{margin-bottom:18px}
-.modal-field label{display:block;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-.radio-group{display:flex;flex-direction:column;gap:8px}
-.radio-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s}
-.radio-opt.selected{border-color:rgba(94,224,160,.35);background:rgba(94,224,160,.06)}
-.radio-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);flex-shrink:0;transition:all .2s}
-.radio-opt.selected .radio-dot{border-color:var(--g2);background:var(--g2)}
-.radio-text{font-size:.85rem;font-weight:500;color:rgba(255,255,255,.7)}
-.radio-opt.selected .radio-text{color:rgba(255,255,255,.9)}
-.check-group{display:flex;flex-wrap:wrap;gap:8px}
-.check-opt{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.6)}
-.check-opt.selected{border-color:rgba(180,224,90,.3);background:rgba(180,224,90,.06);color:rgba(255,255,255,.9)}
-.modal-actions{display:flex;gap:10px;margin-top:24px}
-.btn-cancel{flex:1;padding:12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.88rem;cursor:pointer;transition:all .2s}
-.btn-cancel:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
-.btn-confirm{flex:1;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .15s}
-.btn-confirm:hover{opacity:.88}
-.toast{position:fixed;bottom:24px;right:24px;z-index:500;padding:13px 22px;border-radius:12px;font-size:.85rem;font-weight:500;color:#fff;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
-.toast.show{transform:translateY(0);opacity:1}
-.toast.success{background:rgba(94,224,160,.15);border:1px solid rgba(94,224,160,.3);color:var(--g2)}
-.toast.error{background:rgba(255,95,87,.12);border:1px solid rgba(255,95,87,.25);color:#ff8080}
-.toast.info{background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
-@media(max-width:600px){.atend-header{flex-direction:column}.atend-actions{flex-wrap:wrap}.modal{padding:24px 20px}}
-</style>
-</head>
-<body>
-<div class="bg-mesh" aria-hidden="true"></div>
-
-<!-- LOGIN -->
-<div id="screen-login">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="dot"></div>
-      <span><span class="c1">Consulta</span><span class="c2">Já</span><span class="tag">· Painel Médico</span></span>
-    </div>
-    <div class="login-title">Acesso restrito</div>
-    <div class="login-sub">Entre com suas credenciais para acessar o painel</div>
-    <div class="field">
-      <label>E-mail</label>
-      <input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/>
-    </div>
-    <div class="field">
-      <label>Senha</label>
-      <input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <div class="field" id="field-admin-pwd" style="display:none">
-      <label style="color:rgba(255,189,46,.7)">Senha admin (opcional)</label>
-      <input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off"/>
-    </div>
-    <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar no painel</button>
-    <div style="text-align:center;margin-top:10px">
-      <button onclick="toggleAdminField()" style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.72rem;cursor:pointer;font-family:inherit">Sou administrador</button>
-    </div>
-    <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="screen-app">
-  <nav class="nav">
-    <a href="#" class="nav-brand">
-      <div class="live-dot" id="nav-dot"></div>
-      <span><span class="c1">Consulta</span><span class="c2">Já</span><span class="tag">24h</span></span>
-    </a>
-    <div class="nav-spacer"></div>
-    <div class="nav-medico">Olá, <strong id="nav-nome"></strong></div>
-    <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()">
-      <div class="plantao-indicator"></div>
-      <span id="plantao-txt">Entrar em plantão</span>
-    </button>
-    <button class="nav-logout" onclick="logout()">Sair</button>
-  </nav>
-
-  <div class="app-body">
-    <aside class="sidebar">
-      <div class="sidebar-title">
-        Fila de pacientes
-        <span class="fila-count" id="fila-count">0</span>
-      </div>
-      <div id="fila-lista">
-        <div class="fila-vazia">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <p>Nenhum paciente<br>aguardando atendimento</p>
-        </div>
-      </div>
-      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">
-        📅 Agendamentos
-        <span class="fila-count" id="agend-count">0</span>
-      </div>
-      <div id="agend-lista" style="display:none"></div>
-      <div class="sidebar-title" id="admin-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleAdmin()">
-        👥 Médicos pendentes
-        <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e">0</span>
-      </div>
-      <div id="admin-medicos-lista" style="display:none"></div>
-    </aside>
-
-    <main class="main" id="main-content">
-      <div class="offline-state" id="state-offline">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        <h2>Você está offline</h2>
-        <p>Entre em plantão para receber e visualizar pacientes na fila.</p>
-        <div class="offline-badge">
-          <div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
-          Plantão inativo
-        </div>
-      </div>
-
-      <div class="empty-state" id="state-empty" style="display:none">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        <h2>Fila vazia</h2>
-        <p>Nenhum paciente aguardando no momento.</p>
-      </div>
-
-      <div id="state-atend" style="display:none">
-        <div class="atend-header">
-          <div class="atend-paciente">
-            <div class="atend-nome" id="atend-nome">—</div>
-            <div class="atend-meta">
-              <span class="atend-tag" id="atend-tipo-tag">—</span>
-              <span class="atend-tag crm" id="atend-crm-tag">—</span>
-              <div class="atend-timer">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span id="atend-timer">00:00</span>
-              </div>
-            </div>
-          </div>
-          <div class="atend-actions">
-            <a href="#" class="btn-wpp" id="btn-wpp" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
-              WhatsApp
-            </a>
-            <button class="btn-encerrar" onclick="abrirModalEncerrar()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Encerrar
-            </button>
-          </div>
-        </div>
-
-        <!-- DADOS DO PACIENTE + TRIAGEM -->
-        <div class="triagem-box">
-          <div class="triagem-box-title">Dados do paciente</div>
-          <div class="triagem-grid" style="margin-bottom:12px">
-            <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">—</span></div>
-            <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">—</span></div>
-            <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">—</span></div>
-            <div class="triagem-item"><label>Tel. documentos (SMS)</label><span id="tr-teldoc-pac">—</span></div>
-          </div>
-          <div class="triagem-box-title" style="margin-top:8px">Dados da triagem</div>
-          <div class="triagem-grid">
-            <div class="triagem-item"><label>Idade</label><span id="tr-idade">—</span></div>
-            <div class="triagem-item"><label>Sexo</label><span id="tr-sexo">—</span></div>
-            <div class="triagem-item"><label>Alergias</label><span id="tr-alergias">—</span></div>
-            <div class="triagem-item"><label>Comorbidades</label><span id="tr-cronicas">—</span></div>
-            <div class="triagem-item"><label>Medicações em uso</label><span id="tr-medicacoes">—</span></div>
-            <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">—</span></div>
-            <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">—</span></div>
-          </div>
-        </div>
-
-        <!-- TABS -->
-        <div class="tabs" id="atend-tabs">
-          <button class="tab active" onclick="switchTab('consulta')">💬 Consulta</button>
-          <button class="tab" onclick="switchTab('clinico')">🩺 Avaliação clínica</button>
-          <button class="tab" onclick="switchTab('prontuario')">📄 Prontuário</button>
-        </div>
-
-        <!-- TAB: CONSULTA -->
-        <div class="tab-panel active" id="tab-consulta">
-          <!-- CAMPO MEET (só aparece se tipo = video) -->
-          <div class="meet-section" id="meet-section" style="display:none">
-            <div class="meet-title">🎥 Link do Google Meet</div>
-            <div class="meet-input-row">
-              <input class="meet-input" id="meetLinkInput" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx"/>
-              <button class="btn-meet-save" onclick="salvarMeetLink()">Salvar e compartilhar</button>
-            </div>
-            <div class="meet-link-atual" id="meetLinkAtual" style="display:none">
-              Link ativo: <a id="meetLinkAtualUrl" href="#" target="_blank">—</a>
-            </div>
-          </div>
-          <!-- CHAT INTERNO (só aparece se tipo = chat) -->
-          <div class="chat-medico-wrap" id="chat-section" style="display:none">
-            <div class="chat-medico-header">
-              <h3><div class="chat-online-dot"></div> Chat com o paciente</h3>
-              <span style="font-size:.72rem;color:var(--muted)">Atualiza a cada 3s</span>
-            </div>
-            <div class="chat-medico-msgs" id="chat-medico-msgs">
-              <div class="chat-vazio">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                <span>Aguardando mensagens do paciente...</span>
-              </div>
-            </div>
-            <div class="chat-medico-input">
-              <textarea id="chat-medico-textarea" placeholder="Digite sua mensagem ao paciente..." rows="1"></textarea>
-              <button class="chat-medico-send" onclick="enviarMensagemMedico()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              </button>
-            </div>
-          </div>
-          <!-- fallback para whatsapp -->
-          <div id="wpp-consulta-section" style="display:none;text-align:center;padding:32px 20px">
-            <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Consulta via WhatsApp — entre em contato diretamente com o paciente.</p>
-            <a href="#" id="btn-wpp-consulta" class="btn-wpp" target="_blank" style="display:inline-flex">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
-              Chamar no WhatsApp
-            </a>
-          </div>
-        </div>
-
-        <!-- TAB: AVALIAÇÃO CLÍNICA -->
-        <div class="tab-panel" id="tab-clinico">
-          <div class="clinic-section">
-            <div class="clinic-section-title">Avaliação clínica</div>
-            <div class="clinic-grid">
-              <div class="clinic-field full"><div class="clinic-label">Queixa principal / HDA</div><textarea class="clinic-input tall" id="cl-hda" placeholder="Descreva a queixa do paciente e a história da doença atual..."></textarea></div>
-              <div class="clinic-field"><div class="clinic-label">Comorbidades</div><textarea class="clinic-input" id="cl-comorbidades" placeholder="Ex: HAS, DM2, hipotireoidismo..."></textarea></div>
-              <div class="clinic-field"><div class="clinic-label">Medicações em uso</div><textarea class="clinic-input" id="cl-medicacoes" placeholder="Ex: Losartana 50mg, Metformina 850mg..."></textarea></div>
-              <div class="clinic-field"><div class="clinic-label">Alergias</div><textarea class="clinic-input" id="cl-alergias" placeholder="Ex: Dipirona, Penicilina..."></textarea></div>
-              <div class="clinic-field"><div class="clinic-label">Observações / Exame em telemedicina</div><textarea class="clinic-input" id="cl-obs" placeholder="Achados observados durante a teleconsulta..."></textarea></div>
-              <div class="clinic-field full"><div class="clinic-label">Conduta</div><textarea class="clinic-input tall" id="cl-conduta" placeholder="Prescrição, orientações, encaminhamentos, retorno..."></textarea></div>
-            </div>
-          </div>
-          <div class="docs-section">
-            <div class="docs-title">Documentos a emitir</div>
-            <div class="docs-grid">
-              <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="receita"><span class="dc-icon">💊</span><span class="dc-text">Receita médica</span></label>
-              <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="atestado"><span class="dc-icon">📋</span><span class="dc-text">Atestado médico</span></label>
-              <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="exames"><span class="dc-icon">🔬</span><span class="dc-text">Pedido de exames</span></label>
-              <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="renovacao"><span class="dc-icon">🔄</span><span class="dc-text">Renovação de receita</span></label>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: PRONTUÁRIO -->
-        <div class="tab-panel" id="tab-prontuario">
-          <div class="pront-section">
-            <div class="pront-header">
-              <div class="pront-title">Prontuário de telemedicina</div>
-              <div class="pront-actions">
-                <button class="btn-gerar" onclick="gerarProntuario()">Gerar prontuário</button>
-                <button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()">Copiar texto</button>
-              </div>
-            </div>
-            <div class="pront-output" id="pront-output"></div>
-          </div>
-        </div>
-
-      </div><!-- /state-atend -->
-    </main>
-  </div>
-</div>
-
-<!-- MODAL ENCERRAR -->
-<div class="modal-overlay" id="modal-encerrar">
-  <div class="modal">
-    <div class="modal-title">Encerrar atendimento</div>
-    <div class="modal-sub">Registre o resultado antes de finalizar.</div>
-    <div class="modal-field">
-      <label>Status</label>
-      <div class="radio-group" id="rg-status">
-        <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-dot"></div><span class="radio-text">✅ Atendido</span></div>
-        <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-dot"></div><span class="radio-text">❌ Cancelado</span></div>
-        <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-dot"></div><span class="radio-text">🔇 Sem resposta do paciente</span></div>
-      </div>
-    </div>
-    <div class="modal-field">
-      <label>Documentos emitidos</label>
-      <div class="check-group" id="cg-docs">
-        <div class="check-opt" onclick="toggleCheck(this)">💊 Receita</div>
-        <div class="check-opt" onclick="toggleCheck(this)">📋 Atestado</div>
-        <div class="check-opt" onclick="toggleCheck(this)">🔬 Exames</div>
-        <div class="check-opt" onclick="toggleCheck(this)">🔄 Renovação</div>
-        <div class="check-opt" onclick="toggleCheck(this)">🚫 Nenhum</div>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-confirm" onclick="confirmarEncerramento()">Confirmar encerramento</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script>
 const API = 'https://triagem-api.onrender.com';
 let medico = null;
@@ -553,7 +65,6 @@ function entrarApp() {
   buscarAgendamentos();
   clearInterval(agendInterval);
   agendInterval = setInterval(buscarAgendamentos, 60000);
-  // Tenta carregar médicos pendentes (só aparece se tiver senha admin)
   if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
   mostrarToast('Bem-vindo, ' + medico.nome.split(' ')[0] + '!', 'success');
 }
@@ -689,13 +200,11 @@ function renderPainelAtendimento() {
   document.getElementById('btn-wpp').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
   document.getElementById('btn-wpp-consulta').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
 
-  // Dados completos do paciente
   document.getElementById('tr-nome-pac').textContent = nome;
   document.getElementById('tr-cpf-pac').textContent = p.cpf || '—';
   document.getElementById('tr-tel-pac').textContent = p.tel || '—';
   document.getElementById('tr-teldoc-pac').textContent = p.tel_documentos || p.tel || '—';
 
-  // Dados estruturados da triagem
   document.getElementById('tr-idade').textContent = p.idade || '—';
   document.getElementById('tr-sexo').textContent = p.sexo || '—';
   document.getElementById('tr-alergias').textContent = p.alergias || '—';
@@ -704,7 +213,6 @@ function renderPainelAtendimento() {
   document.getElementById('tr-solicita').textContent = p.solicita || '—';
   document.getElementById('tr-queixa').textContent = p.queixa || p.triagem || '—';
 
-  // Pré-preenche campos clínicos com dados da triagem
   if (p.alergias) document.getElementById('cl-alergias').value = p.alergias;
   if (p.cronicas) document.getElementById('cl-comorbidades').value = p.cronicas;
   if (p.medicacoes) document.getElementById('cl-medicacoes').value = p.medicacoes;
@@ -715,7 +223,6 @@ function renderPainelAtendimento() {
   document.getElementById('pront-output').style.display = 'none';
   document.getElementById('btn-copiar').style.display = 'none';
 
-  // Mostrar seção correta na tab consulta
   document.getElementById('meet-section').style.display = 'none';
   document.getElementById('chat-section').style.display = 'none';
   document.getElementById('wpp-consulta-section').style.display = 'none';
@@ -753,13 +260,9 @@ function iniciarChatMedico() {
   ultimaMsgId = 0;
   chatAtivo = true;
   clearInterval(chatInterval);
-
-  // 1ª carga: histórico completo (ambos os lados)
   carregarHistoricoMedico().then(() => {
-    // Só depois inicia polling de mensagens novas
     chatInterval = setInterval(buscarMensagensNovasMedico, 3000);
   });
-
   const ta = document.getElementById('chat-medico-textarea');
   ta.addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,100)+'px'; });
   ta.addEventListener('keydown', function(e) {
@@ -776,10 +279,8 @@ async function carregarHistoricoMedico() {
     const container = document.getElementById('chat-medico-msgs');
     const msgs = data.mensagens || [];
     if (msgs.length > 0) {
-      // Limpa placeholder "aguardando"
       const vazio = container.querySelector('.chat-vazio');
       if (vazio) vazio.remove();
-      // Renderiza todo o histórico (paciente e médico)
       msgs.forEach(m => {
         adicionarMsgMedico(m.autor, m.texto, m.criado_em);
         ultimaMsgId = m.id;
@@ -800,7 +301,6 @@ async function buscarMensagensNovasMedico() {
       const vazio = container.querySelector('.chat-vazio');
       if (vazio) vazio.remove();
       novas.forEach(m => {
-        // No polling só renderiza paciente (médico já foi adicionado otimisticamente ao enviar)
         if (m.autor === 'paciente') {
           adicionarMsgMedico(m.autor, m.texto, m.criado_em);
         }
@@ -1036,6 +536,10 @@ function renderAgendamentos() {
       hour: '2-digit', minute: '2-digit'
     }) : '—';
     const tipoIcon = a.modalidade === 'video' ? '🎥' : '💬';
+    // ── CORREÇÃO: JSON.stringify evita quebra com nomes com aspas ou acentos especiais
+    const nomeJson = JSON.stringify(a.nome || '');
+    const telJson  = JSON.stringify(a.tel || '');
+    const tipoJson = JSON.stringify(a.modalidade || 'chat');
     return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,244,.25)">
       <div class="fc-top">
         <span class="fc-nome">${a.nome || '—'}</span>
@@ -1046,7 +550,7 @@ function renderAgendamentos() {
         <span class="fc-tag" style="color:rgba(255,255,255,.4);font-size:.72rem">${h}</span>
       </div>
       <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel || '—'} · CPF: ${a.cpf || '—'}</div>
-      <button class="btn-iniciar-agora" onclick="iniciarAgendamento(${a.id}, '${a.nome}', '${a.tel}')">▶ Iniciar consulta agora</button>
+      <button class="btn-iniciar-agora" onclick="iniciarAgendamento(${a.id}, ${nomeJson}, ${telJson}, ${tipoJson})">▶ Iniciar consulta agora</button>
     </div>`;
   }).join('');
 }
@@ -1060,7 +564,7 @@ async function carregarMedicosPendentes() {
     const res = await fetch(`${API}/api/admin/medicos/pendentes`, {
       headers: { 'x-admin-password': sessionStorage.getItem('adminPwd') || '' }
     });
-    if (!res.ok) return; // não é admin
+    if (!res.ok) return;
     const data = await res.json();
     adminData = data.medicos || [];
     const count = adminData.length;
@@ -1144,7 +648,9 @@ async function rejeitarMedico(id, btn) {
 }
 
 // ── INICIAR AGENDAMENTO ANTECIPADO ──
-async function iniciarAgendamento(agendId, nome, tel) {
+// CORREÇÃO: recebe tipo como parâmetro (era hardcoded 'chat')
+// CORREÇÃO: usa JSON.stringify no onclick para escapar nomes com aspas/acentos
+async function iniciarAgendamento(agendId, nome, tel, tipo = 'chat') {
   if (!confirm(`Iniciar consulta de ${nome} agora (antes do horário)?`)) return;
   try {
     const res = await fetch(`${API}/api/agendamento/${agendId}/iniciar`, {
@@ -1152,11 +658,33 @@ async function iniciarAgendamento(agendId, nome, tel) {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
     });
     const d = await res.json();
-    if (d.ok) {
-      mostrarToast('Consulta iniciada! Paciente notificado.', 'success');
-      await buscarFila();
-      await buscarAgendamentos();
-    } else { mostrarToast(d.error || 'Erro ao iniciar', 'error'); }
+    if (!d.ok) { mostrarToast(d.error || 'Erro ao iniciar', 'error'); return; }
+
+    await buscarFila();
+    await buscarAgendamentos();
+
+    // Procura o atendimento recém-criado na fila atualizada
+    const atend = Array.isArray(filaData)
+      ? filaData.find(p => String(p.id) === String(d.atendimentoId))
+      : null;
+
+    if (atend) {
+      atendimentoAtual = atend;
+    } else {
+      // Fallback com dados do agendamento caso a fila ainda não tenha atualizado
+      atendimentoAtual = {
+        id: d.atendimentoId,
+        nome,
+        tel,
+        tipo,
+        triagem: '(Agendamento antecipado)',
+        status: 'assumido'
+      };
+    }
+
+    timerSegundos = 0; iniciarTimer();
+    renderPainelAtendimento(); renderEstado();
+    mostrarToast('Consulta iniciada!', 'success');
   } catch(e) { mostrarToast('Erro de conexão', 'error'); }
 }
 
@@ -1175,5 +703,3 @@ function mostrarToast(msg, tipo = 'info') {
   if (saved) { medico = JSON.parse(saved); entrarApp(); }
 })();
 </script>
-</body>
-</html>
