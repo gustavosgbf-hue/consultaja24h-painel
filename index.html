@@ -566,6 +566,11 @@ function logout() {
   document.getElementById('screen-login').style.display = 'flex';
   document.getElementById('inp-email').value = '';
   document.getElementById('inp-senha').value = '';
+  document.getElementById('inp-admin-pwd').value = '';
+  document.getElementById('field-admin-pwd').style.display = 'none';
+  adminData = []; adminVisible = false;
+  document.getElementById('admin-tab-btn').style.display = 'none';
+  document.getElementById('admin-medicos-lista').style.display = 'none';
 }
 
 // ── PLANTÃO ──
