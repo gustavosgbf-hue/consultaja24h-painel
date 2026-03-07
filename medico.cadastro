@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cadastro Médico — ConsultaJá24h</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{--bg:#060d0b;--box:#0d1a14;--g1:#b4e05a;--g2:#5ee0a0;--line:rgba(255,255,255,.08);--muted:rgba(255,255,255,.4)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
+  .logo{font-size:1.1rem;font-weight:700;color:var(--g1);margin-bottom:28px;text-align:center}
+  .logo span{color:rgba(255,255,255,.5);font-weight:300}
+  .box{background:var(--box);border:1px solid var(--line);border-radius:20px;padding:32px 28px;width:min(480px,100%)}
+  h2{font-size:1.2rem;font-weight:700;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:24px;line-height:1.5}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+  .field input,.field select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:11px 14px;color:#fff;font-family:'Outfit',sans-serif;font-size:.92rem;outline:none;transition:border .2s;-webkit-appearance:none}
+  .field input:focus,.field select:focus{border-color:rgba(180,224,90,.4)}
+  .field input::placeholder{color:rgba(255,255,255,.25)}
+  .field select option{background:#0d1a14;color:#fff}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .btn{width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--g1),var(--g2));color:#051208;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:8px}
+  .btn:hover{opacity:.9}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .msg{display:none;margin-top:16px;padding:12px 16px;border-radius:10px;font-size:.85rem;line-height:1.5}
+  .msg.ok{background:rgba(94,224,160,.08);border:1px solid rgba(94,224,160,.2);color:#5ee0a0}
+  .msg.err{background:rgba(255,95,87,.08);border:1px solid rgba(255,95,87,.2);color:#ff8080}
+  .check-wrap{margin:16px 0 8px}
+  .check-label{display:flex;gap:12px;cursor:pointer;align-items:flex-start}
+  .check-label input[type=checkbox]{display:none}
+  .check-box{width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(180,224,90,.4);background:rgba(255,255,255,.04);flex-shrink:0;margin-top:2px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+  .check-label input:checked + .check-box{background:rgba(180,224,90,.15);border-color:var(--g1)}
+  .check-label input:checked + .check-box::after{content:'✓';font-size:.75rem;color:var(--g1);font-weight:700}
+  .check-txt{font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.55}
+  .divider{text-align:center;color:var(--muted);font-size:.78rem;margin:20px 0 0}
+  .divider a{color:var(--g2);text-decoration:none}
+  .divider a:hover{text-decoration:underline}
+  .senha-wrap{position:relative}
+  .senha-wrap input{padding-right:40px}
+  .toggle-senha{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:4px}
+</style>
+</head>
+<body>
+
+<div class="logo">ConsultaJá<span>24h</span></div>
+
+<div class="box">
+  <h2>Cadastro de Médico</h2>
+  <p class="sub">Preencha seus dados para solicitar acesso à plataforma. Seu cadastro será analisado pela equipe.</p>
+
+  <div class="field">
+    <label>Nome completo</label>
+    <input type="text" id="nome" placeholder="Dr. João Silva" autocomplete="name"/>
+  </div>
+
+  <div class="field">
+    <label>E-mail</label>
+    <input type="email" id="email" placeholder="seu@email.com" autocomplete="email"/>
+  </div>
+
+  <div class="field">
+    <label>Senha</label>
+    <div class="senha-wrap">
+      <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+      <button class="toggle-senha" type="button" onclick="toggleSenha('senha',this)">👁</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Confirmar senha</label>
+    <div class="senha-wrap">
+      <input type="password" id="senha2" placeholder="Repita a senha" autocomplete="new-password"/>
+      <button class="toggle-senha" type="button" onclick="toggleSenha('senha2',this)">👁</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>CRM</label>
+      <input type="text" id="crm" placeholder="123456" inputmode="numeric" maxlength="10"/>
+    </div>
+    <div class="field">
+      <label>UF do CRM</label>
+      <select id="uf">
+        <option value="">Selecione</option>
+        <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+        <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+        <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+        <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+        <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+        <option>SE</option><option>SP</option><option>TO</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Telefone / WhatsApp</label>
+    <input type="tel" id="telefone" placeholder="(DDD) 99999-9999" inputmode="numeric" autocomplete="tel"/>
+  </div>
+
+  <div class="field">
+    <label>Especialidade <span style="color:var(--muted);font-weight:300">(opcional)</span></label>
+    <input type="text" id="especialidade" placeholder="Ex: Clínica Geral, Pediatria..."/>
+  </div>
+
+  <div class="check-wrap" id="check-declaracao-wrap">
+    <label class="check-label">
+      <input type="checkbox" id="chk-declaracao" onchange="document.getElementById('btnCadastrar').disabled=!this.checked"/>
+      <span class="check-box"></span>
+      <span class="check-txt">Declaro que sou médico regularmente inscrito no CRM informado e que sou responsável pelos atos médicos realizados na plataforma.</span>
+    </label>
+  </div>
+
+  <button class="btn" id="btnCadastrar" onclick="cadastrar()" disabled>Solicitar cadastro</button>
+
+  <div class="msg" id="msg"></div>
+
+  <p class="divider">Já tem conta? <a href="/painel.html">Entrar no painel</a></p>
+</div>
+
+<script>
+const API = 'https://triagem-api.onrender.com';
+
+function toggleSenha(id, btn) {
+  var input = document.getElementById(id);
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
+}
+
+function mostrarMsg(texto, tipo) {
+  var el = document.getElementById('msg');
+  el.textContent = texto;
+  el.className = 'msg ' + tipo;
+  el.style.display = 'block';
+}
+
+async function cadastrar() {
+  var nome     = document.getElementById('nome').value.trim();
+  var email    = document.getElementById('email').value.trim();
+  var senha    = document.getElementById('senha').value;
+  var senha2   = document.getElementById('senha2').value;
+  var crm      = document.getElementById('crm').value.trim();
+  var uf       = document.getElementById('uf').value;
+  var telefone = document.getElementById('telefone').value.trim();
+
+  if (!document.getElementById('chk-declaracao').checked) {
+    mostrarMsg('Você precisa marcar a declaração para continuar.', 'err'); return;
+  }
+  if (!nome || !email || !senha || !crm || !uf) {
+    mostrarMsg('Preencha todos os campos obrigatórios.', 'err'); return;
+  }
+  if (senha.length < 6) {
+    mostrarMsg('A senha deve ter ao menos 6 caracteres.', 'err'); return;
+  }
+  if (senha !== senha2) {
+    mostrarMsg('As senhas não coincidem.', 'err'); return;
+  }
+
+  var btn = document.getElementById('btnCadastrar');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+
+  try {
+    var res = await fetch(API + '/api/medico/cadastro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      var especialidade = document.getElementById('especialidade').value.trim();
+    body: JSON.stringify({ nome, email, senha, crm, uf, telefone, especialidade })
+    });
+    var d = await res.json();
+    if (d.ok) {
+      btn.style.display = 'none';
+      mostrarMsg('✓ Cadastro recebido! Seu perfil será analisado pela equipe da plataforma. Você receberá um retorno em breve.', 'ok');
+      // Limpa campos
+      ['nome','email','senha','senha2','crm','telefone'].forEach(function(id){
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('uf').value = '';
+    } else {
+      mostrarMsg(d.error || 'Erro ao enviar cadastro. Tente novamente.', 'err');
+      btn.disabled = false; btn.textContent = 'Solicitar cadastro';
+    }
+  } catch(e) {
+    mostrarMsg('Erro de conexão. Verifique sua internet e tente novamente.', 'err');
+    btn.disabled = false; btn.textContent = 'Solicitar cadastro';
+  }
+}
+
+// Enter para submeter
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') cadastrar();
+});
+</script>
+</body>
+</html>
