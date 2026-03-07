@@ -159,6 +159,7 @@ async function cadastrar() {
     mostrarMsg('As senhas não coincidem.', 'err'); return;
   }
 
+  var especialidade = document.getElementById('especialidade').value.trim();
   var btn = document.getElementById('btnCadastrar');
   btn.disabled = true; btn.textContent = 'Enviando...';
 
@@ -166,8 +167,7 @@ async function cadastrar() {
     var res = await fetch(API + '/api/medico/cadastro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      var especialidade = document.getElementById('especialidade').value.trim();
-    body: JSON.stringify({ nome, email, senha, crm, uf, telefone, especialidade })
+      body: JSON.stringify({ nome, email, senha, crm, uf, telefone, especialidade })
     });
     var d = await res.json();
     if (d.ok) {
