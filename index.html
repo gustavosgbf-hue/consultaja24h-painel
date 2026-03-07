@@ -297,6 +297,11 @@ textarea.clinic-input.tall{min-height:100px}
         <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e">0</span>
       </div>
       <div id="admin-medicos-lista" style="display:none"></div>
+      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">
+        📋 Meu histórico (7 dias)
+        <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span>
+      </div>
+      <div id="hist-lista" style="display:none"></div>
     </aside>
 
     <main class="main" id="main-content">
@@ -348,6 +353,7 @@ textarea.clinic-input.tall{min-height:100px}
             <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">—</span></div>
             <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">—</span></div>
             <div class="triagem-item"><label>Tel. documentos (SMS)</label><span id="tr-teldoc-pac">—</span></div>
+            <div class="triagem-item"><label>Data de nascimento</label><span id="tr-nascimento-pac">—</span></div>
           </div>
           <div class="triagem-box-title" style="margin-top:8px">Dados da triagem</div>
           <div class="triagem-grid">
@@ -542,6 +548,7 @@ function entrarApp() {
   renderEstado();
   buscarFila();
   buscarAgendamentos();
+  buscarHistorico();
   clearInterval(agendInterval);
   agendInterval = setInterval(buscarAgendamentos, 60000);
   if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
@@ -678,6 +685,7 @@ function renderPainelAtendimento() {
   document.getElementById('tr-cpf-pac').textContent = p.cpf || '—';
   document.getElementById('tr-tel-pac').textContent = p.tel || '—';
   document.getElementById('tr-teldoc-pac').textContent = p.tel_documentos || p.tel || '—';
+  document.getElementById('tr-nascimento-pac').textContent = p.data_nascimento ? formatarNascimento(p.data_nascimento) : '—';
   document.getElementById('tr-idade').textContent = p.idade || '—';
   document.getElementById('tr-sexo').textContent = p.sexo || '—';
   document.getElementById('tr-alergias').textContent = p.alergias || '—';
@@ -859,6 +867,7 @@ function gerarProntuario() {
   const tel = p.tel || '—';
   const telDoc = p.tel_documentos || p.tel || '—';
   const cpf = p.cpf || '—';
+  const nasc = p.data_nascimento ? formatarNascimento(p.data_nascimento) : '—';
   const tipo = p.tipo || 'chat';
   const queixa = p.queixa || p.triagem || '—';
   const hda = document.getElementById('cl-hda').value.trim() || '(não preenchido)';
@@ -878,6 +887,7 @@ function gerarProntuario() {
     `Data/Hora: ${dataFormatada}`,
     `Paciente: ${nome}`,
     `CPF: ${cpf}`,
+    `Data de Nascimento: ${nasc}`,
     `WhatsApp: ${tel}`,
     `Tel. documentos: ${telDoc}`,
     `Médico: ${medico.nome}`,
@@ -1138,6 +1148,61 @@ function mostrarToast(msg, tipo = 'info') {
   t.textContent = msg; t.className = 'toast ' + tipo + ' show';
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function formatarNascimento(val) {
+  if (!val) return '—';
+  // val pode ser 'YYYY-MM-DD'
+  const parts = val.split('-');
+  if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
+  return val;
+}
+
+let histData = [];
+let histVisible = false;
+
+async function buscarHistorico() {
+  try {
+    const res = await fetch(`${API}/api/historico`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const data = await res.json();
+    if (!data.ok) return;
+    histData = data.historico || [];
+    document.getElementById('hist-count').textContent = histData.length;
+    if (histVisible) renderHistorico();
+  } catch(e) {}
+}
+
+function toggleHistorico() {
+  histVisible = !histVisible;
+  document.getElementById('hist-lista').style.display = histVisible ? 'block' : 'none';
+  if (histVisible) { buscarHistorico(); }
+}
+
+function renderHistorico() {
+  const container = document.getElementById('hist-lista');
+  if (!histData.length) {
+    container.innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento nos últimos 7 dias</p></div>';
+    return;
+  }
+  container.innerHTML = histData.map(a => {
+    const encerrado = a.encerrado_em ? new Date(a.encerrado_em).toLocaleString('pt-BR', { timeZone: 'America/Fortaleza', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+    const nasc = a.data_nascimento ? formatarNascimento(a.data_nascimento) : '—';
+    const tipo = a.tipo || 'chat';
+    const tipoIcon = tipo === 'video' ? '🎥' : '💬';
+    const statusBadge = a.status_atendimento || a.status || '—';
+    return `<div class="medico-card" style="cursor:default;border-color:rgba(94,224,160,.12)">
+      <div class="medico-card-nome">${a.nome || '—'}</div>
+      <div class="medico-card-meta">
+        ${tipoIcon} ${tipo === 'video' ? 'Vídeo' : 'Chat'} · Encerrado: ${encerrado}<br>
+        CPF: ${a.cpf || '—'} · Nasc.: ${nasc}<br>
+        Tel.: ${a.tel || '—'}<br>
+        Status: ${statusBadge}${a.documentos_emitidos ? ' · ' + a.documentos_emitidos : ''}
+        ${a.triagem ? '<div style="margin-top:6px;font-size:.74rem;color:rgba(255,255,255,.35);line-height:1.5;max-height:60px;overflow:hidden">' + String(a.triagem).replace(/&/g,'&amp;').replace(/</g,'&lt;').slice(0,200) + '</div>' : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 (function init() {
