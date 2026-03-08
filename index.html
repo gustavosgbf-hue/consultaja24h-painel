@@ -14,7 +14,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 :root{--g1:#b4e05a;--g2:#5ee0a0;--red:#ff5f57;--amber:#ffbd2e;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.05);--muted:rgba(255,255,255,.45);--card:rgba(255,255,255,.03);--card2:rgba(255,255,255,.055);--nav-h:60px}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
 .bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70vw 60vh at 0% 0%,rgba(94,224,160,.06) 0%,transparent 55%),radial-gradient(ellipse 50vw 40vh at 100% 80%,rgba(180,224,90,.04) 0%,transparent 50%)}
-/* LOGIN */
 #screen-login{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:#07100d}
 .login-card{width:100%;max-width:400px;padding:48px 40px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.03);backdrop-filter:blur(20px);position:relative;z-index:1}
 .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;justify-content:center}
@@ -33,7 +32,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .btn-login:hover{opacity:.92;transform:translateY(-1px)}
 .btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .login-err{font-size:.8rem;color:#ff7b72;text-align:center;margin-top:12px;display:none}
-/* APP */
 #screen-app{display:none;min-height:100vh;position:relative;z-index:1}
 .nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(7,16,13,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:20px}
 .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
@@ -89,7 +87,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .btn-assumir{padding:7px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;transition:opacity .15s}
 .btn-assumir:hover{opacity:.85}
 .pc-status-badge{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:999px;background:rgba(255,189,46,.1);color:#ffbd2e}
-/* MAIN */
 .main{padding:28px 32px;overflow-y:auto}
 @media(max-width:900px){.main{padding:20px 16px}}
 .empty-state,.offline-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:16px}
@@ -97,7 +94,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .empty-state h2,.offline-state h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:500;color:rgba(255,255,255,.4)}
 .empty-state p,.offline-state p{font-size:.88rem;font-weight:300;color:rgba(255,255,255,.25);max-width:320px;line-height:1.7}
 .offline-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.82rem;font-weight:500;color:var(--muted)}
-/* ATENDIMENTO */
 .atend-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
 .atend-paciente{display:flex;flex-direction:column;gap:5px}
 .atend-nome{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:500}
@@ -121,13 +117,11 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .triagem-queixa{grid-column:1/-1;margin-top:4px;padding-top:14px;border-top:1px solid var(--line2)}
 .triagem-queixa label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);display:block;margin-bottom:8px}
 .triagem-queixa span{font-size:.95rem;font-weight:400;color:rgba(255,255,255,.88);line-height:1.6}
-/* TABS */
 .tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
 .tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
 .tab.active{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
-/* CHAT MÉDICO */
 .chat-medico-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:24px}
 .chat-medico-header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
 .chat-medico-header h3{font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:8px}
@@ -152,7 +146,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .chat-medico-input textarea::placeholder{color:rgba(255,255,255,.2)}
 .chat-medico-send{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .12s}
 .chat-medico-send:hover{transform:scale(1.08)}
-/* MEET */
 .meet-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:24px}
 .meet-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);margin-bottom:14px}
 .meet-input-row{display:flex;gap:10px}
@@ -163,7 +156,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .btn-meet-save:hover{opacity:.85}
 .meet-link-atual{margin-top:10px;font-size:.78rem;color:var(--muted);font-weight:300}
 .meet-link-atual a{color:var(--g2);text-decoration:none}
-/* CLINIC */
 .clinic-section{margin-bottom:24px}
 .clinic-section-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
 .clinic-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -175,6 +167,7 @@ textarea.clinic-input{background:rgba(255,255,255,.03);border:1px solid var(--li
 textarea.clinic-input:focus{border-color:rgba(94,224,160,.3)}
 textarea.clinic-input::placeholder{color:rgba(255,255,255,.15)}
 textarea.clinic-input.tall{min-height:100px}
+textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .docs-section{margin-bottom:24px}
 .docs-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
 .docs-grid{display:flex;flex-wrap:wrap;gap:8px}
@@ -187,7 +180,7 @@ textarea.clinic-input.tall{min-height:100px}
 .pront-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:24px}
 .pront-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
 .pront-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1)}
-.pront-actions{display:flex;gap:8px}
+.pront-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .btn-gerar{padding:9px 18px;border-radius:8px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:opacity .15s}
 .btn-gerar:hover{opacity:.85}
 .btn-copiar{padding:9px 18px;border-radius:8px;border:1px solid rgba(94,224,160,.25);background:rgba(94,224,160,.06);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;display:none}
@@ -196,7 +189,6 @@ textarea.clinic-input.tall{min-height:100px}
 .pront-output{background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:10px;padding:18px;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.9;color:rgba(255,255,255,.75);white-space:pre-wrap;display:none;max-height:400px;overflow-y:auto}
 .atend-timer{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px}
 .atend-timer svg{opacity:.5}
-/* MODAL */
 .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
 .modal{background:#0d1f18;border:1px solid var(--line);border-radius:20px;padding:32px;width:100%;max-width:440px}
@@ -225,6 +217,21 @@ textarea.clinic-input.tall{min-height:100px}
 .toast.error{background:rgba(255,95,87,.12);border:1px solid rgba(255,95,87,.25);color:#ff8080}
 .toast.info{background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
 @media(max-width:600px){.atend-header{flex-direction:column}.atend-actions{flex-wrap:wrap}.modal{padding:24px 20px}}
+/* ── HISTÓRICO CLICÁVEL ──────────────────────────── */
+.hist-card{background:rgba(255,255,255,.03);border:1px solid rgba(94,224,160,.12);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.hist-card:hover{border-color:rgba(94,224,160,.3);background:rgba(94,224,160,.04)}
+.hist-card-nome{font-weight:600;font-size:.92rem;margin-bottom:4px}
+.hist-card-meta{font-size:.78rem;color:var(--muted);line-height:1.6}
+.hist-card-pront-badge{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
+/* ── MODO HISTÓRICO / AUTOSAVE ───────────────────── */
+.atend-tag.historico-badge{background:rgba(94,224,160,.08);color:var(--g2);border:1px solid rgba(94,224,160,.2)}
+.btn-voltar-hist{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-voltar-hist:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
+.autosave-status{font-size:.68rem;color:rgba(255,255,255,.25);font-weight:400;align-items:center;gap:4px;display:none}
+.autosave-status.visible{display:flex}
+.autosave-status.ok{color:var(--g2)}
+.autosave-status.err{color:#ff8080}
+.hist-readonly-notice{background:rgba(94,224,160,.05);border:1px solid rgba(94,224,160,.12);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6}
 </style>
 </head>
 <body>
@@ -239,14 +246,8 @@ textarea.clinic-input.tall{min-height:100px}
     </div>
     <div class="login-title">Acesso restrito</div>
     <div class="login-sub">Entre com suas credenciais para acessar o painel</div>
-    <div class="field">
-      <label>E-mail</label>
-      <input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/>
-    </div>
-    <div class="field">
-      <label>Senha</label>
-      <input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
+    <div class="field"><label>E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/></div>
     <div class="field" id="field-admin-pwd" style="display:none">
       <label style="color:rgba(255,189,46,.7)">Senha admin (opcional)</label>
       <input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off"/>
@@ -277,30 +278,18 @@ textarea.clinic-input.tall{min-height:100px}
 
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-title">
-        Fila de pacientes
-        <span class="fila-count" id="fila-count">0</span>
-      </div>
+      <div class="sidebar-title">Fila de pacientes <span class="fila-count" id="fila-count">0</span></div>
       <div id="fila-lista">
         <div class="fila-vazia">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <p>Nenhum paciente<br>aguardando atendimento</p>
         </div>
       </div>
-      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">
-        📅 Agendamentos
-        <span class="fila-count" id="agend-count">0</span>
-      </div>
+      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">📅 Agendamentos <span class="fila-count" id="agend-count">0</span></div>
       <div id="agend-lista" style="display:none"></div>
-      <div class="sidebar-title" id="admin-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleAdmin()">
-        👥 Médicos pendentes
-        <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e">0</span>
-      </div>
+      <div class="sidebar-title" id="admin-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleAdmin()">👥 Médicos pendentes <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e">0</span></div>
       <div id="admin-medicos-lista" style="display:none"></div>
-      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">
-        📋 Meu histórico (7 dias)
-        <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span>
-      </div>
+      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">📋 Meu histórico (7 dias) <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span></div>
       <div id="hist-lista" style="display:none"></div>
     </aside>
 
@@ -309,16 +298,12 @@ textarea.clinic-input.tall{min-height:100px}
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         <h2>Você está offline</h2>
         <p>Entre em plantão para receber e visualizar pacientes na fila.</p>
-        <div class="offline-badge">
-          <div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
-          Plantão inativo
-        </div>
+        <div class="offline-badge"><div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></div>Plantão inativo</div>
       </div>
 
       <div class="empty-state" id="state-empty" style="display:none">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        <h2>Fila vazia</h2>
-        <p>Nenhum paciente aguardando no momento.</p>
+        <h2>Fila vazia</h2><p>Nenhum paciente aguardando no momento.</p>
       </div>
 
       <div id="state-atend" style="display:none">
@@ -328,13 +313,15 @@ textarea.clinic-input.tall{min-height:100px}
             <div class="atend-meta">
               <span class="atend-tag" id="atend-tipo-tag">—</span>
               <span class="atend-tag crm" id="atend-crm-tag">—</span>
-              <div class="atend-timer">
+              <span class="atend-tag historico-badge" id="atend-hist-badge" style="display:none">📋 Histórico</span>
+              <div class="atend-timer" id="atend-timer-wrap">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span id="atend-timer">00:00</span>
               </div>
             </div>
           </div>
-          <div class="atend-actions">
+          <!-- Ações modo ao vivo -->
+          <div class="atend-actions" id="atend-actions-live">
             <a href="#" class="btn-wpp" id="btn-wpp" target="_blank">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
               WhatsApp
@@ -343,6 +330,10 @@ textarea.clinic-input.tall{min-height:100px}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               Encerrar
             </button>
+          </div>
+          <!-- Ações modo histórico -->
+          <div class="atend-actions" id="atend-actions-hist" style="display:none">
+            <button class="btn-voltar-hist" onclick="fecharHistoricoAtendimento()">← Voltar ao histórico</button>
           </div>
         </div>
 
@@ -380,9 +371,7 @@ textarea.clinic-input.tall{min-height:100px}
               <input class="meet-input" id="meetLinkInput" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx"/>
               <button class="btn-meet-save" onclick="salvarMeetLink()">Salvar e compartilhar</button>
             </div>
-            <div class="meet-link-atual" id="meetLinkAtual" style="display:none">
-              Link ativo: <a id="meetLinkAtualUrl" href="#" target="_blank">—</a>
-            </div>
+            <div class="meet-link-atual" id="meetLinkAtual" style="display:none">Link ativo: <a id="meetLinkAtualUrl" href="#" target="_blank">—</a></div>
           </div>
           <div class="chat-medico-wrap" id="chat-section" style="display:none">
             <div class="chat-medico-header">
@@ -409,9 +398,17 @@ textarea.clinic-input.tall{min-height:100px}
               Chamar no WhatsApp
             </a>
           </div>
+          <!-- aviso exibido no modo histórico nesta aba -->
+          <div id="hist-consulta-notice" style="display:none" class="hist-readonly-notice">
+            📋 Atendimento encerrado. Consulte o prontuário ou edite a avaliação clínica para complementar o registro.
+          </div>
         </div>
 
         <div class="tab-panel" id="tab-clinico">
+          <!-- aviso somente-leitura / editável no histórico -->
+          <div id="hist-clinico-notice" class="hist-readonly-notice" style="display:none">
+            ✏️ Modo histórico — campos editáveis. Use "Gerar prontuário" para salvar as alterações.
+          </div>
           <div class="clinic-section">
             <div class="clinic-section-title">Avaliação clínica</div>
             <div class="clinic-grid">
@@ -439,14 +436,14 @@ textarea.clinic-input.tall{min-height:100px}
             <div class="pront-header">
               <div class="pront-title">Prontuário de telemedicina</div>
               <div class="pront-actions">
-                <button class="btn-gerar" onclick="gerarProntuario()">Gerar prontuário</button>
+                <span class="autosave-status" id="autosave-status"></span>
+                <button class="btn-gerar" id="btn-gerar" onclick="gerarProntuario()">Gerar prontuário</button>
                 <button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()">Copiar texto</button>
               </div>
             </div>
             <div class="pront-output" id="pront-output"></div>
           </div>
         </div>
-
       </div>
     </main>
   </div>
@@ -483,12 +480,14 @@ textarea.clinic-input.tall{min-height:100px}
 </div>
 
 <div class="toast" id="toast"></div>
-
 <script>
 const API = 'https://triagem-api.onrender.com';
 let medico = null;
 let plantaoAtivo = false;
 let atendimentoAtual = null;
+let modoHistorico = false;      // true quando visualizando atendimento encerrado
+let autosaveBound = false;      // flag para não duplicar listeners (fix ponto 1)
+let autosaveTimer = null;
 let timerInterval = null;
 let timerSegundos = 0;
 let filaInterval = null;
@@ -496,6 +495,8 @@ let filaData = [];
 let chatInterval = null;
 let ultimaMsgId = 0;
 let chatAtivo = false;
+
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
 
 async function fazerLogin() {
   const email = document.getElementById('inp-email').value.trim();
@@ -510,45 +511,29 @@ async function fazerLogin() {
       body: JSON.stringify({ email, senha })
     });
     const data = await res.json();
-    if (!res.ok || !data.ok) {
-      err.textContent = data.error || 'E-mail ou senha incorretos.';
-      err.style.display = 'block'; return;
-    }
+    if (!res.ok || !data.ok) { err.textContent = data.error || 'E-mail ou senha incorretos.'; err.style.display = 'block'; return; }
     medico = data.medico;
     sessionStorage.setItem('medico', JSON.stringify(medico));
     sessionStorage.setItem('token', data.token || '');
     const adminPwd = document.getElementById('inp-admin-pwd').value;
     if (adminPwd) sessionStorage.setItem('adminPwd', adminPwd);
     entrarApp();
-  } catch(e) {
-    err.textContent = 'Erro ao conectar com o servidor.';
-    err.style.display = 'block';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Entrar no painel';
-  }
+  } catch(e) { err.textContent = 'Erro ao conectar com o servidor.'; err.style.display = 'block'; }
+  finally { btn.disabled = false; btn.textContent = 'Entrar no painel'; }
 }
 
-document.getElementById('inp-senha').addEventListener('keydown', e => {
-  if (e.key === 'Enter') fazerLogin();
-});
-
+document.getElementById('inp-senha').addEventListener('keydown', e => { if (e.key === 'Enter') fazerLogin(); });
 function getToken() { return sessionStorage.getItem('token') || ''; }
-
 let agendInterval = null;
-
-function toggleAdminField() {
-  const f = document.getElementById('field-admin-pwd');
-  f.style.display = f.style.display === 'none' ? 'block' : 'none';
-}
+function toggleAdminField() { const f = document.getElementById('field-admin-pwd'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; }
 
 function entrarApp() {
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-app').style.display = 'block';
   document.getElementById('nav-nome').textContent = medico.nome;
-  renderEstado();
-  buscarFila();
-  buscarAgendamentos();
-  buscarHistorico();
+  // Registra autosave UMA VEZ aqui, nunca mais (fix ponto 1)
+  if (!autosaveBound) { registrarAutosave(); autosaveBound = true; }
+  renderEstado(); buscarFila(); buscarAgendamentos(); buscarHistorico();
   clearInterval(agendInterval);
   agendInterval = setInterval(buscarAgendamentos, 60000);
   if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
@@ -558,20 +543,19 @@ function entrarApp() {
 function logout() {
   if (plantaoAtivo) sairPlantao();
   clearInterval(agendInterval); agendInterval = null;
-  sessionStorage.clear(); medico = null;
+  sessionStorage.clear(); medico = null; autosaveBound = false;
   document.getElementById('screen-app').style.display = 'none';
   document.getElementById('screen-login').style.display = 'flex';
-  document.getElementById('inp-email').value = '';
-  document.getElementById('inp-senha').value = '';
-  document.getElementById('inp-admin-pwd').value = '';
-  document.getElementById('field-admin-pwd').style.display = 'none';
+  document.getElementById('inp-email').value = ''; document.getElementById('inp-senha').value = '';
+  document.getElementById('inp-admin-pwd').value = ''; document.getElementById('field-admin-pwd').style.display = 'none';
   adminData = []; adminVisible = false;
   document.getElementById('admin-tab-btn').style.display = 'none';
   document.getElementById('admin-medicos-lista').style.display = 'none';
 }
 
-function togglePlantao() { if (plantaoAtivo) sairPlantao(); else entrarPlantao(); }
+// ─── PLANTÃO ─────────────────────────────────────────────────────────────────
 
+function togglePlantao() { if (plantaoAtivo) sairPlantao(); else entrarPlantao(); }
 async function entrarPlantao() {
   try { await fetch(`${API}/api/plantao/entrar`, { method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` } }); } catch(e) {}
   plantaoAtivo = true;
@@ -580,7 +564,6 @@ async function entrarPlantao() {
   renderEstado(); iniciarPollingFila();
   mostrarToast('Você entrou em plantão', 'success');
 }
-
 async function sairPlantao() {
   try { await fetch(`${API}/api/plantao/sair`, { method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` } }); } catch(e) {}
   plantaoAtivo = false;
@@ -590,9 +573,10 @@ async function sairPlantao() {
   if (!atendimentoAtual) renderEstado();
   mostrarToast('Você saiu do plantão', 'info');
 }
-
 function iniciarPollingFila() { buscarFila(); filaInterval = setInterval(buscarFila, 15000); }
 function pararPollingFila() { clearInterval(filaInterval); renderFila(); }
+
+// ─── FILA ─────────────────────────────────────────────────────────────────────
 
 async function buscarFila() {
   try {
@@ -606,67 +590,49 @@ function renderFila() {
   const lista = document.getElementById('fila-lista');
   const count = document.getElementById('fila-count');
   count.textContent = filaData.filter(p => p.status === 'aguardando').length;
-  if (!plantaoAtivo && !atendimentoAtual) {
-    lista.innerHTML = '<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>'; return;
-  }
-  if (filaData.length === 0) {
-    lista.innerHTML = '<div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Fila vazia</p></div>'; return;
-  }
+  if (!plantaoAtivo && !atendimentoAtual) { lista.innerHTML = '<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>'; return; }
+  if (filaData.length === 0) { lista.innerHTML = '<div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Fila vazia</p></div>'; return; }
   try {
     lista.innerHTML = filaData.map(p => {
       const nome = p.nome || 'Paciente';
       const tipo = p.tipo || 'chat';
       const criado = p.criado_em || new Date().toISOString();
-      const triagem = p.triagem || '—';
       const mins = Math.floor((Date.now() - new Date(criado)) / 60000);
       const tempoClass = mins >= 10 ? 'critico' : mins >= 5 ? 'urgente' : '';
-      const isAtual = atendimentoAtual && String(atendimentoAtual.id) === String(p.id);
+      const isAtual = atendimentoAtual && !modoHistorico && String(atendimentoAtual.id) === String(p.id);
       const assumido = p.status === 'assumido' && !isAtual;
-      const tipoLabel = tipo === 'video' ? '📹 Vídeo' : '💬 Chat';
       return `<div class="paciente-card ${isAtual?'active':''} ${assumido?'assumido':''}">
-        <div class="pc-header">
-          <div class="pc-nome">${String(nome).split(' ').slice(0,2).join(' ')}</div>
-          <span class="pc-tipo ${tipo}">${tipoLabel}</span>
-        </div>
-        <div class="pc-queixa">${triagem}</div>
+        <div class="pc-header"><div class="pc-nome">${String(nome).split(' ').slice(0,2).join(' ')}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div>
+        <div class="pc-queixa">${p.triagem||'—'}</div>
         <div class="pc-footer">
           <div class="pc-tempo ${tempoClass}">${mins}min</div>
-          ${p.status==='aguardando'
-            ? `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`
-            : `<span class="pc-status-badge">Em atendimento</span>`}
+          ${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:'<span class="pc-status-badge">Em atendimento</span>'}
         </div>
       </div>`;
     }).join('');
-  } catch(e) {
-    lista.innerHTML = '<div class="fila-vazia"><p>Erro ao carregar fila</p></div>';
-  }
+  } catch(e) { lista.innerHTML = '<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
 
 async function assumirAtendimento(id, evt) {
   evt.stopPropagation();
-  if (!medico || !medico.id || !medico.nome) {
-    mostrarToast('Faça login novamente.', 'error'); return;
-  }
+  if (!medico || !medico.id || !medico.nome) { mostrarToast('Faça login novamente.', 'error'); return; }
   try {
     const res = await fetch(`${API}/api/atendimento/assumir`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
       body: JSON.stringify({ filaId: Number(id), medicoId: Number(medico.id), medicoNome: medico.nome })
     });
     const data = await res.json();
-    if (!res.ok || !data.ok) {
-      mostrarToast(data.error || 'Este paciente já foi assumido.', 'error');
-      await buscarFila(); return;
-    }
+    if (!res.ok || !data.ok) { mostrarToast(data.error || 'Este paciente já foi assumido.', 'error'); await buscarFila(); return; }
+    modoHistorico = false;
     atendimentoAtual = data.atendimento || filaData.find(p => String(p.id) === String(id));
     timerSegundos = 0; iniciarTimer();
     await buscarFila();
     renderPainelAtendimento(); renderEstado();
     mostrarToast('Atendimento assumido!', 'success');
-  } catch(e) {
-    mostrarToast('Erro ao assumir atendimento.', 'error');
-  }
+  } catch(e) { mostrarToast('Erro ao assumir atendimento.', 'error'); }
 }
+
+// ─── PAINEL DE ATENDIMENTO ────────────────────────────────────────────────────
 
 function renderPainelAtendimento() {
   const p = atendimentoAtual;
@@ -674,13 +640,25 @@ function renderPainelAtendimento() {
   const nome = p.nome || '—';
   const tel = p.tel || '';
   const tipo = p.tipo || 'chat';
+
   document.getElementById('atend-nome').textContent = nome;
   const tipoTag = document.getElementById('atend-tipo-tag');
   tipoTag.textContent = tipo === 'video' ? '📹 Consulta por vídeo' : '💬 Consulta por chat';
   tipoTag.className = 'atend-tag ' + tipo;
   document.getElementById('atend-crm-tag').textContent = 'CRM ' + (medico.crm || '—');
-  document.getElementById('btn-wpp').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
-  document.getElementById('btn-wpp-consulta').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
+
+  // Badge e controles de modo (fix ponto 6 — separa ações live vs histórico)
+  document.getElementById('atend-hist-badge').style.display = modoHistorico ? 'inline-flex' : 'none';
+  document.getElementById('atend-timer-wrap').style.display = modoHistorico ? 'none' : 'flex';
+  document.getElementById('atend-actions-live').style.display = modoHistorico ? 'none' : 'flex';
+  document.getElementById('atend-actions-hist').style.display = modoHistorico ? 'flex' : 'none';
+
+  if (!modoHistorico) {
+    document.getElementById('btn-wpp').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
+    document.getElementById('btn-wpp-consulta').href = 'https://wa.me/55' + String(tel).replace(/\D/g,'');
+  }
+
+  // Dados de triagem (somente leitura — sempre visíveis, fix ponto 2 consciente)
   document.getElementById('tr-nome-pac').textContent = nome;
   document.getElementById('tr-cpf-pac').textContent = p.cpf || '—';
   document.getElementById('tr-tel-pac').textContent = p.tel || '—';
@@ -693,56 +671,112 @@ function renderPainelAtendimento() {
   document.getElementById('tr-medicacoes').textContent = p.medicacoes || '—';
   document.getElementById('tr-solicita').textContent = p.solicita || '—';
   document.getElementById('tr-queixa').textContent = p.queixa || p.triagem || '—';
-  if (p.alergias) document.getElementById('cl-alergias').value = p.alergias;
-  if (p.cronicas) document.getElementById('cl-comorbidades').value = p.cronicas;
-  if (p.medicacoes) document.getElementById('cl-medicacoes').value = p.medicacoes;
-  if (p.queixa) document.getElementById('cl-hda').value = p.queixa;
+
+  // Campos clínicos: pré-preenche alergias/comorbidades/medicações; HDA em branco (fix ponto 5)
+  document.getElementById('cl-alergias').value = p.alergias || '';
+  document.getElementById('cl-comorbidades').value = p.cronicas || '';
+  document.getElementById('cl-medicacoes').value = p.medicacoes || '';
+  document.getElementById('cl-hda').value = '';   // médico preenche com base na queixa exibida
   document.getElementById('cl-obs').value = '';
   document.getElementById('cl-conduta').value = '';
+
+  // Fix ponto 3: campos desabilitados no histórico — mas editáveis com aviso claro
+  const clinicInputs = document.querySelectorAll('textarea.clinic-input');
+  clinicInputs.forEach(t => { t.disabled = false; }); // sempre habilita antes de decidir
+  document.getElementById('hist-clinico-notice').style.display = modoHistorico ? 'block' : 'none';
+  document.getElementById('hist-consulta-notice').style.display = modoHistorico ? 'block' : 'none';
+
   document.querySelectorAll('.doc-check').forEach(d => d.classList.remove('checked'));
   document.getElementById('pront-output').style.display = 'none';
   document.getElementById('btn-copiar').style.display = 'none';
+  document.getElementById('autosave-status').className = 'autosave-status';
+
+  // Se histórico tiver prontuário salvo, exibe direto (fix ponto 5 — campo prontuario_salvo)
+  if (p.prontuario_salvo) {
+    document.getElementById('pront-output').textContent = p.prontuario_salvo;
+    document.getElementById('pront-output').style.display = 'block';
+    document.getElementById('btn-copiar').style.display = 'inline-flex';
+    document.getElementById('btn-copiar').classList.remove('copied');
+    document.getElementById('btn-copiar').textContent = 'Copiar texto';
+  }
+
+  // Fix ponto 6: seções de consulta só ligam se NÃO for histórico
   document.getElementById('meet-section').style.display = 'none';
   document.getElementById('chat-section').style.display = 'none';
   document.getElementById('wpp-consulta-section').style.display = 'none';
-  if (tipo === 'video') {
-    document.getElementById('meet-section').style.display = 'block';
-    if (p.meet_link) {
-      document.getElementById('meetLinkInput').value = p.meet_link;
-      document.getElementById('meetLinkAtualUrl').textContent = p.meet_link;
-      document.getElementById('meetLinkAtualUrl').href = p.meet_link;
-      document.getElementById('meetLinkAtual').style.display = 'block';
+
+  if (!modoHistorico) {
+    if (tipo === 'video') {
+      document.getElementById('meet-section').style.display = 'block';
+      if (p.meet_link) {
+        document.getElementById('meetLinkInput').value = p.meet_link;
+        document.getElementById('meetLinkAtualUrl').textContent = p.meet_link;
+        document.getElementById('meetLinkAtualUrl').href = p.meet_link;
+        document.getElementById('meetLinkAtual').style.display = 'block';
+      }
+    } else if (tipo === 'chat') {
+      document.getElementById('chat-section').style.display = 'block';
+      iniciarChatMedico(); // fix ponto 6: só inicia polling se não for histórico
+    } else {
+      document.getElementById('wpp-consulta-section').style.display = 'block';
     }
-  } else if (tipo === 'chat') {
-    document.getElementById('chat-section').style.display = 'block';
-    iniciarChatMedico();
+    switchTab('consulta');
   } else {
-    document.getElementById('wpp-consulta-section').style.display = 'block';
+    // Histórico: vai direto para prontuário se tiver salvo, senão clínico
+    switchTab(p.prontuario_salvo ? 'prontuario' : 'clinico');
   }
-  switchTab('consulta');
 }
+
+// ─── AUTOSAVE (fix ponto 1: listeners registrados uma única vez em entrarApp) ─
+
+function registrarAutosave() {
+  ['cl-hda','cl-comorbidades','cl-medicacoes','cl-alergias','cl-obs','cl-conduta'].forEach(id => {
+    document.getElementById(id).addEventListener('input', agendarAutosave);
+  });
+}
+
+function agendarAutosave() {
+  // Não roda autosave no modo histórico (fix ponto 3)
+  if (modoHistorico || !atendimentoAtual) return;
+  clearTimeout(autosaveTimer);
+  const s = document.getElementById('autosave-status');
+  s.className = 'autosave-status visible'; s.textContent = '💾 Salvando...';
+  autosaveTimer = setTimeout(executarAutosave, 2000);
+}
+
+async function executarAutosave() {
+  if (modoHistorico || !atendimentoAtual) return;
+  const texto = montarTextoProntuario();
+  const s = document.getElementById('autosave-status');
+  try {
+    const res = await fetch(`${API}/api/atendimento/prontuario`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: texto })
+    });
+    if (res.ok) { s.className = 'autosave-status visible ok'; s.textContent = '✓ Salvo'; setTimeout(() => { s.className = 'autosave-status'; }, 3000); }
+    else { s.className = 'autosave-status visible err'; s.textContent = '⚠ Não salvo'; }
+  } catch(e) { s.className = 'autosave-status visible err'; s.textContent = '⚠ Não salvo'; }
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
 
 function switchTab(nome) {
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const nomes = ['consulta','clinico','prontuario'];
-    t.classList.toggle('active', nomes[i] === nome);
+    t.classList.toggle('active', ['consulta','clinico','prontuario'][i] === nome);
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-'+nome).classList.add('active');
 }
 
+// ─── CHAT ─────────────────────────────────────────────────────────────────────
+
 function iniciarChatMedico() {
-  ultimaMsgId = 0;
-  chatAtivo = true;
+  ultimaMsgId = 0; chatAtivo = true;
   clearInterval(chatInterval);
-  carregarHistoricoMedico().then(() => {
-    chatInterval = setInterval(buscarMensagensNovasMedico, 3000);
-  });
+  carregarHistoricoMedico().then(() => { chatInterval = setInterval(buscarMensagensNovasMedico, 3000); });
   const ta = document.getElementById('chat-medico-textarea');
   ta.addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,100)+'px'; });
-  ta.addEventListener('keydown', function(e) {
-    if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); enviarMensagemMedico(); }
-  });
+  ta.addEventListener('keydown', function(e) { if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); enviarMensagemMedico(); } });
 }
 
 async function carregarHistoricoMedico() {
@@ -754,12 +788,8 @@ async function carregarHistoricoMedico() {
     const container = document.getElementById('chat-medico-msgs');
     const msgs = data.mensagens || [];
     if (msgs.length > 0) {
-      const vazio = container.querySelector('.chat-vazio');
-      if (vazio) vazio.remove();
-      msgs.forEach(m => {
-        adicionarMsgMedico(m.autor, m.texto, m.criado_em);
-        ultimaMsgId = m.id;
-      });
+      const vazio = container.querySelector('.chat-vazio'); if (vazio) vazio.remove();
+      msgs.forEach(m => { adicionarMsgMedico(m.autor, m.texto, m.criado_em); ultimaMsgId = m.id; });
     }
   } catch(e) {}
 }
@@ -773,14 +803,8 @@ async function buscarMensagensNovasMedico() {
     const novas = (data.mensagens || []).filter(m => m.id > ultimaMsgId);
     if (novas.length > 0) {
       const container = document.getElementById('chat-medico-msgs');
-      const vazio = container.querySelector('.chat-vazio');
-      if (vazio) vazio.remove();
-      novas.forEach(m => {
-        if (m.autor === 'paciente') {
-          adicionarMsgMedico(m.autor, m.texto, m.criado_em);
-        }
-        ultimaMsgId = m.id;
-      });
+      const vazio = container.querySelector('.chat-vazio'); if (vazio) vazio.remove();
+      novas.forEach(m => { if (m.autor === 'paciente') adicionarMsgMedico(m.autor, m.texto, m.criado_em); ultimaMsgId = m.id; });
     }
   } catch(e) {}
 }
@@ -804,19 +828,17 @@ function adicionarMsgMedico(autor, texto, timestamp) {
   const div = document.createElement('div');
   div.className = 'cmsg ' + autor;
   const hora = new Date(timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  const av = autor === 'medico' ? '🩺' : '🧑';
   const safe = String(texto).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-  div.innerHTML = `<div class="av">${av}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
+  div.innerHTML = `<div class="av">${autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
+  container.appendChild(div); container.scrollTop = container.scrollHeight;
 }
+
+// ─── MEET ─────────────────────────────────────────────────────────────────────
 
 async function salvarMeetLink() {
   const link = document.getElementById('meetLinkInput').value.trim();
   if (!link || !atendimentoAtual) return;
-  if (!link.startsWith('https://meet.google.com/')) {
-    mostrarToast('Cole um link válido do Google Meet', 'error'); return;
-  }
+  if (!link.startsWith('https://meet.google.com/')) { mostrarToast('Cole um link válido do Google Meet', 'error'); return; }
   try {
     const res = await fetch(`${API}/api/atendimento/meet`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
@@ -830,21 +852,19 @@ async function salvarMeetLink() {
       atendimentoAtual.meet_link = link;
       mostrarToast('Link do Meet salvo! O paciente já pode entrar.', 'success');
     }
-  } catch(e) {
-    mostrarToast('Erro ao salvar link.', 'error');
-  }
+  } catch(e) { mostrarToast('Erro ao salvar link.', 'error'); }
 }
+
+// ─── ESTADO ───────────────────────────────────────────────────────────────────
 
 function renderEstado() {
   const offline = document.getElementById('state-offline');
   const empty = document.getElementById('state-empty');
   const atend = document.getElementById('state-atend');
-  if (atendimentoAtual) {
-    offline.style.display = 'none'; empty.style.display = 'none'; atend.style.display = 'block'; return;
-  }
+  if (atendimentoAtual) { offline.style.display='none'; empty.style.display='none'; atend.style.display='block'; return; }
   atend.style.display = 'none';
-  if (!plantaoAtivo) { offline.style.display = 'flex'; empty.style.display = 'none'; }
-  else { offline.style.display = 'none'; empty.style.display = filaData.length === 0 ? 'flex' : 'none'; }
+  if (!plantaoAtivo) { offline.style.display='flex'; empty.style.display='none'; }
+  else { offline.style.display='none'; empty.style.display = filaData.length===0 ? 'flex' : 'none'; }
 }
 
 function iniciarTimer() {
@@ -853,85 +873,69 @@ function iniciarTimer() {
     timerSegundos++;
     const m = String(Math.floor(timerSegundos/60)).padStart(2,'0');
     const s = String(timerSegundos%60).padStart(2,'0');
-    const el = document.getElementById('atend-timer');
-    if (el) el.textContent = m + ':' + s;
+    const el = document.getElementById('atend-timer'); if (el) el.textContent = m+':'+s;
   }, 1000);
 }
 
 function toggleDoc(el) { el.classList.toggle('checked'); }
 
-function gerarProntuario() {
-  const p = atendimentoAtual;
-  if (!p) return;
-  const nome = p.nome || '—';
-  const tel = p.tel || '—';
-  const telDoc = p.tel_documentos || p.tel || '—';
-  const cpf = p.cpf || '—';
-  const nasc = p.data_nascimento ? formatarNascimento(p.data_nascimento) : '—';
+// ─── PRONTUÁRIO ───────────────────────────────────────────────────────────────
+
+// Monta texto sem separadores excessivos e sem dados do médico duplicados (fix ponto 5)
+function montarTextoProntuario() {
+  const p = atendimentoAtual; if (!p) return '';
   const tipo = p.tipo || 'chat';
-  const queixa = p.queixa || p.triagem || '—';
-  const hda = document.getElementById('cl-hda').value.trim() || '(não preenchido)';
-  const comorbidades = document.getElementById('cl-comorbidades').value.trim() || 'Nega comorbidades referidas';
-  const medicacoes = document.getElementById('cl-medicacoes').value.trim() || 'Nega uso contínuo de medicações';
-  const alergias = document.getElementById('cl-alergias').value.trim() || 'Nega alergias medicamentosas';
+  const nasc = p.data_nascimento ? formatarNascimento(p.data_nascimento) : '—';
+  const hda = document.getElementById('cl-hda').value.trim();
+  const comorbidades = document.getElementById('cl-comorbidades').value.trim();
+  const medicacoes = document.getElementById('cl-medicacoes').value.trim();
+  const alergias = document.getElementById('cl-alergias').value.trim();
   const obs = document.getElementById('cl-obs').value.trim();
-  const conduta = document.getElementById('cl-conduta').value.trim() || '(não preenchido)';
+  const conduta = document.getElementById('cl-conduta').value.trim();
   const docs = [...document.querySelectorAll('.doc-check.checked')].map(d => d.querySelector('.dc-text').textContent).join(', ') || 'Nenhum';
-  const modalidadeTexto = tipo === 'video' ? 'Consulta por vídeo' : 'Consulta por chat';
-  const dataFormatada = new Date().toLocaleString('pt-BR', { timeZone: 'America/Fortaleza', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-  const sep = '────────────────────────────────────────';
   const linhas = [
-    'PRONTUÁRIO DE TELEMEDICINA',
-    'Consulta realizada por telemedicina conforme Resolução CFM 2.314/2022',
-    sep, '',
-    `Data/Hora: ${dataFormatada}`,
-    `Paciente: ${nome}`,
-    `CPF: ${cpf}`,
-    `Data de Nascimento: ${nasc}`,
-    `WhatsApp: ${tel}`,
-    `Tel. documentos: ${telDoc}`,
-    `Médico: ${medico.nome}`,
-    `CRM: ${medico.crm}`,
-    `Modalidade: ${modalidadeTexto}`,
-    '', sep,
-    'TRIAGEM', '',
-    'Queixa inicial:',
-    queixa,
-    ...(p.idade ? [`Idade: ${p.idade}`] : []),
-    ...(p.sexo ? [`Sexo: ${p.sexo}`] : []),
-    ...(p.solicita ? [`Solicita: ${p.solicita}`] : []),
-    '', sep,
-    'AVALIAÇÃO CLÍNICA', '',
-    'HDA (História da Doença Atual)',
-    hda, '',
+    `Paciente: ${p.nome||'—'}`,
+    `CPF: ${p.cpf||'—'}`,
+    `Data de nascimento: ${nasc}`,
+    `Modalidade: ${tipo==='video'?'Vídeo':'Chat'}`,
+    '',
+    'QP / HDA',
+    hda || '(preencher)',
+    '',
     'Antecedentes / Comorbidades',
-    comorbidades, '',
+    comorbidades || 'Nega comorbidades referidas',
+    '',
     'Medicações em uso',
-    medicacoes, '',
+    medicacoes || 'Nega uso contínuo de medicações',
+    '',
     'Alergias',
-    alergias,
+    alergias || 'Nega alergias medicamentosas',
   ];
   if (obs) linhas.push('', 'Observações em telemedicina', obs);
-  linhas.push(
-    '', sep,
-    'CONDUTA', '',
-    conduta, '',
-    `Documentos emitidos: ${docs}`,
-    '', sep,
-    `${medico.nome}`,
-    `CRM ${medico.crm}`,
-    '',
-    'Documento gerado eletronicamente em plataforma de telemedicina.',
-    'Registro de atendimento conforme Resolução CFM 2.314/2022.'
-  );
+  linhas.push('', 'Conduta', conduta || '(preencher)', '', `Documentos emitidos: ${docs}`);
+  return linhas.join('\n');
+}
+
+function gerarProntuario() {
+  if (!atendimentoAtual) return;
+  const texto = montarTextoProntuario();
   const out = document.getElementById('pront-output');
-  out.textContent = linhas.join('\n');
-  out.style.display = 'block';
+  out.textContent = texto; out.style.display = 'block';
   const btnCopiar = document.getElementById('btn-copiar');
-  btnCopiar.style.display = 'inline-flex';
-  btnCopiar.classList.remove('copied');
-  btnCopiar.textContent = 'Copiar texto';
+  btnCopiar.style.display = 'inline-flex'; btnCopiar.classList.remove('copied'); btnCopiar.textContent = 'Copiar texto';
   mostrarToast('Prontuário gerado!', 'success');
+  // Salva imediatamente ao gerar (fix ponto 4 — endpoint já deve existir)
+  salvarProntuarioAgora(texto);
+}
+
+async function salvarProntuarioAgora(texto) {
+  if (!atendimentoAtual) return;
+  try {
+    await fetch(`${API}/api/atendimento/prontuario`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: texto })
+    });
+  } catch(e) {}
 }
 
 function copiarProntuario() {
@@ -942,6 +946,8 @@ function copiarProntuario() {
     setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'Copiar texto'; }, 3000);
   });
 }
+
+// ─── ENCERRAR ─────────────────────────────────────────────────────────────────
 
 function abrirModalEncerrar() {
   document.getElementById('modal-encerrar').classList.add('open');
@@ -958,29 +964,29 @@ async function confirmarEncerramento() {
   const statusTexto = statusEl.querySelector('.radio-text').textContent;
   const docs = [...document.querySelectorAll('#cg-docs .check-opt.selected')].map(el => el.textContent.trim()).join(', ') || 'Nenhum';
   clearInterval(chatInterval); chatAtivo = false;
+  // Salva prontuário antes de encerrar
+  const prontAtual = document.getElementById('pront-output').textContent;
+  if (prontAtual.trim()) await salvarProntuarioAgora(prontAtual);
   try {
     await fetch(`${API}/api/atendimento/encerrar`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
       body: JSON.stringify({ filaId: atendimentoAtual.id, status: statusTexto, documentos_emitidos: docs })
     });
   } catch(e) {}
   clearInterval(timerInterval);
   filaData = filaData.filter(p => String(p.id) !== String(atendimentoAtual.id));
-  atendimentoAtual = null;
-  fecharModal();
-  renderFila(); renderEstado();
+  atendimentoAtual = null; modoHistorico = false;
+  fecharModal(); buscarHistorico(); renderFila(); renderEstado();
   mostrarToast('Atendimento encerrado', 'success');
 }
 
-let agendData = [];
-let agendVisible = false;
+// ─── AGENDAMENTOS ─────────────────────────────────────────────────────────────
+
+let agendData = []; let agendVisible = false;
 
 async function buscarAgendamentos() {
   try {
-    const res = await fetch(`${API}/api/agendamentos`, {
-      headers: { 'Authorization': `Bearer ${getToken()}` }
-    });
+    const res = await fetch(`${API}/api/agendamentos`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
     const data = await res.json();
     if (!data.ok) return;
     agendData = data.agendamentos || [];
@@ -989,158 +995,153 @@ async function buscarAgendamentos() {
   } catch(e) {}
 }
 
-function toggleAgendamentos() {
-  agendVisible = !agendVisible;
-  document.getElementById('agend-lista').style.display = agendVisible ? 'block' : 'none';
-  if (agendVisible) renderAgendamentos();
-}
+function toggleAgendamentos() { agendVisible = !agendVisible; document.getElementById('agend-lista').style.display = agendVisible ? 'block' : 'none'; if (agendVisible) renderAgendamentos(); }
 
 function renderAgendamentos() {
   const container = document.getElementById('agend-lista');
-  if (!agendData.length) {
-    container.innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum agendamento próximo</p></div>';
-    return;
-  }
+  if (!agendData.length) { container.innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum agendamento próximo</p></div>'; return; }
   container.innerHTML = agendData.map(a => {
-    const h = a.horario_agendado ? new Date(a.horario_agendado).toLocaleString('pt-BR', {
-      timeZone: 'America/Fortaleza', weekday: 'short', day: '2-digit', month: '2-digit',
-      hour: '2-digit', minute: '2-digit'
-    }) : '—';
+    const h = a.horario_agendado ? new Date(a.horario_agendado).toLocaleString('pt-BR', { timeZone:'America/Fortaleza', weekday:'short', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
     const tipoIcon = a.modalidade === 'video' ? '🎥' : '💬';
-    const nomeJson = JSON.stringify(a.nome || '');
-    const telJson  = JSON.stringify(a.tel || '');
-    const tipoJson = JSON.stringify(a.modalidade || 'chat');
     return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,244,.25)">
-      <div class="fc-top">
-        <span class="fc-nome">${a.nome || '—'}</span>
-        <span class="fc-tempo" style="color:#4285f4">📅</span>
-      </div>
-      <div class="fc-meta">
-        <span class="fc-tag" style="background:rgba(66,133,244,.12);color:#4285f4">${tipoIcon}</span>
-        <span class="fc-tag" style="color:rgba(255,255,255,.4);font-size:.72rem">${h}</span>
-      </div>
-      <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel || '—'} · CPF: ${a.cpf || '—'}</div>
-      <button class="btn-iniciar-agora" onclick="iniciarAgendamento(${a.id}, ${nomeJson}, ${telJson}, ${tipoJson})">▶ Iniciar consulta agora</button>
+      <div class="fc-top"><span class="fc-nome">${a.nome||'—'}</span><span class="fc-tempo" style="color:#4285f4">📅</span></div>
+      <div class="fc-meta"><span class="fc-tag" style="background:rgba(66,133,244,.12);color:#4285f4">${tipoIcon}</span><span class="fc-tag" style="color:rgba(255,255,255,.4);font-size:.72rem">${h}</span></div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel||'—'} · CPF: ${a.cpf||'—'}</div>
+      <button class="btn-iniciar-agora" onclick="iniciarAgendamento(${a.id}, ${JSON.stringify(a.nome||'')}, ${JSON.stringify(a.tel||'')}, ${JSON.stringify(a.modalidade||'chat')})">▶ Iniciar consulta agora</button>
     </div>`;
   }).join('');
 }
 
-let adminVisible = false;
-let adminData = [];
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+
+let adminVisible = false; let adminData = [];
 
 async function carregarMedicosPendentes() {
   try {
-    const res = await fetch(`${API}/api/admin/medicos/pendentes`, {
-      headers: { 'x-admin-password': sessionStorage.getItem('adminPwd') || '' }
-    });
+    const res = await fetch(`${API}/api/admin/medicos/pendentes`, { headers: { 'x-admin-password': sessionStorage.getItem('adminPwd') || '' } });
     if (!res.ok) return;
     const data = await res.json();
     adminData = data.medicos || [];
     const count = adminData.length;
-    const tabBtn = document.getElementById('admin-tab-btn');
-    const countEl = document.getElementById('admin-pendente-count');
-    if (count > 0) {
-      tabBtn.style.display = 'flex';
-      countEl.textContent = count;
-    } else {
-      tabBtn.style.display = 'none';
-    }
+    if (count > 0) { document.getElementById('admin-tab-btn').style.display = 'flex'; document.getElementById('admin-pendente-count').textContent = count; }
+    else { document.getElementById('admin-tab-btn').style.display = 'none'; }
     if (adminVisible) renderMedicosPendentes();
   } catch(e) {}
 }
 
-function toggleAdmin() {
-  adminVisible = !adminVisible;
-  const lista = document.getElementById('admin-medicos-lista');
-  lista.style.display = adminVisible ? 'block' : 'none';
-  if (adminVisible) renderMedicosPendentes();
-}
+function toggleAdmin() { adminVisible = !adminVisible; document.getElementById('admin-medicos-lista').style.display = adminVisible ? 'block' : 'none'; if (adminVisible) renderMedicosPendentes(); }
 
 function renderMedicosPendentes() {
   const container = document.getElementById('admin-medicos-lista');
-  if (!adminData.length) {
-    container.innerHTML = '<div class="fila-vazia" style="padding:12px"><p>Nenhum médico pendente</p></div>';
-    return;
-  }
+  if (!adminData.length) { container.innerHTML = '<div class="fila-vazia" style="padding:12px"><p>Nenhum médico pendente</p></div>'; return; }
   container.innerHTML = adminData.map(m => {
-    const dt = m.created_at ? new Date(m.created_at).toLocaleString('pt-BR', { timeZone: 'America/Fortaleza', day:'2-digit', month:'2-digit', year:'numeric' }) : '—';
+    const dt = m.created_at ? new Date(m.created_at).toLocaleString('pt-BR', { timeZone:'America/Fortaleza', day:'2-digit', month:'2-digit', year:'numeric' }) : '—';
     return `<div class="medico-card">
-      <div class="medico-card-nome">${m.nome || '—'}</div>
-      <div class="medico-card-meta">
-        CRM ${m.crm || '—'}/${m.uf || '—'}${m.especialidade ? ' · ' + m.especialidade : ''}<br>
-        ${m.email || '—'} · 📱 ${m.telefone || '—'}<br>
-        Cadastro: ${dt}
-      </div>
-      <div class="medico-card-btns">
-        <button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button>
-        <button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button>
-      </div>
+      <div class="medico-card-nome">${m.nome||'—'}</div>
+      <div class="medico-card-meta">CRM ${m.crm||'—'}/${m.uf||'—'}${m.especialidade?' · '+m.especialidade:''}<br>${m.email||'—'} · 📱 ${m.telefone||'—'}<br>Cadastro: ${dt}</div>
+      <div class="medico-card-btns"><button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button><button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button></div>
     </div>`;
   }).join('');
 }
 
 async function aprovarMedico(id, btn) {
-  const pwd = sessionStorage.getItem('adminPwd') || '';
   btn.disabled = true; btn.textContent = 'Aprovando...';
   try {
-    const res = await fetch(`${API}/api/admin/medico/${id}/aprovar`, {
-      method: 'PATCH', headers: { 'x-admin-password': pwd }
-    });
+    const res = await fetch(`${API}/api/admin/medico/${id}/aprovar`, { method:'PATCH', headers:{'x-admin-password': sessionStorage.getItem('adminPwd')||''} });
     const d = await res.json();
-    if (d.ok) {
-      adminData = adminData.filter(m => m.id !== id);
-      renderMedicosPendentes();
-      document.getElementById('admin-pendente-count').textContent = adminData.length;
-      if (!adminData.length) document.getElementById('admin-tab-btn').style.display = 'none';
-      mostrarToast('Médico aprovado com sucesso', 'success');
-    } else { mostrarToast(d.error || 'Erro ao aprovar', 'error'); btn.disabled = false; btn.textContent = '✓ Aprovar'; }
-  } catch(e) { mostrarToast('Erro de conexão', 'error'); btn.disabled = false; btn.textContent = '✓ Aprovar'; }
+    if (d.ok) { adminData = adminData.filter(m => m.id !== id); renderMedicosPendentes(); document.getElementById('admin-pendente-count').textContent = adminData.length; if (!adminData.length) document.getElementById('admin-tab-btn').style.display = 'none'; mostrarToast('Médico aprovado', 'success'); }
+    else { mostrarToast(d.error||'Erro ao aprovar', 'error'); btn.disabled=false; btn.textContent='✓ Aprovar'; }
+  } catch(e) { mostrarToast('Erro de conexão', 'error'); btn.disabled=false; btn.textContent='✓ Aprovar'; }
 }
 
 async function rejeitarMedico(id, btn) {
   if (!confirm('Rejeitar este médico?')) return;
-  const pwd = sessionStorage.getItem('adminPwd') || '';
   btn.disabled = true; btn.textContent = 'Rejeitando...';
   try {
-    const res = await fetch(`${API}/api/admin/medico/${id}/rejeitar`, {
-      method: 'PATCH', headers: { 'x-admin-password': pwd }
-    });
+    const res = await fetch(`${API}/api/admin/medico/${id}/rejeitar`, { method:'PATCH', headers:{'x-admin-password': sessionStorage.getItem('adminPwd')||''} });
     const d = await res.json();
-    if (d.ok) {
-      adminData = adminData.filter(m => m.id !== id);
-      renderMedicosPendentes();
-      document.getElementById('admin-pendente-count').textContent = adminData.length;
-      if (!adminData.length) document.getElementById('admin-tab-btn').style.display = 'none';
-      mostrarToast('Médico rejeitado', 'info');
-    } else { mostrarToast(d.error || 'Erro ao rejeitar', 'error'); btn.disabled = false; btn.textContent = '✕ Rejeitar'; }
-  } catch(e) { mostrarToast('Erro de conexão', 'error'); btn.disabled = false; btn.textContent = '✕ Rejeitar'; }
+    if (d.ok) { adminData = adminData.filter(m => m.id !== id); renderMedicosPendentes(); document.getElementById('admin-pendente-count').textContent = adminData.length; if (!adminData.length) document.getElementById('admin-tab-btn').style.display = 'none'; mostrarToast('Médico rejeitado', 'info'); }
+    else { mostrarToast(d.error||'Erro ao rejeitar', 'error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
+  } catch(e) { mostrarToast('Erro de conexão', 'error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
 }
 
-// ── CORREÇÃO: iniciarAgendamento agora seta atendimentoAtual e abre o painel ──
+// ─── AGENDAMENTO INICIAR ──────────────────────────────────────────────────────
+
 async function iniciarAgendamento(agendId, nome, tel, tipo = 'chat') {
   if (!confirm(`Iniciar consulta de ${nome} agora (antes do horário)?`)) return;
   try {
-    const res = await fetch(`${API}/api/agendamento/${agendId}/iniciar`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
-    });
+    const res = await fetch(`${API}/api/agendamento/${agendId}/iniciar`, { method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`} });
     const d = await res.json();
-    if (!d.ok) { mostrarToast(d.error || 'Erro ao iniciar', 'error'); return; }
-    await buscarFila();
-    await buscarAgendamentos();
-    const atend = Array.isArray(filaData)
-      ? filaData.find(p => String(p.id) === String(d.atendimentoId))
-      : null;
-    if (atend) {
-      atendimentoAtual = atend;
-    } else {
-      atendimentoAtual = { id: d.atendimentoId, nome, tel, tipo, triagem: '(Agendamento antecipado)', status: 'assumido' };
-    }
+    if (!d.ok) { mostrarToast(d.error||'Erro ao iniciar', 'error'); return; }
+    await buscarFila(); await buscarAgendamentos();
+    const atend = Array.isArray(filaData) ? filaData.find(p => String(p.id) === String(d.atendimentoId)) : null;
+    modoHistorico = false;
+    atendimentoAtual = atend || { id: d.atendimentoId, nome, tel, tipo, triagem: '(Agendamento antecipado)', status: 'assumido' };
     timerSegundos = 0; iniciarTimer();
     renderPainelAtendimento(); renderEstado();
     mostrarToast('Consulta iniciada!', 'success');
   } catch(e) { mostrarToast('Erro de conexão', 'error'); }
 }
+
+// ─── HISTÓRICO ────────────────────────────────────────────────────────────────
+
+let histData = []; let histVisible = false;
+
+async function buscarHistorico() {
+  try {
+    const res = await fetch(`${API}/api/historico`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    const data = await res.json();
+    if (!data.ok) return;
+    histData = data.historico || [];
+    document.getElementById('hist-count').textContent = histData.length;
+    if (histVisible) renderHistorico();
+  } catch(e) {}
+}
+
+function toggleHistorico() { histVisible = !histVisible; document.getElementById('hist-lista').style.display = histVisible ? 'block' : 'none'; if (histVisible) buscarHistorico(); }
+
+// Cards clicáveis (fix mudança 2)
+function renderHistorico() {
+  const container = document.getElementById('hist-lista');
+  if (!histData.length) { container.innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento nos últimos 7 dias</p></div>'; return; }
+  container.innerHTML = histData.map((a, idx) => {
+    const encerrado = a.encerrado_em ? new Date(a.encerrado_em).toLocaleString('pt-BR', { timeZone:'America/Fortaleza', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
+    const tipo = a.tipo || 'chat';
+    const tipoIcon = tipo === 'video' ? '🎥' : '💬';
+    const temPront = !!a.prontuario_salvo;
+    return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${idx})">
+      <div class="hist-card-nome">${a.nome||'—'}</div>
+      <div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${encerrado}<br>CPF: ${a.cpf||'—'} · Tel.: ${a.tel||'—'}</div>
+      ${temPront ? '<div class="hist-card-pront-badge">📄 Prontuário salvo</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+// Fix ponto 6: bloqueia se houver atendimento ativo real
+function abrirHistoricoAtendimento(idx) {
+  if (atendimentoAtual && !modoHistorico) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.', 'error'); return; }
+  const a = histData[idx]; if (!a) return;
+  // Para qualquer polling ativo antes de abrir histórico (fix ponto 6)
+  clearInterval(chatInterval); chatAtivo = false;
+  clearInterval(timerInterval);
+  modoHistorico = true;
+  atendimentoAtual = a;
+  renderPainelAtendimento();
+  renderEstado();
+  // Fecha lista do histórico para dar foco ao painel
+  histVisible = false;
+  document.getElementById('hist-lista').style.display = 'none';
+}
+
+// Fix ponto 7: fechar histórico limpa estado sem perder atendimento ativo real
+function fecharHistoricoAtendimento() {
+  atendimentoAtual = null;
+  modoHistorico = false;
+  renderEstado();
+  buscarHistorico();
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
 
 let toastTimer = null;
 function mostrarToast(msg, tipo = 'info') {
@@ -1152,58 +1153,12 @@ function mostrarToast(msg, tipo = 'info') {
 
 function formatarNascimento(val) {
   if (!val) return '—';
-  // val pode ser 'YYYY-MM-DD'
   const parts = val.split('-');
   if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
   return val;
 }
 
-let histData = [];
-let histVisible = false;
-
-async function buscarHistorico() {
-  try {
-    const res = await fetch(`${API}/api/historico`, {
-      headers: { 'Authorization': `Bearer ${getToken()}` }
-    });
-    const data = await res.json();
-    if (!data.ok) return;
-    histData = data.historico || [];
-    document.getElementById('hist-count').textContent = histData.length;
-    if (histVisible) renderHistorico();
-  } catch(e) {}
-}
-
-function toggleHistorico() {
-  histVisible = !histVisible;
-  document.getElementById('hist-lista').style.display = histVisible ? 'block' : 'none';
-  if (histVisible) { buscarHistorico(); }
-}
-
-function renderHistorico() {
-  const container = document.getElementById('hist-lista');
-  if (!histData.length) {
-    container.innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento nos últimos 7 dias</p></div>';
-    return;
-  }
-  container.innerHTML = histData.map(a => {
-    const encerrado = a.encerrado_em ? new Date(a.encerrado_em).toLocaleString('pt-BR', { timeZone: 'America/Fortaleza', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
-    const nasc = a.data_nascimento ? formatarNascimento(a.data_nascimento) : '—';
-    const tipo = a.tipo || 'chat';
-    const tipoIcon = tipo === 'video' ? '🎥' : '💬';
-    const statusBadge = a.status_atendimento || a.status || '—';
-    return `<div class="medico-card" style="cursor:default;border-color:rgba(94,224,160,.12)">
-      <div class="medico-card-nome">${a.nome || '—'}</div>
-      <div class="medico-card-meta">
-        ${tipoIcon} ${tipo === 'video' ? 'Vídeo' : 'Chat'} · Encerrado: ${encerrado}<br>
-        CPF: ${a.cpf || '—'} · Nasc.: ${nasc}<br>
-        Tel.: ${a.tel || '—'}<br>
-        Status: ${statusBadge}${a.documentos_emitidos ? ' · ' + a.documentos_emitidos : ''}
-        ${a.triagem ? '<div style="margin-top:6px;font-size:.74rem;color:rgba(255,255,255,.35);line-height:1.5;max-height:60px;overflow:hidden">' + String(a.triagem).replace(/&/g,'&amp;').replace(/</g,'&lt;').slice(0,200) + '</div>' : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 
 (function init() {
   const saved = sessionStorage.getItem('medico');
