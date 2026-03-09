@@ -752,8 +752,9 @@ function renderAgendamentos() {
   container.innerHTML=agendData.map(a=>{
     const h=a.horario_agendado?new Date(a.horario_agendado).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
     const tipoIcon=a.modalidade==='video'?'🎥':'💬';
-    return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,244,.25)">
-      <div style="font-weight:600;font-size:.92rem;margin-bottom:4px">${a.nome||'—'}</div>
+    return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,244,.25);position:relative">
+      <button onclick="cancelarAgendamento(${a.id}, this)" style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(255,95,87,.15);color:#ff5f57;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1" title="Cancelar agendamento">✕</button>
+      <div style="font-weight:600;font-size:.92rem;margin-bottom:4px;padding-right:28px">${a.nome||'—'}</div>
       <div style="font-size:.78rem;color:rgba(255,255,255,.45)">${tipoIcon} ${h}</div>
       <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel||'—'} · CPF: ${a.cpf||'—'}</div>
       <button class="btn-iniciar-agora" onclick="iniciarAgendamento(${a.id}, ${JSON.stringify(a.nome||'')}, ${JSON.stringify(a.tel||'')}, ${JSON.stringify(a.modalidade||'chat')})">▶ Iniciar consulta agora</button>
@@ -819,6 +820,20 @@ async function iniciarAgendamento(agendId, nome, tel, tipo = 'chat') {
     buscarAgendamentos();
     mostrarToast('Consulta iniciada!', 'success');
   } catch(e) { mostrarToast('Erro de conexão', 'error'); }
+}
+
+async function cancelarAgendamento(agendId, btn) {
+  if (!confirm('Cancelar este agendamento?')) return;
+  btn.disabled=true; btn.textContent='...';
+  try {
+    const res = await fetch(`${API}/api/agendamento/${agendId}/cancelar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
+    });
+    const d = await res.json();
+    if (d.ok) { agendData=agendData.filter(a=>a.id!==agendId); renderAgendamentos(); document.getElementById('agend-count').textContent=agendData.length; mostrarToast('Agendamento cancelado','info'); }
+    else { mostrarToast(d.error||'Erro ao cancelar','error'); btn.disabled=false; btn.textContent='✕'; }
+  } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✕'; }
 }
 
 let histData=[], histVisible=false;
