@@ -687,9 +687,41 @@ function montarTextoProntuario() {
   const obs=document.getElementById('cl-obs').value.trim();
   const conduta=document.getElementById('cl-conduta').value.trim();
   const docs=[...document.querySelectorAll('.doc-check.checked')].map(d=>d.querySelector('.dc-text').textContent).join(', ')||'Nenhum';
-  const linhas=[`Paciente: ${p.nome||'—'}`,`CPF: ${p.cpf||'—'}`,`Data de nascimento: ${nasc}`,`Modalidade: ${tipo==='video'?'Vídeo':'Chat'}`,'','QP / HDA',hda||'(preencher)','','Antecedentes / Comorbidades',comorbidades||'Nega comorbidades referidas','','Medicações em uso',medicacoes||'Nega uso contínuo de medicações','','Alergias',alergias||'Nega alergias medicamentosas'];
-  if (obs) linhas.push('','Observações em telemedicina',obs);
-  linhas.push('','Conduta',conduta||'(preencher)','',`Documentos emitidos: ${docs}`);
+  const sep = '─────────────────────────────────';
+  const dataHora = new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const linhas = [
+    `CONSULTA MÉDICA ONLINE · ${dataHora}`,
+    sep,
+    `Paciente: ${p.nome||'—'}`,
+    `CPF: ${p.cpf||'—'}`,
+    `Nascimento: ${nasc}`,
+    `Modalidade: ${tipo==='video'?'Vídeo (Google Meet)':'Chat'}`,
+    '',
+    sep,
+    'QUEIXA PRINCIPAL / HDA',
+    sep,
+    hda||'(preencher)',
+    '',
+    sep,
+    'ANTECEDENTES',
+    sep,
+    `Comorbidades: ${comorbidades||'Nega comorbidades referidas'}`,
+    `Medicações em uso: ${medicacoes||'Nega uso contínuo de medicações'}`,
+    `Alergias: ${alergias||'Nega alergias medicamentosas'}`,
+  ];
+  if (obs) linhas.push('', sep, 'OBSERVAÇÕES (TELEMEDICINA)', sep, obs);
+  linhas.push(
+    '',
+    sep,
+    'CONDUTA',
+    sep,
+    conduta||'(preencher)',
+    '',
+    sep,
+    `Documentos emitidos: ${docs}`,
+    `Atendimento realizado por telemedicina conforme Res. CFM 2.314/2022.`,
+    sep,
+  );
   return linhas.join('\n');
 }
 function gerarProntuario() {
