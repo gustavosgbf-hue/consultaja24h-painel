@@ -72,7 +72,8 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .paciente-card{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
 .paciente-card:hover{border-color:rgba(180,224,90,.25);background:rgba(180,224,90,.04)}
 .paciente-card.active{border-color:rgba(94,224,160,.4);background:rgba(94,224,160,.06)}
-.paciente-card.assumido{opacity:.45;cursor:default;pointer-events:none}
+.paciente-card.assumido{opacity:.55;cursor:default}
+.paciente-card.assumido .pc-header,.paciente-card.assumido .pc-queixa,.paciente-card.assumido .pc-tempo{pointer-events:none}
 .pc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .pc-nome{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.9)}
 .pc-tipo{font-size:.67rem;font-weight:600;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
