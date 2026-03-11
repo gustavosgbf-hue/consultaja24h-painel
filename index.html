@@ -1029,7 +1029,7 @@ function renderMedicosPendentes() {
   if (!adminData.length) { container.innerHTML='<div class="fila-vazia" style="padding:12px"><p>Nenhum médico pendente</p></div>'; return; }
   container.innerHTML=adminData.map(m=>{
     const dt=m.created_at?new Date(m.created_at).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'numeric'}):'—';
-    return `<div class="medico-card"><div class="medico-card-nome">${m.nome||'—'}</div><div class="medico-card-meta">CRM ${m.crm||'—'}/${m.uf||'—'}${m.especialidade?' · '+m.especialidade:''}<br>${m.email||'—'} · 📱 ${m.telefone||'—'}<br>Cadastro: ${dt}</div><div class="medico-card-btns"><button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button><button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button></div></div>`;
+    return `<div class="medico-card"><div class="medico-card-nome">${m.nome||'—'}${m.nome_exibicao&&m.nome_exibicao!==m.nome?` <span style="color:var(--muted);font-weight:400;font-size:.85em">(${m.nome_exibicao})</span>`:''}</div><div class="medico-card-meta">CRM ${m.crm||'—'}/${m.uf||'—'}${m.especialidade?' · '+m.especialidade:''}<br>${m.email||'—'} · 📱 ${m.telefone||'—'}${m.cnpj?`<br>🏢 CNPJ: ${m.cnpj}`:''}${m.tem_assinatura_digital?`<br>✍️ Assinatura digital${m.provedor_assinatura?' · '+m.provedor_assinatura:''}`:''  }${m.tem_memed?`<br>💊 Memed${m.memed_email?' · '+m.memed_email:''}`:''}<br>Cadastro: ${dt}</div><div class="medico-card-btns"><button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button><button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button></div></div>`;
   }).join('');
 }
 async function aprovarMedico(id, btn) {
