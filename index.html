@@ -63,7 +63,7 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .nav-logout{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s;flex-shrink:0}
 .nav-logout:hover{border-color:rgba(255,95,87,.3);color:#ff8080}
 .app-body{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - var(--nav-h));gap:0}
-@media(max-width:900px){.app-body{grid-template-columns:1fr}}
+
 .sidebar{border-right:1px solid var(--line);padding:20px 16px;overflow-y:auto;max-height:calc(100vh - var(--nav-h));position:sticky;top:var(--nav-h)}
 .sidebar-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
 .fila-count{background:rgba(180,224,90,.15);color:var(--g1);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:999px}
@@ -86,7 +86,7 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .btn-assumir:hover{opacity:.85}
 .pc-status-badge{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:999px;background:rgba(255,189,46,.1);color:#ffbd2e}
 .main{padding:28px 32px;overflow-y:auto}
-@media(max-width:900px){.main{padding:20px 16px}}
+
 .empty-state,.offline-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:16px}
 .empty-state svg,.offline-state svg{opacity:.2}
 .empty-state h2,.offline-state h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:500;color:rgba(255,255,255,.4)}
@@ -155,7 +155,7 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .clinic-section{margin-bottom:24px}
 .clinic-section-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
 .clinic-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:700px){.clinic-grid{grid-template-columns:1fr}}
+
 .clinic-field{display:flex;flex-direction:column;gap:8px}
 .clinic-field.full{grid-column:1/-1}
 .clinic-label{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.55)}
@@ -211,7 +211,103 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .toast.success{background:rgba(94,224,160,.15);border:1px solid rgba(94,224,160,.3);color:var(--g2)}
 .toast.error{background:rgba(255,95,87,.12);border:1px solid rgba(255,95,87,.25);color:#ff8080}
 .toast.info{background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
-@media(max-width:600px){.atend-header{flex-direction:column}.atend-actions{flex-wrap:wrap}.modal{padding:24px 20px}}
+
+/* ══════════════════════════════════════
+   MOBILE — UX dedicada para < 768px
+══════════════════════════════════════ */
+@media(max-width:768px){
+
+  /* Nav compacta */
+  .nav{padding:0 12px;gap:8px}
+  .nav-medico{display:none}
+  .plantao-btn{padding:7px 12px;font-size:.72rem}
+  .nav-logout{padding:7px 10px;font-size:.72rem}
+
+  /* Layout: sidebar vira painel inferior fixo, main ocupa tudo */
+  .app-body{display:block;min-height:calc(100vh - var(--nav-h))}
+
+  .sidebar{
+    position:fixed;bottom:0;left:0;right:0;
+    width:100%;max-height:55vh;
+    border-right:none;border-top:1px solid var(--line);
+    border-radius:20px 20px 0 0;
+    background:#060d0b;
+    padding:12px 16px 24px;
+    z-index:200;
+    overflow-y:auto;
+    transform:translateY(calc(100% - 52px));
+    transition:transform .3s cubic-bezier(.32,.72,0,1);
+  }
+  .sidebar.open{transform:translateY(0)}
+
+  /* Handle de arrastar */
+  .sidebar::before{
+    content:'';display:block;
+    width:36px;height:4px;border-radius:2px;
+    background:rgba(255,255,255,.15);
+    margin:0 auto 14px;
+  }
+
+  /* Título da sidebar como botão de toggle */
+  .sidebar-title:first-of-type{
+    cursor:pointer;
+    font-size:.78rem;
+    padding:4px 0;
+  }
+
+  /* Main ocupa tela toda */
+  .main{
+    padding:16px 14px;
+    min-height:calc(100vh - var(--nav-h) - 52px);
+    padding-bottom:80px; /* espaço para sidebar fechada */
+  }
+
+  /* Header do atendimento mobile */
+  .atend-header{flex-direction:column;gap:10px;margin-bottom:16px}
+  .atend-nome{font-size:1.3rem}
+  .atend-actions{width:100%;gap:8px}
+  .atend-actions .btn-wpp,
+  .atend-actions .btn-encerrar,
+  .atend-actions .btn-voltar-hist{flex:1;justify-content:center;padding:11px 10px;font-size:.8rem}
+
+  /* Triagem mais compacta */
+  .triagem-box{padding:14px}
+  .triagem-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .triagem-item span{font-size:.82rem}
+
+  /* Tabs menores */
+  .tabs{gap:4px}
+  .tab{padding:8px 6px;font-size:.75rem}
+
+  /* Chat mobile */
+  .chat-medico-msgs{height:220px}
+
+  /* Avaliação clínica */
+  .clinic-grid{grid-template-columns:1fr}
+
+  /* Modal fullscreen no mobile */
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal{border-radius:20px 20px 0 0;max-width:100%;padding:28px 20px 36px}
+
+  /* Cards de agendamento no mobile */
+  .btn-iniciar-agora{width:100%;justify-content:center;padding:10px}
+
+  /* Toast no topo no mobile */
+  .toast{bottom:auto;top:72px;right:12px;left:12px;text-align:center}
+
+  /* Histórico */
+  .hist-card{padding:12px 14px}
+}
+
+/* Tablet intermediário */
+@media(min-width:769px) and (max-width:900px){
+  .app-body{grid-template-columns:260px 1fr}
+  .main{padding:20px 16px}
+}
+
+@media(max-width:700px){.clinic-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.modal{padding:24px 20px}}
+
 .hist-card{background:rgba(255,255,255,.03);border:1px solid rgba(94,224,160,.12);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
 .hist-card:hover{border-color:rgba(94,224,160,.3);background:rgba(94,224,160,.04)}
 .hist-card-nome{font-weight:600;font-size:.92rem;margin-bottom:4px}
@@ -225,6 +321,27 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .autosave-status.ok{color:var(--g2)}
 .autosave-status.err{color:#ff8080}
 .hist-readonly-notice{background:rgba(94,224,160,.05);border:1px solid rgba(94,224,160,.12);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6}
+/* FAB mobile — botão flutuante da fila */
+.fab-fila{
+  display:none;
+  position:fixed;bottom:64px;right:16px;z-index:210;
+  width:52px;height:52px;border-radius:50%;
+  border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);
+  color:#051208;font-size:1.1rem;font-weight:700;
+  box-shadow:0 4px 20px rgba(94,224,160,.35);
+  cursor:pointer;align-items:center;justify-content:center;
+  transition:transform .15s;
+}
+.fab-fila:hover{transform:scale(1.08)}
+.fab-fila .fab-badge{
+  position:absolute;top:-4px;right:-4px;
+  min-width:18px;height:18px;border-radius:9px;
+  background:#ff5f57;color:#fff;
+  font-size:.62rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 4px;
+}
+@media(max-width:768px){.fab-fila{display:flex}}
 </style>
 </head>
 <body>
@@ -422,6 +539,47 @@ function getToken() { return sessionStorage.getItem('token')||''; }
 let agendInterval = null;
 function toggleAdminField() { const f=document.getElementById('field-admin-pwd'); f.style.display=f.style.display==='none'?'block':'none'; }
 
+// ── MOBILE SIDEBAR DRAWER ──────────────────────────────────────────────────
+function isMobile() { return window.innerWidth <= 768; }
+
+function toggleSidebarMobile() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) sidebar.classList.toggle('open');
+}
+
+function setupMobileSidebar() {
+  if (!isMobile()) return;
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+
+  // Toggle ao clicar no título da fila
+  const firstTitle = sidebar.querySelector('.sidebar-title');
+  if (firstTitle) {
+    firstTitle.addEventListener('click', function() {
+      sidebar.classList.toggle('open');
+    });
+  }
+
+  // Fechar ao swipe para baixo
+  let startY = 0;
+  sidebar.addEventListener('touchstart', function(e){ startY = e.touches[0].clientY; }, {passive:true});
+  sidebar.addEventListener('touchend', function(e){
+    const dy = e.changedTouches[0].clientY - startY;
+    if (dy > 60) sidebar.classList.remove('open');
+    if (dy < -60) sidebar.classList.add('open');
+  }, {passive:true});
+
+  // Fechar ao assumir paciente
+  document.addEventListener('atendimentoIniciado', function() {
+    sidebar.classList.remove('open');
+  });
+}
+
+// Notificar quando atendimento inicia (para fechar sidebar)
+function notificarAtendimentoIniciado() {
+  document.dispatchEvent(new CustomEvent('atendimentoIniciado'));
+}
+
 function entrarApp() {
   document.getElementById('screen-login').style.display='none';
   document.getElementById('screen-app').style.display='block';
@@ -432,6 +590,7 @@ function entrarApp() {
   agendInterval = setInterval(buscarAgendamentos, 60000);
   if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
   mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
+  setTimeout(setupMobileSidebar, 100);
   // Detecta se veio via link de assumir do e-mail
   const urlParams = new URLSearchParams(window.location.search);
   const assumiuId = urlParams.get('assumiu');
@@ -498,7 +657,11 @@ async function buscarFila() {
 function renderFila() {
   const lista=document.getElementById('fila-lista');
   const count=document.getElementById('fila-count');
-  count.textContent=filaData.filter(p=>p.status==='aguardando').length;
+  const qtd=filaData.filter(p=>p.status==='aguardando').length;
+  count.textContent=qtd;
+  // Badge FAB mobile
+  const fabBadge=document.getElementById('fab-badge');
+  if(fabBadge){if(qtd>0){fabBadge.textContent=qtd;fabBadge.style.display='flex';}else{fabBadge.style.display='none';}}
   if (!plantaoAtivo&&!atendimentoAtual) { lista.innerHTML='<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>'; return; }
   if (filaData.length===0) { lista.innerHTML='<div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Fila vazia</p></div>'; return; }
   try {
@@ -531,6 +694,8 @@ async function assumirAtendimento(id, evt) {
     await buscarFila();
     renderPainelAtendimento(); renderEstado();
     mostrarToast('Atendimento assumido!','success');
+    // Fechar sidebar no mobile ao assumir
+    if(isMobile()){const s=document.querySelector('.sidebar');if(s)s.classList.remove('open');}
   } catch(e) { mostrarToast('Erro ao assumir atendimento.','error'); }
 }
 
@@ -939,5 +1104,8 @@ function formatarNascimento(val) {
 }
 (function init() { const saved=sessionStorage.getItem('medico'); if(saved){medico=JSON.parse(saved);entrarApp();} })();
 </script>
+<button class="fab-fila" id="fab-fila" onclick="toggleSidebarMobile()" title="Ver fila">
+  👥<span class="fab-badge" id="fab-badge" style="display:none">0</span>
+</button>
 </body>
 </html>
