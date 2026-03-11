@@ -432,6 +432,25 @@ function entrarApp() {
   agendInterval = setInterval(buscarAgendamentos, 60000);
   if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
   mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
+  // Detecta se veio via link de assumir do e-mail
+  const urlParams = new URLSearchParams(window.location.search);
+  const assumiuId = urlParams.get('assumiu');
+  if (assumiuId) {
+    history.replaceState(null,'',window.location.pathname);
+    setTimeout(async function() {
+      try {
+        const res = await fetch(API+'/api/atendimento/status/'+assumiuId, {headers:{'Authorization':'Bearer '+getToken()}});
+        const d = await res.json();
+        if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
+          atendimentoAtual = d.atendimento;
+          modoHistorico = false;
+          timerSegundos = 0; iniciarTimer();
+          renderPainelAtendimento(); renderEstado();
+          mostrarToast('Atendimento assumido com sucesso!', 'success');
+        }
+      } catch(e) { console.warn('assumiu param error:', e); }
+    }, 800);
+  }
 }
 
 function logout() {
