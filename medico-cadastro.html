@@ -40,6 +40,54 @@
   .senha-wrap{position:relative}
   .senha-wrap input{padding-right:40px}
   .toggle-senha{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:4px}
+
+  /* ── Seção separadora ── */
+  .section-divider{
+    display:flex;align-items:center;gap:10px;
+    margin:24px 0 16px;
+  }
+  .section-divider span{
+    font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:rgba(180,224,90,.6);white-space:nowrap;
+  }
+  .section-divider::before,.section-divider::after{
+    content:'';flex:1;height:1px;background:var(--line);
+  }
+
+  /* ── Toggle sim/não ── */
+  .toggle-row{
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(255,255,255,.03);border:1px solid var(--line);
+    border-radius:10px;padding:11px 14px;margin-bottom:16px;
+  }
+  .toggle-row-label{
+    font-size:.88rem;color:rgba(255,255,255,.75);line-height:1.4;
+  }
+  .toggle-row-label small{display:block;font-size:.75rem;color:var(--muted);margin-top:2px}
+  .toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;margin-left:12px}
+  .toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+  .toggle-track{
+    position:absolute;inset:0;border-radius:11px;
+    background:rgba(255,255,255,.08);border:1px solid var(--line);
+    cursor:pointer;transition:background .2s,border-color .2s;
+  }
+  .toggle-track::after{
+    content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);
+    width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.3);
+    transition:left .2s,background .2s;
+  }
+  .toggle-switch input:checked ~ .toggle-track{background:rgba(180,224,90,.2);border-color:rgba(180,224,90,.5)}
+  .toggle-switch input:checked ~ .toggle-track::after{left:21px;background:var(--g1)}
+
+  /* ── Subfield que aparece condicionalmente ── */
+  .sub-field{
+    display:none;margin-top:-8px;margin-bottom:16px;
+    animation:fadeIn .2s ease;
+  }
+  .sub-field.visible{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+  .hint{font-size:.72rem;color:var(--muted);margin-top:5px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -50,6 +98,7 @@
   <h2>Cadastro de Médico</h2>
   <p class="sub">Preencha seus dados para solicitar acesso à plataforma. Seu cadastro será analisado pela equipe.</p>
 
+  <!-- ── DADOS PESSOAIS ── -->
   <div class="field">
     <label>Nome completo</label>
     <input type="text" id="nome" placeholder="João Silva" autocomplete="name"/>
@@ -58,7 +107,7 @@
   <div class="field">
     <label>Nome de exibição no painel</label>
     <input type="text" id="nome_exibicao" placeholder="Dr. João Silva ou Dra. Marta Campos"/>
-    <div style="font-size:.72rem;color:var(--muted);margin-top:5px">Como vai aparecer para pacientes e no painel</div>
+    <div class="hint">Como vai aparecer para pacientes e no painel</div>
   </div>
 
   <div class="field">
@@ -112,6 +161,75 @@
     <input type="text" id="especialidade" placeholder="Ex: Clínica Geral, Pediatria..."/>
   </div>
 
+  <!-- ── DADOS PROFISSIONAIS EXTRAS ── -->
+  <div class="section-divider"><span>Dados profissionais</span></div>
+
+  <!-- CNPJ -->
+  <div class="toggle-row">
+    <div class="toggle-row-label">
+      Possui CNPJ?
+      <small>Para emissão de nota fiscal e repasses</small>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="chk-cnpj" onchange="toggleField('chk-cnpj','field-cnpj')"/>
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+  <div class="sub-field" id="field-cnpj">
+    <div class="field" style="margin-bottom:0">
+      <label>CNPJ</label>
+      <input type="text" id="cnpj" placeholder="00.000.000/0001-00" inputmode="numeric" maxlength="18"/>
+    </div>
+  </div>
+
+  <!-- Assinatura digital -->
+  <div class="toggle-row">
+    <div class="toggle-row-label">
+      Possui assinatura digital ICP-Brasil?
+      <small>Necessária para assinar prescrições e documentos médicos</small>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="chk-assinatura" onchange="toggleField('chk-assinatura','field-assinatura')"/>
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+  <div class="sub-field" id="field-assinatura">
+    <div class="field" style="margin-bottom:0">
+      <label>Provedor da assinatura <span style="color:var(--muted);font-weight:300">(opcional)</span></label>
+      <select id="provedor_assinatura">
+        <option value="">Não informar</option>
+        <option value="Memed">Memed</option>
+        <option value="BirdID">BirdID</option>
+        <option value="Vidaas">Vidaas</option>
+        <option value="Soluti">Soluti</option>
+        <option value="Certisign">Certisign</option>
+        <option value="Safeweb">Safeweb</option>
+        <option value="Outro">Outro</option>
+      </select>
+      <div class="hint">Ajuda a equipe a configurar a integração corretamente</div>
+    </div>
+  </div>
+
+  <!-- Memed -->
+  <div class="toggle-row">
+    <div class="toggle-row-label">
+      Já usa o Memed?
+      <small>Plataforma de prescrição digital</small>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="chk-memed" onchange="toggleField('chk-memed','field-memed')"/>
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+  <div class="sub-field" id="field-memed">
+    <div class="field" style="margin-bottom:0">
+      <label>E-mail cadastrado no Memed <span style="color:var(--muted);font-weight:300">(opcional)</span></label>
+      <input type="email" id="memed_email" placeholder="mesmo e-mail do seu login no Memed"/>
+      <div class="hint">Facilita a integração da prescrição digital com a plataforma</div>
+    </div>
+  </div>
+
+  <!-- ── DECLARAÇÃO ── -->
   <div class="check-wrap" id="check-declaracao-wrap">
     <label class="check-label">
       <input type="checkbox" id="chk-declaracao" onchange="document.getElementById('btnCadastrar').disabled=!this.checked"/>
@@ -134,6 +252,12 @@ function toggleSenha(id, btn) {
   var input = document.getElementById(id);
   if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
   else { input.type = 'password'; btn.textContent = '👁'; }
+}
+
+function toggleField(checkId, fieldId) {
+  var checked = document.getElementById(checkId).checked;
+  var field = document.getElementById(fieldId);
+  field.classList.toggle('visible', checked);
 }
 
 function mostrarMsg(texto, tipo) {
@@ -165,8 +289,14 @@ async function cadastrar() {
     mostrarMsg('As senhas não coincidem.', 'err'); return;
   }
 
-  var especialidade = document.getElementById('especialidade').value.trim();
-  var nome_exibicao = document.getElementById('nome_exibicao').value.trim() || nome;
+  var especialidade       = document.getElementById('especialidade').value.trim();
+  var nome_exibicao       = document.getElementById('nome_exibicao').value.trim() || nome;
+  var cnpj                = document.getElementById('chk-cnpj').checked ? document.getElementById('cnpj').value.trim() : '';
+  var tem_assinatura      = document.getElementById('chk-assinatura').checked;
+  var provedor_assinatura = tem_assinatura ? document.getElementById('provedor_assinatura').value : '';
+  var tem_memed           = document.getElementById('chk-memed').checked;
+  var memed_email         = tem_memed ? document.getElementById('memed_email').value.trim() : '';
+
   var btn = document.getElementById('btnCadastrar');
   btn.disabled = true; btn.textContent = 'Enviando...';
 
@@ -174,17 +304,21 @@ async function cadastrar() {
     var res = await fetch(API + '/api/medico/cadastro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, nome_exibicao, email, senha, crm, uf, telefone, especialidade })
+      body: JSON.stringify({
+        nome, nome_exibicao, email, senha, crm, uf, telefone, especialidade,
+        cnpj, tem_assinatura_digital: tem_assinatura, provedor_assinatura,
+        tem_memed, memed_email
+      })
     });
     var d = await res.json();
     if (d.ok) {
       btn.style.display = 'none';
       mostrarMsg('✓ Cadastro recebido! Seu perfil será analisado pela equipe da plataforma. Você receberá um retorno em breve.', 'ok');
-      // Limpa campos
-      ['nome','nome_exibicao','email','senha','senha2','crm','telefone'].forEach(function(id){
+      ['nome','nome_exibicao','email','senha','senha2','crm','telefone','cnpj','memed_email'].forEach(function(id){
         document.getElementById(id).value = '';
       });
       document.getElementById('uf').value = '';
+      document.getElementById('provedor_assinatura').value = '';
     } else {
       mostrarMsg(d.error || 'Erro ao enviar cadastro. Tente novamente.', 'err');
       btn.disabled = false; btn.textContent = 'Solicitar cadastro';
@@ -194,6 +328,16 @@ async function cadastrar() {
     btn.disabled = false; btn.textContent = 'Solicitar cadastro';
   }
 }
+
+// Máscara CNPJ
+document.getElementById('cnpj').addEventListener('input', function() {
+  var v = this.value.replace(/\D/g,'').substring(0,14);
+  v = v.replace(/^(\d{2})(\d)/,'$1.$2');
+  v = v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+  v = v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+  v = v.replace(/(\d{4})(\d)/,'$1-$2');
+  this.value = v;
+});
 
 // Enter para submeter
 document.addEventListener('keydown', function(e) {
