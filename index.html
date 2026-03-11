@@ -789,7 +789,7 @@ function renderAgendamentos() {
       <div style="font-weight:600;font-size:.92rem;margin-bottom:4px;padding-right:28px">${a.nome||'—'}</div>
       <div style="font-size:.78rem;color:rgba(255,255,255,.45)">${tipoIcon} ${h}</div>
       <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel||'—'} · CPF: ${a.cpf||'—'}</div>
-      <button class="btn-iniciar-agora" onclick="iniciarAgendamento(${a.id}, ${JSON.stringify(a.nome||'')}, ${JSON.stringify(a.tel||'')}, ${JSON.stringify(a.modalidade||'chat')})">▶ Iniciar consulta agora</button>
+      <button class="btn-iniciar-agora" data-id="${a.id}" data-nome="${(a.nome||'').replace(/"/g,'&quot;')}" data-tel="${a.tel||''}" data-tipo="${a.modalidade||'chat'}" onclick="iniciarAgendamentoBtn(this)">▶ Iniciar consulta agora</button>
     </div>`;
   }).join('');
 }
@@ -836,6 +836,14 @@ async function rejeitarMedico(id, btn) {
 }
 
 // ─── PATCH APLICADO: usa d.atendimento direto, sem buscarFila() + find() ──────
+function iniciarAgendamentoBtn(btn) {
+  const id = btn.getAttribute('data-id');
+  const nome = btn.getAttribute('data-nome');
+  const tel = btn.getAttribute('data-tel');
+  const tipo = btn.getAttribute('data-tipo') || 'chat';
+  iniciarAgendamento(parseInt(id), nome, tel, tipo);
+}
+
 async function iniciarAgendamento(agendId, nome, tel, tipo = 'chat') {
   if (!confirm(`Iniciar consulta de ${nome} agora (antes do horário)?`)) return;
   try {
