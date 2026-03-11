@@ -585,6 +585,26 @@ function entrarApp() {
   document.getElementById('screen-app').style.display='block';
   document.getElementById('nav-nome').textContent=medico.nome;
   if (!autosaveBound) { registrarAutosave(); autosaveBound=true; }
+  // Restaurar atendimento em andamento ao recarregar a página
+  const atendSalvo = sessionStorage.getItem('atendimentoAtual');
+  if (atendSalvo && !atendimentoAtual) {
+    try {
+      const atendParsed = JSON.parse(atendSalvo);
+      // Verifica no servidor se ainda está assumido
+      fetch(API+'/api/atendimento/status/'+atendParsed.id, {headers:{'Authorization':'Bearer '+getToken()}})
+        .then(r=>r.json()).then(d=>{
+          if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
+            atendimentoAtual = d.atendimento;
+            modoHistorico = false;
+            timerSegundos = 0; iniciarTimer();
+            renderPainelAtendimento(); renderEstado();
+            mostrarToast('Atendimento recuperado: '+atendimentoAtual.nome, 'success');
+          } else {
+            sessionStorage.removeItem('atendimentoAtual');
+          }
+        }).catch(()=>sessionStorage.removeItem('atendimentoAtual'));
+    } catch(e) { sessionStorage.removeItem('atendimentoAtual'); }
+  }
   renderEstado(); buscarFila(); buscarAgendamentos(); buscarHistorico();
   clearInterval(agendInterval);
   agendInterval = setInterval(buscarAgendamentos, 60000);
@@ -602,6 +622,7 @@ function entrarApp() {
         const d = await res.json();
         if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
           atendimentoAtual = d.atendimento;
+          sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoAtual));
           modoHistorico = false;
           timerSegundos = 0; iniciarTimer();
           renderPainelAtendimento(); renderEstado();
@@ -675,7 +696,7 @@ function renderFila() {
       return `<div class="paciente-card ${isAtual?'active':''} ${assumido?'assumido':''}">
         <div class="pc-header"><div class="pc-nome">${String(nome).split(' ').slice(0,2).join(' ')}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div>
         <div class="pc-queixa">${p.triagem||'—'}</div>
-        <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div>
+        <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':`<button onclick="encerrarTravado('${p.id}','${(p.nome||'').replace(/'/g,"\\'")}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`}</div>
       </div>`;
     }).join('');
   } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
@@ -690,6 +711,7 @@ async function assumirAtendimento(id, evt) {
     if (!res.ok||!data.ok) { mostrarToast(data.error||'Este paciente já foi assumido.','error'); await buscarFila(); return; }
     modoHistorico=false;
     atendimentoAtual=data.atendimento||filaData.find(p=>String(p.id)===String(id));
+    if(atendimentoAtual) sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoAtual));
     timerSegundos=0; iniciarTimer();
     await buscarFila();
     renderPainelAtendimento(); renderEstado();
@@ -926,6 +948,17 @@ function copiarProntuario() {
   });
 }
 
+async function encerrarTravado(id, nome, e) {
+  if(e) e.stopPropagation();
+  if(!confirm('Encerrar atendimento de '+nome+'?')) return;
+  try {
+    const res = await fetch(API+'/api/atendimento/encerrar',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({filaId:id,status:'Encerrado pelo painel',documentos_emitidos:'Nenhum'})});
+    const d = await res.json();
+    if(d.ok){ mostrarToast('Atendimento encerrado.','success'); await buscarFila(); }
+    else mostrarToast(d.error||'Erro ao encerrar','error');
+  } catch(e){ mostrarToast('Erro ao encerrar','error'); }
+}
+
 function abrirModalEncerrar() {
   document.getElementById('modal-encerrar').classList.add('open');
   document.querySelectorAll('#rg-status .radio-opt').forEach(r=>r.classList.remove('selected'));
@@ -946,7 +979,7 @@ async function confirmarEncerramento() {
   try { await fetch(`${API}/api/atendimento/encerrar`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,status:statusTexto,documentos_emitidos:docs})}); } catch(e) {}
   clearInterval(timerInterval);
   filaData=filaData.filter(p=>String(p.id)!==String(atendimentoAtual.id));
-  atendimentoAtual=null; modoHistorico=false;
+  atendimentoAtual=null; modoHistorico=false; sessionStorage.removeItem('atendimentoAtual');
   fecharModal(); buscarHistorico(); renderFila(); renderEstado();
   mostrarToast('Atendimento encerrado','success');
 }
