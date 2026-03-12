@@ -608,7 +608,7 @@ function entrarApp() {
   }
   renderEstado(); buscarFila(); buscarAgendamentos(); buscarHistorico();
   clearInterval(agendInterval);
-  agendInterval = setInterval(buscarAgendamentos, 60000);
+  agendInterval = setInterval(buscarAgendamentos, 20000);
   if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
   mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
   setTimeout(setupMobileSidebar, 100);
@@ -1070,7 +1070,16 @@ async function iniciarAgendamento(agendId, nome, tel, tipo = 'chat') {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
     });
     const d = await res.json();
-    if (!d.ok) { mostrarToast(d.error || 'Erro ao iniciar', 'error'); return; }
+    if (!d.ok) {
+      mostrarToast(d.error || 'Erro ao iniciar', 'error');
+      // Se outro médico já iniciou, remove da lista imediatamente
+      if (d.error && d.error.includes('outro médico')) {
+        agendData = agendData.filter(a => a.id !== agendId);
+        renderAgendamentos();
+        document.getElementById('agend-count').textContent = agendData.length;
+      }
+      return;
+    }
     modoHistorico = false;
     atendimentoAtual = d.atendimento || { id: d.atendimentoId, nome, tel, tipo, triagem: '(Agendamento antecipado)', status: 'assumido' };
     timerSegundos = 0; iniciarTimer();
