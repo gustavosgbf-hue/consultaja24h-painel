@@ -693,14 +693,34 @@ function renderFila() {
       const mins=Math.floor((Date.now()-new Date(criado))/60000);
       const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
       const isAtual=atendimentoAtual&&!modoHistorico&&String(atendimentoAtual.id)===String(p.id);
-      const assumido=p.status==='assumido'&&!isAtual;
-      return `<div class="paciente-card ${isAtual?'active':''} ${assumido?'assumido':''}">
+      const meuAssumido=p.status==='assumido'&&!isAtual&&medico&&String(p.medico_id)===String(medico.id);
+      const assumido=p.status==='assumido'&&!isAtual&&!meuAssumido;
+      return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''}">
         <div class="pc-header"><div class="pc-nome">${String(nome).split(' ').slice(0,2).join(' ')}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div>
         <div class="pc-queixa">${p.triagem||'—'}</div>
-        <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':`<button onclick="encerrarTravado('${p.id}','${(p.nome||'').replace(/'/g,"\\'")}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`}</div>
+        <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':meuAssumido?`<button onclick="retomarAtendimento('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:600;cursor:pointer;">↩ Retomar</button>`:`<button onclick="encerrarTravado('${p.id}','${(p.nome||'').replace(/'/g,"\\'")}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`}</div>
       </div>`;
     }).join('');
   } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
+}
+
+async function retomarAtendimento(id, evt) {
+  evt.stopPropagation();
+  try {
+    const res = await fetch(`${API}/api/atendimento/status/${id}`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const data = await res.json();
+    if (!data.ok) { mostrarToast('Erro ao retomar atendimento', 'error'); return; }
+    // Busca dados completos da fila
+    const p = filaData.find(p => String(p.id) === String(id));
+    modoHistorico = false;
+    atendimentoAtual = p || data.atendimento;
+    if (atendimentoAtual) sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoAtual));
+    timerSegundos = 0; iniciarTimer();
+    renderPainelAtendimento(); renderEstado();
+    mostrarToast('Atendimento retomado!', 'success');
+  } catch(e) { mostrarToast('Erro de conexão', 'error'); }
 }
 
 async function assumirAtendimento(id, evt) {
