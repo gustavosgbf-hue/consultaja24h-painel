@@ -1242,7 +1242,7 @@ async function abrirMemed() {
     if (!data.ok || !data.token) {
       // Token indisponível — abre site do Memed em nova aba
       if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-      window.open('https://app.memed.com.br', '_blank');
+      window.open('https://memed.com.br/plataforma/', '_blank');
       mostrarToast('Abrindo Memed em nova aba','info');
       return;
     }
