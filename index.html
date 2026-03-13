@@ -382,7 +382,7 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
   </nav>
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-title">Fila de pacientes <span class="fila-count" id="fila-count">0</span></div>
+      <div class="sidebar-title">Fila de pacientes <span style="display:flex;align-items:center;gap:8px"><span class="fila-count" id="fila-count">0</span><button id="btn-fechar-sidebar" onclick="fecharSidebarMobile()" style="display:none;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:0 2px;line-height:1" title="Fechar">✕</button></span></div>
       <div id="fila-lista"><div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><p>Nenhum paciente<br>aguardando atendimento</p></div></div>
       <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">📅 Agendamentos <span class="fila-count" id="agend-count">0</span></div>
       <div id="agend-lista" style="display:none"></div>
@@ -566,6 +566,11 @@ function toggleAdminField() { const f=document.getElementById('field-admin-pwd')
 // ── MOBILE SIDEBAR DRAWER ──────────────────────────────────────────────────
 function isMobile() { return window.innerWidth <= 768; }
 
+function fecharSidebarMobile() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) sidebar.classList.remove('open');
+}
+
 function toggleSidebarMobile() {
   const sidebar = document.querySelector('.sidebar');
   if (sidebar) sidebar.classList.toggle('open');
@@ -575,6 +580,10 @@ function setupMobileSidebar() {
   if (!isMobile()) return;
   const sidebar = document.querySelector('.sidebar');
   if (!sidebar) return;
+
+  // Mostrar botão fechar no mobile
+  const btnFechar = document.getElementById('btn-fechar-sidebar');
+  if (btnFechar) btnFechar.style.display = 'inline-block';
 
   // Toggle ao clicar no título da fila
   const firstTitle = sidebar.querySelector('.sidebar-title');
@@ -718,10 +727,13 @@ function renderFila() {
       const isAtual=atendimentoAtual&&!modoHistorico&&String(atendimentoAtual.id)===String(p.id);
       const meuAssumido=p.status==='assumido'&&!isAtual&&medico&&String(p.medico_id)===String(medico.id);
       const assumido=p.status==='assumido'&&!isAtual&&!meuAssumido;
+      const isAdmin=!!sessionStorage.getItem('adminPwd');
+      const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
       return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''}">
         <div class="pc-header"><div class="pc-nome">${String(nome).split(' ').slice(0,2).join(' ')}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div>
         <div class="pc-queixa">${p.triagem||'—'}</div>
-        <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':meuAssumido?`<button onclick="retomarAtendimento('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:600;cursor:pointer;">↩ Retomar</button>`:`<button onclick="encerrarTravado('${p.id}','${(p.nome||'').replace(/'/g,"\\'")}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`}</div>
+        ${assumido&&nomeMediaco?`<div style="font-size:.68rem;color:var(--muted);margin:-4px 0 6px;padding:0 2px">👨‍⚕️ Dr(a). ${nomeMediaco}</div>`:''}
+        <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':meuAssumido?`<button onclick="retomarAtendimento('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:600;cursor:pointer;">↩ Retomar</button>`:isAdmin?`<button onclick="encerrarTravado('${p.id}','${(p.nome||'').replace(/'/g,"\\'")}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div>
       </div>`;
     }).join('');
   } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
@@ -1244,84 +1256,57 @@ async function abrirMemed() {
 
     script.onload = () => {
       memedCarregado = true;
+      // 4. Configurar features
+      MdHub.command.send('plataforma.sinapse-prescricao', 'setFeatureToggle', {
+        historyPrescription: false,
+        dropdownSync: false,
+        buttonClose: true,
+        allowShareModal: true
+      });
 
-      // 4. Aguardar módulo inicializar antes de enviar comandos
-      MdSinapsePrescricao.event.add('core:moduleInit', async (module) => {
-        if (module.name !== 'plataforma.prescricao') return;
+      // 5. Dados do paciente
+      const pac = atendimentoAtual;
+      const [nome,...sobArr] = (pac.nome||'').split(' ');
+      MdHub.command.send('plataforma.sinapse-prescricao', 'setPaciente', {
+        nome: nome || pac.nome,
+        sobrenome: sobArr.join(' ') || '',
+        cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
+        telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
+        data_nascimento: pac.data_nascimento || undefined,
+        sexo: pac.sexo==='F'?'F':pac.sexo==='M'?'M':undefined
+      });
 
-        // 5. Dados do paciente
-        const pac = atendimentoAtual;
-        const partes = (pac.nome||'').trim().split(' ');
-        const nomePac = partes[0] || '';
-        const sobrenomePac = partes.slice(1).join(' ') || '';
-        const cpfLimpo = (pac.cpf||'').replace(/\D/g,'') || undefined;
-        const telLimpo = (pac.tel||'').replace(/\D/g,'') || undefined;
-        const nascimento = pac.data_nascimento || undefined;
-        const sexo = pac.sexo==='F'?'F':pac.sexo==='M'?'M':undefined;
+      // 6. Mostrar plataforma
+      MdHub.command.send('plataforma.sinapse-prescricao', 'setPrescriptionType', 'whitelist');
+      MdHub.module.show('plataforma.sinapse-prescricao');
 
-        await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
-          nome: nomePac,
-          sobrenome: sobrenomePac,
-          cpf: cpfLimpo,
-          telefone: telLimpo,
-          data_nascimento: nascimento,
-          sexo
-        });
-
-        // 6. Alergias do paciente (se tiver)
-        if (pac.alergias && pac.alergias !== '—' && pac.alergias !== 'Nenhuma') {
-          // passa como texto livre — Memed aceita string no lugar do array de IDs
-          await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
-            historyPrescription: true,
-            buttonClose: true,
-            allowShareModal: true
-          });
-        } else {
-          await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
-            historyPrescription: true,
-            buttonClose: true,
-            allowShareModal: true
-          });
+      // 7. Ouvir prescrição finalizada
+      MdHub.event.add('prescricaoImpressa', async (data) => {
+        const link = data?.prescricao?.link || '';
+        if (link && atendimentoAtual) {
+          // Salvar link no prontuário
+          try {
+            const obs = `[Receita Memed]: ${link}`;
+            // Appends receita link to existing prontuario text
+            const prontAtual = atendimentoAtual.prontuario || '';
+            const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
+            await fetch(`${API}/api/atendimento/prontuario`, {
+              method: 'POST',
+              headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${localStorage.getItem('token')}` },
+              body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
+            });
+            if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+            mostrarToast('Receita salva no prontuário','success');
+          } catch(e) {}
         }
+      });
 
-        // 7. Local de trabalho
-        await MdHub.command.send('plataforma.prescricao', 'setWorkplace', {
-          city: 'São Luís',
-          state: 'MA',
-          local_name: 'ConsultaJá24h'
-        });
-
-        // 8. Mostrar plataforma
-        MdHub.module.show('plataforma.prescricao');
-
+      // 8. Fechar Memed
+      MdHub.event.add('core:moduleHide', () => {
+        const s = document.getElementById('memed-script');
+        if (s) s.remove();
+        memedCarregado = false;
         if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-
-        // 9. Ouvir prescrição finalizada
-        MdHub.event.add('prescricaoImpressa', async (data) => {
-          const link = data?.prescricao?.link || '';
-          if (link && atendimentoAtual) {
-            try {
-              const obs = `[Receita Memed]: ${link}`;
-              const prontAtual = atendimentoAtual.prontuario || '';
-              const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
-              await fetch(`${API}/api/atendimento/prontuario`, {
-                method: 'POST',
-                headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${localStorage.getItem('token')}` },
-                body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
-              });
-              if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
-              mostrarToast('Receita salva no prontuário ✓','success');
-            } catch(e) {}
-          }
-        });
-
-        // 10. Fechar Memed
-        MdSinapsePrescricao.event.add('core:moduleHide', (mod) => {
-          if (mod.moduleName === 'plataforma.prescricao') {
-            memedCarregado = false;
-            if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-          }
-        });
       });
     };
 
