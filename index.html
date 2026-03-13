@@ -1254,10 +1254,23 @@ let memedToken = null;
 
 function fecharMemedDrawer() {
   const drawer = document.getElementById('memed-drawer');
+  const drawerBody = document.getElementById('memed-drawer-body');
   const overlay = document.getElementById('memed-overlay');
   if (drawer) drawer.classList.remove('aberto');
   if (overlay) overlay.classList.remove('ativo');
-  // Move o container do Memed de volta para o head (SDK continua vivo mas oculto)
+  // Devolve o elemento Memed pro body (SDK espera ele lá) e oculta
+  if (drawerBody) {
+    Array.from(drawerBody.children).forEach(el => {
+      if (el.id !== 'memed-drawer-loading') {
+        el.style.cssText = el._origStyle || '';
+        el.style.display = 'none';
+        document.body.appendChild(el);
+      }
+    });
+    // Reseta loading para próxima abertura
+    const loading = document.getElementById('memed-drawer-loading');
+    if (loading) { loading.style.display = 'flex'; drawerBody.appendChild(loading); }
+  }
   try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
   const btn = document.getElementById('btn-memed');
   if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
@@ -1350,8 +1363,6 @@ async function abrirMemed() {
     script.type = 'text/javascript';
     script.setAttribute('data-color', '#b4e05a');
     script.setAttribute('data-token', memedToken);
-    // Injeta o SDK dentro do drawer para ficar contido lateralmente
-    script.setAttribute('data-container', '#memed-drawer-body');
     script.src = 'https://partners.memed.com.br/integration.js';
 
     script.onload = () => {
@@ -1382,6 +1393,24 @@ async function abrirMemed() {
         });
 
         MdHub.module.show('plataforma.prescricao');
+
+        // Intercepta o elemento que o Memed injeta no body e move pro drawer
+        const drawer = document.getElementById('memed-drawer-body');
+        const loading = document.getElementById('memed-drawer-loading');
+        const observer = new MutationObserver(() => {
+          // O Memed injeta um elemento com id/class contendo 'sinapse' ou 'memed' no body
+          const memedEl = document.querySelector('body > [id*="sinapse"], body > [id*="memed"], body > [class*="sinapse"], body > [class*="SinapseP"], body > div[style*="z-index: 9"]');
+          if (memedEl && memedEl.parentNode === document.body) {
+            observer.disconnect();
+            // Guarda estilos originais para restaurar ao fechar
+            memedEl._origStyle = memedEl.getAttribute('style') || '';
+            // Remove posicionamento fixo/absoluto que o Memed coloca
+            memedEl.style.cssText = 'width:100%;height:100%;position:relative;top:auto;left:auto;right:auto;bottom:auto;z-index:1;overflow:auto';
+            drawer.appendChild(memedEl);
+            if (loading) loading.style.display = 'none';
+          }
+        });
+        observer.observe(document.body, { childList: true, subtree: false });
 
         // Eventos — salva tudo detalhado no prontuário
         MdHub.event.add('prescricaoImpressa', async (ev) => {
