@@ -293,6 +293,18 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
   /* Cards de agendamento no mobile */
   .btn-iniciar-agora{width:100%;justify-content:center;padding:10px}
 
+  /* Histórico mobile — scroll suave e padding adequado */
+  .hist-card{padding:14px 16px;margin-bottom:10px}
+  .hist-card-nome{font-size:.95rem}
+  
+  /* Botão voltar ao histórico mais visível no mobile */
+  .btn-voltar-hist{
+    width:100%;justify-content:center;
+    padding:13px;font-size:.85rem;
+    background:rgba(255,255,255,.04);
+    margin-bottom:16px;
+  }
+
   /* Toast no topo no mobile */
   .toast{bottom:auto;top:72px;right:12px;left:12px;text-align:center}
 
@@ -1148,10 +1160,27 @@ function abrirHistoricoAtendimento(idx) {
   const a=histData[idx]; if (!a) return;
   clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval);
   modoHistorico=true; atendimentoAtual=a;
+  // Fechar sidebar no mobile ao abrir histórico
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) sidebar.classList.remove('open');
+  // Esconder FAB no histórico
+  const fab = document.getElementById('fab-fila');
+  if (fab) fab.style.display='none';
   renderPainelAtendimento(); renderEstado();
   histVisible=false; document.getElementById('hist-lista').style.display='none';
+  // Scroll para o topo do main
+  const main = document.getElementById('main-content');
+  if (main) main.scrollTop = 0;
+  window.scrollTo(0,0);
 }
-function fecharHistoricoAtendimento() { atendimentoAtual=null; modoHistorico=false; renderEstado(); buscarHistorico(); }
+function fecharHistoricoAtendimento() { 
+  atendimentoAtual=null; modoHistorico=false; renderEstado(); buscarHistorico();
+  // Mostrar FAB de volta
+  const fab = document.getElementById('fab-fila');
+  if (fab) fab.style.display='';
+  // Scroll para o topo
+  window.scrollTo(0,0);
+}
 
 let toastTimer=null;
 function mostrarToast(msg, tipo='info') {
