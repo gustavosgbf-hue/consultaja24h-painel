@@ -120,16 +120,7 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
 /* ── PAINEL LATERAL MEMED ─────────────────────────────────── */
 /* Header nosso que fica fixo no topo direito */
-#memed-drawer{position:fixed;top:var(--nav-h);right:0;width:min(520px,100vw);z-index:10001;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);pointer-events:none}
-#memed-drawer.aberto{transform:translateX(0);pointer-events:auto}
-#memed-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#07100d;border-bottom:1px solid rgba(255,255,255,.08);border-left:1px solid rgba(255,255,255,.08);box-shadow:-4px 0 20px rgba(0,0,0,.4)}
-#memed-drawer-title{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.04em}
-#memed-drawer-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color .2s;line-height:1}
-#memed-drawer-close:hover{color:#ff8080}
-#memed-drawer-body{display:none}
-#memed-drawer-loading{position:fixed;top:calc(var(--nav-h) + 44px);right:0;width:min(520px,100vw);height:calc(100vh - var(--nav-h) - 44px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f5f5f5;z-index:10000}
-#memed-drawer-loading .memed-spinner{width:32px;height:32px;border:3px solid #e0e0e0;border-top-color:#b4e05a;border-radius:50%;animation:memedSpin .8s linear infinite}
-#memed-drawer-loading p{font-size:.85rem;color:#666;font-family:'Outfit',sans-serif}
+
 @keyframes memedSpin{to{transform:rotate(360deg)}}
 /* Quando Memed aberto: força elemento dele a ficar no canto direito */
 body.memed-aberto > [id*="sinapse"],
@@ -1299,15 +1290,22 @@ function irParaAba(aba) {
   }, 200);
 }
 
+function fecharMemedLoading() {
+  // Chamado quando SDK confirma que está pronto
+  const bar = document.getElementById('memed-atalhos');
+  if (bar) bar.classList.add('visivel');
+}
+
 function abrirMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.add('ativo');
   document.body.classList.add('memed-aberto');
-  // Mostra barra de atalhos com pequeno delay (Memed ainda abrindo)
+  // Barra de atalhos aparece quando SDK confirma (fecharMemedLoading)
+  // Fallback: mostra depois de 5s mesmo se SDK demorar
   setTimeout(() => {
     const bar = document.getElementById('memed-atalhos');
     if (bar) bar.classList.add('visivel');
-  }, 600);
+  }, 5000);
 }
 
 async function salvarPrescricaoNoProntuario(dados) {
@@ -1346,43 +1344,52 @@ async function abrirMemed() {
   const btn = document.getElementById('btn-memed');
   if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
 
-  // Se SDK já está carregado, só abre o drawer novamente sem recarregar
+  // SDK já carregado — reabre sem recarregar script (rápido)
   if (memedCarregado) {
     try {
+      // Atualiza paciente caso seja um atendimento diferente
+      const pac = atendimentoAtual;
+      const partes = (pac.nome||'').trim().split(' ');
+      await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+        idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
+        nome: partes[0] || '',
+        sobrenome: partes.slice(1).join(' ') || '',
+        cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
+        email: pac.email || undefined,
+        telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
+        data_nascimento: pac.data_nascimento || undefined,
+        sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
+      });
       MdHub.module.show('plataforma.prescricao');
       abrirMemedDrawer();
-      document.getElementById('memed-drawer-loading').style.display = 'none';
-    } catch(e) { memedCarregado = false; }
-    if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-    if (memedCarregado) return;
+      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+      return;
+    } catch(e) {
+      // SDK corrompido — recarrega
+      memedCarregado = false;
+      const s = document.getElementById('memed-script');
+      if (s) s.remove();
+    }
   }
 
   try {
-    // 1. Token (sempre renovado)
-    memedToken = null;
+    // 1. Busca token do médico no backend
     const res = await fetch(`${API}/api/memed/token`, {
       headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     const data = await res.json();
     if (!data.ok || !data.token) {
       if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-      window.open('https://app.memed.com.br', '_blank');
-      mostrarToast('Abrindo Memed em nova aba','info');
+      mostrarToast('Não foi possível carregar a prescrição','error');
       return;
     }
     memedToken = data.token;
 
-    // Abre o drawer imediatamente com loading — sem esperar o SDK
+    // Mostra loading imediato
     abrirMemedDrawer();
-    document.getElementById('memed-drawer-loading').style.display = 'flex';
     if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
 
-    // 2. Remove script anterior
-    const scriptAntigo = document.getElementById('memed-script');
-    if (scriptAntigo) scriptAntigo.remove();
-    memedCarregado = false;
-
-    // 3. Carrega SDK
+    // 2. Carrega SDK (uma única vez por sessão)
     const script = document.createElement('script');
     script.id = 'memed-script';
     script.type = 'text/javascript';
@@ -1396,7 +1403,8 @@ async function abrirMemed() {
       MdSinapsePrescricao.event.add('core:moduleInit', async (module) => {
         if (module.name !== 'plataforma.prescricao') return;
 
-        document.getElementById('memed-drawer-loading').style.display = 'none';
+        // Esconde loading
+        fecharMemedLoading();
 
         await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
           historyPrescription: true,
@@ -1419,17 +1427,7 @@ async function abrirMemed() {
 
         MdHub.module.show('plataforma.prescricao');
 
-        // Esconde loading assim que o elemento do Memed aparecer no DOM
-        const loadingEl = document.getElementById('memed-drawer-loading');
-        const visObs = new MutationObserver(() => {
-          const memedEl = document.querySelector('body > [id*="sinapse"], body > [id*="SinapseP"], body > [class*="SinapseP"]');
-          if (memedEl) { visObs.disconnect(); if (loadingEl) loadingEl.style.display = 'none'; }
-        });
-        visObs.observe(document.body, { childList: true, subtree: true });
-        // Fallback: esconde loading após 4s de qualquer forma
-        setTimeout(() => { if (loadingEl) loadingEl.style.display = 'none'; }, 4000);
-
-        // Eventos — salva tudo detalhado no prontuário
+        // Eventos — salva detalhado no prontuário
         MdHub.event.add('prescricaoImpressa', async (ev) => {
           const p = ev?.prescricao || ev || {};
           await salvarPrescricaoNoProntuario({
@@ -1573,18 +1571,6 @@ return val;
   <button class="ma-btn" onclick="irParaAba('prontuario')">📄 Prontuário</button>
   <div class="ma-sep"></div>
   <button class="ma-btn" onclick="fecharMemedDrawer()" style="color:rgba(255,255,255,.4);border-color:transparent;background:none;font-size:.75rem">✕ fechar</button>
-</div>
-<div id="memed-drawer">
-  <div id="memed-drawer-header">
-    <span id="memed-drawer-title">💊 Prescrição Digital · <span id="memed-drawer-paciente"></span></span>
-    <button id="memed-drawer-close" onclick="fecharMemedDrawer()" title="Fechar">✕</button>
-  </div>
-  <div id="memed-drawer-body">
-    <div id="memed-drawer-loading">
-      <div class="memed-spinner"></div>
-      <p>Carregando Memed...</p>
-    </div>
-  </div>
 </div>
 </body>
 </html>
