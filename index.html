@@ -1244,57 +1244,84 @@ async function abrirMemed() {
 
     script.onload = () => {
       memedCarregado = true;
-      // 4. Configurar features
-      MdHub.command.send('plataforma.sinapse-prescricao', 'setFeatureToggle', {
-        historyPrescription: false,
-        dropdownSync: false,
-        buttonClose: true,
-        allowShareModal: true
-      });
 
-      // 5. Dados do paciente
-      const pac = atendimentoAtual;
-      const [nome,...sobArr] = (pac.nome||'').split(' ');
-      MdHub.command.send('plataforma.sinapse-prescricao', 'setPaciente', {
-        nome: nome || pac.nome,
-        sobrenome: sobArr.join(' ') || '',
-        cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
-        telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
-        data_nascimento: pac.data_nascimento || undefined,
-        sexo: pac.sexo==='F'?'F':pac.sexo==='M'?'M':undefined
-      });
+      // 4. Aguardar módulo inicializar antes de enviar comandos
+      MdSinapsePrescricao.event.add('core:moduleInit', async (module) => {
+        if (module.name !== 'plataforma.prescricao') return;
 
-      // 6. Mostrar plataforma
-      MdHub.command.send('plataforma.sinapse-prescricao', 'setPrescriptionType', 'whitelist');
-      MdHub.module.show('plataforma.sinapse-prescricao');
+        // 5. Dados do paciente
+        const pac = atendimentoAtual;
+        const partes = (pac.nome||'').trim().split(' ');
+        const nomePac = partes[0] || '';
+        const sobrenomePac = partes.slice(1).join(' ') || '';
+        const cpfLimpo = (pac.cpf||'').replace(/\D/g,'') || undefined;
+        const telLimpo = (pac.tel||'').replace(/\D/g,'') || undefined;
+        const nascimento = pac.data_nascimento || undefined;
+        const sexo = pac.sexo==='F'?'F':pac.sexo==='M'?'M':undefined;
 
-      // 7. Ouvir prescrição finalizada
-      MdHub.event.add('prescricaoImpressa', async (data) => {
-        const link = data?.prescricao?.link || '';
-        if (link && atendimentoAtual) {
-          // Salvar link no prontuário
-          try {
-            const obs = `[Receita Memed]: ${link}`;
-            // Appends receita link to existing prontuario text
-            const prontAtual = atendimentoAtual.prontuario || '';
-            const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
-            await fetch(`${API}/api/atendimento/prontuario`, {
-              method: 'POST',
-              headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${localStorage.getItem('token')}` },
-              body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
-            });
-            if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
-            mostrarToast('Receita salva no prontuário','success');
-          } catch(e) {}
+        await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+          nome: nomePac,
+          sobrenome: sobrenomePac,
+          cpf: cpfLimpo,
+          telefone: telLimpo,
+          data_nascimento: nascimento,
+          sexo
+        });
+
+        // 6. Alergias do paciente (se tiver)
+        if (pac.alergias && pac.alergias !== '—' && pac.alergias !== 'Nenhuma') {
+          // passa como texto livre — Memed aceita string no lugar do array de IDs
+          await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+            historyPrescription: true,
+            buttonClose: true,
+            allowShareModal: true
+          });
+        } else {
+          await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+            historyPrescription: true,
+            buttonClose: true,
+            allowShareModal: true
+          });
         }
-      });
 
-      // 8. Fechar Memed
-      MdHub.event.add('core:moduleHide', () => {
-        const s = document.getElementById('memed-script');
-        if (s) s.remove();
-        memedCarregado = false;
+        // 7. Local de trabalho
+        await MdHub.command.send('plataforma.prescricao', 'setWorkplace', {
+          city: 'São Luís',
+          state: 'MA',
+          local_name: 'ConsultaJá24h'
+        });
+
+        // 8. Mostrar plataforma
+        MdHub.module.show('plataforma.prescricao');
+
         if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+
+        // 9. Ouvir prescrição finalizada
+        MdHub.event.add('prescricaoImpressa', async (data) => {
+          const link = data?.prescricao?.link || '';
+          if (link && atendimentoAtual) {
+            try {
+              const obs = `[Receita Memed]: ${link}`;
+              const prontAtual = atendimentoAtual.prontuario || '';
+              const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
+              await fetch(`${API}/api/atendimento/prontuario`, {
+                method: 'POST',
+                headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${localStorage.getItem('token')}` },
+                body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
+              });
+              if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+              mostrarToast('Receita salva no prontuário ✓','success');
+            } catch(e) {}
+          }
+        });
+
+        // 10. Fechar Memed
+        MdSinapsePrescricao.event.add('core:moduleHide', (mod) => {
+          if (mod.moduleName === 'plataforma.prescricao') {
+            memedCarregado = false;
+            if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+          }
+        });
       });
     };
 
