@@ -137,6 +137,11 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 #chat-pip-header .pip-btn{width:22px;height:22px;border-radius:6px;border:none;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
 #chat-pip-header .pip-btn:hover{background:rgba(255,255,255,.13);color:#fff}
 #chat-pip-msgs{height:200px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent}
+/* Mensagens dentro do PiP — tamanho compacto */
+#chat-pip-msgs .cmsg .bub{font-size:.75rem;padding:7px 10px;line-height:1.5}
+#chat-pip-msgs .cmsg .av{width:22px;height:22px;font-size:.65rem}
+#chat-pip-msgs .cmsg .ts{font-size:.55rem}
+#chat-pip-msgs .msg-arquivo-img{max-width:140px;max-height:120px}
 #chat-pip.minimizado #chat-pip-msgs,#chat-pip.minimizado #chat-pip-input{display:none}
 #chat-pip-msgs::-webkit-scrollbar{width:3px}
 #chat-pip-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
@@ -805,7 +810,13 @@ const criado=p.criado_em||new Date().toISOString();
 const mins=Math.floor((Date.now()-new Date(criado))/60000);
 const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
 const isAtual=atendimentoAtual&&!modoHistorico&&String(atendimentoAtual.id)===String(p.id);
-const meuAssumido=p.status==='assumido'&&!isAtual&&medico&&String(p.medico_id)===String(medico.id);
+// meuAssumido: assumido por mim mas não é o atendimento ativo agora
+// compara medico_id como string E como número para evitar mismatch de tipo
+const meuMedId = medico ? String(medico.id) : '';
+const meuAssumido=p.status==='assumido'&&!isAtual&&medico&&(
+  String(p.medico_id)===meuMedId ||
+  (p.medico_nome && medico.nome && p.medico_nome.trim()===medico.nome.trim())
+);
 const assumido=p.status==='assumido'&&!isAtual&&!meuAssumido;
 const isAdmin=!!sessionStorage.getItem('adminPwd');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
@@ -1261,24 +1272,34 @@ else mostrarToast(d.error||'Erro ao encerrar','error');
 }
 
 function abrirModalEncerrar() {
+if (!atendimentoAtual) { mostrarToast('Nenhum atendimento ativo para encerrar.','error'); return; }
 document.getElementById('modal-encerrar').classList.add('open');
 document.querySelectorAll('#rg-status .radio-opt').forEach(r=>r.classList.remove('selected'));
 document.querySelectorAll('#cg-docs .check-opt').forEach(c=>c.classList.remove('selected'));
+// Pre-seleciona "Atendido" por padrão
+const primeiroStatus = document.querySelector('#rg-status .radio-opt');
+if (primeiroStatus) primeiroStatus.classList.add('selected');
 }
 function fecharModal() { document.getElementById('modal-encerrar').classList.remove('open'); }
 function selectRadio(el) { el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(r=>r.classList.remove('selected')); el.classList.add('selected'); }
 function toggleCheck(el) { el.classList.toggle('selected'); }
 
 async function confirmarEncerramento() {
+if (!atendimentoAtual) { mostrarToast('Nenhum atendimento ativo.','error'); fecharModal(); return; }
 const statusEl=document.querySelector('#rg-status .radio-opt.selected');
 if (!statusEl) { mostrarToast('Selecione o status do atendimento.','error'); return; }
-const statusTexto=statusEl.querySelector('.radio-text').textContent;
+const statusTexto=statusEl.querySelector('.radio-text').textContent.trim();
 const docs=[...document.querySelectorAll('#cg-docs .check-opt.selected')].map(el=>el.textContent.trim()).join(', ')||'Nenhum';
+const filaId = atendimentoAtual.id;
 clearInterval(chatInterval); chatAtivo=false; esconderChatPip();
-if (prontAtual.trim()) await salvarProntuarioAgora(prontAtual);
-try { await fetch(`${API}/api/atendimento/encerrar`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,status:statusTexto,documentos_emitidos:docs})}); } catch(e) {}
+try { if (prontAtual && prontAtual.trim()) await salvarProntuarioAgora(prontAtual); } catch(e) {}
+try {
+  const r = await fetch(`${API}/api/atendimento/encerrar`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId,status:statusTexto,documentos_emitidos:docs})});
+  const d = await r.json();
+  if (!d.ok) { mostrarToast('Erro ao encerrar: '+(d.error||'tente novamente'),'error'); return; }
+} catch(e) { mostrarToast('Erro de conexão ao encerrar.','error'); return; }
 clearInterval(timerInterval);
-filaData=filaData.filter(p=>String(p.id)!==String(atendimentoAtual.id));
+filaData=filaData.filter(p=>String(p.id)!==String(filaId));
 atendimentoAtual=null; modoHistorico=false; sessionStorage.removeItem('atendimentoAtual');
 fecharModal(); buscarHistorico(); renderFila(); renderEstado();
 mostrarToast('Atendimento encerrado','success');
