@@ -1228,17 +1228,24 @@ let memedToken = null; // sempre renovado a cada clique
 async function abrirMemed() {
   if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
   const btn = document.getElementById('btn-memed');
+
+  // Tenta integração completa primeiro; se falhar, abre site do Memed em nova aba
   if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
 
   try {
     // 1. Obter token do médico
-    // Sempre busca token novo (tokens Memed expiram)
     memedToken = null;
     const res = await fetch(`${API}/api/memed/token`, {
       headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     const data = await res.json();
-    if (!data.ok || !data.token) throw new Error(data.error || 'Token indisponível');
+    if (!data.ok || !data.token) {
+      // Token indisponível — abre site do Memed em nova aba
+      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+      window.open('https://app.memed.com.br', '_blank');
+      mostrarToast('Abrindo Memed em nova aba','info');
+      return;
+    }
     memedToken = data.token;
 
     // 2. Remover script anterior se houver
@@ -1340,7 +1347,8 @@ async function abrirMemed() {
     document.head.appendChild(script);
 
   } catch(e) {
-    mostrarToast('Erro Memed: ' + e.message, 'error');
+    window.open('https://app.memed.com.br', '_blank');
+    mostrarToast('Abrindo Memed em nova aba','info');
     if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
   }
 }
