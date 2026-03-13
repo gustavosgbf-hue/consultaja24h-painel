@@ -194,7 +194,7 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .modal-field{margin-bottom:18px}
 .modal-field label{display:block;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
 .radio-group{display:flex;flex-direction:column;gap:8px}
-.radio-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1px solid var(–line);background:var(–card);cursor:pointer;transition:all .2s}
+.radio-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1px solid var(–line);background:var(–card);cursor:pointer;transition:all .2s;color:rgba(255,255,255,.75)}
 .radio-opt.selected{border-color:rgba(94,224,160,.35);background:rgba(94,224,160,.06)}
 .radio-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);flex-shrink:0;transition:all .2s}
 .radio-opt.selected .radio-dot{border-color:var(–g2);background:var(–g2)}
@@ -1252,8 +1252,10 @@ headers: { 'Authorization': `Bearer ${getToken()}` }
 });
 const data = await res.json();
 if (!data.ok || !data.token) {
+// Token indisponível — abre site do Memed em nova aba
 if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-mostrarToast('Erro ao obter token Memed: ' + (data.error||'tente novamente'), 'error');
+window.open('https://memed.com.br/plataforma/', '_blank');
+mostrarToast('Abrindo Memed em nova aba','info');
 return;
 }
 memedToken = data.token;
@@ -1357,7 +1359,8 @@ script.onerror = () => {
 document.head.appendChild(script);
 
 } catch(e) {
-mostrarToast('Erro ao carregar Memed: ' + e.message, 'error');
+window.open('https://app.memed.com.br', '_blank');
+mostrarToast('Abrindo Memed em nova aba','info');
 if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
 }
 }
