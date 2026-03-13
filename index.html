@@ -250,6 +250,7 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
   }
 
   /* Título da sidebar como botão de toggle */
+  #btn-fechar-sidebar{display:block!important}
   .sidebar-title:first-of-type{
     cursor:pointer;
     font-size:.78rem;
@@ -382,7 +383,10 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
   </nav>
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-title">Fila de pacientes <span class="fila-count" id="fila-count">0</span></div>
+      <div class="sidebar-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Fila de pacientes <span class="fila-count" id="fila-count">0</span></span>
+        <button onclick="toggleSidebarMobile()" style="display:none;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1" id="btn-fechar-sidebar">✕</button>
+      </div>
       <div id="fila-lista"><div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><p>Nenhum paciente<br>aguardando atendimento</p></div></div>
       <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">📅 Agendamentos <span class="fila-count" id="agend-count">0</span></div>
       <div id="agend-lista" style="display:none"></div>
@@ -755,6 +759,8 @@ async function assumirAtendimento(id, evt) {
 }
 
 function renderPainelAtendimento() {
+  // Fechar sidebar no mobile ao entrar em atendimento
+  if (isMobile()) { const s=document.querySelector('.sidebar'); if(s) s.classList.remove('open'); }
   const p=atendimentoAtual; if (!p) return;
   const nome=p.nome||'—', tel=p.tel||'', tipo=p.tipo||'chat';
   document.getElementById('atend-nome').textContent=nome;
