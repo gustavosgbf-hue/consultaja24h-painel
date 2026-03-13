@@ -398,6 +398,11 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
         <input type="text" id="admin-hist-busca" placeholder="Buscar paciente/CPF/tel..." oninput="carregarHistoricoGeral()" style="background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:6px 8px;font-size:.78rem;width:100%;box-sizing:border-box">
       </div>
       <div id="admin-hist-lista" style="display:none"></div>
+      <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleBuscaPacientes()">🔍 Buscar pacientes</div>
+      <div id="busca-pacientes-section" style="display:none;padding:8px 0">
+        <input type="text" id="busca-paciente-input" placeholder="Nome, CPF ou telefone..." oninput="buscarPacientes()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;color:#eee;font-family:'Outfit',sans-serif;font-size:.78rem;box-sizing:border-box;margin-bottom:6px"/>
+        <div id="busca-paciente-resultado"></div>
+      </div>
       <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">📋 Meu histórico <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span></div>
       <div id="hist-lista" style="display:none"></div>
     </aside>
@@ -1351,6 +1356,69 @@ async function abrirMemed() {
     mostrarToast('Abrindo Memed em nova aba','info');
     if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
   }
+}
+
+
+// ── BUSCA DE PACIENTES ────────────────────────────────────────────────────────
+let buscaPacientesVisible = false, buscaTimer = null;
+
+function toggleBuscaPacientes() {
+  buscaPacientesVisible = !buscaPacientesVisible;
+  const sec = document.getElementById('busca-pacientes-section');
+  sec.style.display = buscaPacientesVisible ? 'block' : 'none';
+  if (buscaPacientesVisible) {
+    document.getElementById('busca-paciente-input').focus();
+  } else {
+    document.getElementById('busca-paciente-resultado').innerHTML = '';
+    document.getElementById('busca-paciente-input').value = '';
+  }
+}
+
+async function buscarPacientes() {
+  clearTimeout(buscaTimer);
+  const q = document.getElementById('busca-paciente-input').value.trim();
+  const res_div = document.getElementById('busca-paciente-resultado');
+  if (q.length < 2) { res_div.innerHTML = ''; return; }
+  res_div.innerHTML = '<div style="color:var(--muted);font-size:.75rem;padding:6px 0">Buscando...</div>';
+  buscaTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`${API}/api/pacientes/busca?q=${encodeURIComponent(q)}`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (!data.ok || !data.pacientes.length) {
+        res_div.innerHTML = '<div style="color:var(--muted);font-size:.75rem;padding:6px 0">Nenhum paciente encontrado.</div>';
+        return;
+      }
+      // Agrupa por CPF/nome
+      const grupos = {};
+      data.pacientes.forEach(a => {
+        const key = a.cpf || a.nome;
+        if (!grupos[key]) grupos[key] = { nome: a.nome, cpf: a.cpf, tel: a.tel, atendimentos: [] };
+        grupos[key].atendimentos.push(a);
+      });
+      res_div.innerHTML = Object.values(grupos).map(g => `
+        <div style="border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:8px;overflow:hidden">
+          <div style="padding:10px 12px;background:rgba(255,255,255,.04);cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+            <div style="font-weight:600;font-size:.82rem">${g.nome}</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:2px">CPF: ${g.cpf||'—'} · Tel: ${g.tel||'—'} · ${g.atendimentos.length} atendimento(s)</div>
+          </div>
+          <div style="display:none">
+            ${g.atendimentos.map(a => {
+              const dt = a.encerrado_em ? new Date(a.encerrado_em).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+              return `<div style="padding:8px 12px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.04)'" onmouseout="this.style.background=''" onclick="abrirAtendimentoHistorico(${a.id})">
+                <div style="font-size:.75rem;font-weight:600">${dt}</div>
+                <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${a.queixa||a.triagem?.substring(0,60)||'—'}</div>
+                ${a.prontuario_salvo ? '<div style="font-size:.68rem;color:var(--g2);margin-top:3px">📄 Prontuário salvo</div>' : ''}
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+    } catch(e) {
+      res_div.innerHTML = '<div style="color:#ff8080;font-size:.75rem;padding:6px 0">Erro ao buscar.</div>';
+    }
+  }, 400);
 }
 
 function toggleHistorico() { histVisible=!histVisible; document.getElementById('hist-lista').style.display=histVisible?'block':'none'; if(histVisible) buscarHistorico(); }
