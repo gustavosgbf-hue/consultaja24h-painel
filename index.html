@@ -1252,10 +1252,8 @@ headers: { 'Authorization': `Bearer ${getToken()}` }
 });
 const data = await res.json();
 if (!data.ok || !data.token) {
-// Token indisponível — abre site do Memed em nova aba
 if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-window.open('https://memed.com.br/plataforma/', '_blank');
-mostrarToast('Abrindo Memed em nova aba','info');
+mostrarToast('Erro ao obter token Memed: ' + (data.error||'tente novamente'), 'error');
 return;
 }
 memedToken = data.token;
@@ -1359,8 +1357,7 @@ script.onerror = () => {
 document.head.appendChild(script);
 
 } catch(e) {
-window.open('https://app.memed.com.br', '_blank');
-mostrarToast('Abrindo Memed em nova aba','info');
+mostrarToast('Erro ao carregar Memed: ' + e.message, 'error');
 if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
 }
 }
