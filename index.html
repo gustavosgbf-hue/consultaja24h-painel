@@ -1257,7 +1257,7 @@ async function abrirMemed() {
     script.onload = () => {
       memedCarregado = true;
       // 4. Configurar features
-      MdHub.command.send('plataforma.sinapse-prescricao', 'setFeatureToggle', {
+      MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
         historyPrescription: false,
         dropdownSync: false,
         buttonClose: true,
@@ -1267,29 +1267,29 @@ async function abrirMemed() {
       // 5. Dados do paciente
       const pac = atendimentoAtual;
       const [nome,...sobArr] = (pac.nome||'').split(' ');
-      MdHub.command.send('plataforma.sinapse-prescricao', 'setPaciente', {
+      MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+        idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
         nome: nome || pac.nome,
         sobrenome: sobArr.join(' ') || '',
         cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
+        email: pac.email || undefined,
         telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
         data_nascimento: pac.data_nascimento || undefined,
-        sexo: pac.sexo==='F'?'F':pac.sexo==='M'?'M':undefined
+        sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
       });
 
       // 6. Mostrar plataforma
-      MdHub.command.send('plataforma.sinapse-prescricao', 'setPrescriptionType', 'whitelist');
-      MdHub.module.show('plataforma.sinapse-prescricao');
+      MdHub.module.show('plataforma.prescricao');
 
-      // 7. Ouvir prescrição finalizada (remove listener antigo antes de adicionar)
+      // 7. Ouvir prescrição finalizada (remove listeners antigos antes de adicionar)
       MdHub.event.remove('prescricaoImpressa');
+      MdHub.event.remove('prescricaoExcluida');
       MdHub.event.remove('core:moduleHide');
       MdHub.event.add('prescricaoImpressa', async (data) => {
         const link = data?.prescricao?.link || '';
         if (link && atendimentoAtual) {
-          // Salvar link no prontuário
           try {
             const obs = `[Receita Memed]: ${link}`;
-            // Appends receita link to existing prontuario text
             const prontAtual = atendimentoAtual.prontuario || '';
             const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
             await fetch(`${API}/api/atendimento/prontuario`, {
@@ -1299,6 +1299,26 @@ async function abrirMemed() {
             });
             if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
             mostrarToast('Receita salva no prontuário','success');
+          } catch(e) {}
+        }
+      });
+
+      // Prescrição excluída — remove link do prontuário se existir
+      MdHub.event.add('prescricaoExcluida', async (data) => {
+        const link = data?.prescricao?.link || '';
+        if (link && atendimentoAtual && atendimentoAtual.prontuario) {
+          try {
+            const novoPront = atendimentoAtual.prontuario
+              .split('\n\n')
+              .filter(l => !l.includes(link))
+              .join('\n\n');
+            await fetch(`${API}/api/atendimento/prontuario`, {
+              method: 'POST',
+              headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
+              body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
+            });
+            if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+            mostrarToast('Receita excluída do prontuário','info');
           } catch(e) {}
         }
       });
