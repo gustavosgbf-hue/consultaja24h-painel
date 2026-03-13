@@ -1280,7 +1280,9 @@ async function abrirMemed() {
       MdHub.command.send('plataforma.sinapse-prescricao', 'setPrescriptionType', 'whitelist');
       MdHub.module.show('plataforma.sinapse-prescricao');
 
-      // 7. Ouvir prescrição finalizada
+      // 7. Ouvir prescrição finalizada (remove listener antigo antes de adicionar)
+      MdHub.event.remove('prescricaoImpressa');
+      MdHub.event.remove('core:moduleHide');
       MdHub.event.add('prescricaoImpressa', async (data) => {
         const link = data?.prescricao?.link || '';
         if (link && atendimentoAtual) {
