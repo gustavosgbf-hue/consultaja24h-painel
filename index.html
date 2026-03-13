@@ -122,23 +122,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 /* Header nosso que fica fixo no topo direito */
 
 @keyframes memedSpin{to{transform:rotate(360deg)}}
-/* Quando Memed aberto: força elemento dele a ficar no canto direito */
-body.memed-aberto > [id*="sinapse"],
-body.memed-aberto > [id*="memed-module"],
-body.memed-aberto > div[class*="SinapseP"],
-body.memed-aberto > div[style*="z-index: 999"],
-body.memed-aberto > div[style*="z-index:999"]{
-  position:fixed !important;
-  top:calc(var(--nav-h) + 44px) !important;
-  right:0 !important;
-  left:auto !important;
-  width:min(520px,100vw) !important;
-  height:calc(100vh - var(--nav-h) - 44px) !important;
-  max-width:min(520px,100vw) !important;
-  z-index:10000 !important;
-  border-left:1px solid rgba(0,0,0,.1) !important;
-  box-shadow:-8px 0 40px rgba(0,0,0,.45) !important;
-}
 #memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
 /* Barra flutuante de atalhos quando Memed está aberto */
@@ -1300,12 +1283,9 @@ function abrirMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.add('ativo');
   document.body.classList.add('memed-aberto');
-  // Barra de atalhos aparece quando SDK confirma (fecharMemedLoading)
-  // Fallback: mostra depois de 5s mesmo se SDK demorar
-  setTimeout(() => {
-    const bar = document.getElementById('memed-atalhos');
-    if (bar) bar.classList.add('visivel');
-  }, 5000);
+  // Barra aparece junto — SDK já confirmou que modal está na tela
+  const bar = document.getElementById('memed-atalhos');
+  if (bar) setTimeout(() => bar.classList.add('visivel'), 400);
 }
 
 async function salvarPrescricaoNoProntuario(dados) {
@@ -1384,9 +1364,6 @@ async function abrirMemed() {
       return;
     }
     memedToken = data.token;
-
-    // Mostra loading imediato
-    abrirMemedDrawer();
     if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
 
     // 2. Carrega SDK (uma única vez por sessão)
@@ -1403,9 +1380,7 @@ async function abrirMemed() {
       MdSinapsePrescricao.event.add('core:moduleInit', async (module) => {
         if (module.name !== 'plataforma.prescricao') return;
 
-        // Esconde loading
-        fecharMemedLoading();
-
+        // SDK pronto — configura e abre
         await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
           historyPrescription: true,
           buttonClose: true,
@@ -1426,6 +1401,7 @@ async function abrirMemed() {
         });
 
         MdHub.module.show('plataforma.prescricao');
+        abrirMemedDrawer();
 
         // Eventos — salva detalhado no prontuário
         MdHub.event.add('prescricaoImpressa', async (ev) => {
