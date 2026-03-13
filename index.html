@@ -1271,83 +1271,85 @@ script.id = 'memed-script';
 script.type = 'text/javascript';
 script.setAttribute('data-color', '#b4e05a');
 script.setAttribute('data-token', memedToken);
-script.src = 'https://integrations.memed.com.br/modulos/plataforma.sinapse-prescricao/build/sinapse-prescricao.min.js';
+script.src = 'https://partners.memed.com.br/integration.js';
 
 script.onload = () => {
   memedCarregado = true;
-  // 4. Configurar features
-  MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
-    historyPrescription: false,
-    dropdownSync: false,
-    buttonClose: true,
-    allowShareModal: true
-  });
 
-  // 5. Dados do paciente
-  const pac = atendimentoAtual;
-  const [nome,...sobArr] = (pac.nome||'').split(' ');
-  MdHub.command.send('plataforma.prescricao', 'setPaciente', {
-    idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
-    nome: nome || pac.nome,
-    sobrenome: sobArr.join(' ') || '',
-    cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
-    email: pac.email || undefined,
-    telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
-    data_nascimento: pac.data_nascimento || undefined,
-    sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
-  });
+  // 4. Aguarda módulo inicializar — obrigatório conforme doc Memed
+  MdSinapsePrescricao.event.add('core:moduleInit', async (module) => {
+    if (module.name !== 'plataforma.prescricao') return;
 
-  // 6. Mostrar plataforma
-  MdHub.module.show('plataforma.prescricao');
+    // 5. Features
+    await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+      historyPrescription: true,
+      buttonClose: true,
+      allowShareModal: true
+    });
 
-  // 7. Ouvir prescrição finalizada (remove listeners antigos antes de adicionar)
-  MdHub.event.remove('prescricaoImpressa');
-  MdHub.event.remove('prescricaoExcluida');
-  MdHub.event.remove('core:moduleHide');
-  MdHub.event.add('prescricaoImpressa', async (data) => {
-    const link = data?.prescricao?.link || '';
-    if (link && atendimentoAtual) {
-      try {
-        const obs = `[Receita Memed]: ${link}`;
-        const prontAtual = atendimentoAtual.prontuario || '';
-        const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
-        await fetch(`${API}/api/atendimento/prontuario`, {
-          method: 'POST',
-          headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
-          body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
-        });
-        if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
-        mostrarToast('Receita salva no prontuário','success');
-      } catch(e) {}
-    }
-  });
+    // 6. Dados do paciente
+    const pac = atendimentoAtual;
+    const partes = (pac.nome||'').trim().split(' ');
+    await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+      idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
+      nome: partes[0] || '',
+      sobrenome: partes.slice(1).join(' ') || '',
+      cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
+      email: pac.email || undefined,
+      telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
+      data_nascimento: pac.data_nascimento || undefined,
+      sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
+    });
 
-  // Prescrição excluída — remove link do prontuário se existir
-  MdHub.event.add('prescricaoExcluida', async (data) => {
-    const link = data?.prescricao?.link || '';
-    if (link && atendimentoAtual && atendimentoAtual.prontuario) {
-      try {
-        const novoPront = atendimentoAtual.prontuario
-          .split('\n\n')
-          .filter(l => !l.includes(link))
-          .join('\n\n');
-        await fetch(`${API}/api/atendimento/prontuario`, {
-          method: 'POST',
-          headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
-          body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
-        });
-        if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
-        mostrarToast('Receita excluída do prontuário','info');
-      } catch(e) {}
-    }
-  });
-
-  // 8. Fechar Memed
-  MdHub.event.add('core:moduleHide', () => {
-    const s = document.getElementById('memed-script');
-    if (s) s.remove();
-    memedCarregado = false;
+    // 7. Mostrar plataforma
+    MdHub.module.show('plataforma.prescricao');
     if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+
+    // 8. Eventos de prescrição
+    MdHub.event.add('prescricaoImpressa', async (data) => {
+      const link = data?.prescricao?.link || '';
+      if (link && atendimentoAtual) {
+        try {
+          const obs = `[Receita Memed]: ${link}`;
+          const prontAtual = atendimentoAtual.prontuario || '';
+          const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
+          await fetch(`${API}/api/atendimento/prontuario`, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
+            body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
+          });
+          if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+          mostrarToast('Receita salva no prontuario','success');
+        } catch(e) {}
+      }
+    });
+
+    MdHub.event.add('prescricaoExcluida', async (data) => {
+      const link = data?.prescricao?.link || '';
+      if (link && atendimentoAtual && atendimentoAtual.prontuario) {
+        try {
+          const novoPront = atendimentoAtual.prontuario
+            .split('\n\n')
+            .filter(l => !l.includes(link))
+            .join('\n\n');
+          await fetch(`${API}/api/atendimento/prontuario`, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
+            body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
+          });
+          if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+          mostrarToast('Receita excluida do prontuario','info');
+        } catch(e) {}
+      }
+    });
+
+    // 9. Fechar Memed
+    MdSinapsePrescricao.event.add('core:moduleHide', (mod) => {
+      if (mod.moduleName === 'plataforma.prescricao') {
+        memedCarregado = false;
+        if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+      }
+    });
   });
 };
 
