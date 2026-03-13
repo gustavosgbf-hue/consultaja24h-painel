@@ -561,7 +561,7 @@ sessionStorage.setItem(‘token’, data.token||’’);
 const adminPwd = document.getElementById(‘inp-admin-pwd’).value;
 if (adminPwd) sessionStorage.setItem(‘adminPwd’, adminPwd);
 entrarApp();
-} catch(e) { err.textContent = ‘Erro ao conectar com o servidor.’; err.style.display=‘block’; }
+} catch(e) { err.textContent = ‘Erro: ’ + e.message; err.style.display=‘block’; }
 finally { btn.disabled=false; btn.textContent=‘Entrar no painel’; }
 }
 document.getElementById(‘inp-senha’).addEventListener(‘keydown’, e => { if(e.key===‘Enter’) fazerLogin(); });
