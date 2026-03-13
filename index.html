@@ -1235,7 +1235,7 @@ async function abrirMemed() {
     // Sempre busca token novo (tokens Memed expiram)
     memedToken = null;
     const res = await fetch(`${API}/api/memed/token`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     const data = await res.json();
     if (!data.ok || !data.token) throw new Error(data.error || 'Token indisponível');
@@ -1294,7 +1294,7 @@ async function abrirMemed() {
             const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
             await fetch(`${API}/api/atendimento/prontuario`, {
               method: 'POST',
-              headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${localStorage.getItem('token')}` },
+              headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
               body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
             });
             if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
@@ -1340,7 +1340,7 @@ async function abrirAtendimentoHistorico(id) {
   // Usado pelo histórico geral do admin - busca atendimento pelo id
   try {
     const res = await fetch(`${API}/api/atendimento/status/${id}`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     const data = await res.json();
     if (!data.ok || !data.atendimento) return mostrarToast('Não encontrado','error');
