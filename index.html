@@ -124,6 +124,29 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 @keyframes memedSpin{to{transform:rotate(360deg)}}
 #memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
+/* ── CHAT PICTURE-IN-PICTURE ─────────────────────────────── */
+#chat-pip{position:fixed;bottom:24px;right:24px;width:320px;z-index:5000;border-radius:18px;overflow:hidden;border:1px solid rgba(94,224,160,.2);background:#0d1a14;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);transform:translateY(120%) scale(.95);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s;display:flex;flex-direction:column}
+#chat-pip.visivel{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+#chat-pip.minimizado{height:52px!important}
+#chat-pip-header{display:flex;align-items:center;gap:8px;padding:11px 14px;background:rgba(94,224,160,.07);border-bottom:1px solid rgba(94,224,160,.12);flex-shrink:0;user-select:none}
+#chat-pip-header .pip-dot{width:7px;height:7px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+#chat-pip-header .pip-title{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.85);flex:1}
+#chat-pip-header .pip-badge{background:rgba(255,95,87,.9);color:#fff;font-size:.65rem;font-weight:700;border-radius:10px;padding:2px 6px;display:none;margin-left:4px}
+#chat-pip-header .pip-badge.visivel{display:inline-block}
+#chat-pip-header .pip-actions{display:flex;gap:4px}
+#chat-pip-header .pip-btn{width:22px;height:22px;border-radius:6px;border:none;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+#chat-pip-header .pip-btn:hover{background:rgba(255,255,255,.13);color:#fff}
+#chat-pip-msgs{height:200px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent}
+#chat-pip.minimizado #chat-pip-msgs,#chat-pip.minimizado #chat-pip-input{display:none}
+#chat-pip-msgs::-webkit-scrollbar{width:3px}
+#chat-pip-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+#chat-pip-input{padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;background:rgba(0,0,0,.2);flex-shrink:0}
+#chat-pip-input textarea{flex:1;padding:8px 12px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#fff;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:300;resize:none;outline:none;min-height:36px;max-height:80px;line-height:1.5;transition:border-color .2s}
+#chat-pip-input textarea:focus{border-color:rgba(94,224,160,.3)}
+#chat-pip-input textarea::placeholder{color:rgba(255,255,255,.2)}
+#chat-pip-send{width:36px;height:36px;border-radius:50%;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .12s}
+#chat-pip-send:hover{transform:scale(1.08)}
+@media(max-width:600px){#chat-pip{width:calc(100vw - 24px);right:12px;bottom:12px}}
 /* Barra flutuante de atalhos quando Memed está aberto */
 #memed-atalhos{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);z-index:20000;display:flex;gap:10px;align-items:center;background:#0d1a14;border:1px solid rgba(180,224,90,.25);border-radius:50px;padding:10px 18px;box-shadow:0 8px 32px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s;white-space:nowrap}
 #memed-atalhos.visivel{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
@@ -899,14 +922,117 @@ function switchTab(nome) {
 document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',['consulta','clinico','prontuario'][i]===nome);});
 document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
 document.getElementById('tab-'+nome).classList.add('active');
+// PiP: mostra quando sai da aba de consulta e chat está ativo
+if (nome !== 'consulta' && chatAtivo) {
+  mostrarChatPip();
+} else {
+  esconderChatPip();
 }
+}
+
+// ── CHAT PIP ──────────────────────────────────────────────
+let pipMinimizado = false;
+let pipMsgsNaoLidas = 0;
+
+function mostrarChatPip() {
+  const pip = document.getElementById('chat-pip');
+  if (!pip || !chatAtivo) return;
+  pip.classList.add('visivel');
+  sincronizarMsgsPip();
+}
+
+function esconderChatPip() {
+  const pip = document.getElementById('chat-pip');
+  if (pip) pip.classList.remove('visivel');
+  pipMsgsNaoLidas = 0;
+  atualizarBadgePip();
+}
+
+function toggleChatPip() {
+  const pip = document.getElementById('chat-pip');
+  const btn = document.getElementById('pip-min-btn');
+  if (!pip) return;
+  pipMinimizado = !pipMinimizado;
+  pip.classList.toggle('minimizado', pipMinimizado);
+  if (btn) btn.textContent = pipMinimizado ? '+' : '−';
+  if (!pipMinimizado) { pipMsgsNaoLidas = 0; atualizarBadgePip(); sincronizarMsgsPip(); }
+}
+
+function fecharChatPip() {
+  esconderChatPip();
+  switchTab('consulta');
+}
+
+function atualizarBadgePip() {
+  const badge = document.getElementById('pip-badge');
+  if (!badge) return;
+  if (pipMsgsNaoLidas > 0) {
+    badge.textContent = pipMsgsNaoLidas;
+    badge.classList.add('visivel');
+  } else {
+    badge.classList.remove('visivel');
+  }
+}
+
+function sincronizarMsgsPip() {
+  // Copia as mensagens do chat principal para o PiP
+  const origem = document.getElementById('chat-medico-msgs');
+  const destino = document.getElementById('chat-pip-msgs');
+  if (!origem || !destino) return;
+  destino.innerHTML = origem.innerHTML;
+  destino.scrollTop = destino.scrollHeight;
+}
+
+function adicionarMsgPip(autor, texto) {
+  const destino = document.getElementById('chat-pip-msgs');
+  if (!destino) return;
+  const vazio = destino.querySelector('.chat-vazio');
+  if (vazio) vazio.remove();
+  const div = document.createElement('div');
+  div.className = autor === 'medico' ? 'msg-medico' : 'msg-paciente';
+  div.textContent = texto;
+  destino.appendChild(div);
+  destino.scrollTop = destino.scrollHeight;
+  // Badge se minimizado ou invisível
+  const pip = document.getElementById('chat-pip');
+  if (autor === 'paciente' && pip && (pipMinimizado || !pip.classList.contains('visivel'))) {
+    pipMsgsNaoLidas++;
+    atualizarBadgePip();
+  }
+}
+
+async function enviarMensagemPip() {
+  const ta = document.getElementById('chat-pip-textarea');
+  if (!ta || !ta.value.trim() || !atendimentoAtual) return;
+  const texto = ta.value.trim();
+  ta.value = ''; ta.style.height = 'auto';
+  // Adiciona visualmente nos dois chats imediatamente
+  adicionarMsgMedico('medico', texto, new Date().toISOString());
+  adicionarMsgPip('medico', texto);
+  try {
+    await fetch(`${API}/api/chat/enviar`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ atendimentoId: atendimentoAtual.id, autor: 'medico', autorId: medico?.id, texto })
+    });
+  } catch(e) {}
+}
+
+// ── FIM PIP ───────────────────────────────────────────────
 
 function iniciarChatMedico() {
 ultimaMsgId=0; chatAtivo=true; clearInterval(chatInterval);
-carregarHistoricoMedico().then(()=>{chatInterval=setInterval(buscarMensagensNovasMedico,3000);});
+carregarHistoricoMedico().then(()=>{chatInterval=setInterval(buscarMensagensNovasMedico,3000); sincronizarMsgsPip();});
 const ta=document.getElementById('chat-medico-textarea');
 ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
 ta.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarMensagemMedico();}});
+// Inicializa textarea do PiP
+const taPip=document.getElementById('chat-pip-textarea');
+if (taPip && !taPip._pipInit) {
+  taPip._pipInit=true;
+  taPip.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px';});
+  taPip.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarMensagemPip();}});
+}
 }
 async function carregarHistoricoMedico() {
 if (!atendimentoAtual) return;
@@ -924,7 +1050,7 @@ try {
 const res=await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
 const data=await res.json(); if (!data.ok) return;
 const novas=(data.mensagens||[]).filter(m=>m.id>ultimaMsgId);
-if (novas.length>0) { const container=document.getElementById('chat-medico-msgs'); const v=container.querySelector('.chat-vazio'); if(v)v.remove(); novas.forEach(m=>{if(m.autor==='paciente')adicionarMsgMedico(m.autor,m.texto,m.criado_em);ultimaMsgId=m.id;}); }
+if (novas.length>0) { const container=document.getElementById('chat-medico-msgs'); const v=container.querySelector('.chat-vazio'); if(v)v.remove(); novas.forEach(m=>{if(m.autor==='paciente'){adicionarMsgMedico(m.autor,m.texto,m.criado_em);adicionarMsgPip('paciente',m.texto);}ultimaMsgId=m.id;}); }
 } catch(e) {}
 }
 async function enviarMensagemMedico() {
@@ -932,6 +1058,7 @@ const ta=document.getElementById('chat-medico-textarea');
 const texto=ta.value.trim(); if (!texto||!atendimentoAtual) return;
 ta.value=''; ta.style.height='auto';
 adicionarMsgMedico('medico',texto,new Date().toISOString());
+adicionarMsgPip('medico',texto);
 try { await fetch(`${API}/api/chat/enviar`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({atendimentoId:atendimentoAtual.id,autor:'medico',autorId:medico.id,texto})}); } catch(e) {}
 }
 function adicionarMsgMedico(autor,texto,timestamp) {
@@ -1069,8 +1196,7 @@ const statusEl=document.querySelector('#rg-status .radio-opt.selected');
 if (!statusEl) { mostrarToast('Selecione o status do atendimento.','error'); return; }
 const statusTexto=statusEl.querySelector('.radio-text').textContent;
 const docs=[...document.querySelectorAll('#cg-docs .check-opt.selected')].map(el=>el.textContent.trim()).join(', ')||'Nenhum';
-clearInterval(chatInterval); chatAtivo=false;
-const prontAtual=document.getElementById('pront-output').textContent;
+clearInterval(chatInterval); chatAtivo=false; esconderChatPip();
 if (prontAtual.trim()) await salvarProntuarioAgora(prontAtual);
 try { await fetch(`${API}/api/atendimento/encerrar`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,status:statusTexto,documentos_emitidos:docs})}); } catch(e) {}
 clearInterval(timerInterval);
@@ -1478,7 +1604,7 @@ headers: { 'Authorization': `Bearer ${getToken()}` }
 });
 const data = await res.json();
 if (!data.ok || !data.atendimento) return mostrarToast('Não encontrado','error');
-clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval);
+clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true; atendimentoAtual=data.atendimento;
 const sidebar=document.querySelector('.sidebar'); if(sidebar){sidebar.classList.remove('open');sidebar.classList.remove('idle');}
 const fab=document.getElementById('fab-fila'); if(fab) fab.style.display='none';
@@ -1494,7 +1620,7 @@ window.scrollTo(0,0);
 function abrirHistoricoAtendimento(idx) {
 if (atendimentoAtual&&!modoHistorico) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.','error'); return; }
 const a=histData[idx]; if (!a) return;
-clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval);
+clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true; atendimentoAtual=a;
 // Fechar sidebar no mobile ao abrir histórico
 const sidebar = document.querySelector('.sidebar');
@@ -1539,6 +1665,23 @@ return val;
 
 
 <!-- ── DRAWER MEMED ─────────────────────────────────────── -->
+<!-- Chat PiP -->
+<div id="chat-pip">
+  <div id="chat-pip-header" onclick="toggleChatPip()">
+    <div class="pip-dot"></div>
+    <span class="pip-title">💬 Chat com o paciente</span>
+    <span class="pip-badge" id="pip-badge">0</span>
+    <div class="pip-actions" onclick="event.stopPropagation()">
+      <button class="pip-btn" onclick="toggleChatPip()" id="pip-min-btn" title="Minimizar">−</button>
+      <button class="pip-btn" onclick="fecharChatPip()" title="Fechar e ir para chat">↗</button>
+    </div>
+  </div>
+  <div id="chat-pip-msgs"></div>
+  <div id="chat-pip-input">
+    <textarea id="chat-pip-textarea" placeholder="Mensagem..." rows="1"></textarea>
+    <button id="chat-pip-send" onclick="enviarMensagemPip()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
 <div id="memed-overlay" onclick="fecharMemedDrawer()"></div>
 <div id="memed-atalhos">
   <span class="ma-label">ir para</span>
