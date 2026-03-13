@@ -119,18 +119,36 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
 .tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
 /* ── PAINEL LATERAL MEMED ─────────────────────────────────── */
-#memed-drawer{position:fixed;top:var(--nav-h);right:0;width:min(480px,100vw);height:calc(100vh - var(--nav-h));background:#fff;z-index:300;box-shadow:-8px 0 40px rgba(0,0,0,.45);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
-#memed-drawer.aberto{transform:translateX(0)}
-#memed-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#07100d;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+/* Header nosso que fica fixo no topo direito */
+#memed-drawer{position:fixed;top:var(--nav-h);right:0;width:min(520px,100vw);z-index:10001;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);pointer-events:none}
+#memed-drawer.aberto{transform:translateX(0);pointer-events:auto}
+#memed-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#07100d;border-bottom:1px solid rgba(255,255,255,.08);border-left:1px solid rgba(255,255,255,.08);box-shadow:-4px 0 20px rgba(0,0,0,.4)}
 #memed-drawer-title{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.04em}
 #memed-drawer-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color .2s;line-height:1}
 #memed-drawer-close:hover{color:#ff8080}
-#memed-drawer-body{flex:1;position:relative;overflow:hidden}
-#memed-drawer-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f5f5f5;z-index:2}
+#memed-drawer-body{display:none}
+#memed-drawer-loading{position:fixed;top:calc(var(--nav-h) + 44px);right:0;width:min(520px,100vw);height:calc(100vh - var(--nav-h) - 44px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f5f5f5;z-index:10000}
 #memed-drawer-loading .memed-spinner{width:32px;height:32px;border:3px solid #e0e0e0;border-top-color:#b4e05a;border-radius:50%;animation:memedSpin .8s linear infinite}
 #memed-drawer-loading p{font-size:.85rem;color:#666;font-family:'Outfit',sans-serif}
 @keyframes memedSpin{to{transform:rotate(360deg)}}
-#memed-overlay{position:fixed;inset:0;z-index:299;background:rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .3s}
+/* Quando Memed aberto: força elemento dele a ficar no canto direito */
+body.memed-aberto > [id*="sinapse"],
+body.memed-aberto > [id*="memed-module"],
+body.memed-aberto > div[class*="SinapseP"],
+body.memed-aberto > div[style*="z-index: 999"],
+body.memed-aberto > div[style*="z-index:999"]{
+  position:fixed !important;
+  top:calc(var(--nav-h) + 44px) !important;
+  right:0 !important;
+  left:auto !important;
+  width:min(520px,100vw) !important;
+  height:calc(100vh - var(--nav-h) - 44px) !important;
+  max-width:min(520px,100vw) !important;
+  z-index:10000 !important;
+  border-left:1px solid rgba(0,0,0,.1) !important;
+  box-shadow:-8px 0 40px rgba(0,0,0,.45) !important;
+}
+#memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
 
 .tab.active{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
@@ -1254,23 +1272,10 @@ let memedToken = null;
 
 function fecharMemedDrawer() {
   const drawer = document.getElementById('memed-drawer');
-  const drawerBody = document.getElementById('memed-drawer-body');
   const overlay = document.getElementById('memed-overlay');
   if (drawer) drawer.classList.remove('aberto');
   if (overlay) overlay.classList.remove('ativo');
-  // Devolve o elemento Memed pro body (SDK espera ele lá) e oculta
-  if (drawerBody) {
-    Array.from(drawerBody.children).forEach(el => {
-      if (el.id !== 'memed-drawer-loading') {
-        el.style.cssText = el._origStyle || '';
-        el.style.display = 'none';
-        document.body.appendChild(el);
-      }
-    });
-    // Reseta loading para próxima abertura
-    const loading = document.getElementById('memed-drawer-loading');
-    if (loading) { loading.style.display = 'flex'; drawerBody.appendChild(loading); }
-  }
+  document.body.classList.remove('memed-aberto');
   try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
   const btn = document.getElementById('btn-memed');
   if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
@@ -1283,6 +1288,7 @@ function abrirMemedDrawer() {
   if (nomePac && atendimentoAtual) nomePac.textContent = (atendimentoAtual.nome||'').split(' ').slice(0,2).join(' ');
   if (drawer) drawer.classList.add('aberto');
   if (overlay) overlay.classList.add('ativo');
+  document.body.classList.add('memed-aberto');
 }
 
 async function salvarPrescricaoNoProntuario(dados) {
@@ -1394,23 +1400,15 @@ async function abrirMemed() {
 
         MdHub.module.show('plataforma.prescricao');
 
-        // Intercepta o elemento que o Memed injeta no body e move pro drawer
-        const drawer = document.getElementById('memed-drawer-body');
-        const loading = document.getElementById('memed-drawer-loading');
-        const observer = new MutationObserver(() => {
-          // O Memed injeta um elemento com id/class contendo 'sinapse' ou 'memed' no body
-          const memedEl = document.querySelector('body > [id*="sinapse"], body > [id*="memed"], body > [class*="sinapse"], body > [class*="SinapseP"], body > div[style*="z-index: 9"]');
-          if (memedEl && memedEl.parentNode === document.body) {
-            observer.disconnect();
-            // Guarda estilos originais para restaurar ao fechar
-            memedEl._origStyle = memedEl.getAttribute('style') || '';
-            // Remove posicionamento fixo/absoluto que o Memed coloca
-            memedEl.style.cssText = 'width:100%;height:100%;position:relative;top:auto;left:auto;right:auto;bottom:auto;z-index:1;overflow:auto';
-            drawer.appendChild(memedEl);
-            if (loading) loading.style.display = 'none';
-          }
+        // Esconde loading assim que o elemento do Memed aparecer no DOM
+        const loadingEl = document.getElementById('memed-drawer-loading');
+        const visObs = new MutationObserver(() => {
+          const memedEl = document.querySelector('body > [id*="sinapse"], body > [id*="SinapseP"], body > [class*="SinapseP"]');
+          if (memedEl) { visObs.disconnect(); if (loadingEl) loadingEl.style.display = 'none'; }
         });
-        observer.observe(document.body, { childList: true, subtree: false });
+        visObs.observe(document.body, { childList: true, subtree: true });
+        // Fallback: esconde loading após 4s de qualquer forma
+        setTimeout(() => { if (loadingEl) loadingEl.style.display = 'none'; }, 4000);
 
         // Eventos — salva tudo detalhado no prontuário
         MdHub.event.add('prescricaoImpressa', async (ev) => {
