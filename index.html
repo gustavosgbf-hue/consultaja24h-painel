@@ -813,9 +813,12 @@ const isAtual=atendimentoAtual&&!modoHistorico&&String(atendimentoAtual.id)===St
 // meuAssumido: assumido por mim mas não é o atendimento ativo agora
 // compara medico_id como string E como número para evitar mismatch de tipo
 const meuMedId = medico ? String(medico.id) : '';
+const _stripDr = s => (s||'').replace(/^Dr\.?\s*/i,'').replace(/^Dra\.?\s*/i,'').trim();
 const meuAssumido=p.status==='assumido'&&!isAtual&&medico&&(
   String(p.medico_id)===meuMedId ||
-  (p.medico_nome && medico.nome && p.medico_nome.trim()===medico.nome.trim())
+  String(p.medico_id)===String(medico.id) ||
+  _stripDr(p.medico_nome)===_stripDr(medico.nome) ||
+  _stripDr(p.medico_nome).toLowerCase().startsWith(_stripDr(medico.nome).split(' ')[0].toLowerCase())
 );
 const assumido=p.status==='assumido'&&!isAtual&&!meuAssumido;
 const isAdmin=!!sessionStorage.getItem('adminPwd');
