@@ -454,6 +454,9 @@ padding:0 4px;
       </div>
       <div id="admin-hist-lista" style="display:none"></div>
       <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">📋 Meu histórico <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span></div>
+      <div id="hist-busca-wrap" style="display:none;padding:6px 0 2px">
+        <input type="text" id="hist-busca" placeholder="Buscar paciente, CPF, tel..." oninput="renderHistorico()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:8px;padding:7px 10px;font-size:.78rem;width:100%;box-sizing:border-box;font-family:'Outfit',sans-serif">
+      </div>
       <div id="hist-lista" style="display:none"></div>
     </aside>
     <main class="main" id="main-content">
@@ -1538,8 +1541,13 @@ async function abrirMemed() {
   // SDK já carregado — reabre sem recarregar script (rápido)
   if (memedCarregado) {
     try {
-      // Atualiza paciente caso seja um atendimento diferente
-      const pac = atendimentoAtual;
+      // Busca dados completos do paciente no servidor para garantir CPF/data_nascimento
+      let pac = atendimentoAtual;
+      try {
+        const rPac = await fetch(`${API}/api/atendimento/status/${pac.id}`, {headers:{'Authorization':`Bearer ${getToken()}`}});
+        const dPac = await rPac.json();
+        if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
+      } catch(e) {}
       const partes = (pac.nome||'').trim().split(' ');
       await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
         idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
@@ -1670,11 +1678,13 @@ async function abrirMemed() {
   }
 }
 
-function toggleHistorico() { histVisible=!histVisible; document.getElementById('hist-lista').style.display=histVisible?'block':'none'; if(histVisible) buscarHistorico(); }
+function toggleHistorico() { histVisible=!histVisible; document.getElementById('hist-lista').style.display=histVisible?'block':'none'; document.getElementById('hist-busca-wrap').style.display=histVisible?'block':'none'; if(histVisible) buscarHistorico(); }
 function renderHistorico() {
 const container=document.getElementById('hist-lista');
-if (!histData.length) { container.innerHTML='<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
-container.innerHTML=histData.map((a,idx)=>{
+const q=(document.getElementById('hist-busca')?.value||'').toLowerCase().trim();
+const lista=q?histData.filter(a=>(a.nome||'').toLowerCase().includes(q)||(a.cpf||'').includes(q)||(a.tel||'').includes(q)):histData;
+if (!lista.length) { container.innerHTML='<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
+container.innerHTML=lista.map((a,idx)=>{
 const encerrado=a.encerrado_em?new Date(a.encerrado_em).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const tipo=a.tipo||'chat', tipoIcon=tipo==='video'?'🎥':'💬', temPront=!!a.prontuario_salvo;
 return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${idx})"><div class="hist-card-nome">${a.nome||'—'}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${encerrado}<br>CPF: ${a.cpf||'—'} · Tel.: ${a.tel||'—'}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
