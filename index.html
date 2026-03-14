@@ -1384,8 +1384,7 @@ const linhas=[
 ];
 if (obs) linhas.push('',sep,'OBSERVAÇÕES (TELEMEDICINA)',sep,obs);
 linhas.push('',sep,'CONDUTA',sep,conduta||'(não informado)','',sep,`Documentos emitidos: ${docs}`,`Atendimento realizado por telemedicina conforme Res. CFM 2.314/2022.`,sep);
-return linhas.join('
-');
+return linhas.join('\n');
 }
 
 function montarTextoProntuario() {
