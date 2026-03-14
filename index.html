@@ -393,6 +393,13 @@ margin-bottom:14px;
 .autosave-status.ok{color:var(--g2)}
 .autosave-status.err{color:#ff8080}
 .hist-readonly-notice{background:rgba(94,224,160,.05);border:1px solid rgba(94,224,160,.12);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6}
+
+/* Badge solicita destacado */
+.solicita-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.04em;background:rgba(255,189,46,.12);color:#ffbd2e;border:1px solid rgba(255,189,46,.25);margin-left:8px;vertical-align:middle}
+/* Badge Meet */
+.meet-badge{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:999px}
+.meet-badge.ok{background:rgba(94,224,160,.12);color:#5ee0a0;border:1px solid rgba(94,224,160,.25)}
+.meet-badge.pendente{background:rgba(255,95,87,.08);color:#ff8080;border:1px solid rgba(255,95,87,.2)}
 /* FAB mobile — botão flutuante da fila */
 .fab-fila{
 display:none;
@@ -502,6 +509,7 @@ padding:0 4px;
             <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">—</span></div>
             <div class="triagem-item"><label>Tel. documentos (SMS)</label><span id="tr-teldoc-pac">—</span></div>
             <div class="triagem-item"><label>Data de nascimento</label><span id="tr-nascimento-pac">—</span></div>
+            <div class="triagem-item"><label>E-mail</label><span id="tr-email-pac">—</span></div>
           </div>
           <div class="triagem-box-title" style="margin-top:8px">Dados da triagem</div>
           <div class="triagem-grid">
@@ -524,6 +532,7 @@ padding:0 4px;
             <div class="meet-title">🎥 Link do Google Meet</div>
             <div class="meet-input-row"><input class="meet-input" id="meetLinkInput" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx"/><button class="btn-meet-save" onclick="salvarMeetLink()">Salvar e compartilhar</button></div>
             <div class="meet-link-atual" id="meetLinkAtual" style="display:none">Link ativo: <a id="meetLinkAtualUrl" href="#" target="_blank">—</a></div>
+            <div id="meet-badge-wrap" style="margin-top:8px"></div>
           </div>
           <div class="chat-medico-wrap" id="chat-section" style="display:none">
             <div class="chat-medico-header"><h3><div class="chat-online-dot"></div> Chat com o paciente</h3><span style="font-size:.72rem;color:var(--muted)">Atualiza a cada 3s</span></div>
@@ -558,7 +567,21 @@ padding:0 4px;
               <div class="clinic-field"><div class="clinic-label">Medicações em uso</div><textarea class="clinic-input" id="cl-medicacoes" placeholder="Ex: Losartana 50mg, Metformina 850mg..."></textarea></div>
               <div class="clinic-field"><div class="clinic-label">Alergias</div><textarea class="clinic-input" id="cl-alergias" placeholder="Ex: Dipirona, Penicilina..."></textarea></div>
               <div class="clinic-field"><div class="clinic-label">Observações / Exame em telemedicina</div><textarea class="clinic-input" id="cl-obs" placeholder="Achados observados durante a teleconsulta..."></textarea></div>
-              <div class="clinic-field full"><div class="clinic-label">Conduta</div><textarea class="clinic-input tall" id="cl-conduta" placeholder="Prescrição, orientações, encaminhamentos, retorno..."></textarea></div>
+              <div class="clinic-field full">
+                <div class="clinic-label" style="display:flex;align-items:center;justify-content:space-between">
+                  Conduta
+                  <span style="font-size:.65rem;color:rgba(255,255,255,.25);font-weight:400;letter-spacing:0;text-transform:none">clique para inserir</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+                  <button onclick="inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Sinais de alarme</button>
+                  <button onclick="inserirConduta('Quadro compatível com síndrome viral leve. Tratamento sintomático orientado.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Síndrome viral leve</button>
+                  <button onclick="inserirConduta('Sem sinais de urgência ou emergência identificados no momento.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Sem urgência</button>
+                  <button onclick="inserirConduta('Atestado médico emitido conforme solicitação e avaliação clínica.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Atestado emitido</button>
+                  <button onclick="inserirConduta('Receita médica emitida. Orientado sobre posologia e duração do tratamento.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Receita emitida</button>
+                  <button onclick="inserirConduta('Encaminhado para avaliação presencial. Orientado a procurar serviço de saúde local.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Encaminhar presencial</button>
+                </div>
+                <textarea class="clinic-input tall" id="cl-conduta" placeholder="Prescrição, orientações, encaminhamentos, retorno..."></textarea>
+              </div>
             </div>
           </div>
           <div class="docs-section">
@@ -835,19 +858,44 @@ document.getElementById('tr-cpf-pac').textContent=p.cpf||'—';
 document.getElementById('tr-tel-pac').textContent=p.tel||'—';
 document.getElementById('tr-teldoc-pac').textContent=p.tel_documentos||p.tel||'—';
 document.getElementById('tr-nascimento-pac').textContent=p.data_nascimento?formatarNascimento(p.data_nascimento):'—';
+// E-mail do paciente
+const emailPacEl = document.getElementById('tr-email-pac');
+if (emailPacEl) emailPacEl.textContent = p.email || '—';
 document.getElementById('tr-idade').textContent=p.idade||'—';
 document.getElementById('tr-sexo').textContent=p.sexo||'—';
 document.getElementById('tr-alergias').textContent=p.alergias||'—';
 document.getElementById('tr-cronicas').textContent=p.cronicas||'—';
 document.getElementById('tr-medicacoes').textContent=p.medicacoes||'—';
-document.getElementById('tr-solicita').textContent=p.solicita||'—';
+// Solicita — badge destacado se tiver valor
+const solicitaEl = document.getElementById('tr-solicita');
+if (solicitaEl) {
+  solicitaEl.textContent = p.solicita || '—';
+  const headerNome = document.getElementById('atend-nome');
+  const badgeExist = document.getElementById('solicita-badge-header');
+  if (badgeExist) badgeExist.remove();
+  if (p.solicita && p.solicita !== 'Não informado' && p.solicita !== '—' && headerNome) {
+    const badge = document.createElement('span');
+    badge.id = 'solicita-badge-header';
+    badge.className = 'solicita-badge';
+    badge.textContent = '📋 ' + p.solicita;
+    headerNome.parentNode.insertBefore(badge, headerNome.nextSibling);
+  }
+}
 document.getElementById('tr-queixa').textContent=p.queixa||p.triagem||'—';
 document.getElementById('cl-alergias').value=p.alergias||'';
 document.getElementById('cl-comorbidades').value=p.cronicas||'';
 document.getElementById('cl-medicacoes').value=p.medicacoes||'';
-document.getElementById('cl-hda').value='';
+// HDA pré-preenchida com queixa da triagem
+document.getElementById('cl-hda').value = !modoHistorico ? (p.queixa || p.triagem || '') : '';
 document.getElementById('cl-obs').value='';
 document.getElementById('cl-conduta').value='';
+// Badge indicador Meet
+const meetBadgeWrap = document.getElementById('meet-badge-wrap');
+if (meetBadgeWrap && p.tipo === 'video') {
+  meetBadgeWrap.innerHTML = p.meet_link
+    ? '<span class="meet-badge ok">✓ Meet configurado</span>'
+    : '<span class="meet-badge pendente">⚠ Meet pendente</span>';
+}
 document.querySelectorAll('textarea.clinic-input').forEach(t=>{t.disabled=false;});
 document.getElementById('hist-clinico-notice').style.display=modoHistorico?'block':'none';
 document.getElementById('hist-consulta-notice').style.display=modoHistorico?'block':'none';
@@ -874,6 +922,15 @@ document.getElementById('chat-section').style.display='block'; iniciarChatMedico
 } else { document.getElementById('wpp-consulta-section').style.display='block'; }
 switchTab('consulta');
 } else { switchTab(p.prontuario_salvo?'prontuario':'clinico'); }
+}
+
+function inserirConduta(texto) {
+const campo = document.getElementById('cl-conduta');
+if (!campo) return;
+const atual = campo.value.trim();
+campo.value = atual ? atual + '\n' + texto : texto;
+campo.dispatchEvent(new Event('input'));
+campo.focus();
 }
 
 function registrarAutosave() {
@@ -1283,6 +1340,13 @@ async function confirmarEncerramento() {
 if (!atendimentoAtual) { mostrarToast('Nenhum atendimento ativo.','error'); fecharModal(); return; }
 const statusEl=document.querySelector('#rg-status .radio-opt.selected');
 if (!statusEl) { mostrarToast('Selecione o status do atendimento.','error'); return; }
+// Alerta se encerrar sem registro clínico mínimo
+const hdaVal = (document.getElementById('cl-hda').value||'').trim();
+const condutaVal = (document.getElementById('cl-conduta').value||'').trim();
+if (!hdaVal && !condutaVal) {
+  const ok = confirm('⚠️ Atenção: você está encerrando sem HDA e sem conduta registrados.\nDeseja continuar mesmo assim?');
+  if (!ok) return;
+}
 const statusTexto=statusEl.querySelector('.radio-text').textContent.trim();
 const docs=[...document.querySelectorAll('#cg-docs .check-opt.selected')].map(el=>el.textContent.trim()).join(', ')||'Nenhum';
 const filaId = atendimentoAtual.id;
