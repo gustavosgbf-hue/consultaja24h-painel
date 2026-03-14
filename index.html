@@ -1737,10 +1737,10 @@ const container=document.getElementById('hist-lista');
 const q=(document.getElementById('hist-busca')?.value||'').toLowerCase().trim();
 const lista=q?histData.filter(a=>(a.nome||'').toLowerCase().includes(q)||(a.cpf||'').includes(q)||(a.tel||'').includes(q)):histData;
 if (!lista.length) { container.innerHTML='<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
-container.innerHTML=lista.map((a,idx)=>{
+container.innerHTML=lista.map((a)=>{
 const encerrado=a.encerrado_em?new Date(a.encerrado_em).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const tipo=a.tipo||'chat', tipoIcon=tipo==='video'?'🎥':'💬', temPront=!!a.prontuario_salvo;
-return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${idx})"><div class="hist-card-nome">${a.nome||'—'}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${encerrado}<br>CPF: ${a.cpf||'—'} · Tel.: ${a.tel||'—'}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
+return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${histData.indexOf(a)})"><div class="hist-card-nome">${a.nome||'—'}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${encerrado}<br>CPF: ${a.cpf||'—'} · Tel.: ${a.tel||'—'}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
 }).join('');
 }
 
