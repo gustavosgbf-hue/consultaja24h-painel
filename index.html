@@ -928,7 +928,13 @@ if (p.meet_link) { document.getElementById('meetLinkInput').value=p.meet_link; d
 document.getElementById('chat-section').style.display='block'; iniciarChatMedico();
 } else { document.getElementById('wpp-consulta-section').style.display='block'; }
 switchTab('consulta');
-} else { switchTab(p.prontuario_salvo?'prontuario':'clinico'); }
+} else {
+  if (tipo==='chat') {
+    document.getElementById('chat-section').style.display='block';
+    carregarChatHistorico(p.id);
+  }
+  switchTab(p.prontuario_salvo?'prontuario':'clinico');
+}
 }
 
 function registrarAutosave() {
@@ -1055,6 +1061,29 @@ async function enviarMensagemPip() {
 }
 
 // ── FIM PIP ───────────────────────────────────────────────
+
+async function carregarChatHistorico(atendId) {
+  const container = document.getElementById('chat-medico-msgs');
+  if (!container) return;
+  container.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:.78rem;padding:12px;text-align:center">Carregando mensagens...</div>';
+  const ta = document.getElementById('chat-medico-textarea');
+  const sendBtn = document.getElementById('chat-medico-send');
+  if (ta) { ta.disabled=true; ta.placeholder='Histórico — somente leitura'; ta.style.opacity='.4'; }
+  if (sendBtn) { sendBtn.disabled=true; sendBtn.style.opacity='.4'; }
+  try {
+    const res = await fetch(`${API}/api/chat/${atendId}`, {headers:{'Authorization':`Bearer ${getToken()}`}});
+    const data = await res.json();
+    if (!data.ok || !data.mensagens?.length) {
+      container.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:.78rem;padding:12px;text-align:center">Nenhuma mensagem nesta consulta</div>';
+      return;
+    }
+    container.innerHTML = '';
+    data.mensagens.forEach(m => adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo));
+    container.scrollTop = container.scrollHeight;
+  } catch(e) {
+    container.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:.78rem;padding:12px;text-align:center">Erro ao carregar mensagens</div>';
+  }
+}
 
 function iniciarChatMedico() {
 ultimaMsgId=0; chatAtivo=true; clearInterval(chatInterval);
@@ -1731,7 +1760,11 @@ if (main) main.scrollTop = 0;
 window.scrollTo(0,0);
 }
 function fecharHistoricoAtendimento() {
-atendimentoAtual=null; modoHistorico=false; renderEstado(); buscarHistorico();
+atendimentoAtual=null; modoHistorico=false;
+const _ta=document.getElementById('chat-medico-textarea'); const _sb=document.getElementById('chat-medico-send');
+if(_ta){_ta.disabled=false;_ta.placeholder='Digite sua mensagem...';_ta.style.opacity='';}
+if(_sb){_sb.disabled=false;_sb.style.opacity='';}
+renderEstado(); buscarHistorico();
 // Mostrar FAB de volta
 const fab = document.getElementById('fab-fila');
 if (fab) fab.style.display='';
