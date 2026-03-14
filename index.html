@@ -434,7 +434,7 @@ padding:0 4px;
     <div class="field"><label>E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
     <div class="field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/></div>
     <div class="field" id="field-admin-pwd" style="display:none"><label style="color:rgba(255,189,46,.7)">Senha admin (opcional)</label><input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off"/></div>
-    <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar no painel</button>
+    <button class="btn-login" id="btn-login">Entrar no painel</button>
     <div style="text-align:center;margin-top:10px"><button onclick="toggleAdminField()" style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.72rem;cursor:pointer;font-family:inherit">Sou administrador</button></div>
     <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
   </div>
@@ -631,11 +631,28 @@ padding:0 4px;
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<script src="./api-config.js"></script>
 <script>
-const API = 'https://triagem-api.onrender.com';
+const API = window.API_BASE_URL;
 let medico = null, plantaoAtivo = false, atendimentoAtual = null, modoHistorico = false;
 let autosaveBound = false, autosaveTimer = null, timerInterval = null, timerSegundos = 0;
 let filaInterval = null, filaData = [], chatInterval = null, ultimaMsgId = 0, chatAtivo = false;
+let filaRetryMs = 15000, agendRetryMs = 20000, chatRetryMs = 3000;
+
+function escHtml(v){
+return String(v ?? '')
+.replace(/&/g,'&amp;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;')
+.replace(/"/g,'&quot;')
+.replace(/'/g,'&#39;');
+}
+function escAttr(v){ return escHtml(v).replace(/`/g,'&#96;'); }
+function safeUrl(v){
+const u=String(v||'').trim();
+if(!u) return '';
+return /^https?:\/\//i.test(u) ? u : '';
+}
 
 async function fazerLogin() {
 const email = document.getElementById('inp-email').value.trim();
@@ -656,6 +673,7 @@ entrarApp();
 } catch(e) { err.textContent = 'Erro: ' + e.message; err.style.display='block'; }
 finally { btn.disabled=false; btn.textContent='Entrar no painel'; }
 }
+document.getElementById('btn-login').addEventListener('click', fazerLogin);
 document.getElementById('inp-senha').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
 function getToken() { return sessionStorage.getItem('token')||''; }
 let agendInterval = null;
@@ -696,7 +714,7 @@ sessionStorage.removeItem('atendimentoAtual');
 }
 renderEstado(); buscarFila(); buscarAgendamentos(); buscarHistorico();
 clearInterval(agendInterval);
-agendInterval = setInterval(buscarAgendamentos, 20000);
+iniciarPollingAgendamentos();
 if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
 mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
 setTimeout(setupMobileSidebar, 100);
@@ -753,15 +771,26 @@ pararPollingFila();
 if (!atendimentoAtual) renderEstado();
 mostrarToast('Você saiu do plantão','info');
 }
-function iniciarPollingFila() { buscarFila(); filaInterval=setInterval(buscarFila,15000); }
+function iniciarPollingFila() {
+clearInterval(filaInterval);
+buscarFila();
+filaInterval=setInterval(function(){ if(!document.hidden) buscarFila(); },filaRetryMs);
+}
 function pararPollingFila() { clearInterval(filaInterval); renderFila(); }
+
+function iniciarPollingAgendamentos() {
+clearInterval(agendInterval);
+buscarAgendamentos();
+agendInterval=setInterval(function(){ if(!document.hidden) buscarAgendamentos(); },agendRetryMs);
+}
 
 async function buscarFila() {
 try {
 const res = await fetch(`${API}/api/fila`,{headers:{'Authorization':`Bearer ${getToken()}`}});
 const data = await res.json();
-if (data.ok) { filaData=data.fila||[]; renderFila(); renderEstado(); }
-} catch(e) {}
+if (data.ok) { filaData=data.fila||[]; filaRetryMs=15000; renderFila(); renderEstado(); }
+else { filaRetryMs=Math.min(filaRetryMs*2,60000); }
+} catch(e) { filaRetryMs=Math.min(filaRetryMs*2,60000); }
 }
 
 function renderFila() {
@@ -777,6 +806,8 @@ if (filaData.length===0) { lista.innerHTML='<div class="fila-vazia"><svg width="
 try {
 lista.innerHTML=filaData.map(p=>{
 const nome=p.nome||'Paciente', tipo=p.tipo||'chat';
+const nomeSafe=escHtml(String(nome).split(' ').slice(0,2).join(' '));
+const triagemSafe=escHtml(p.triagem||'—');
 const criado=p.criado_em||new Date().toISOString();
 const mins=Math.floor((Date.now()-new Date(criado))/60000);
 const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
@@ -794,7 +825,8 @@ const meuAssumido=p.status==='assumido'&&!isAtual&&medico&&(
 const assumido=p.status==='assumido'&&!isAtual&&!meuAssumido;
 const isAdmin=!!sessionStorage.getItem('adminPwd');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
-return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''}"> <div class="pc-header"><div class="pc-nome">${String(nome).split(' ').slice(0,2).join(' ')}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${p.triagem||'—'}</div> ${assumido&&nomeMediaco?`<div style="font-size:.68rem;color:var(--muted);margin:-4px 0 6px;padding:0 2px">👨‍⚕️ Dr(a). ${nomeMediaco}</div>`:''} <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':meuAssumido?`<button onclick="retomarAtendimento('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:600;cursor:pointer;">↩ Retomar</button>`:isAdmin?`<button onclick="encerrarTravado('${p.id}','${(p.nome||'').replace(/'/g,"\'")}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
+const nomeMediacoSafe=escHtml(nomeMediaco);
+return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''}"> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div> ${assumido&&nomeMediaco?`<div style="font-size:.68rem;color:var(--muted);margin:-4px 0 6px;padding:0 2px">👨‍⚕️ Dr(a). ${nomeMediacoSafe}</div>`:''} <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':meuAssumido?`<button onclick="retomarAtendimento('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:600;cursor:pointer;">↩ Retomar</button>`:isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
 }).join('');
 } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
@@ -1053,14 +1085,18 @@ async function enviarMensagemPip() {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ atendimentoId: atendimentoAtual.id, autor: 'medico', autorId: medico?.id, texto })
     });
-  } catch(e) {}
+  } catch(e) { chatRetryMs=Math.min(chatRetryMs*2,15000); }
 }
 
 // ── FIM PIP ───────────────────────────────────────────────
 
 function iniciarChatMedico() {
 ultimaMsgId=0; chatAtivo=true; clearInterval(chatInterval);
-carregarHistoricoMedico().then(()=>{chatInterval=setInterval(buscarMensagensNovasMedico,3000); sincronizarMsgsPip();});
+carregarHistoricoMedico().then(()=>{
+clearInterval(chatInterval);
+chatInterval=setInterval(function(){ if(!document.hidden) buscarMensagensNovasMedico(); },chatRetryMs);
+sincronizarMsgsPip();
+});
 const ta=document.getElementById('chat-medico-textarea');
 ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
 ta.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarMensagemMedico();}});
@@ -1083,13 +1119,14 @@ if (msgs.length>0) { const v=container.querySelector('.chat-vazio'); if(v)v.remo
 } catch(e) {}
 }
 async function buscarMensagensNovasMedico() {
-if (!atendimentoAtual||!chatAtivo) return;
+if (!atendimentoAtual||!chatAtivo||modoHistorico||document.hidden) return;
 try {
 const res=await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
-const data=await res.json(); if (!data.ok) return;
+const data=await res.json(); if (!data.ok) { chatRetryMs=Math.min(chatRetryMs*2,15000); return; }
+chatRetryMs=3000;
 const novas=(data.mensagens||[]).filter(m=>m.id>ultimaMsgId);
 if (novas.length>0) { const container=document.getElementById('chat-medico-msgs'); const v=container.querySelector('.chat-vazio'); if(v)v.remove(); novas.forEach(m=>{if(m.autor==='paciente'){adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo);adicionarMsgPip('paciente',m.texto);}ultimaMsgId=m.id;}); }
-} catch(e) {}
+} catch(e) { chatRetryMs=Math.min(chatRetryMs*2,15000); }
 }
 async function enviarMensagemMedico() {
 // Se tiver arquivo selecionado, envia o arquivo
@@ -1107,10 +1144,13 @@ const div=document.createElement('div'); div.className='cmsg '+autor;
 const hora=new Date(timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 const safe=String(texto).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 let arquivoHtml = '';
-if (arquivoUrl && arquivoTipo === 'imagem') {
-  arquivoHtml = `<a href="${arquivoUrl}" target="_blank"><img class="msg-arquivo-img" src="${arquivoUrl}" alt="imagem"/></a>`;
-} else if (arquivoUrl && arquivoTipo === 'pdf') {
-  arquivoHtml = `<a class="msg-arquivo-pdf" href="${arquivoUrl}" target="_blank">📄 Abrir PDF</a>`;
+const arquivoSeguro = safeUrl(arquivoUrl);
+if (arquivoSeguro && arquivoTipo === 'imagem') {
+  const href = escAttr(arquivoSeguro);
+  arquivoHtml = `<a href="${href}" target="_blank" rel="noopener noreferrer"><img class="msg-arquivo-img" src="${href}" alt="imagem"/></a>`;
+} else if (arquivoSeguro && arquivoTipo === 'pdf') {
+  const href = escAttr(arquivoSeguro);
+  arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="noopener noreferrer">📄 Abrir PDF</a>`;
 }
 div.innerHTML=`<div class="av">${autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${arquivoUrl?'':safe}${arquivoHtml}</div><div class="ts">${hora}</div></div>`;
 container.appendChild(div); container.scrollTop=container.scrollHeight;
@@ -1312,8 +1352,10 @@ mostrarToast('Prontuário copiado!','success'); setTimeout(()=>{btn.classList.re
 });
 }
 
-async function encerrarTravado(id, nome, e) {
+async function encerrarTravado(id, e) {
 if(e) e.stopPropagation();
+const item = filaData.find(function(p){ return String(p.id)===String(id); });
+const nome = item && item.nome ? item.nome : 'este paciente';
 if(!confirm('Encerrar atendimento de '+nome+'?')) return;
 try {
 const res = await fetch(API+'/api/atendimento/encerrar',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({filaId:id,status:'Encerrado pelo painel',documentos_emitidos:'Nenhum'})});
@@ -1369,7 +1411,8 @@ let agendData=[], agendVisible=false;
 async function buscarAgendamentos() {
 try {
 const res=await fetch(`${API}/api/agendamentos`,{headers:{'Authorization':`Bearer ${getToken()}`}});
-const data=await res.json(); if (!data.ok) return;
+const data=await res.json(); if (!data.ok) { agendRetryMs=Math.min(agendRetryMs*2,120000); return; }
+agendRetryMs=20000;
 agendData=data.agendamentos||[];
 document.getElementById('agend-count').textContent=agendData.length;
 if (agendVisible) renderAgendamentos();
@@ -1382,7 +1425,7 @@ if (!agendData.length) { container.innerHTML='<div class="fila-vazia" style="pad
 container.innerHTML=agendData.map(a=>{
 const h=a.horario_agendado?new Date(a.horario_agendado).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const tipoIcon=a.modalidade==='video'?'🎥':'💬';
-return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,244,.25);position:relative"> <button onclick="cancelarAgendamento(${a.id}, this)" style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(255,95,87,.15);color:#ff5f57;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1" title="Cancelar agendamento">✕</button> <div style="font-weight:600;font-size:.92rem;margin-bottom:4px;padding-right:28px">${a.nome||'—'}</div> <div style="font-size:.78rem;color:rgba(255,255,255,.45)">${tipoIcon} ${h}</div> <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${a.tel||'—'} · CPF: ${a.cpf||'—'}</div> <button class="btn-iniciar-agora" data-id="${a.id}" data-nome="${(a.nome||'').replace(/"/g,'&quot;')}" data-tel="${a.tel||''}" data-tipo="${a.modalidade||'chat'}" onclick="iniciarAgendamentoBtn(this)">▶ Iniciar consulta agora</button> </div>`;
+return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,244,.25);position:relative"> <button onclick="cancelarAgendamento(${a.id}, this)" style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(255,95,87,.15);color:#ff5f57;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1" title="Cancelar agendamento">✕</button> <div style="font-weight:600;font-size:.92rem;margin-bottom:4px;padding-right:28px">${escHtml(a.nome||'—')}</div> <div style="font-size:.78rem;color:rgba(255,255,255,.45)">${tipoIcon} ${h}</div> <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:4px">📱 ${escHtml(a.tel||'—')} · CPF: ${escHtml(a.cpf||'—')}</div> <button class="btn-iniciar-agora" data-id="${a.id}" data-nome="${escAttr(a.nome||'')}" data-tel="${escAttr(a.tel||'')}" data-tipo="${escAttr(a.modalidade||'chat')}" onclick="iniciarAgendamentoBtn(this)">▶ Iniciar consulta agora</button> </div>`;
 }).join('');
 }
 
@@ -1438,7 +1481,7 @@ if(!hist.length){lista.innerHTML='<div style="color:var(--muted);font-size:.78re
 lista.innerHTML=hist.map(a=>{
 const data_fmt=a.criado_em?new Date(a.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
 const statusColor=a.status==='encerrado'?'#5ee0a0':a.status==='assumido'?'#ffbd2e':'#aaa';
-return `<div class="hist-card" onclick="abrirAtendimentoHistorico(${a.id})" style="cursor:pointer;margin-bottom:10px"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"> <strong style="font-size:.88rem">${a.nome||'—'}</strong> <span style="font-size:.7rem;color:${statusColor};background:${statusColor}22;padding:2px 7px;border-radius:20px">${a.status}</span> </div> <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px"> ${a.medico_nome?`Dr(a) ${a.medico_nome} · `:''}${data_fmt} </div> <div style="font-size:.77rem;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(a.queixa||a.triagem||'').substring(0,60)}</div> </div>`;
+return `<div class="hist-card" onclick="abrirAtendimentoHistorico(${a.id})" style="cursor:pointer;margin-bottom:10px"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"> <strong style="font-size:.88rem">${escHtml(a.nome||'—')}</strong> <span style="font-size:.7rem;color:${statusColor};background:${statusColor}22;padding:2px 7px;border-radius:20px">${a.status}</span> </div> <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px"> ${a.medico_nome?`Dr(a) ${escHtml(a.medico_nome)} · `:''}${escHtml(data_fmt)} </div> <div style="font-size:.77rem;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml((a.queixa||a.triagem||'').substring(0,60))}</div> </div>`;
 }).join('');
 } catch(e){ document.getElementById('admin-hist-lista').innerHTML='<div style="color:#ff8080;font-size:.78rem;padding:8px 0">Erro de conexão</div>'; }
 }
@@ -1447,7 +1490,7 @@ const container=document.getElementById('admin-medicos-lista');
 if (!adminData.length) { container.innerHTML='<div class="fila-vazia" style="padding:12px"><p>Nenhum médico pendente</p></div>'; return; }
 container.innerHTML=adminData.map(m=>{
 const dt=m.created_at?new Date(m.created_at).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'numeric'}):'—';
-return `<div class="medico-card"><div class="medico-card-nome">${m.nome||'—'}${m.nome_exibicao&&m.nome_exibicao!==m.nome?` <span style="color:var(--muted);font-weight:400;font-size:.85em">(${m.nome_exibicao})</span>`:''}</div><div class="medico-card-meta">CRM ${m.crm||'—'}/${m.uf||'—'}${m.especialidade?' · '+m.especialidade:''}<br>${m.email||'—'} · 📱 ${m.telefone||'—'}${m.cnpj?`<br>🏢 CNPJ: ${m.cnpj}`:''}${m.tem_assinatura_digital?`<br>✍️ Assinatura digital${m.provedor_assinatura?' · '+m.provedor_assinatura:''}`:''  }${m.tem_memed?`<br>💊 Memed${m.memed_email?' · '+m.memed_email:''}`:''}<br>Cadastro: ${dt}</div><div class="medico-card-btns"><button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button><button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button></div></div>`;
+return `<div class="medico-card"><div class="medico-card-nome">${escHtml(m.nome||'—')}${m.nome_exibicao&&m.nome_exibicao!==m.nome?` <span style="color:var(--muted);font-weight:400;font-size:.85em">(${escHtml(m.nome_exibicao)})</span>`:''}</div><div class="medico-card-meta">CRM ${escHtml(m.crm||'—')}/${escHtml(m.uf||'—')}${m.especialidade?' · '+escHtml(m.especialidade):''}<br>${escHtml(m.email||'—')} · 📱 ${escHtml(m.telefone||'—')}${m.cnpj?`<br>🏢 CNPJ: ${escHtml(m.cnpj)}`:''}${m.tem_assinatura_digital?`<br>✍️ Assinatura digital${m.provedor_assinatura?' · '+escHtml(m.provedor_assinatura):''}`:''  }${m.tem_memed?`<br>💊 Memed${m.memed_email?' · '+escHtml(m.memed_email):''}`:''}<br>Cadastro: ${escHtml(dt)}</div><div class="medico-card-btns"><button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button><button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button></div></div>`;
 }).join('');
 }
 async function aprovarMedico(id, btn) {
@@ -1737,10 +1780,10 @@ const container=document.getElementById('hist-lista');
 const q=(document.getElementById('hist-busca')?.value||'').toLowerCase().trim();
 const lista=q?histData.filter(a=>(a.nome||'').toLowerCase().includes(q)||(a.cpf||'').includes(q)||(a.tel||'').includes(q)):histData;
 if (!lista.length) { container.innerHTML='<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
-container.innerHTML=lista.map((a,idx)=>{
+container.innerHTML=lista.map((a)=>{
 const encerrado=a.encerrado_em?new Date(a.encerrado_em).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const tipo=a.tipo||'chat', tipoIcon=tipo==='video'?'🎥':'💬', temPront=!!a.prontuario_salvo;
-return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${idx})"><div class="hist-card-nome">${a.nome||'—'}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${encerrado}<br>CPF: ${a.cpf||'—'} · Tel.: ${a.tel||'—'}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
+return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${Number(a.id)||0})"><div class="hist-card-nome">${escHtml(a.nome||'—')}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${escHtml(encerrado)}<br>CPF: ${escHtml(a.cpf||'—')} · Tel.: ${escHtml(a.tel||'—')}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
 }).join('');
 }
 
@@ -1765,9 +1808,9 @@ window.scrollTo(0,0);
 } catch(e) { mostrarToast('Erro ao abrir atendimento','error'); }
 }
 
-function abrirHistoricoAtendimento(idx) {
+function abrirHistoricoAtendimento(id) {
 if (atendimentoAtual&&!modoHistorico) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.','error'); return; }
-const a=histData[idx]; if (!a) return;
+const a=histData.find(item=>String(item.id)===String(id)); if (!a) return;
 clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true; atendimentoAtual=a;
 // Fechar sidebar no mobile ao abrir histórico
@@ -1805,6 +1848,13 @@ const parts=val.split('-');
 if (parts.length===3) return parts[2]+'/'+parts[1]+'/'+parts[0];
 return val;
 }
+document.addEventListener('visibilitychange', function(){
+if(document.hidden) return;
+if(plantaoAtivo) buscarFila();
+buscarAgendamentos();
+if(chatAtivo&&!modoHistorico) buscarMensagensNovasMedico();
+});
+
 (function init() { const saved=sessionStorage.getItem('medico'); if(saved){medico=JSON.parse(saved);entrarApp();} })();
 </script>
 <button class="fab-fila" id="fab-fila" onclick="toggleSidebarMobile()" title="Ver fila">
