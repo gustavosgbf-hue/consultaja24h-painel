@@ -230,7 +230,7 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .btn-copiar{padding:9px 18px;border-radius:8px;border:1px solid rgba(94,224,160,.25);background:rgba(94,224,160,.06);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;display:none}
 .btn-copiar:hover{background:rgba(94,224,160,.12)}
 .btn-copiar.copied{border-color:rgba(180,224,90,.4);background:rgba(180,224,90,.1);color:var(--g1)}
-.pront-output{background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:10px;padding:18px;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.9;color:rgba(255,255,255,.75);white-space:pre-wrap;display:none;max-height:400px;overflow-y:auto}
+.pront-output{display:none;margin-top:4px}.pront-card{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px;padding:20px;margin-bottom:8px}.pront-card-title{font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);margin-bottom:10px;opacity:.7}.pront-card-body{font-size:.82rem;font-weight:300;color:rgba(255,255,255,.75);line-height:1.8;white-space:pre-wrap}.pront-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line2)}.pront-paciente{font-size:.9rem;font-weight:600;color:#fff}.pront-meta{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.6}.pront-empty{font-size:.78rem;color:rgba(255,255,255,.25);font-style:italic}
 .atend-timer{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px}
 .atend-timer svg{opacity:.5}
 .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
@@ -570,7 +570,7 @@ padding:0 4px;
           <div class="pront-section">
             <div class="pront-header">
               <div class="pront-title">Prontuário de telemedicina</div>
-              <div class="pront-actions"><span class="autosave-status" id="autosave-status"></span><button class="btn-gerar" id="btn-gerar" onclick="gerarProntuario()">Gerar prontuário</button><button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()">Copiar texto</button></div>
+              <div class="pront-actions"><span class="autosave-status" id="autosave-status"></span><button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()" style="display:none">📋 Copiar texto</button></div>
             </div>
             <div class="pront-output" id="pront-output"></div>
           </div>
@@ -911,8 +911,8 @@ document.getElementById('pront-output').style.display='none';
 document.getElementById('btn-copiar').style.display='none';
 document.getElementById('autosave-status').className='autosave-status';
 if (p.prontuario_salvo) {
-document.getElementById('pront-output').textContent=p.prontuario_salvo;
-document.getElementById('pront-output').style.display='block';
+// prontuário salvo: renderizar visual imediatamente
+renderProntuarioVisual();
 document.getElementById('btn-copiar').style.display='inline-flex';
 document.getElementById('btn-copiar').classList.remove('copied');
 document.getElementById('btn-copiar').textContent='Copiar texto';
@@ -928,13 +928,7 @@ if (p.meet_link) { document.getElementById('meetLinkInput').value=p.meet_link; d
 document.getElementById('chat-section').style.display='block'; iniciarChatMedico();
 } else { document.getElementById('wpp-consulta-section').style.display='block'; }
 switchTab('consulta');
-} else {
-  if (tipo==='chat') {
-    document.getElementById('chat-section').style.display='block';
-    carregarChatHistorico(p.id);
-  }
-  switchTab(p.prontuario_salvo?'prontuario':'clinico');
-}
+} else { switchTab(p.prontuario_salvo?'prontuario':'clinico'); }
 }
 
 function registrarAutosave() {
@@ -955,7 +949,7 @@ const texto=montarTextoProntuario();
 const s=document.getElementById('autosave-status');
 try {
 const res=await fetch(`${API}/api/atendimento/prontuario`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,prontuario:texto})});
-if (res.ok) { s.className='autosave-status visible ok'; s.textContent='✓ Salvo'; setTimeout(()=>{s.className='autosave-status';},3000); }
+if (res.ok) { s.className='autosave-status visible ok'; s.textContent='✓ Salvo'; setTimeout(()=>{s.className='autosave-status';},3000); renderProntuarioVisual(); }
 else { s.className='autosave-status visible err'; s.textContent='⚠ Não salvo'; }
 } catch(e) { s.className='autosave-status visible err'; s.textContent='⚠ Não salvo'; }
 }
@@ -1061,29 +1055,6 @@ async function enviarMensagemPip() {
 }
 
 // ── FIM PIP ───────────────────────────────────────────────
-
-async function carregarChatHistorico(atendId) {
-  const container = document.getElementById('chat-medico-msgs');
-  if (!container) return;
-  container.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:.78rem;padding:12px;text-align:center">Carregando mensagens...</div>';
-  const ta = document.getElementById('chat-medico-textarea');
-  const sendBtn = document.getElementById('chat-medico-send');
-  if (ta) { ta.disabled=true; ta.placeholder='Histórico — somente leitura'; ta.style.opacity='.4'; }
-  if (sendBtn) { sendBtn.disabled=true; sendBtn.style.opacity='.4'; }
-  try {
-    const res = await fetch(`${API}/api/chat/${atendId}`, {headers:{'Authorization':`Bearer ${getToken()}`}});
-    const data = await res.json();
-    if (!data.ok || !data.mensagens?.length) {
-      container.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:.78rem;padding:12px;text-align:center">Nenhuma mensagem nesta consulta</div>';
-      return;
-    }
-    container.innerHTML = '';
-    data.mensagens.forEach(m => adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo));
-    container.scrollTop = container.scrollHeight;
-  } catch(e) {
-    container.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:.78rem;padding:12px;text-align:center">Erro ao carregar mensagens</div>';
-  }
-}
 
 function iniciarChatMedico() {
 ultimaMsgId=0; chatAtivo=true; clearInterval(chatInterval);
@@ -1277,19 +1248,63 @@ sep,
 );
 return linhas.join('\n');
 }
+function renderProntuarioVisual() {
+if (!atendimentoAtual) return;
+const p = atendimentoAtual;
+const hda=document.getElementById('cl-hda').value.trim();
+const comorbidades=document.getElementById('cl-comorbidades').value.trim();
+const medicacoes=document.getElementById('cl-medicacoes').value.trim();
+const alergias=document.getElementById('cl-alergias').value.trim();
+const obs=document.getElementById('cl-obs').value.trim();
+const conduta=document.getElementById('cl-conduta').value.trim();
+const docs=[...document.querySelectorAll('.doc-check.checked')].map(d=>d.querySelector('.dc-text').textContent).join(', ')||'Nenhum';
+const nasc=p.data_nascimento?formatarNascimento(p.data_nascimento):'—';
+const tipo=p.tipo||'chat';
+const dataHora=new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const empty = v => v ? `<span>${v}</span>` : `<span class="pront-empty">Não informado</span>`;
+const out = document.getElementById('pront-output');
+out.style.display = 'block';
+out.innerHTML = `
+<div class="pront-header">
+  <div>
+    <div class="pront-paciente">${p.nome||'—'}</div>
+    <div class="pront-meta">CPF: ${p.cpf||'—'} · Nasc.: ${nasc} · ${tipo==='video'?'📹 Vídeo':'💬 Chat'}</div>
+    <div class="pront-meta">${dataHora} · Res. CFM 2.314/2022</div>
+  </div>
+</div>
+<div class="pront-card">
+  <div class="pront-card-title">Queixa principal / HDA</div>
+  <div class="pront-card-body">${empty(hda)}</div>
+</div>
+<div class="pront-card">
+  <div class="pront-card-title">Antecedentes</div>
+  <div class="pront-card-body">Comorbidades: ${comorbidades||'Nega comorbidades referidas'}
+Medicações em uso: ${medicacoes||'Nega uso contínuo de medicações'}
+Alergias: ${alergias||'Nega alergias medicamentosas'}</div>
+</div>
+${obs?`<div class="pront-card"><div class="pront-card-title">Observações (telemedicina)</div><div class="pront-card-body">${obs}</div></div>`:''}
+<div class="pront-card">
+  <div class="pront-card-title">Conduta</div>
+  <div class="pront-card-body">${empty(conduta)}</div>
+</div>
+<div class="pront-card">
+  <div class="pront-card-title">Documentos emitidos</div>
+  <div class="pront-card-body">${docs}</div>
+</div>`;
+document.getElementById('btn-copiar').style.display='inline-flex';
+}
 function gerarProntuario() {
 if (!atendimentoAtual) return;
+renderProntuarioVisual();
 const texto=montarTextoProntuario();
-const out=document.getElementById('pront-output'); out.textContent=texto; out.style.display='block';
-const btnCopiar=document.getElementById('btn-copiar'); btnCopiar.style.display='inline-flex'; btnCopiar.classList.remove('copied'); btnCopiar.textContent='Copiar texto';
-mostrarToast('Prontuário gerado!','success'); salvarProntuarioAgora(texto);
+salvarProntuarioAgora(texto);
 }
 async function salvarProntuarioAgora(texto) {
 if (!atendimentoAtual) return;
 try { await fetch(`${API}/api/atendimento/prontuario`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,prontuario:texto})}); } catch(e) {}
 }
 function copiarProntuario() {
-navigator.clipboard.writeText(document.getElementById('pront-output').textContent).then(()=>{
+navigator.clipboard.writeText(montarTextoProntuario()).then(()=>{
 const btn=document.getElementById('btn-copiar'); btn.classList.add('copied'); btn.textContent='✓ Copiado!';
 mostrarToast('Prontuário copiado!','success'); setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Copiar texto';},3000);
 });
@@ -1760,11 +1775,7 @@ if (main) main.scrollTop = 0;
 window.scrollTo(0,0);
 }
 function fecharHistoricoAtendimento() {
-atendimentoAtual=null; modoHistorico=false;
-const _ta=document.getElementById('chat-medico-textarea'); const _sb=document.getElementById('chat-medico-send');
-if(_ta){_ta.disabled=false;_ta.placeholder='Digite sua mensagem...';_ta.style.opacity='';}
-if(_sb){_sb.disabled=false;_sb.style.opacity='';}
-renderEstado(); buscarHistorico();
+atendimentoAtual=null; modoHistorico=false; renderEstado(); buscarHistorico();
 // Mostrar FAB de volta
 const fab = document.getElementById('fab-fila');
 if (fab) fab.style.display='';
