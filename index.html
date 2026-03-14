@@ -272,98 +272,103 @@ MOBILE — UX dedicada para < 768px
 .plantao-btn{padding:7px 12px;font-size:.72rem}
 .nav-logout{padding:7px 10px;font-size:.72rem}
 
-/* Layout: sidebar vira painel inferior fixo, main ocupa tudo */
-.app-body{display:block;min-height:calc(100vh - var(--nav-h))}
+/* Layout: sidebar fixa na esquerda igual ao PC, só menor */
+.app-body{display:flex;min-height:calc(100vh - var(--nav-h))}
 
 .sidebar{
-position:fixed;bottom:0;left:0;right:0;
-width:100%;max-height:70vh;
-border-right:none;border-top:1px solid var(--line);
-border-radius:20px 20px 0 0;
-background:#0a1a14;
-padding:12px 16px 32px;
-z-index:200;
+position:sticky;top:var(--nav-h);
+width:180px;min-width:180px;
+height:calc(100vh - var(--nav-h));
 overflow-y:auto;
-transform:translateY(100%);
-transition:transform .3s cubic-bezier(.32,.72,0,1);
-}
-/* Sem atendimento: handle visível no topo (56px) */
-.sidebar.idle{transform:translateY(calc(100% - 56px))}
-.sidebar.idle.open{transform:translateY(0)}
-/* Com atendimento: completamente escondida — sem handle visível */
-.sidebar.open{transform:translateY(0)}
-/* Garante que sem open e sem idle = totalmente escondida */
-.sidebar:not(.idle):not(.open){transform:translateY(100%)}
-
-/* Handle de arrastar */
-.sidebar::before{
-content:'';display:block;
-width:36px;height:4px;border-radius:2px;
-background:rgba(255,255,255,.15);
-margin:0 auto 14px;
-}
-
-/* Título da sidebar como botão de toggle */
-.sidebar-title:first-of-type{
-cursor:pointer;
+padding:14px 10px 32px;
 font-size:.78rem;
-padding:4px 0;
+transform:none !important;
+border-right:1px solid var(--line);
+border-top:none;
+border-radius:0;
+background:var(--bg);
 }
 
-/* Main ocupa tela toda */
+/* Sidebar sem handle — não precisa mais */
+.sidebar::before{display:none}
+
+/* Títulos da sidebar menores */
+.sidebar-title{font-size:.65rem;margin-bottom:10px}
+.fila-count{font-size:.65rem;padding:1px 6px}
+
+/* Cards da fila mais compactos */
+.fila-card{padding:10px 10px}
+.fila-card .fc-nome{font-size:.82rem}
+.fila-card .fc-queixa{font-size:.72rem;-webkit-line-clamp:2}
+.fila-card .fc-meta{font-size:.68rem}
+.btn-chat-inline{font-size:.7rem;padding:4px 8px}
+.btn-retomar{font-size:.7rem;padding:5px 8px}
+
+/* Botão fechar sidebar — esconde no mobile fixo */
+#btn-fechar-sidebar{display:none!important}
+
+/* Main ocupa o restante */
 .main{
-padding:16px 14px;
-min-height:calc(100vh - var(--nav-h) - 52px);
-padding-bottom:80px; /* espaço para sidebar fechada */
+flex:1;
+min-width:0;
+padding:14px 12px;
+padding-bottom:40px;
+overflow-x:hidden;
 }
 
 /* Header do atendimento mobile */
-.atend-header{flex-direction:column;gap:10px;margin-bottom:16px}
-.atend-nome{font-size:1.3rem}
-.atend-actions{width:100%;gap:8px}
+.atend-header{flex-direction:column;gap:8px;margin-bottom:14px}
+.atend-nome{font-size:1.1rem}
+.atend-actions{width:100%;gap:6px;flex-wrap:wrap}
 .atend-actions .btn-wpp,
+#btn-memed,
 .atend-actions .btn-encerrar,
-.atend-actions .btn-voltar-hist{flex:1;justify-content:center;padding:11px 10px;font-size:.8rem}
+.atend-actions .btn-voltar-hist{flex:1;min-width:calc(50% - 3px);justify-content:center;padding:10px 8px;font-size:.75rem}
 
 /* Triagem mais compacta */
-.triagem-box{padding:14px}
-.triagem-grid{grid-template-columns:1fr 1fr;gap:8px}
-.triagem-item span{font-size:.82rem}
+.triagem-box{padding:12px}
+.triagem-grid{grid-template-columns:1fr 1fr;gap:6px}
+.triagem-item span{font-size:.78rem}
+.triagem-box-title{font-size:.68rem}
 
 /* Tabs menores */
-.tabs{gap:4px}
-.tab{padding:8px 6px;font-size:.75rem}
+.tabs{gap:3px}
+.tab{padding:7px 4px;font-size:.68rem;letter-spacing:-.01em}
 
 /* Chat mobile */
-.chat-medico-msgs{height:220px}
+.chat-medico-msgs{height:200px}
+.chat-msg{font-size:.82rem}
+.chat-msg,.chat-input-row input{word-break:break-word}
 
 /* Avaliação clínica */
 .clinic-grid{grid-template-columns:1fr}
+.clinic-label{font-size:.72rem}
+.clinic-textarea{font-size:.82rem}
 
 /* Modal fullscreen no mobile */
 .modal-overlay{padding:0;align-items:flex-end}
-.modal{border-radius:20px 20px 0 0;max-width:100%;padding:28px 20px 36px}
+.modal{border-radius:20px 20px 0 0;max-width:100%;padding:24px 16px 32px}
 
 /* Cards de agendamento no mobile */
 .btn-iniciar-agora{width:100%;justify-content:center;padding:10px}
 
-/* Histórico mobile — scroll suave e padding adequado */
-.hist-card{padding:14px 16px;margin-bottom:10px}
-.hist-card-nome{font-size:.95rem}
+/* Histórico mobile */
+.hist-card{padding:12px 14px;margin-bottom:8px}
+.hist-card-nome{font-size:.88rem}
 
-/* Botão voltar ao histórico mais visível no mobile */
+/* Botão voltar ao histórico */
 .btn-voltar-hist{
 width:100%;justify-content:center;
-padding:13px;font-size:.85rem;
+padding:11px;font-size:.8rem;
 background:rgba(255,255,255,.04);
-margin-bottom:16px;
+margin-bottom:14px;
 }
 
 /* Toast no topo no mobile */
 .toast{bottom:auto;top:72px;right:12px;left:12px;text-align:center}
 
-/* Histórico */
-.hist-card{padding:12px 14px}
+/* FAB escondido — sidebar sempre visível */
+.fab-fila{display:none!important}
 }
 
 /* Tablet intermediário */
@@ -633,73 +638,13 @@ function getToken() { return sessionStorage.getItem('token')||''; }
 let agendInterval = null;
 function toggleAdminField() { const f=document.getElementById('field-admin-pwd'); f.style.display=f.style.display==='none'?'block':'none'; }
 
-// -- MOBILE SIDEBAR DRAWER --------------------------------------------------
+// -- MOBILE SIDEBAR ----------------------------------------------------------
 function isMobile() { return window.innerWidth <= 768; }
-
-function fecharSidebarMobile() {
-const sidebar = document.querySelector('.sidebar');
-if (sidebar) sidebar.classList.remove('open');
-}
-
-function toggleSidebarMobile() {
-const sidebar = document.querySelector('.sidebar');
-if (sidebar) sidebar.classList.toggle('open');
-}
-
-function setupMobileSidebar() {
-if (!isMobile()) return;
-const sidebar = document.querySelector('.sidebar');
-if (!sidebar) return;
-
-// Mostrar botão fechar no mobile
-const btnFechar = document.getElementById('btn-fechar-sidebar');
-if (btnFechar) btnFechar.style.display = 'inline-block';
-
-// Toggle ao clicar no título da fila
-const firstTitle = sidebar.querySelector('.sidebar-title');
-if (firstTitle) {
-firstTitle.onclick = function() {
-sidebar.classList.toggle('open');
-};
-}
-
-// Swipe para baixo fecha, para cima abre
-let startY = 0;
-sidebar.addEventListener('touchstart', function(e){ startY = e.touches[0].clientY; }, {passive:true});
-sidebar.addEventListener('touchend', function(e){
-const dy = e.changedTouches[0].clientY - startY;
-if (dy > 60) sidebar.classList.remove('open');
-if (dy < -60) sidebar.classList.add('open');
-}, {passive:true});
-
-// Estado inicial baseado em ter atendimento ou não
-atualizarEstadoSidebarMobile();
-
-// Fechar ao assumir paciente
-document.addEventListener('atendimentoIniciado', function() {
-sidebar.classList.remove('open');
-atualizarEstadoSidebarMobile();
-});
-}
-
-function atualizarEstadoSidebarMobile() {
-if (!isMobile()) return;
-const sidebar = document.querySelector('.sidebar');
-if (!sidebar) return;
-if (atendimentoAtual && !modoHistorico) {
-// Tem atendimento: esconde sidebar completamente, só FAB
-sidebar.classList.remove('idle');
-sidebar.classList.remove('open');
-} else {
-// Sem atendimento: sidebar parcialmente visível (handle no topo)
-sidebar.classList.add('idle');
-}
-}
-
-// Notificar quando atendimento inicia (para fechar sidebar)
-function notificarAtendimentoIniciado() {
-document.dispatchEvent(new CustomEvent('atendimentoIniciado'));
-}
+function fecharSidebarMobile() { /* sidebar fixa no mobile */ }
+function toggleSidebarMobile() { /* sidebar fixa no mobile */ }
+function setupMobileSidebar() { /* sidebar fixa no mobile — sem drawer */ }
+function atualizarEstadoSidebarMobile() { /* sidebar fixa no mobile */ }
+function notificarAtendimentoIniciado() { /* sem drawer para fechar */ }
 
 function entrarApp() {
 document.getElementById('screen-login').style.display='none';
