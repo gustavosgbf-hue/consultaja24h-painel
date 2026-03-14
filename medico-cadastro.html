@@ -232,21 +232,22 @@
   <!-- ── DECLARAÇÃO ── -->
   <div class="check-wrap" id="check-declaracao-wrap">
     <label class="check-label">
-      <input type="checkbox" id="chk-declaracao" onchange="document.getElementById('btnCadastrar').disabled=!this.checked"/>
+      <input type="checkbox" id="chk-declaracao" />
       <span class="check-box"></span>
       <span class="check-txt">Declaro que sou médico regularmente inscrito no CRM informado e que sou responsável pelos atos médicos realizados na plataforma.</span>
     </label>
   </div>
 
-  <button class="btn" id="btnCadastrar" onclick="cadastrar()" disabled>Solicitar cadastro</button>
+  <button class="btn" id="btnCadastrar"  disabled>Solicitar cadastro</button>
 
   <div class="msg" id="msg"></div>
 
   <p class="divider">Já tem conta? <a href="/">Entrar no painel</a></p>
 </div>
 
+<script src="./api-config.js"></script>
 <script>
-const API = 'https://triagem-api.onrender.com';
+const API = window.API_BASE_URL;
 
 function toggleSenha(id, btn) {
   var input = document.getElementById(id);
@@ -265,6 +266,21 @@ function mostrarMsg(texto, tipo) {
   el.textContent = texto;
   el.className = 'msg ' + tipo;
   el.style.display = 'block';
+}
+
+
+function validarCRM(crm) {
+  var digits = String(crm || '').replace(/\D/g,'');
+  return digits.length >= 4 && digits.length <= 10;
+}
+
+function validarTelefone(telefone) {
+  var digits = String(telefone || '').replace(/\D/g,'');
+  return digits.length === 10 || digits.length === 11;
+}
+
+function validarEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||''));
 }
 
 async function cadastrar() {
@@ -288,6 +304,12 @@ async function cadastrar() {
   if (senha !== senha2) {
     mostrarMsg('As senhas não coincidem.', 'err'); return;
   }
+  if (!validarCRM(crm)) {
+    mostrarMsg('Informe um CRM válido (apenas números, entre 4 e 10 dígitos).', 'err'); return;
+  }
+  if (telefone && !validarTelefone(telefone)) {
+    mostrarMsg('Informe um telefone válido com DDD (10 ou 11 dígitos).', 'err'); return;
+  }
 
   var especialidade       = document.getElementById('especialidade').value.trim();
   var nome_exibicao       = document.getElementById('nome_exibicao').value.trim() || nome;
@@ -296,6 +318,13 @@ async function cadastrar() {
   var provedor_assinatura = tem_assinatura ? document.getElementById('provedor_assinatura').value : '';
   var tem_memed           = document.getElementById('chk-memed').checked;
   var memed_email         = tem_memed ? document.getElementById('memed_email').value.trim() : '';
+
+  if (tem_memed && !memed_email) {
+    mostrarMsg('Informe o e-mail do Memed para habilitar essa integração.', 'err'); return;
+  }
+  if (tem_memed && !validarEmail(memed_email)) {
+    mostrarMsg('Informe um e-mail válido no campo do Memed.', 'err'); return;
+  }
 
   var btn = document.getElementById('btnCadastrar');
   btn.disabled = true; btn.textContent = 'Enviando...';
@@ -339,9 +368,14 @@ document.getElementById('cnpj').addEventListener('input', function() {
   this.value = v;
 });
 
-// Enter para submeter
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') cadastrar();
+// Enter para submeter apenas no formulário
+document.querySelector('.card').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') cadastrar();
+});
+
+document.getElementById('btnCadastrar').addEventListener('click', cadastrar);
+document.getElementById('chk-declaracao').addEventListener('change', function() {
+  document.getElementById('btnCadastrar').disabled = !this.checked;
 });
 </script>
 </body>
