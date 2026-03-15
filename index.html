@@ -715,6 +715,31 @@ async function safeJson(res) {
   try { return JSON.parse(text); } catch(e) { console.warn('[safeJson] parse error:', e); return {}; }
 }
 
+// ── FETCH CENTRALIZADO ──────────────────────────────────────────────────────
+// Centraliza: token de autorização, safeJson, erros 401/500 e toast automático
+async function apiFetch(path, opts={}) {
+  const token = getToken();
+  const adminPwd = sessionStorage.getItem('adminPwd') || '';
+  const headers = { ...(opts.headers || {}) };
+  if (token && !headers['Authorization'] && !headers['x-admin-password']) {
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+  if (opts._admin) { headers['x-admin-password'] = adminPwd; delete opts._admin; }
+  if (opts.json) {
+    headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(opts.json);
+    delete opts.json;
+  }
+  const res = await fetch(API + path, { ...opts, headers });
+  if (res.status === 401) {
+    mostrarToast('Sessão expirada. Faça login novamente.', 'error');
+    sessionStorage.clear();
+    location.reload();
+    return {};
+  }
+  return safeJson(res);
+}
+
 // ── RECUPERAÇÃO DE SENHA ────────────────────────────────────────────────────
 function abrirRecuperacao() {
   const sec = document.getElementById('recovery-section');
@@ -809,8 +834,8 @@ if (atendSalvo && !atendimentoAtual) {
 try {
 const atendParsed = JSON.parse(atendSalvo);
 // Verifica no servidor se ainda está assumido
-fetch(API+'/api/atendimento/status/'+atendParsed.id, {headers:{'Authorization':'Bearer '+getToken()}})
-.then(r=>safeJson(r)).then(d=>{
+apiFetch('/api/atendimento/status/'+atendParsed.id)
+.then(data=>.then(d=>{
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 atendimentoAtual = d.atendimento;
 modoHistorico = false;
@@ -836,8 +861,7 @@ if (assumiuId) {
 history.replaceState(null,'',window.location.pathname);
 setTimeout(async function() {
 try {
-const res = await fetch(API+'/api/atendimento/status/'+assumiuId, {headers:{'Authorization':'Bearer '+getToken()}});
-const d = await safeJson(res);
+const d = await apiFetch('/api/atendimento/status/'+assumiuId);
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 atendimentoAtual = d.atendimento;
 sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoAtual));
@@ -866,7 +890,7 @@ document.getElementById('admin-medicos-lista').style.display='none';
 
 function togglePlantao() { if(plantaoAtivo) sairPlantao(); else entrarPlantao(); }
 async function entrarPlantao() {
-try { await fetch(`${API}/api/plantao/entrar`,{method:'POST',headers:{'Authorization':`Bearer ${getToken()}`}}); } catch(e) {}
+try { await apiFetch('/api/plantao/entrar',{method:'POST'}); } catch(e) {}
 plantaoAtivo=true;
 document.getElementById('btn-plantao').className='plantao-btn online';
 document.getElementById('plantao-txt').textContent='Sair do plantão';
@@ -874,7 +898,7 @@ renderEstado(); iniciarPollingFila();
 mostrarToast('Você entrou em plantão','success');
 }
 async function sairPlantao() {
-try { await fetch(`${API}/api/plantao/sair`,{method:'POST',headers:{'Authorization':`Bearer ${getToken()}`}}); } catch(e) {}
+try { await apiFetch('/api/plantao/sair',{method:'POST'}); } catch(e) {}
 plantaoAtivo=false;
 document.getElementById('btn-plantao').className='plantao-btn offline';
 document.getElementById('plantao-txt').textContent='Entrar em plantão';
@@ -883,22 +907,21 @@ if (!atendimentoAtual) renderEstado();
 mostrarToast('Você saiu do plantão','info');
 }
 function iniciarPollingFila() {
-clearInterval(filaInterval);
+if (filaInterval) { clearInterval(filaInterval); filaInterval=null; }
 buscarFila();
 filaInterval=setInterval(function(){ if(!document.hidden) buscarFila(); },filaRetryMs);
 }
-function pararPollingFila() { clearInterval(filaInterval); renderFila(); }
+function pararPollingFila() { if(filaInterval){clearInterval(filaInterval);filaInterval=null;} renderFila(); }
 
 function iniciarPollingAgendamentos() {
-clearInterval(agendInterval);
+if (agendInterval) { clearInterval(agendInterval); agendInterval=null; }
 buscarAgendamentos();
 agendInterval=setInterval(function(){ if(!document.hidden) buscarAgendamentos(); },agendRetryMs);
 }
 
 async function buscarFila() {
 try {
-const res = await fetch(`${API}/api/fila`,{headers:{'Authorization':`Bearer ${getToken()}`}});
-const data = await safeJson(res);
+const data = await apiFetch('/api/fila');
 if (data.ok) { filaData=data.fila||[]; filaRetryMs=15000; renderFila(); renderEstado(); }
 else { filaRetryMs=Math.min(filaRetryMs*2,60000); }
 } catch(e) { filaRetryMs=Math.min(filaRetryMs*2,60000); }
@@ -946,10 +969,7 @@ return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumid
 async function retomarAtendimento(id, evt) {
 evt.stopPropagation();
 try {
-const res = await fetch(`${API}/api/atendimento/status/${id}`, {
-headers: { 'Authorization': `Bearer ${getToken()}` }
-});
-const data = await safeJson(res);
+const data = await apiFetch(`/api/atendimento/status/${id}`);
 if (!data.ok) { mostrarToast('Erro ao retomar atendimento', 'error'); return; }
 // Busca dados completos da fila
 const p = filaData.find(p => String(p.id) === String(id));
@@ -983,8 +1003,7 @@ async function assumirAtendimento(id, evt) {
 evt.stopPropagation();
 if (!medico||!medico.id||!medico.nome) { mostrarToast('Faça login novamente.','error'); return; }
 try {
-const res=await fetch(`${API}/api/atendimento/assumir`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:Number(id),medicoId:Number(medico.id),medicoNome:medico.nome})});
-const data=await safeJson(res);
+const data=await apiFetch('/api/atendimento/assumir',{method:'POST',json:{filaId:Number(id),medicoId:Number(medico.id),medicoNome:medico.nome}});
 if (!res.ok||!data.ok) { mostrarToast(data.error||'Este paciente já foi assumido.','error'); await buscarFila(); return; }
 modoHistorico=false;
 atendimentoAtual=data.atendimento||filaData.find(p=>String(p.id)===String(id));
@@ -1115,8 +1134,8 @@ if (modoHistorico||!atendimentoAtual) return;
 const texto=montarTextoProntuario();
 const s=document.getElementById('autosave-status');
 try {
-const res=await fetch(`${API}/api/atendimento/prontuario`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,prontuario:texto})});
-if (res.ok) { s.className='autosave-status visible ok'; s.textContent='✓ Salvo'; setTimeout(()=>{s.className='autosave-status';},3000); renderProntuarioVisual(); }
+const _pr=await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:texto}});
+if (_pr.ok) { s.className='autosave-status visible ok'; s.textContent='✓ Salvo'; setTimeout(()=>{s.className='autosave-status';},3000); renderProntuarioVisual(); }
 else { s.className='autosave-status visible err'; s.textContent='⚠ Não salvo'; }
 } catch(e) { s.className='autosave-status visible err'; s.textContent='⚠ Não salvo'; }
 }
@@ -1224,9 +1243,10 @@ async function enviarMensagemPip() {
 // ── FIM PIP ───────────────────────────────────────────────
 
 function iniciarChatMedico() {
-ultimaMsgId=0; chatAtivo=true; clearInterval(chatInterval);
+ultimaMsgId=0; chatAtivo=true;
+if (chatInterval) { clearInterval(chatInterval); chatInterval=null; }
 carregarHistoricoMedico().then(()=>{
-clearInterval(chatInterval);
+if (chatInterval) { clearInterval(chatInterval); chatInterval=null; }
 chatInterval=setInterval(function(){ if(!document.hidden) buscarMensagensNovasMedico(); },chatRetryMs);
 sincronizarMsgsPip();
 });
@@ -1244,8 +1264,7 @@ if (taPip && !taPip._pipInit) {
 async function carregarHistoricoMedico() {
 if (!atendimentoAtual) return;
 try {
-const res=await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
-const data=await safeJson(res); if (!data.ok) return;
+const data=await apiFetch(`/api/chat/${atendimentoAtual.id}`,{headers:{}}); if (!data.ok) return;
 const container=document.getElementById('chat-medico-msgs');
 const msgs=data.mensagens||[];
 if (msgs.length>0) { const v=container.querySelector('.chat-vazio'); if(v)v.remove(); msgs.forEach(m=>{adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo);ultimaMsgId=m.id;}); }
@@ -1254,8 +1273,7 @@ if (msgs.length>0) { const v=container.querySelector('.chat-vazio'); if(v)v.remo
 async function buscarMensagensNovasMedico() {
 if (!atendimentoAtual||!chatAtivo||modoHistorico||document.hidden) return;
 try {
-const res=await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
-const data=await safeJson(res); if (!data.ok) { chatRetryMs=Math.min(chatRetryMs*2,15000); return; }
+const data=await apiFetch(`/api/chat/${atendimentoAtual.id}`,{headers:{}}); if (!data.ok) { chatRetryMs=Math.min(chatRetryMs*2,15000); return; }
 chatRetryMs=3000;
 const novas=(data.mensagens||[]).filter(m=>m.id>ultimaMsgId);
 if (novas.length>0) { const container=document.getElementById('chat-medico-msgs'); const v=container.querySelector('.chat-vazio'); if(v)v.remove(); novas.forEach(m=>{if(m.autor==='paciente'){adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo);adicionarMsgPip('paciente',m.texto);}ultimaMsgId=m.id;}); }
@@ -1269,7 +1287,7 @@ const texto=ta.value.trim(); if (!texto||!atendimentoAtual) return;
 ta.value=''; ta.style.height='auto';
 adicionarMsgMedico('medico',texto,new Date().toISOString());
 adicionarMsgPip('medico',texto);
-try { await fetch(`${API}/api/chat/enviar`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({atendimentoId:atendimentoAtual.id,autor:'medico',autorId:medico.id,texto})}); } catch(e) {}
+try { await apiFetch('/api/chat/enviar',{method:'POST',json:{atendimentoId:atendimentoAtual.id,autor:'medico',autorId:medico.id,texto}}); } catch(e) {}
 }
 function adicionarMsgMedico(autor, texto, timestamp, arquivoUrl, arquivoTipo) {
 const container=document.getElementById('chat-medico-msgs');
@@ -1345,8 +1363,7 @@ const link=document.getElementById('meetLinkInput').value.trim();
 if (!link||!atendimentoAtual) return;
 if (!link.startsWith('https://meet.google.com/')) { mostrarToast('Cole um link válido do Google Meet','error'); return; }
 try {
-const res=await fetch(`${API}/api/atendimento/meet`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,meetLink:link})});
-const data=await safeJson(res);
+const data=await apiFetch('/api/atendimento/meet',{method:'POST',json:{filaId:atendimentoAtual.id,meetLink:link}});
 if (data.ok) { document.getElementById('meetLinkAtualUrl').textContent=link; document.getElementById('meetLinkAtualUrl').href=link; document.getElementById('meetLinkAtual').style.display='block'; atendimentoAtual.meet_link=link; mostrarToast('Link do Meet salvo! O paciente já pode entrar.','success'); }
 } catch(e) { mostrarToast('Erro ao salvar link.','error'); }
 }
@@ -1366,7 +1383,7 @@ if (!plantaoAtivo) { offline.style.display='flex'; empty.style.display='none'; a
 else { offline.style.display='none'; empty.style.display=filaData.length===0?'flex':'none'; atend.style.display='none'; }
 }
 function iniciarTimer() {
-clearInterval(timerInterval);
+if (timerInterval) { clearInterval(timerInterval); timerInterval=null; }
 timerInterval=setInterval(()=>{
 timerSegundos++;
 const m=String(Math.floor(timerSegundos/60)).padStart(2,'0');
@@ -1502,7 +1519,7 @@ salvarProntuarioAgora(texto);
 }
 async function salvarProntuarioAgora(texto) {
 if (!atendimentoAtual) return;
-try { await fetch(`${API}/api/atendimento/prontuario`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,prontuario:texto})}); } catch(e) {}
+try { await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:texto}}); } catch(e) {}
 }
 function copiarProntuario() {
 navigator.clipboard.writeText(montarTextoProntuario()).then(()=>{
@@ -1517,8 +1534,7 @@ const item = filaData.find(function(p){ return String(p.id)===String(id); });
 const nome = item && item.nome ? item.nome : 'este paciente';
 if(!confirm('Encerrar atendimento de '+nome+'?')) return;
 try {
-const res = await fetch(API+'/api/atendimento/encerrar',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({filaId:id,status:'Encerrado pelo painel',documentos_emitidos:'Nenhum'})});
-const d = await safeJson(res);
+const d = await apiFetch('/api/atendimento/encerrar',{method:'POST',json:{filaId:id,status:'Encerrado pelo painel',documentos_emitidos:'Nenhum'}});
 if(d.ok){ mostrarToast('Atendimento encerrado.','success'); await buscarFila(); }
 else mostrarToast(d.error||'Erro ao encerrar','error');
 } catch(e){ mostrarToast('Erro ao encerrar','error'); }
@@ -1559,8 +1575,7 @@ try {
   if (textoPront && textoPront.trim()) await salvarProntuarioAgora(textoPront);
 } catch(e) { console.warn('[encerrar] erro ao salvar prontuario:', e); }
 try {
-  const r = await fetch(`${API}/api/atendimento/encerrar`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId,status:statusTexto,documentos_emitidos:docs})});
-  const d = await safeJson(r);
+  const d = await apiFetch('/api/atendimento/encerrar',{method:'POST',json:{filaId,status:statusTexto,documentos_emitidos:docs}});
   if (!d.ok) { mostrarToast('Erro ao encerrar: '+(d.error||'tente novamente'),'error'); return; }
 } catch(e) { mostrarToast('Erro de conexão ao encerrar.','error'); return; }
 clearInterval(timerInterval);
@@ -1574,8 +1589,7 @@ setTimeout(atualizarEstadoSidebarMobile, 100);
 let agendData=[], agendVisible=false;
 async function buscarAgendamentos() {
 try {
-const res=await fetch(`${API}/api/agendamentos`,{headers:{'Authorization':`Bearer ${getToken()}`}});
-const data=await safeJson(res); if (!data.ok) { agendRetryMs=Math.min(agendRetryMs*2,120000); return; }
+const data=await apiFetch('/api/agendamentos'); if (!data.ok) { agendRetryMs=Math.min(agendRetryMs*2,120000); return; }
 agendRetryMs=20000;
 agendData=data.agendamentos||[];
 document.getElementById('agend-count').textContent=agendData.length;
@@ -1596,9 +1610,7 @@ return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,24
 let adminVisible=false, adminData=[];
 async function carregarMedicosPendentes() {
 try {
-const res=await fetch(`${API}/api/admin/medicos/pendentes`,{headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
-if (!res.ok) return;
-const data=await safeJson(res); adminData=data.medicos||[];
+const data=await apiFetch('/api/admin/medicos/pendentes',{_admin:true}); if (!data.ok && data.ok !== undefined) return; adminData=data.medicos||[];
 const count=adminData.length;
 if (count>0) { document.getElementById('admin-tab-btn').style.display='flex'; document.getElementById('admin-pendente-count').textContent=count; }
 else { document.getElementById('admin-tab-btn').style.display='none'; }
@@ -1630,8 +1642,7 @@ if(medicoId) params.set('medico_id',medicoId);
 if(inicio) params.set('data_inicio',inicio);
 if(fim) params.set('data_fim',fim);
 if(busca) params.set('busca',busca);
-const res=await fetch(`${API}/api/admin/historico?${params}`,{headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
-const data=await safeJson(res);
+const data=await apiFetch(`/api/admin/historico?${params}`,{_admin:true});
 if(!data.ok) { lista.innerHTML='<div style="color:#ff8080;font-size:.78rem;padding:8px 0">Erro ao carregar</div>'; return; }
 // Popula select de médicos na primeira carga
 if(data.medicos&&data.medicos.length&&!histGeralMedicos.length) {
@@ -1660,8 +1671,7 @@ return `<div class="medico-card"><div class="medico-card-nome">${escHtml(m.nome|
 async function aprovarMedico(id, btn) {
 btn.disabled=true; btn.textContent='Aprovando...';
 try {
-const res=await fetch(`${API}/api/admin/medico/${id}/aprovar`,{method:'PATCH',headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
-const d=await safeJson(res);
+const d=await apiFetch(`/api/admin/medico/${id}/aprovar`,{method:'PATCH',_admin:true});
 if (d.ok) { adminData=adminData.filter(m=>m.id!==id); renderMedicosPendentes(); document.getElementById('admin-pendente-count').textContent=adminData.length; if(!adminData.length) document.getElementById('admin-tab-btn').style.display='none'; mostrarToast('Médico aprovado','success'); }
 else { mostrarToast(d.error||'Erro ao aprovar','error'); btn.disabled=false; btn.textContent='✓ Aprovar'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✓ Aprovar'; }
@@ -1670,8 +1680,7 @@ async function rejeitarMedico(id, btn) {
 if (!confirm('Rejeitar este médico?')) return;
 btn.disabled=true; btn.textContent='Rejeitando...';
 try {
-const res=await fetch(`${API}/api/admin/medico/${id}/rejeitar`,{method:'PATCH',headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
-const d=await safeJson(res);
+const d=await apiFetch(`/api/admin/medico/${id}/rejeitar`,{method:'PATCH',_admin:true});
 if (d.ok) { adminData=adminData.filter(m=>m.id!==id); renderMedicosPendentes(); document.getElementById('admin-pendente-count').textContent=adminData.length; if(!adminData.length) document.getElementById('admin-tab-btn').style.display='none'; mostrarToast('Médico rejeitado','info'); }
 else { mostrarToast(d.error||'Erro ao rejeitar','error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
@@ -1689,11 +1698,7 @@ iniciarAgendamento(parseInt(id), nome, tel, tipo);
 async function iniciarAgendamento(agendId, nome, tel, tipo = 'chat') {
 if (!confirm(`Iniciar consulta de ${nome} agora (antes do horário)?`)) return;
 try {
-const res = await fetch(`${API}/api/agendamento/${agendId}/iniciar`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
-});
-const d = await safeJson(res);
+const d = await apiFetch(`/api/agendamento/${agendId}/iniciar`,{method:'POST'});
 if (!d.ok) {
 mostrarToast(d.error || 'Erro ao iniciar', 'error');
 // Se outro médico já iniciou, remove da lista imediatamente
@@ -1717,11 +1722,7 @@ async function cancelarAgendamento(agendId, btn) {
 if (!confirm('Cancelar este agendamento?')) return;
 btn.disabled=true; btn.textContent='...';
 try {
-const res = await fetch(`${API}/api/agendamento/${agendId}/cancelar`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
-});
-const d = await safeJson(res);
+const d = await apiFetch(`/api/agendamento/${agendId}/cancelar`,{method:'POST'});
 if (d.ok) { agendData=agendData.filter(a=>a.id!==agendId); renderAgendamentos(); document.getElementById('agend-count').textContent=agendData.length; mostrarToast('Agendamento cancelado','info'); }
 else { mostrarToast(d.error||'Erro ao cancelar','error'); btn.disabled=false; btn.textContent='✕'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✕'; }
@@ -1730,8 +1731,7 @@ else { mostrarToast(d.error||'Erro ao cancelar','error'); btn.disabled=false; bt
 let histData=[], histVisible=false;
 async function buscarHistorico() {
 try {
-const res=await fetch(`${API}/api/historico`,{headers:{'Authorization':`Bearer ${getToken()}`}});
-const data=await safeJson(res); if (!data.ok) return;
+const data=await apiFetch('/api/historico'); if (!data.ok) return;
 histData=data.historico||[];
 document.getElementById('hist-count').textContent=histData.length;
 if (histVisible) renderHistorico();
@@ -1780,11 +1780,7 @@ async function salvarPrescricaoNoProntuario(dados) {
     const obs = linhas.join('\n');
     const prontAtual = atendimentoAtual.prontuario || '';
     const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
-    await fetch(`${API}/api/atendimento/prontuario`, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
-      body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
-    });
+    await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
     if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
     // Atualiza campo prontuário na tela se estiver visível
     const campo = document.getElementById('prontuario-texto');
@@ -1804,8 +1800,7 @@ async function abrirMemed() {
       // Busca dados completos do paciente no servidor para garantir CPF/data_nascimento
       let pac = atendimentoAtual;
       try {
-        const rPac = await fetch(`${API}/api/atendimento/status/${pac.id}`, {headers:{'Authorization':`Bearer ${getToken()}`}});
-        const dPac = await safeJson(rPac);
+        const dPac = await apiFetch(`/api/atendimento/status/${pac.id}`);
         if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
       } catch(e) {}
       const partes = (pac.nome||'').trim().split(' ');
@@ -1833,10 +1828,7 @@ async function abrirMemed() {
 
   try {
     // 1. Busca token do médico no backend
-    const res = await fetch(`${API}/api/memed/token`, {
-      headers: { 'Authorization': `Bearer ${getToken()}` }
-    });
-    const data = await safeJson(res);
+    const data = await apiFetch('/api/memed/token');
     if (!data.ok || !data.token) {
       if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
       mostrarToast('Não foi possível carregar a prescrição','error');
@@ -1901,11 +1893,7 @@ async function abrirMemed() {
                 .split('\n\n')
                 .filter(l => !l.includes(link))
                 .join('\n\n');
-              await fetch(`${API}/api/atendimento/prontuario`, {
-                method: 'POST',
-                headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${getToken()}` },
-                body: JSON.stringify({ filaId: atendimentoAtual.id, prontuario: novoPront })
-              });
+              await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
               if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
               const campo = document.getElementById('prontuario-texto');
               if (campo) campo.value = novoPront;
@@ -1948,17 +1936,13 @@ container.innerHTML=lista.map((a)=>{
 const encerrado=a.encerrado_em?new Date(a.encerrado_em).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const tipo=a.tipo||'chat', tipoIcon=tipo==='video'?'🎥':'💬', temPront=!!a.prontuario_salvo;
 return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${Number(a.id)||0})"><div class="hist-card-nome">${escHtml(a.nome||'—')}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${escHtml(encerrado)}<br>CPF: ${escHtml(a.cpf||'—')} · Tel.: ${escHtml(a.tel||'—')}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
-return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${histData.indexOf(a)})"><div class="hist-card-nome">${a.nome||'—'}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${encerrado}<br>CPF: ${a.cpf||'—'} · Tel.: ${a.tel||'—'}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
 }).join('');
 }
 
 async function abrirAtendimentoHistorico(id) {
 // Usado pelo histórico geral do admin - busca atendimento pelo id
 try {
-const res = await fetch(`${API}/api/atendimento/status/${id}`, {
-headers: { 'Authorization': `Bearer ${getToken()}` }
-});
-const data = await safeJson(res);
+const data = await apiFetch(`/api/atendimento/status/${id}`);
 if (!data.ok || !data.atendimento) return mostrarToast('Não encontrado','error');
 clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true; atendimentoAtual=data.atendimento;
@@ -2036,7 +2020,17 @@ buscarAgendamentos();
 if(chatAtivo&&!modoHistorico) buscarMensagensNovasMedico();
 });
 
-(function init() { const saved=sessionStorage.getItem('medico'); if(saved){medico=JSON.parse(saved);entrarApp();} })();
+(function init() {
+  try {
+    const saved = sessionStorage.getItem('medico');
+    if (saved) { medico = JSON.parse(saved); entrarApp(); }
+  } catch(e) {
+    console.warn('[init] sessionStorage corrompido, limpando.', e);
+    sessionStorage.removeItem('medico');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('atendimentoAtual');
+  }
+})();
 </script>
 <button class="fab-fila" id="fab-fila" onclick="toggleSidebarMobile()" title="Ver fila">
 👥<span class="fab-badge" id="fab-badge" style="display:none">0</span>
