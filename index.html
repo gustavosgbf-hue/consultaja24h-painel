@@ -706,6 +706,14 @@ const u=String(v||'').trim();
 if(!u) return '';
 return /^https?:\/\//i.test(u) ? u : '';
 }
+// Helper seguro: evita "Unexpected end of JSON input" em respostas vazias
+async function safeJson(res) {
+  const ct = res.headers.get('content-type') || '';
+  if (!ct.includes('application/json')) return {};
+  const text = await res.text();
+  if (!text || !text.trim()) return {};
+  try { return JSON.parse(text); } catch(e) { console.warn('[safeJson] parse error:', e); return {}; }
+}
 
 // ── RECUPERAÇÃO DE SENHA ────────────────────────────────────────────────────
 function abrirRecuperacao() {
@@ -746,7 +754,7 @@ async function trocarSenha() {
       method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
       body: JSON.stringify({senhaAtual, novaSenha, confirmarSenha})
     });
-    const data = await res.json();
+    const data = await safeJson(res);
     if (!data.ok) { errEl.textContent=data.error||'Erro ao trocar senha.'; errEl.style.display='block'; btn.disabled=false; btn.textContent='Salvar nova senha'; return; }
     document.getElementById('trocar-overlay').classList.remove('open');
     mostrarToast('Senha atualizada com sucesso!','success');
@@ -761,7 +769,7 @@ const btn = document.getElementById('btn-login');
 err.style.display = 'none'; btn.disabled = true; btn.textContent = 'Entrando...';
 try {
 const res = await fetch(`${API}/api/medico/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email,senha}) });
-const data = await res.json();
+const data = await safeJson(res);
 if (!res.ok || !data.ok) { err.textContent = data.error||'E-mail ou senha incorretos.'; err.style.display='block'; return; }
 medico = data.medico;
 sessionStorage.setItem('medico', JSON.stringify(medico));
@@ -802,7 +810,7 @@ try {
 const atendParsed = JSON.parse(atendSalvo);
 // Verifica no servidor se ainda está assumido
 fetch(API+'/api/atendimento/status/'+atendParsed.id, {headers:{'Authorization':'Bearer '+getToken()}})
-.then(r=>r.json()).then(d=>{
+.then(r=>safeJson(r)).then(d=>{
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 atendimentoAtual = d.atendimento;
 modoHistorico = false;
@@ -829,7 +837,7 @@ history.replaceState(null,'',window.location.pathname);
 setTimeout(async function() {
 try {
 const res = await fetch(API+'/api/atendimento/status/'+assumiuId, {headers:{'Authorization':'Bearer '+getToken()}});
-const d = await res.json();
+const d = await safeJson(res);
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 atendimentoAtual = d.atendimento;
 sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoAtual));
@@ -890,7 +898,7 @@ agendInterval=setInterval(function(){ if(!document.hidden) buscarAgendamentos();
 async function buscarFila() {
 try {
 const res = await fetch(`${API}/api/fila`,{headers:{'Authorization':`Bearer ${getToken()}`}});
-const data = await res.json();
+const data = await safeJson(res);
 if (data.ok) { filaData=data.fila||[]; filaRetryMs=15000; renderFila(); renderEstado(); }
 else { filaRetryMs=Math.min(filaRetryMs*2,60000); }
 } catch(e) { filaRetryMs=Math.min(filaRetryMs*2,60000); }
@@ -941,7 +949,7 @@ try {
 const res = await fetch(`${API}/api/atendimento/status/${id}`, {
 headers: { 'Authorization': `Bearer ${getToken()}` }
 });
-const data = await res.json();
+const data = await safeJson(res);
 if (!data.ok) { mostrarToast('Erro ao retomar atendimento', 'error'); return; }
 // Busca dados completos da fila
 const p = filaData.find(p => String(p.id) === String(id));
@@ -976,7 +984,7 @@ evt.stopPropagation();
 if (!medico||!medico.id||!medico.nome) { mostrarToast('Faça login novamente.','error'); return; }
 try {
 const res=await fetch(`${API}/api/atendimento/assumir`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:Number(id),medicoId:Number(medico.id),medicoNome:medico.nome})});
-const data=await res.json();
+const data=await safeJson(res);
 if (!res.ok||!data.ok) { mostrarToast(data.error||'Este paciente já foi assumido.','error'); await buscarFila(); return; }
 modoHistorico=false;
 atendimentoAtual=data.atendimento||filaData.find(p=>String(p.id)===String(id));
@@ -1233,7 +1241,7 @@ async function carregarHistoricoMedico() {
 if (!atendimentoAtual) return;
 try {
 const res=await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
-const data=await res.json(); if (!data.ok) return;
+const data=await safeJson(res); if (!data.ok) return;
 const container=document.getElementById('chat-medico-msgs');
 const msgs=data.mensagens||[];
 if (msgs.length>0) { const v=container.querySelector('.chat-vazio'); if(v)v.remove(); msgs.forEach(m=>{adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo);ultimaMsgId=m.id;}); }
@@ -1243,7 +1251,7 @@ async function buscarMensagensNovasMedico() {
 if (!atendimentoAtual||!chatAtivo||modoHistorico||document.hidden) return;
 try {
 const res=await fetch(`${API}/api/chat/${atendimentoAtual.id}`);
-const data=await res.json(); if (!data.ok) { chatRetryMs=Math.min(chatRetryMs*2,15000); return; }
+const data=await safeJson(res); if (!data.ok) { chatRetryMs=Math.min(chatRetryMs*2,15000); return; }
 chatRetryMs=3000;
 const novas=(data.mensagens||[]).filter(m=>m.id>ultimaMsgId);
 if (novas.length>0) { const container=document.getElementById('chat-medico-msgs'); const v=container.querySelector('.chat-vazio'); if(v)v.remove(); novas.forEach(m=>{if(m.autor==='paciente'){adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo);adicionarMsgPip('paciente',m.texto);}ultimaMsgId=m.id;}); }
@@ -1317,7 +1325,7 @@ async function enviarArquivoChat() {
   fd.append('autorId', medico?.id || '');
   try {
     const res = await fetch(`${API}/api/chat/upload`, { method: 'POST', body: fd });
-    const data = await res.json();
+    const data = await safeJson(res);
     if (data.ok && data.mensagem) {
       const m = data.mensagem;
       adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo);
@@ -1334,7 +1342,7 @@ if (!link||!atendimentoAtual) return;
 if (!link.startsWith('https://meet.google.com/')) { mostrarToast('Cole um link válido do Google Meet','error'); return; }
 try {
 const res=await fetch(`${API}/api/atendimento/meet`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId:atendimentoAtual.id,meetLink:link})});
-const data=await res.json();
+const data=await safeJson(res);
 if (data.ok) { document.getElementById('meetLinkAtualUrl').textContent=link; document.getElementById('meetLinkAtualUrl').href=link; document.getElementById('meetLinkAtual').style.display='block'; atendimentoAtual.meet_link=link; mostrarToast('Link do Meet salvo! O paciente já pode entrar.','success'); }
 } catch(e) { mostrarToast('Erro ao salvar link.','error'); }
 }
@@ -1506,7 +1514,7 @@ const nome = item && item.nome ? item.nome : 'este paciente';
 if(!confirm('Encerrar atendimento de '+nome+'?')) return;
 try {
 const res = await fetch(API+'/api/atendimento/encerrar',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({filaId:id,status:'Encerrado pelo painel',documentos_emitidos:'Nenhum'})});
-const d = await res.json();
+const d = await safeJson(res);
 if(d.ok){ mostrarToast('Atendimento encerrado.','success'); await buscarFila(); }
 else mostrarToast(d.error||'Erro ao encerrar','error');
 } catch(e){ mostrarToast('Erro ao encerrar','error'); }
@@ -1548,7 +1556,7 @@ try {
 } catch(e) { console.warn('[encerrar] erro ao salvar prontuario:', e); }
 try {
   const r = await fetch(`${API}/api/atendimento/encerrar`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},body:JSON.stringify({filaId,status:statusTexto,documentos_emitidos:docs})});
-  const d = await r.json();
+  const d = await safeJson(r);
   if (!d.ok) { mostrarToast('Erro ao encerrar: '+(d.error||'tente novamente'),'error'); return; }
 } catch(e) { mostrarToast('Erro de conexão ao encerrar.','error'); return; }
 clearInterval(timerInterval);
@@ -1563,7 +1571,7 @@ let agendData=[], agendVisible=false;
 async function buscarAgendamentos() {
 try {
 const res=await fetch(`${API}/api/agendamentos`,{headers:{'Authorization':`Bearer ${getToken()}`}});
-const data=await res.json(); if (!data.ok) { agendRetryMs=Math.min(agendRetryMs*2,120000); return; }
+const data=await safeJson(res); if (!data.ok) { agendRetryMs=Math.min(agendRetryMs*2,120000); return; }
 agendRetryMs=20000;
 agendData=data.agendamentos||[];
 document.getElementById('agend-count').textContent=agendData.length;
@@ -1586,7 +1594,7 @@ async function carregarMedicosPendentes() {
 try {
 const res=await fetch(`${API}/api/admin/medicos/pendentes`,{headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
 if (!res.ok) return;
-const data=await res.json(); adminData=data.medicos||[];
+const data=await safeJson(res); adminData=data.medicos||[];
 const count=adminData.length;
 if (count>0) { document.getElementById('admin-tab-btn').style.display='flex'; document.getElementById('admin-pendente-count').textContent=count; }
 else { document.getElementById('admin-tab-btn').style.display='none'; }
@@ -1619,7 +1627,7 @@ if(inicio) params.set('data_inicio',inicio);
 if(fim) params.set('data_fim',fim);
 if(busca) params.set('busca',busca);
 const res=await fetch(`${API}/api/admin/historico?${params}`,{headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
-const data=await res.json();
+const data=await safeJson(res);
 if(!data.ok) { lista.innerHTML='<div style="color:#ff8080;font-size:.78rem;padding:8px 0">Erro ao carregar</div>'; return; }
 // Popula select de médicos na primeira carga
 if(data.medicos&&data.medicos.length&&!histGeralMedicos.length) {
@@ -1649,7 +1657,7 @@ async function aprovarMedico(id, btn) {
 btn.disabled=true; btn.textContent='Aprovando...';
 try {
 const res=await fetch(`${API}/api/admin/medico/${id}/aprovar`,{method:'PATCH',headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
-const d=await res.json();
+const d=await safeJson(res);
 if (d.ok) { adminData=adminData.filter(m=>m.id!==id); renderMedicosPendentes(); document.getElementById('admin-pendente-count').textContent=adminData.length; if(!adminData.length) document.getElementById('admin-tab-btn').style.display='none'; mostrarToast('Médico aprovado','success'); }
 else { mostrarToast(d.error||'Erro ao aprovar','error'); btn.disabled=false; btn.textContent='✓ Aprovar'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✓ Aprovar'; }
@@ -1659,7 +1667,7 @@ if (!confirm('Rejeitar este médico?')) return;
 btn.disabled=true; btn.textContent='Rejeitando...';
 try {
 const res=await fetch(`${API}/api/admin/medico/${id}/rejeitar`,{method:'PATCH',headers:{'x-admin-password':sessionStorage.getItem('adminPwd')||''}});
-const d=await res.json();
+const d=await safeJson(res);
 if (d.ok) { adminData=adminData.filter(m=>m.id!==id); renderMedicosPendentes(); document.getElementById('admin-pendente-count').textContent=adminData.length; if(!adminData.length) document.getElementById('admin-tab-btn').style.display='none'; mostrarToast('Médico rejeitado','info'); }
 else { mostrarToast(d.error||'Erro ao rejeitar','error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
@@ -1681,7 +1689,7 @@ const res = await fetch(`${API}/api/agendamento/${agendId}/iniciar`, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
 });
-const d = await res.json();
+const d = await safeJson(res);
 if (!d.ok) {
 mostrarToast(d.error || 'Erro ao iniciar', 'error');
 // Se outro médico já iniciou, remove da lista imediatamente
@@ -1709,7 +1717,7 @@ const res = await fetch(`${API}/api/agendamento/${agendId}/cancelar`, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }
 });
-const d = await res.json();
+const d = await safeJson(res);
 if (d.ok) { agendData=agendData.filter(a=>a.id!==agendId); renderAgendamentos(); document.getElementById('agend-count').textContent=agendData.length; mostrarToast('Agendamento cancelado','info'); }
 else { mostrarToast(d.error||'Erro ao cancelar','error'); btn.disabled=false; btn.textContent='✕'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✕'; }
@@ -1719,7 +1727,7 @@ let histData=[], histVisible=false;
 async function buscarHistorico() {
 try {
 const res=await fetch(`${API}/api/historico`,{headers:{'Authorization':`Bearer ${getToken()}`}});
-const data=await res.json(); if (!data.ok) return;
+const data=await safeJson(res); if (!data.ok) return;
 histData=data.historico||[];
 document.getElementById('hist-count').textContent=histData.length;
 if (histVisible) renderHistorico();
@@ -1793,7 +1801,7 @@ async function abrirMemed() {
       let pac = atendimentoAtual;
       try {
         const rPac = await fetch(`${API}/api/atendimento/status/${pac.id}`, {headers:{'Authorization':`Bearer ${getToken()}`}});
-        const dPac = await rPac.json();
+        const dPac = await safeJson(rPac);
         if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
       } catch(e) {}
       const partes = (pac.nome||'').trim().split(' ');
@@ -1824,7 +1832,7 @@ async function abrirMemed() {
     const res = await fetch(`${API}/api/memed/token`, {
       headers: { 'Authorization': `Bearer ${getToken()}` }
     });
-    const data = await res.json();
+    const data = await safeJson(res);
     if (!data.ok || !data.token) {
       if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
       mostrarToast('Não foi possível carregar a prescrição','error');
@@ -1946,7 +1954,7 @@ try {
 const res = await fetch(`${API}/api/atendimento/status/${id}`, {
 headers: { 'Authorization': `Bearer ${getToken()}` }
 });
-const data = await res.json();
+const data = await safeJson(res);
 if (!data.ok || !data.atendimento) return mostrarToast('Não encontrado','error');
 clearInterval(chatInterval); chatAtivo=false; clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true; atendimentoAtual=data.atendimento;
@@ -1980,7 +1988,7 @@ if (a.tipo === 'chat') {
   const container = document.getElementById('chat-medico-msgs');
   container.innerHTML = '<div class="chat-vazio"><span>Carregando conversa...</span></div>';
   fetch(`${API}/api/chat/${a.id}`)
-    .then(r=>r.json())
+    .then(r=>safeJson(r))
     .then(data=>{
       container.innerHTML='';
       const msgs=data.mensagens||[];
