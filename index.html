@@ -427,20 +427,19 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 ══════════════════════════════════════════════════════════ */
 @media(max-width:768px){
 
-/* Nav */
-.nav{padding:0 10px;gap:6px}
+/* ── Nav ─────────────────────────────────────────────────── */
+.nav{padding:0 14px;gap:8px;height:56px}
 .nav-medico{display:none}
-.plantao-btn{padding:6px 10px;font-size:.72rem;gap:5px}
+.plantao-btn{padding:7px 12px;font-size:.72rem;gap:5px;border-radius:999px}
 .plantao-btn span{display:none}
-.plantao-btn .plantao-indicator{width:9px;height:9px}
-.nav-logout{padding:6px 10px;font-size:.72rem}
+.plantao-btn .plantao-indicator{width:8px;height:8px}
+.nav-logout{padding:7px 12px;font-size:.72rem;border-radius:8px}
 
-/* Esconde toggle handle no mobile */
+/* ── Toggle e rail: escondidos no mobile ─────────────────── */
 .sidebar-toggle{display:none!important}
 .sidebar-rail{display:none!important}
 
-/* Layout mobile: bloco simples, sem grid.
-   Usa seletor de screen-app para ganhar especificidade sem !important */
+/* ── Layout: bloco sem grid ──────────────────────────────── */
 #screen-app .app-body{
   display:block;
   min-height:calc(100dvh - var(--nav-h));
@@ -448,7 +447,8 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
   transition:none;
 }
 
-/* Sidebar: drawer que desliza da esquerda */
+/* ── Sidebar como drawer ─────────────────────────────────── */
+/* Estrutura e comportamento intactos — apenas visual elevado */
 .sidebar,
 .app-body .sidebar{
   position:fixed!important;
@@ -460,15 +460,15 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
   overflow-y:auto!important;
   -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain;
-  padding:16px 14px 60px!important;
-  background:#0a1810!important;
-  border-right:1px solid rgba(94,224,160,.15)!important;
-  box-shadow:4px 0 32px rgba(0,0,0,.6)!important;
+  /* padding top maior para dar respiro após header */
+  padding:20px 16px 72px!important;
+  background:#091510!important;
+  border-right:1px solid rgba(94,224,160,.12)!important;
+  box-shadow:8px 0 40px rgba(0,0,0,.7), 1px 0 0 rgba(94,224,160,.06)!important;
   z-index:150!important;
   transform:translateX(-100%)!important;
-  transition:transform .28s cubic-bezier(.4,0,.2,1)!important;
+  transition:transform .26s cubic-bezier(.4,0,.2,1)!important;
   will-change:transform;
-  /* sobrescreve qualquer sticky/grid residual */
   opacity:1!important;
   pointer-events:auto!important;
 }
@@ -484,89 +484,314 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
   display:block!important;
 }
 
+/* Cabeçalho da fila no drawer */
+.sidebar-title{
+  font-size:.66rem;
+  letter-spacing:.12em;
+  margin-bottom:16px;
+  color:rgba(255,255,255,.3);
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.fila-count{
+  font-size:.62rem;
+  padding:2px 7px;
+  background:rgba(180,224,90,.1);
+  color:rgba(180,224,90,.75);
+}
+
+/* Cards da fila no drawer — mais respirados */
+.fila-card,.paciente-card{
+  padding:13px 14px;
+  margin-bottom:10px;
+  border-radius:13px;
+  border-color:rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);
+}
+.paciente-card:hover{
+  border-color:rgba(180,224,90,.2);
+  background:rgba(180,224,90,.03);
+}
+.paciente-card.active{
+  border-color:rgba(94,224,160,.3);
+  background:rgba(94,224,160,.05);
+}
+.pc-nome{font-size:.92rem;font-weight:500;letter-spacing:-.01em}
+.pc-queixa{font-size:.8rem;line-height:1.5;margin-bottom:10px;color:rgba(255,255,255,.38)}
+.btn-assumir{
+  font-size:.72rem;
+  padding:7px 14px;
+  min-height:34px;
+  border-radius:7px;
+  letter-spacing:.01em;
+}
+
 /* Overlay backdrop */
 .sidebar-overlay{
   display:none;
   position:fixed;inset:0;
   top:var(--nav-h);
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,.6);
   z-index:149;
-  backdrop-filter:blur(2px);
-  -webkit-backdrop-filter:blur(2px);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
   touch-action:none;
 }
 .sidebar-overlay.open{display:block}
 
-/* Main: tela cheia */
+/* ── Main: tela cheia ────────────────────────────────────── */
 .main{
   width:100%!important;
-  padding:10px 10px 80px!important;
+  padding:14px 14px 88px!important;
   overflow-x:hidden!important;
 }
 
-/* Header atendimento compacto */
-.atend-header{flex-direction:row;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:nowrap;padding:8px 0 10px;border-bottom:1px solid var(--line)}
-.atend-paciente{flex:1;min-width:0}
-.atend-nome{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.atend-meta{gap:5px;flex-wrap:wrap}
-.atend-tag{font-size:.62rem;padding:3px 7px}
+/* ── 1. HEADER DO ATENDIMENTO ────────────────────────────── */
+/* Quebra em coluna para dar protagonismo ao nome do paciente */
+.atend-header{
+  flex-direction:column;
+  align-items:flex-start;
+  gap:0;
+  margin-bottom:14px;
+  padding:12px 0 14px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.atend-paciente{
+  width:100%;
+  margin-bottom:10px;
+}
+.atend-nome{
+  font-size:1.15rem;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+  font-weight:500;
+  letter-spacing:-.02em;
+  line-height:1.25;
+  margin-bottom:6px;
+}
+.atend-meta{
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.atend-tag{font-size:.65rem;padding:3px 9px}
 .atend-tag.crm{display:none}
-.atend-timer{font-size:.68rem}
-.atend-actions{display:flex;gap:5px;flex-wrap:nowrap;flex-shrink:0}
-.atend-actions .btn-wpp{padding:8px 9px;font-size:.72rem;gap:3px}
-.atend-actions .btn-wpp svg{width:13px;height:13px}
-.atend-actions .btn-wpp .wpp-txt{display:none}
-#btn-memed{padding:8px 9px;font-size:.72rem}
-.atend-actions .btn-encerrar{padding:8px 9px;font-size:.72rem;gap:3px}
+.atend-timer{
+  font-size:.68rem;
+  color:rgba(255,255,255,.28);
+  letter-spacing:.02em;
+}
+/* Ações em linha, com min-height de toque confortável */
+.atend-actions{
+  display:flex;
+  flex-direction:row;
+  gap:6px;
+  flex-wrap:nowrap;
+  width:100%;
+}
+.atend-actions .btn-wpp,
+#btn-memed,
+.atend-actions .btn-encerrar,
+.atend-actions .btn-voltar-hist{
+  min-height:40px;
+  padding:0 12px;
+  font-size:.75rem;
+  gap:5px;
+  flex:1;
+  justify-content:center;
+  border-radius:9px;
+}
+.atend-actions .btn-wpp svg,
 .atend-actions .btn-encerrar svg{width:13px;height:13px}
-.atend-actions .btn-voltar-hist{padding:8px 10px;font-size:.72rem}
-#memed-aviso{font-size:.72rem;padding:8px 10px;margin-top:6px}
+.atend-actions .btn-wpp .wpp-txt{display:none}
 
-/* Triagem */
-.triagem-box{padding:10px;margin-bottom:12px}
-.triagem-grid{grid-template-columns:1fr 1fr;gap:6px}
-.triagem-item span{font-size:.78rem}
-.triagem-box-title{font-size:.66rem;margin-bottom:8px}
+/* ── 4. MEMED AVISO ──────────────────────────────────────── */
+/* Aviso auxiliar, sem chamar atenção */
+#memed-aviso{
+  font-size:.7rem!important;
+  color:rgba(255,255,255,.32)!important;
+  background:rgba(255,255,255,.015)!important;
+  border:1px solid rgba(255,255,255,.05)!important;
+  border-radius:8px;
+  padding:8px 11px!important;
+  margin-top:8px!important;
+  line-height:1.55;
+}
+#memed-aviso strong{color:rgba(255,189,46,.45)!important;font-weight:500}
+#memed-aviso a{color:rgba(180,224,90,.5)!important}
 
-/* Tabs */
-.tabs{gap:4px;margin-bottom:12px;padding:3px}
-.tab{padding:11px 6px;font-size:.78rem;font-weight:600;border-radius:8px}
+/* ── 8. TRIAGEM ──────────────────────────────────────────── */
+.triagem-box{
+  padding:13px 14px;
+  margin-bottom:14px;
+  border-radius:13px;
+  border-color:rgba(255,255,255,.06);
+}
+.triagem-grid{grid-template-columns:1fr 1fr;gap:10px 12px}
+.triagem-item{gap:3px}
+.triagem-item label{font-size:.62rem;letter-spacing:.08em}
+.triagem-item span{font-size:.82rem;line-height:1.4}
+.triagem-box-title{font-size:.64rem;letter-spacing:.1em;margin-bottom:12px;color:rgba(180,224,90,.65)}
+.triagem-queixa{padding-top:12px;margin-top:6px}
+.triagem-queixa span{font-size:.88rem;line-height:1.65}
 
-/* Chat */
+/* ── 3. TABS ─────────────────────────────────────────────── */
+.tabs{
+  gap:3px;
+  margin-bottom:14px;
+  padding:3px;
+  border-radius:11px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+}
+.tab{
+  padding:10px 6px;
+  font-size:.76rem;
+  font-weight:600;
+  border-radius:9px;
+  letter-spacing:.01em;
+  transition:background .15s,color .15s;
+}
+.tab.active{
+  background:rgba(255,255,255,.09);
+  color:rgba(255,255,255,.95);
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+
+/* ── 2. CHAT ─────────────────────────────────────────────── */
+/* Altura dinâmica — mais espaço para as mensagens */
 .chat-medico-wrap{
   display:flex;flex-direction:column;
-  height:calc(100dvh - var(--nav-h) - 370px);
-  min-height:280px;border-radius:12px;margin-bottom:0;overflow:hidden;
+  height:calc(100dvh - var(--nav-h) - 340px);
+  min-height:300px;
+  border-radius:14px;
+  margin-bottom:0;
+  overflow:hidden;
+  border-color:rgba(255,255,255,.06);
+  background:rgba(255,255,255,.02);
+  box-shadow:0 2px 20px rgba(0,0,0,.25);
+}
+.chat-medico-header{
+  padding:11px 14px;
+  background:rgba(255,255,255,.025);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  flex-shrink:0;
+}
+.chat-medico-header h3{
+  font-size:.8rem;
+  font-weight:500;
+  color:rgba(255,255,255,.65);
+  letter-spacing:.01em;
 }
 .chat-medico-msgs{
-  flex:1 1 0;height:auto!important;min-height:0;
-  overflow-y:auto;-webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;padding:12px;
+  flex:1 1 0;
+  height:auto!important;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:14px 12px;
+  gap:10px;
+  display:flex;
+  flex-direction:column;
 }
+/* Bolhas mobile — confortáveis para leitura */
+.cmsg .bub{
+  font-size:.88rem;
+  line-height:1.65;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  padding:10px 13px;
+  border-radius:16px;
+}
+.cmsg.paciente .bub{
+  border-bottom-left-radius:4px;
+  background:rgba(255,255,255,.055);
+  border-color:rgba(255,255,255,.07);
+}
+.cmsg.medico .bub{
+  border-bottom-right-radius:4px;
+  background:linear-gradient(135deg,rgba(180,224,90,.17),rgba(94,224,160,.11));
+  border-color:rgba(180,224,90,.18);
+}
+.cmsg .bub-wrap{max-width:82%}
+.cmsg .av{width:26px;height:26px;font-size:.65rem;flex-shrink:0}
+.cmsg .ts{font-size:.58rem;color:rgba(255,255,255,.18);margin-top:4px}
+/* Input do chat — sempre acessível */
 .chat-medico-input{
-  flex-shrink:0;padding:10px 11px;gap:8px;
+  flex-shrink:0;
+  padding:10px 12px;
+  gap:9px;
+  background:rgba(0,0,0,.18);
+  border-top:1px solid rgba(255,255,255,.05);
   padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
 }
 .chat-medico-input textarea{
-  font-size:max(.9rem,16px);padding:10px 12px;
-  min-height:40px;max-height:88px;border-radius:22px;line-height:1.5;
+  font-size:max(.88rem,16px);
+  padding:10px 14px;
+  min-height:42px;
+  max-height:88px;
+  border-radius:22px;
+  line-height:1.5;
+  background:rgba(255,255,255,.05);
+  border-color:rgba(255,255,255,.08);
 }
-.chat-medico-send{width:40px;height:40px}
-.chat-clip-btn{width:32px;height:32px}
-.chat-preview-wrap{flex-shrink:0;padding:6px 10px}
-
-/* Bolhas */
-.cmsg .bub{font-size:.875rem;line-height:1.6;overflow-wrap:anywhere;word-break:break-word}
-.cmsg .bub-wrap{max-width:84%}
-.cmsg .av{width:24px;height:24px;font-size:.65rem;flex-shrink:0}
+.chat-medico-input textarea:focus{border-color:rgba(94,224,160,.28)}
+.chat-medico-send{
+  width:42px;height:42px;
+  border-radius:50%;
+  box-shadow:0 2px 10px rgba(180,224,90,.2);
+}
+.chat-clip-btn{
+  width:34px;height:34px;
+  border-radius:8px;
+  border-color:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+}
+.chat-preview-wrap{flex-shrink:0;padding:7px 12px}
 .msg-arquivo-img{max-width:min(200px,72%);max-height:150px}
 
-/* Avaliação clínica */
+/* ── Avaliação clínica ───────────────────────────────────── */
 .clinic-grid{grid-template-columns:1fr}
 .clinic-label{font-size:.75rem}
-textarea.clinic-input{font-size:max(.88rem,16px);padding:10px 12px}
+textarea.clinic-input{
+  font-size:max(.88rem,16px);
+  padding:11px 13px;
+  border-radius:10px;
+  background:rgba(255,255,255,.025);
+  border-color:rgba(255,255,255,.07);
+}
 
-/* Modais */
+/* ── 5. FAB ──────────────────────────────────────────────── */
+.fab-fila{
+  display:flex!important;
+  bottom:22px;
+  right:16px;
+  width:50px;height:50px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#b4e05a,#5ee0a0);
+  box-shadow:
+    0 4px 16px rgba(94,224,160,.3),
+    0 8px 32px rgba(0,0,0,.35),
+    0 1px 0 rgba(255,255,255,.15) inset;
+  transition:transform .15s, box-shadow .15s;
+}
+.fab-fila:active{
+  transform:scale(.94);
+  box-shadow:0 2px 10px rgba(94,224,160,.2), 0 4px 16px rgba(0,0,0,.3);
+}
+.fab-fila .fab-badge{
+  top:-3px;right:-3px;
+  min-width:17px;height:17px;
+  border-radius:9px;
+  font-size:.58rem;
+  font-weight:700;
+  padding:0 4px;
+  border:2px solid #07100d;
+}
+
+/* ── Modais ──────────────────────────────────────────────── */
 .modal-overlay{padding:0;align-items:flex-end}
 .modal{
   border-radius:20px 20px 0 0;max-width:100%;
@@ -574,26 +799,30 @@ textarea.clinic-input{font-size:max(.88rem,16px);padding:10px 12px}
   padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
 }
 
-/* Agendamentos */
-.btn-iniciar-agora{width:100%;justify-content:center;padding:10px}
+/* ── Agendamentos ────────────────────────────────────────── */
+.btn-iniciar-agora{width:100%;justify-content:center;padding:10px;min-height:40px}
 
-/* Histórico */
-.hist-card{padding:11px 13px;margin-bottom:8px}
-.hist-card-nome{font-size:.88rem}
-.btn-voltar-hist{width:auto;padding:8px 14px;font-size:.78rem;margin-bottom:10px}
+/* ── 9. Histórico e estados vazios ───────────────────────── */
+.hist-card{
+  padding:13px 14px;
+  margin-bottom:9px;
+  border-radius:12px;
+}
+.hist-card-nome{font-size:.9rem;letter-spacing:-.01em}
+.btn-voltar-hist{width:auto;padding:9px 14px;font-size:.78rem;margin-bottom:12px}
+.empty-state h2,.offline-state h2{font-size:1.25rem;font-weight:400}
+.empty-state p,.offline-state p{font-size:.82rem;line-height:1.8}
+.empty-state svg,.offline-state svg{opacity:.15}
 
-/* Sidebar itens */
-.sidebar-title{font-size:.68rem;margin-bottom:10px}
-.fila-count{font-size:.65rem;padding:1px 6px}
-.fila-card,.paciente-card{padding:10px}
+/* ── Toast ───────────────────────────────────────────────── */
+.toast{
+  bottom:auto;top:64px;
+  right:12px;left:12px;
+  text-align:center;font-size:.8rem;
+  border-radius:10px;
+}
 
-/* Toast */
-.toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center;font-size:.82rem}
-
-/* FAB — visível no mobile */
-.fab-fila{display:flex!important;bottom:20px;right:14px}
-
-/* iOS scroll lock quando drawer aberto */
+/* ── iOS scroll lock quando drawer aberto ────────────────── */
 body.drawer-open{overflow:hidden;position:fixed;width:100%}
 }
 
