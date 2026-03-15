@@ -3,7 +3,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>Painel Médico · ConsultaJá24h</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -183,9 +183,9 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .cmsg.medico{flex-direction:row-reverse}
 .cmsg .av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
-.cmsg .bub-wrap{display:flex;flex-direction:column;max-width:78%}
+.cmsg .bub-wrap{display:flex;flex-direction:column;max-width:78%;min-width:0}
 .cmsg.medico .bub-wrap{align-items:flex-end}
-.cmsg .bub{padding:10px 14px;border-radius:14px;font-size:.875rem;font-weight:300;line-height:1.6}
+.cmsg .bub{padding:10px 14px;border-radius:14px;font-size:.875rem;font-weight:300;line-height:1.6;overflow-wrap:anywhere;word-break:break-word}
 .cmsg.paciente .bub{background:rgba(255,255,255,.06);border:1px solid var(--line);border-bottom-left-radius:4px;color:rgba(255,255,255,.88)}
 .cmsg.medico .bub{background:linear-gradient(135deg,rgba(180,224,90,.2),rgba(94,224,160,.15));border:1px solid rgba(180,224,90,.25);border-bottom-right-radius:4px;color:rgba(255,255,255,.9)}
 .cmsg .ts{font-size:.62rem;color:rgba(255,255,255,.2);margin-top:3px;padding:0 2px}
@@ -198,7 +198,7 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 .chat-medico-send:hover{transform:scale(1.08)}
 .chat-clip-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;align-self:center}
 .chat-clip-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.15)}
-.msg-arquivo-img{max-width:220px;max-height:200px;border-radius:10px;display:block;margin-top:6px;cursor:pointer;transition:opacity .15s}
+.msg-arquivo-img{max-width:min(220px,80%);max-height:200px;border-radius:10px;display:block;margin-top:6px;cursor:pointer;transition:opacity .15s}
 .msg-arquivo-img:hover{opacity:.85}
 .msg-arquivo-pdf{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:7px 12px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.8);font-size:.78rem;font-weight:500;text-decoration:none;transition:background .15s}
 .msg-arquivo-pdf:hover{background:rgba(255,255,255,.12)}
@@ -277,114 +277,218 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .toast.error{background:rgba(255,95,87,.12);border:1px solid rgba(255,95,87,.25);color:#ff8080}
 .toast.info{background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
 
-/* ══════════════════════════════════════
-MOBILE — UX dedicada para < 768px
-══════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════
+   MOBILE — chat-first, drawer sidebar, iOS/Android safe
+══════════════════════════════════════════════════════════ */
 @media(max-width:768px){
 
-/* Nav compacta */
-.nav{padding:0 12px;gap:8px}
+/* ── Nav compacta ─────────────────────────────────────── */
+.nav{padding:0 10px;gap:6px}
 .nav-medico{display:none}
-.plantao-btn{padding:7px 12px;font-size:.72rem}
-.nav-logout{padding:7px 10px;font-size:.72rem}
+.plantao-btn{padding:6px 10px;font-size:.72rem;gap:5px}
+.plantao-btn span{display:none}
+.plantao-btn .plantao-indicator{width:9px;height:9px}
+.nav-logout{padding:6px 10px;font-size:.72rem}
 
-/* Layout: sidebar fixa na esquerda igual ao PC, só menor */
-.app-body{display:flex;min-height:calc(100vh - var(--nav-h))}
+/* ── Layout: sem sidebar ocupando espaço ─────────────── */
+/* Usa 100dvh para respeitar safe-area do iOS */
+.app-body{
+  display:block;
+  min-height:calc(100dvh - var(--nav-h));
+  position:relative;
+}
 
+/* ── Sidebar: drawer overlay, 100% oculta por padrão ─── */
 .sidebar{
-position:sticky;top:var(--nav-h);
-width:180px;min-width:180px;
-height:calc(100vh - var(--nav-h));
-overflow-y:auto;
-padding:14px 10px 32px;
-font-size:.78rem;
-transform:none !important;
-border-right:1px solid var(--line);
-border-top:none;
-border-radius:0;
-background:var(--bg);
+  position:fixed;
+  top:var(--nav-h);
+  left:0;
+  width:min(300px, 88vw);
+  height:calc(100dvh - var(--nav-h));
+  overflow-y:auto;
+  /* iOS momentum scroll */
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:16px 14px 60px;
+  background:#0a1810;
+  border-right:1px solid rgba(94,224,160,.15);
+  box-shadow:4px 0 32px rgba(0,0,0,.6);
+  z-index:150;
+  /* começa fora da tela */
+  transform:translateX(-100%);
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
 }
+.sidebar.open{transform:translateX(0)}
 
-/* Sidebar sem handle — não precisa mais */
-.sidebar::before{display:none}
+/* Backdrop quando sidebar aberta */
+.sidebar-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  top:var(--nav-h);
+  background:rgba(0,0,0,.55);
+  z-index:149;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  touch-action:none; /* impede scroll do fundo no iOS */
+}
+.sidebar-overlay.open{display:block}
 
-/* Títulos da sidebar menores */
-.sidebar-title{font-size:.65rem;margin-bottom:10px}
-.fila-count{font-size:.65rem;padding:1px 6px}
-
-/* Cards da fila mais compactos */
-.fila-card{padding:10px 10px}
-.fila-card .fc-nome{font-size:.82rem}
-.fila-card .fc-queixa{font-size:.72rem;-webkit-line-clamp:2}
-.fila-card .fc-meta{font-size:.68rem}
-.btn-chat-inline{font-size:.7rem;padding:4px 8px}
-.btn-retomar{font-size:.7rem;padding:5px 8px}
-
-/* Botão fechar sidebar — esconde no mobile fixo */
-#btn-fechar-sidebar{display:none!important}
-
-/* Main ocupa o restante */
+/* ── Main: tela cheia ─────────────────────────────────── */
 .main{
-flex:1;
-min-width:0;
-padding:14px 12px;
-padding-bottom:40px;
-overflow-x:hidden;
+  width:100%;
+  padding:10px 10px 80px;
+  /* padding-bottom garante espaço acima do FAB */
+  overflow-x:hidden;
 }
 
-/* Header do atendimento mobile */
-.atend-header{flex-direction:column;gap:8px;margin-bottom:14px}
-.atend-nome{font-size:1.1rem}
-.atend-actions{width:100%;gap:6px;flex-wrap:wrap}
-.atend-actions .btn-wpp,
-#btn-memed,
-.atend-actions .btn-encerrar,
-.atend-actions .btn-voltar-hist{flex:1;min-width:calc(50% - 3px);justify-content:center;padding:10px 8px;font-size:.75rem}
+/* ── Header atendimento: linha compacta ──────────────── */
+.atend-header{
+  flex-direction:row;
+  align-items:center;
+  gap:6px;
+  margin-bottom:10px;
+  flex-wrap:nowrap;
+  padding:8px 0 10px;
+  border-bottom:1px solid var(--line);
+}
+.atend-paciente{flex:1;min-width:0}
+.atend-nome{
+  font-size:.95rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.atend-meta{gap:5px;flex-wrap:wrap}
+.atend-tag{font-size:.62rem;padding:3px 7px}
+.atend-tag.crm{display:none}
+.atend-timer{font-size:.68rem}
+.atend-actions{display:flex;gap:5px;flex-wrap:nowrap;flex-shrink:0}
+.atend-actions .btn-wpp{padding:8px 9px;font-size:.72rem;gap:3px}
+.atend-actions .btn-wpp svg{width:13px;height:13px}
+.atend-actions .btn-wpp .wpp-txt{display:none}
+#btn-memed{padding:8px 9px;font-size:.72rem}
+.atend-actions .btn-encerrar{padding:8px 9px;font-size:.72rem;gap:3px}
+.atend-actions .btn-encerrar svg{width:13px;height:13px}
+.atend-actions .btn-voltar-hist{padding:8px 10px;font-size:.72rem}
+#memed-aviso{font-size:.72rem;padding:8px 10px;margin-top:6px}
 
-/* Triagem mais compacta */
-.triagem-box{padding:12px}
+/* ── Triagem compacta ─────────────────────────────────── */
+.triagem-box{padding:10px;margin-bottom:12px}
 .triagem-grid{grid-template-columns:1fr 1fr;gap:6px}
 .triagem-item span{font-size:.78rem}
-.triagem-box-title{font-size:.68rem}
+.triagem-box-title{font-size:.66rem;margin-bottom:8px}
 
-/* Tabs menores */
-.tabs{gap:3px}
-.tab{padding:7px 4px;font-size:.68rem;letter-spacing:-.01em}
+/* ── Tabs: toque confortável ──────────────────────────── */
+.tabs{gap:4px;margin-bottom:12px;padding:3px}
+.tab{padding:11px 6px;font-size:.78rem;font-weight:600;border-radius:8px}
 
-/* Chat mobile */
-.chat-medico-msgs{height:200px}
-.chat-msg{font-size:.82rem}
-.chat-msg,.chat-input-row input{word-break:break-word}
-
-/* Avaliação clínica */
-.clinic-grid{grid-template-columns:1fr}
-.clinic-label{font-size:.72rem}
-.clinic-textarea{font-size:.82rem}
-
-/* Modal fullscreen no mobile */
-.modal-overlay{padding:0;align-items:flex-end}
-.modal{border-radius:20px 20px 0 0;max-width:100%;padding:24px 16px 32px}
-
-/* Cards de agendamento no mobile */
-.btn-iniciar-agora{width:100%;justify-content:center;padding:10px}
-
-/* Histórico mobile */
-.hist-card{padding:12px 14px;margin-bottom:8px}
-.hist-card-nome{font-size:.88rem}
-
-/* Botão voltar ao histórico */
-.btn-voltar-hist{
-width:100%;justify-content:center;
-padding:11px;font-size:.8rem;
-background:rgba(255,255,255,.04);
-margin-bottom:14px;
+/* ── CHAT: estrutura flex que preenche o espaço ───────── */
+/*
+  A estratégia aqui:
+  .chat-medico-wrap vira coluna flex com altura definida
+  por 100dvh menos: nav(60) + header(~70) + triagem(~80)
+  + tabs(~50) + input(~70) + margens (~40) = ~370px buffer
+  min-height garante usabilidade em telas muito pequenas
+*/
+.chat-medico-wrap{
+  display:flex;
+  flex-direction:column;
+  height:calc(100dvh - var(--nav-h) - 370px);
+  min-height:280px;
+  border-radius:12px;
+  margin-bottom:0;
+  overflow:hidden; /* contém o scroll interno */
 }
 
-/* Toast no topo no mobile */
-.toast{bottom:auto;top:72px;right:12px;left:12px;text-align:center}
+/* Área de mensagens: cresce para preencher o wrap */
+.chat-medico-msgs{
+  flex:1 1 0;
+  height:auto !important; /* sobrescreve os 200px/320px fixos */
+  min-height:0; /* necessário para flex shrink funcionar */
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; /* evita bounce propagating ao body */
+  padding:12px;
+}
 
-/* FAB escondido — sidebar sempre visível */
-.fab-fila{display:none!important}
+/* Input: não cresce, fica colado no fundo do wrap */
+.chat-medico-input{
+  flex-shrink:0;
+  padding:10px 11px;
+  gap:8px;
+  /* safe-area-inset para notch/home indicator do iPhone */
+  padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+}
+.chat-medico-input textarea{
+  font-size:.9rem;
+  padding:10px 12px;
+  min-height:40px;
+  max-height:88px;
+  border-radius:22px;
+  line-height:1.5;
+  /* evita zoom automático no iOS (font < 16px dispara zoom) */
+  font-size:max(.9rem, 16px);
+}
+.chat-medico-send{width:40px;height:40px}
+.chat-clip-btn{width:32px;height:32px}
+
+/* Preview de arquivo */
+.chat-preview-wrap{flex-shrink:0;padding:6px 10px}
+.chat-preview-img{width:36px;height:36px}
+
+/* Imagens nas mensagens: responsivas */
+.msg-arquivo-img{max-width:min(200px,72%);max-height:150px}
+
+/* Bolhas: overflow e quebra de texto */
+.cmsg .bub{font-size:.875rem;line-height:1.6}
+.cmsg .bub-wrap{max-width:84%}
+.cmsg .av{width:24px;height:24px;font-size:.65rem;flex-shrink:0}
+.cmsg .ts{font-size:.58rem}
+
+/* ── Avaliação clínica ────────────────────────────────── */
+.clinic-grid{grid-template-columns:1fr}
+.clinic-label{font-size:.75rem}
+textarea.clinic-input{font-size:max(.88rem,16px);padding:10px 12px}
+
+/* ── Modais bottom sheet ──────────────────────────────── */
+.modal-overlay{padding:0;align-items:flex-end}
+.modal{
+  border-radius:20px 20px 0 0;
+  max-width:100%;
+  padding:24px 16px;
+  /* safe-area para iPhone com home indicator */
+  padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Agendamentos ─────────────────────────────────────── */
+.btn-iniciar-agora{width:100%;justify-content:center;padding:10px}
+
+/* ── Histórico ────────────────────────────────────────── */
+.hist-card{padding:11px 13px;margin-bottom:8px}
+.hist-card-nome{font-size:.88rem}
+.btn-voltar-hist{
+  width:auto;padding:8px 14px;font-size:.78rem;margin-bottom:10px;
+}
+
+/* ── Sidebar itens ────────────────────────────────────── */
+.sidebar-title{font-size:.68rem;margin-bottom:10px}
+.fila-count{font-size:.65rem;padding:1px 6px}
+.fila-card,.paciente-card{padding:10px}
+
+/* ── Toast no topo ────────────────────────────────────── */
+.toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center;font-size:.82rem}
+
+/* ── FAB da fila ──────────────────────────────────────── */
+.fab-fila{display:flex !important;bottom:20px;right:14px}
+
+/* ── PiP: esconde quando chat nativo está ativo ───────── */
+body.chat-mobile-ativo #chat-pip{display:none!important}
+
+/* ── iOS: evita bounce scroll no body quando drawer aberto */
+body.drawer-open{overflow:hidden;position:fixed;width:100%}
+
 }
 
 /* Tablet intermediário */
@@ -447,7 +551,10 @@ font-size:.62rem;font-weight:700;
 display:flex;align-items:center;justify-content:center;
 padding:0 4px;
 }
-@media(max-width:768px){.fab-fila{display:flex}}
+@media(max-width:768px){
+  .fab-fila{display:none!important}
+  #nav-fila-btn{display:flex!important}
+}
 </style>
 
 </head>
@@ -482,6 +589,10 @@ padding:0 4px;
     <div class="nav-spacer"></div>
     <div class="nav-medico">Olá, <strong id="nav-nome"></strong></div>
     <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
+    <button id="nav-fila-btn" onclick="toggleSidebarMobile()" aria-label="Fila de pacientes" style="display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);cursor:pointer;position:relative;flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span id="nav-fila-badge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;border-radius:8px;background:#ff5f57;color:#fff;font-size:.55rem;font-weight:700;align-items:center;justify-content:center;padding:0 3px">0</span>
+    </button>
     <button class="nav-logout" onclick="logout()">Sair</button>
   </nav>
   <div class="app-body">
@@ -508,6 +619,7 @@ padding:0 4px;
       </div>
       <div id="hist-lista" style="display:none"></div>
     </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="fecharSidebarMobile()"></div>
     <main class="main" id="main-content">
       <div class="offline-state" id="state-offline">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
@@ -530,7 +642,7 @@ padding:0 4px;
             </div>
           </div>
           <div class="atend-actions" id="atend-actions-live">
-            <a href="#" class="btn-wpp" id="btn-wpp" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>WhatsApp</a>
+            <a href="#" class="btn-wpp" id="btn-wpp" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg><span class="wpp-txt">WhatsApp</span></a>
             <button onclick="abrirMemed()" style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(180,224,90,.25);background:rgba(180,224,90,.08);color:#b4e05a;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s" id="btn-memed">💊 Prescrever</button>
             <div id="memed-aviso" style="margin-top:10px;padding:10px 14px;background:rgba(255,189,46,.06);border:1px solid rgba(255,189,46,.2);border-radius:10px;font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.6">
               ⚠️ <strong style="color:rgba(255,189,46,.8)">Integração temporariamente indisponível.</strong>
@@ -815,13 +927,60 @@ function getToken() { return sessionStorage.getItem('token')||''; }
 let agendInterval = null;
 function toggleAdminField() { const f=document.getElementById('field-admin-pwd'); f.style.display=f.style.display==='none'?'block':'none'; }
 
-// -- MOBILE SIDEBAR ----------------------------------------------------------
+// -- MOBILE SIDEBAR DRAWER --------------------------------------------------
 function isMobile() { return window.innerWidth <= 768; }
-function fecharSidebarMobile() { /* sidebar fixa no mobile */ }
-function toggleSidebarMobile() { /* sidebar fixa no mobile */ }
-function setupMobileSidebar() { /* sidebar fixa no mobile — sem drawer */ }
-function atualizarEstadoSidebarMobile() { /* sidebar fixa no mobile */ }
-function notificarAtendimentoIniciado() { /* sem drawer para fechar */ }
+
+function abrirSidebarMobile() {
+  if (!isMobile()) return;
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  if (sb) sb.classList.add('open');
+  if (ov) ov.classList.add('open');
+  // iOS: trava scroll do body enquanto drawer está aberto
+  document.body.classList.add('drawer-open');
+  // salva posição de scroll para restaurar depois
+  document.body.style.top = '-' + window.scrollY + 'px';
+}
+
+function fecharSidebarMobile() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.classList.remove('open');
+  // iOS: restaura scroll do body
+  if (document.body.classList.contains('drawer-open')) {
+    const scrollY = Math.abs(parseInt(document.body.style.top || '0'));
+    document.body.classList.remove('drawer-open');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollY);
+  }
+}
+
+function toggleSidebarMobile() {
+  const sb = document.querySelector('.sidebar');
+  if (!sb) return;
+  if (sb.classList.contains('open')) fecharSidebarMobile();
+  else abrirSidebarMobile();
+}
+
+function setupMobileSidebar() {
+  if (!isMobile()) return;
+  fecharSidebarMobile();
+}
+
+function atualizarEstadoSidebarMobile() {
+  if (!isMobile()) return;
+  fecharSidebarMobile();
+}
+
+function notificarAtendimentoIniciado() {
+  if (isMobile()) fecharSidebarMobile();
+}
+
+// Fecha drawer com Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && isMobile()) fecharSidebarMobile();
+});
 
 function entrarApp() {
 document.getElementById('screen-login').style.display='none';
@@ -835,7 +994,7 @@ try {
 const atendParsed = JSON.parse(atendSalvo);
 // Verifica no servidor se ainda está assumido
 apiFetch('/api/atendimento/status/'+atendParsed.id)
-.then(d=>{
+.then(data=>.then(d=>{
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 atendimentoAtual = d.atendimento;
 modoHistorico = false;
@@ -935,6 +1094,8 @@ count.textContent=qtd;
 // Badge FAB mobile
 const fabBadge=document.getElementById('fab-badge');
 if(fabBadge){if(qtd>0){fabBadge.textContent=qtd;fabBadge.style.display='flex';}else{fabBadge.style.display='none';}}
+const navBadge=document.getElementById('nav-fila-badge');
+if(navBadge){if(qtd>0){navBadge.textContent=qtd;navBadge.style.display='flex';}else{navBadge.style.display='none';}}
 if (!plantaoAtivo&&!atendimentoAtual) { lista.innerHTML='<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>'; return; }
 if (filaData.length===0) { lista.innerHTML='<div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Fila vazia</p></div>'; return; }
 try {
@@ -1144,6 +1305,7 @@ function switchTab(nome) {
 document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',['consulta','clinico','prontuario'][i]===nome);});
 document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
 document.getElementById('tab-'+nome).classList.add('active');
+if (isMobile()) fecharSidebarMobile();
 // PiP: mostra quando sai da aba de consulta e chat está ativo
 if (nome !== 'consulta' && chatAtivo) {
   mostrarChatPip();
@@ -1244,6 +1406,7 @@ async function enviarMensagemPip() {
 
 function iniciarChatMedico() {
 ultimaMsgId=0; chatAtivo=true;
+if (isMobile()) { document.body.classList.add('chat-mobile-ativo'); fecharSidebarMobile(); }
 if (chatInterval) { clearInterval(chatInterval); chatInterval=null; }
 carregarHistoricoMedico().then(()=>{
 if (chatInterval) { clearInterval(chatInterval); chatInterval=null; }
@@ -1567,7 +1730,7 @@ if (!hdaVal && !condutaVal) {
 const statusTexto=statusEl.querySelector('.radio-text').textContent.trim();
 const docs=[...document.querySelectorAll('#cg-docs .check-opt.selected')].map(el=>el.textContent.trim()).join(', ')||'Nenhum';
 const filaId = atendimentoAtual.id;
-clearInterval(chatInterval); chatAtivo=false; esconderChatPip();
+clearInterval(chatInterval); chatAtivo=false; esconderChatPip(); document.body.classList.remove('chat-mobile-ativo');
 // CORREÇÃO: gerar e salvar prontuário AGORA com docs marcados antes de encerrar
 try {
   // Atualiza docs no prontuário final
