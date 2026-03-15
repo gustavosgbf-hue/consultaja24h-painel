@@ -1065,8 +1065,10 @@ document.getElementById('pront-output').style.display='none';
 document.getElementById('btn-copiar').style.display='none';
 document.getElementById('autosave-status').className='autosave-status';
 if (p.prontuario_salvo) {
-// prontuário salvo: renderizar visual imediatamente
-renderProntuarioVisual();
+// prontuário salvo: exibir o texto salvo diretamente
+const out = document.getElementById('pront-output');
+out.style.display = 'block';
+out.innerHTML = `<div class="pront-card"><div class="pront-card-title">Prontuário registrado</div><div class="pront-card-body">${escHtml(p.prontuario_salvo)}</div></div>`;
 document.getElementById('btn-copiar').style.display='inline-flex';
 document.getElementById('btn-copiar').classList.remove('copied');
 document.getElementById('btn-copiar').textContent='Copiar texto';
