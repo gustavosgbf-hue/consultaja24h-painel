@@ -541,6 +541,7 @@ padding:0 4px;
           </div>
           <div class="atend-actions" id="atend-actions-hist" style="display:none">
             <button class="btn-voltar-hist" onclick="fecharHistoricoAtendimento()">← Voltar ao histórico</button>
+            <button id="btn-ver-conversa" onclick="switchTab('consulta')" style="display:none;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:1px solid rgba(94,224,160,.25);background:rgba(94,224,160,.08);color:#5ee0a0;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer">💬 Ver conversa</button>
           </div>
         </div>
         <div class="triagem-box">
@@ -1010,6 +1011,8 @@ document.getElementById('atend-hist-badge').style.display=modoHistorico?'inline-
 document.getElementById('atend-timer-wrap').style.display=modoHistorico?'none':'flex';
 document.getElementById('atend-actions-live').style.display=modoHistorico?'none':'flex';
 document.getElementById('atend-actions-hist').style.display=modoHistorico?'flex':'none';
+const btnVerConversa = document.getElementById('btn-ver-conversa');
+if (btnVerConversa) btnVerConversa.style.display=(modoHistorico && tipo==='chat')?'inline-flex':'none';
 if (!modoHistorico) {
 document.getElementById('btn-wpp').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
 document.getElementById('btn-wpp-consulta').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
@@ -1081,10 +1084,36 @@ if (tipo==='video') {
 document.getElementById('meet-section').style.display='block';
 if (p.meet_link) { document.getElementById('meetLinkInput').value=p.meet_link; document.getElementById('meetLinkAtualUrl').textContent=p.meet_link; document.getElementById('meetLinkAtualUrl').href=p.meet_link; document.getElementById('meetLinkAtual').style.display='block'; }
 } else if (tipo==='chat') {
-document.getElementById('chat-section').style.display='block'; iniciarChatMedico();
+document.getElementById('chat-section').style.display='block';
+document.getElementById('chat-medico-input').style.display='flex';
+iniciarChatMedico();
 } else { document.getElementById('wpp-consulta-section').style.display='block'; }
 switchTab('consulta');
-} else { switchTab(p.prontuario_salvo?'prontuario':'clinico'); }
+} else {
+// Modo histórico: mostrar chat somente leitura se for chat
+if (tipo==='chat') {
+  document.getElementById('chat-section').style.display='block';
+  document.getElementById('chat-medico-input').style.display='none';
+  document.getElementById('chat-preview-wrap').style.display='none';
+  document.getElementById('chat-medico-msgs').innerHTML='<div class="chat-vazio"><span>Carregando conversa...</span></div>';
+  fetch(`${API}/api/chat/${p.id}`)
+    .then(r=>safeJson(r))
+    .then(data=>{
+      const container=document.getElementById('chat-medico-msgs');
+      container.innerHTML='';
+      const msgs=data.mensagens||[];
+      if(msgs.length===0){
+        container.innerHTML='<div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Sem mensagens registradas</span></div>';
+      } else {
+        msgs.forEach(m=>adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo));
+        container.scrollTop=container.scrollHeight;
+      }
+    })
+    .catch(()=>{document.getElementById('chat-medico-msgs').innerHTML='<div class="chat-vazio"><span>Erro ao carregar conversa</span></div>';});
+  switchTab('consulta');
+} else {
+  switchTab(p.prontuario_salvo?'prontuario':'clinico');
+}
 }
 
 function inserirConduta(texto) {
