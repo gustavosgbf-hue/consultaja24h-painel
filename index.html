@@ -835,7 +835,7 @@ try {
 const atendParsed = JSON.parse(atendSalvo);
 // Verifica no servidor se ainda está assumido
 apiFetch('/api/atendimento/status/'+atendParsed.id)
-.then(data=>.then(d=>{
+.then(d=>{
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 atendimentoAtual = d.atendimento;
 modoHistorico = false;
