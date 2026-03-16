@@ -1183,7 +1183,8 @@ async function apiFetch(path, opts={}) {
   const res = await fetch(API + path, { ...opts, headers });
   if (res.status === 401) {
     mostrarToast('Sessão expirada. Faça login novamente.', 'error');
-    sessionStorage.clear();
+    localStorage.removeItem('token');
+    localStorage.removeItem('medico');
     location.reload();
     return {};
   }
@@ -1247,8 +1248,8 @@ const res = await fetch(`${API}/api/medico/login`, { method:'POST', headers:{'Co
 const data = await safeJson(res);
 if (!res.ok || !data.ok) { err.textContent = data.error||'E-mail ou senha incorretos.'; err.style.display='block'; return; }
 medico = data.medico;
-sessionStorage.setItem('medico', JSON.stringify(medico));
-sessionStorage.setItem('token', data.token||'');
+localStorage.setItem('medico', JSON.stringify(medico));
+localStorage.setItem('token', data.token||'');
 const adminPwd = document.getElementById('inp-admin-pwd').value;
 if (adminPwd) sessionStorage.setItem('adminPwd', adminPwd);
 entrarApp();
@@ -1261,7 +1262,7 @@ finally { btn.disabled=false; btn.textContent='Entrar no painel'; }
 }
 document.getElementById('btn-login').addEventListener('click', fazerLogin);
 document.getElementById('inp-senha').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
-function getToken() { return sessionStorage.getItem('token')||''; }
+function getToken() { return localStorage.getItem('token')||''; }
 let agendInterval = null;
 function toggleAdminField() { const f=document.getElementById('field-admin-pwd'); f.style.display=f.style.display==='none'?'block':'none'; }
 
@@ -1487,7 +1488,7 @@ if (plantaoAtivo) sairPlantao();
 slots.forEach((_, i) => pararPollingSlot(i));
 slots[0] = null; slots[1] = null; slotAtivo = 0;
 clearInterval(agendInterval); agendInterval=null;
-sessionStorage.clear(); medico=null; autosaveBound=false;
+localStorage.removeItem('token'); localStorage.removeItem('medico'); medico=null; autosaveBound=false;
 document.getElementById('screen-app').style.display='none';
 document.getElementById('screen-login').style.display='flex';
 // Remove estado de autenticação — toggle some, CSS volta ao estado de login
@@ -2989,13 +2990,12 @@ if(chatAtivo&&!modoHistorico) buscarMensagensNovasMedico();
 
 (function init() {
   try {
-    const saved = sessionStorage.getItem('medico');
+    const saved = localStorage.getItem('medico');
     if (saved) { medico = JSON.parse(saved); entrarApp(); }
   } catch(e) {
-    console.warn('[init] sessionStorage corrompido, limpando.', e);
-    sessionStorage.removeItem('medico');
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('atendimentoAtual');
+    console.warn('[init] localStorage corrompido, limpando.', e);
+    localStorage.removeItem('medico');
+    localStorage.removeItem('token');
   }
 })();
 </script>
