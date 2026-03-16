@@ -48,7 +48,6 @@ body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.
 @media(max-width:480px){.trocar-card{padding:28px 20px}}
 #screen-app{display:none;min-height:100vh;position:relative;z-index:1}
 /* BUG 3: toggle nunca aparece antes da autenticação — fallback CSS */
-#screen-login ~ * .sidebar-toggle,
 body:not(.app-autenticado) .sidebar-toggle{display:none!important}
 .nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(7,16,13,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:20px}
 .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
@@ -265,6 +264,17 @@ body:not(.app-autenticado) .sidebar-toggle{display:none!important}
 .slot-tab-btn .slot-dot{width:7px;height:7px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 .slot-tab-btn .slot-name{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ── FIX LAYOUT RAIZ: sidebar-overlay é filho do grid no desktop.
+   Sem display:none global ele ocupa a 2ª coluna e empurra .main para
+   a linha seguinte, quebrando o layout sidebar|main.
+   No mobile o @media(max-width:768px) já redefine display:none e
+   .sidebar-overlay.open{display:block} — esse override não é afetado. ── */
+.sidebar-overlay { display:none; }
+
+/* ── Toggle sidebar: visível no desktop após autenticação ── */
+/* Garante que app-autenticado mostra o toggle mesmo sem inline style */
+body.app-autenticado .sidebar-toggle { display:flex !important; }
+
 /* ── DESKTOP: garantia de largura nos blocos internos do atendimento ── */
 /* Estes blocos vivem dentro de .main (célula de grid) e devem ocupar 100% */
 #state-atend{width:100%;display:block}
@@ -424,7 +434,21 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .btn-copiar:hover{background:rgba(94,224,160,.12)}
 .btn-copiar.copied{border-color:rgba(180,224,90,.4);background:rgba(180,224,90,.1);color:var(--g1)}
 .pront-output{display:none;margin-top:4px}.pront-card{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px;padding:20px;margin-bottom:8px}.pront-card-title{font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);margin-bottom:10px;opacity:.7}.pront-card-body{font-size:.82rem;font-weight:300;color:rgba(255,255,255,.75);line-height:1.8;white-space:pre-wrap}.pront-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line2)}.pront-paciente{font-size:.9rem;font-weight:600;color:#fff}.pront-meta{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.6}.pront-empty{font-size:.78rem;color:rgba(255,255,255,.25);font-style:italic}
-.atend-timer{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+/* ── MODAL VER CHAT ────────────────────────────────────────── */
+.chat-hist-overlay{position:fixed;inset:0;z-index:350;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center;padding:0}
+.chat-hist-overlay.open{display:flex}
+.chat-hist-modal{background:#0d1f18;border:1px solid rgba(94,224,160,.2);border-radius:20px 20px 0 0;width:100%;max-width:680px;height:72vh;display:flex;flex-direction:column;animation:slideUp .25s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.chat-hist-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
+.chat-hist-title{font-size:.85rem;font-weight:600;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:8px}
+.chat-hist-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+.chat-hist-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.chat-hist-close:hover{border-color:rgba(255,95,87,.3);color:#ff8080}
+.chat-hist-msgs{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:6px}
+.chat-hist-empty{text-align:center;color:var(--muted);font-size:.83rem;padding:40px 0;font-weight:300}
+.chat-hist-loading{text-align:center;color:var(--muted);font-size:.83rem;padding:40px 0}
+.btn-ver-chat{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid rgba(94,224,160,.25);background:rgba(94,224,160,.06);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+.btn-ver-chat:hover{background:rgba(94,224,160,.12);border-color:rgba(94,224,160,.4)}
 .atend-timer svg{opacity:.5}
 .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
@@ -941,7 +965,7 @@ body.drawer-open{overflow:hidden;position:fixed;width:100%}
           <div class="pront-section">
             <div class="pront-header">
               <div class="pront-title">Prontuário de telemedicina</div>
-              <div class="pront-actions"><span class="autosave-status" id="autosave-status"></span><button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()" style="display:none">📋 Copiar texto</button></div>
+              <div class="pront-actions"><button class="btn-ver-chat" id="btn-ver-chat" onclick="abrirChatHistorico()" title="Ver conversa completa do chat">💬 Ver chat</button><span class="autosave-status" id="autosave-status"></span><button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()" style="display:none">📋 Copiar texto</button></div>
             </div>
             <div class="pront-output" id="pront-output"></div>
           </div>
@@ -1763,6 +1787,7 @@ document.getElementById('chat-section').style.display='block'; iniciarChatMedico
 } else { document.getElementById('wpp-consulta-section').style.display='block'; }
 switchTab('consulta');
 } else { switchTab(p.prontuario_salvo?'prontuario':'clinico'); }
+atualizarBtnVerChat();
 }
 
 function inserirConduta(texto) {
@@ -2333,6 +2358,76 @@ async function salvarProntuarioAgora(texto) {
 if (!atendimentoAtual) return;
 try { await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:texto}}); } catch(e) {}
 }
+// ── VER CHAT DA CONSULTA ────────────────────────────────────
+async function abrirChatHistorico() {
+  const p = atendimentoAtual;
+  if (!p) return;
+  // Só faz sentido para atendimentos do tipo chat
+  const overlay = document.getElementById('chat-hist-overlay');
+  const msgs    = document.getElementById('chat-hist-msgs');
+  const sub     = document.getElementById('chat-hist-sub');
+  if (!overlay || !msgs) return;
+
+  sub.textContent = (p.nome || '—') + (p.tipo === 'video' ? ' · 📹 Vídeo' : ' · 💬 Chat');
+  msgs.innerHTML  = '<div class="chat-hist-loading">Carregando conversa...</div>';
+  overlay.classList.add('open');
+
+  // Não inicia polling — apenas carrega mensagens existentes (histórico estático)
+  try {
+    const data = await apiFetch(`/api/chat/${p.id}`, { headers: {} });
+    if (!data.ok) { msgs.innerHTML = '<div class="chat-hist-empty">Não foi possível carregar a conversa.</div>'; return; }
+    const lista = data.mensagens || [];
+    if (lista.length === 0) {
+      msgs.innerHTML = '<div class="chat-hist-empty">Nenhuma mensagem nesta consulta.</div>';
+      return;
+    }
+    msgs.innerHTML = '';
+    lista.forEach(m => {
+      const div  = document.createElement('div');
+      div.className = 'cmsg ' + m.autor;
+      const hora = new Date(m.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const safe = String(m.texto || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+      let arquivoHtml = '';
+      const url = safeUrl(m.arquivo_url);
+      if (url && m.arquivo_tipo === 'imagem') {
+        const href = escAttr(url);
+        arquivoHtml = `<a href="${href}" target="_blank" rel="noopener noreferrer"><img class="msg-arquivo-img" src="${href}" alt="imagem"/></a>`;
+      } else if (url && m.arquivo_tipo === 'pdf') {
+        const href = escAttr(url);
+        arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="noopener noreferrer">📄 Abrir PDF</a>`;
+      }
+      div.innerHTML = `<div class="av">${m.autor === 'medico' ? '🩺' : '🧑'}</div><div class="bub-wrap"><div class="bub">${m.arquivo_url ? '' : safe}${arquivoHtml}</div><div class="ts">${hora}</div></div>`;
+      msgs.appendChild(div);
+    });
+    msgs.scrollTop = msgs.scrollHeight;
+  } catch(e) {
+    msgs.innerHTML = '<div class="chat-hist-empty">Erro ao carregar conversa.</div>';
+  }
+}
+
+function fecharChatHistorico(e) {
+  // Fecha se clicou no overlay ou sem evento (botão X)
+  if (e && e.target !== document.getElementById('chat-hist-overlay')) return;
+  document.getElementById('chat-hist-overlay')?.classList.remove('open');
+}
+
+// Fecha com Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('chat-hist-overlay');
+    if (overlay?.classList.contains('open')) { overlay.classList.remove('open'); return; }
+  }
+});
+
+// Mostra/esconde btn-ver-chat conforme tipo do atendimento
+function atualizarBtnVerChat() {
+  const btn = document.getElementById('btn-ver-chat');
+  if (!btn) return;
+  // Visível para chat; escondido para vídeo/wpp (não há histórico de mensagens)
+  const p = atendimentoAtual;
+  btn.style.display = (p && p.tipo === 'chat') ? '' : 'none';
+}
+
 function copiarProntuario() {
 navigator.clipboard.writeText(montarTextoProntuario()).then(()=>{
 const btn=document.getElementById('btn-copiar'); btn.classList.add('copied'); btn.textContent='✓ Copiado!';
@@ -2904,6 +2999,22 @@ if(chatAtivo&&!modoHistorico) buscarMensagensNovasMedico();
   </div>
 </div>
 <div id="memed-overlay" onclick="fecharMemedDrawer()"></div>
+
+<!-- Modal ver chat da consulta -->
+<div class="chat-hist-overlay" id="chat-hist-overlay" onclick="fecharChatHistorico(event)">
+  <div class="chat-hist-modal" onclick="event.stopPropagation()">
+    <div class="chat-hist-header">
+      <div>
+        <div class="chat-hist-title">💬 Chat da consulta</div>
+        <div class="chat-hist-sub" id="chat-hist-sub">—</div>
+      </div>
+      <button class="chat-hist-close" onclick="fecharChatHistorico()">✕</button>
+    </div>
+    <div class="chat-hist-msgs" id="chat-hist-msgs">
+      <div class="chat-hist-loading">Carregando conversa...</div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal trocar senha obrigatório -->
 <div class="trocar-overlay" id="trocar-overlay">
