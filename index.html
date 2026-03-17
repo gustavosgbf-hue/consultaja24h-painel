@@ -2550,15 +2550,17 @@ return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,24
 
 let adminVisible=false, adminData=[];
 async function carregarMedicosPendentes() {
+// Histórico geral aparece para qualquer admin autenticado — independe de médicos pendentes
+document.getElementById('admin-hist-tab-btn').style.display='flex';
 try {
-const data=await apiFetch('/api/admin/medicos/pendentes',{_admin:true}); if (!data.ok && data.ok !== undefined) return; adminData=data.medicos||[];
+const data=await apiFetch('/api/admin/medicos/pendentes',{_admin:true});
+if (!data.ok && data.ok !== undefined) return;
+adminData=data.medicos||[];
 const count=adminData.length;
 if (count>0) { document.getElementById('admin-tab-btn').style.display='flex'; document.getElementById('admin-pendente-count').textContent=count; }
 else { document.getElementById('admin-tab-btn').style.display='none'; }
-// Mostrar aba histórico geral para admin
-document.getElementById('admin-hist-tab-btn').style.display='flex';
 if (adminVisible) renderMedicosPendentes();
-} catch(e) {}
+} catch(e) { console.warn('[Admin] carregarMedicosPendentes:', e.message); }
 }
 function toggleAdmin() { adminVisible=!adminVisible; document.getElementById('admin-medicos-lista').style.display=adminVisible?'block':'none'; if(adminVisible) renderMedicosPendentes(); }
 
