@@ -2566,6 +2566,7 @@ function toggleAdmin() { adminVisible=!adminVisible; document.getElementById('ad
 
 let histGeralVisible=false;
 let histGeralMedicos=[];
+let histGeralCache={}; // cache id→objeto para abrir sem refetch
 function toggleHistoricoGeral() {
 histGeralVisible=!histGeralVisible;
 document.getElementById('admin-hist-filtros').style.display=histGeralVisible?'flex':'none';
@@ -2596,9 +2597,12 @@ data.medicos.forEach(m=>{ const o=document.createElement('option'); o.value=m.id
 const hist=data.historico||[];
 document.getElementById('admin-hist-count').textContent=hist.length;
 if(!hist.length){lista.innerHTML='<div style="color:var(--muted);font-size:.78rem;padding:8px 0">Nenhum atendimento encontrado.</div>';return;}
+// Popula cache com objetos completos para abertura sem refetch
+histGeralCache={};
+hist.forEach(a=>{ histGeralCache[String(a.id)]=a; });
 lista.innerHTML=hist.map(a=>{
 const data_fmt=a.criado_em?new Date(a.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
-const statusColor=a.status==='encerrado'?'#5ee0a0':a.status==='assumido'?'#ffbd2e':'#aaa';
+const statusColor=a.status==='encerrado'?'#5ee0a0':a.status==='assumido'?'#ffbd2e':a.status==='cancelado'?'#ff8080':'#aaa';
 return `<div class="hist-card" onclick="abrirAtendimentoHistorico(${a.id})" style="cursor:pointer;margin-bottom:10px"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"> <strong style="font-size:.88rem">${escHtml(a.nome||'—')}</strong> <span style="font-size:.7rem;color:${statusColor};background:${statusColor}22;padding:2px 7px;border-radius:20px">${a.status}</span> </div> <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px"> ${a.medico_nome?`Dr(a) ${escHtml(a.medico_nome)} · `:''}${escHtml(data_fmt)} </div> <div style="font-size:.77rem;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml((a.queixa||a.triagem||'').substring(0,60))}</div> </div>`;
 }).join('');
 } catch(e){ document.getElementById('admin-hist-lista').innerHTML='<div style="color:#ff8080;font-size:.78rem;padding:8px 0">Erro de conexão</div>'; }
@@ -2929,15 +2933,15 @@ return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${Number(a.id)
 }).join('');
 }
 
-async function abrirAtendimentoHistorico(id) {
-try {
-const data = await apiFetch(`/api/atendimento/status/${id}`);
-if (!data.ok || !data.atendimento) return mostrarToast('Não encontrado','error');
+function abrirAtendimentoHistorico(id) {
+// Usa objeto já carregado no cache — sem refetch para /api/atendimento/status
+const atendimento = histGeralCache[String(id)];
+if (!atendimento) { mostrarToast('Atendimento não encontrado no cache. Recarregue o histórico.','error'); return; }
 // Bloqueia se houver slot VIVO
 const algumSlotVivo = slots.some(s => s !== null && !modoHistorico);
 if (algumSlotVivo) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.','error'); return; }
 pararPollingSlot(0);
-slots[0] = criarSlot(data.atendimento);
+slots[0] = criarSlot(atendimento);
 slotAtivo = 0;
 clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true;
@@ -2949,7 +2953,6 @@ document.getElementById('admin-hist-lista').style.display='none';
 document.getElementById('admin-hist-filtros').style.display='none';
 const main=document.getElementById('main-content'); if(main) main.scrollTop=0;
 window.scrollTo(0,0);
-} catch(e) { mostrarToast('Erro ao abrir atendimento','error'); }
 }
 
 function abrirHistoricoAtendimento(id) {
