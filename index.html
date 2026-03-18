@@ -1138,12 +1138,13 @@ return `<button class="slot-tab-btn ${i === slotAtivo ? 'active' : ''}" onclick=
 }
 
 function escHtml(v){
-return String(v ?? '')
-.replace(/&/g,'&')
-.replace(/</g,'<')
-.replace(/>/g,'>')
-.replace(/"/g,'"')
-.replace(/'/g,''');
+var s=String(v??'');
+s=s.replace(/&/g,'&amp;');
+s=s.replace(/</g,'&lt;');
+s=s.replace(/>/g,'&gt;');
+s=s.replace(/"/g,'&quot;');
+s=s.replace(/'/g,'&#39;');
+return s;
 }
 function escAttr(v){ return escHtml(v).replace(/`/g,'`'); }
 function safeUrl(v){
@@ -2910,7 +2911,7 @@ if (!data) return undefined;
 // Se já está em AAAA-MM-DD, retorna direto
 if (/^\d{4}-\d{2}-\d{2}$/.test(data)) return data;
 // Se está em DD/MM/AAAA, converte
-const m = data.match(/^(\d{2})/(\d{2})/(\d{4})$/);
+const m = data.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
 if (m) return m[3] + '-' + m[2] + '-' + m[1];
 return undefined;
 }
