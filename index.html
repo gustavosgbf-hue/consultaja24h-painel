@@ -319,11 +319,24 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
 .tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
 /* -- PAINEL LATERAL MEMED ----------------------------------- */
-/* Header nosso que fica fixo no topo direito */
-
 @keyframes memedSpin{to{transform:rotate(360deg)}}
-#memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s}
+
+/* Overlay escuro de fundo */
+#memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
+
+/* Iframes específicos do Memed (src contém memed.com.br) — não afeta outros iframes */
+body.memed-aberto iframe[src*="memed.com.br"],
+body.memed-aberto iframe[src*="partners.memed"] {
+  position:fixed!important;top:0!important;right:0!important;
+  width:min(520px,100vw)!important;height:100vh!important;
+  z-index:10000!important;border:none!important;
+  display:block!important;opacity:1!important;
+  pointer-events:auto!important;transform:none!important;visibility:visible!important;
+}
+
+/* Impede scroll do body enquanto Memed está aberto */
+body.memed-aberto{overflow:hidden!important}
 /* -- CHAT PICTURE-IN-PICTURE ------------------------------- */
 #chat-pip{position:fixed;bottom:24px;right:24px;width:320px;z-index:5000;border-radius:18px;overflow:hidden;border:1px solid rgba(94,224,160,.2);background:#0d1a14;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);transform:translateY(120%) scale(.95);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s;display:flex;flex-direction:column}
 #chat-pip.visivel{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
@@ -2875,9 +2888,26 @@ if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
 }
 
 function abrirMemedDrawer() {
-const overlay = document.getElementById('memed-overlay');
-if (overlay) overlay.classList.add('ativo');
-document.body.classList.add('memed-aberto');
+  console.log('[MEMED-OPEN] abrindo drawer');
+  const overlay = document.getElementById('memed-overlay');
+  if (overlay) overlay.classList.add('ativo');
+  document.body.classList.add('memed-aberto');
+
+  // Fallback JS: força visibilidade apenas dos iframes do Memed
+  setTimeout(function() {
+    const iframes = document.querySelectorAll('iframe[src*="memed.com.br"], iframe[src*="partners.memed"]');
+    console.log('[MEMED-OPEN] iframes Memed encontrados:', iframes.length);
+    iframes.forEach(function(f) {
+      f.style.cssText = 'position:fixed!important;top:0!important;right:0!important;width:min(520px,100vw)!important;height:100vh!important;z-index:10000!important;border:none!important;display:block!important;opacity:1!important;pointer-events:auto!important;transform:none!important;visibility:visible!important';
+      console.log('[MEMED-OPEN] iframe corrigido:', f.src.substring(0, 60));
+    });
+    if (iframes.length === 0) {
+      console.warn('[MEMED-OPEN] nenhum iframe Memed encontrado em 300ms — listando todos os iframes:');
+      document.querySelectorAll('iframe').forEach(function(f){
+        console.log('  iframe:', f.id || '(sem id)', '|', (f.src||'').substring(0,80));
+      });
+    }
+  }, 300);
 }
 
 // -- salvar prescrição no prontuário --------------------------
@@ -2933,7 +2963,7 @@ return undefined;
 // -- ponto de entrada -----------------------------------------
 async function abrirMemed() {
 if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
-console.log('[MEMED] iniciando');
+console.log('[MEMED-CLICK] botão prescrever clicado');
 const btn = document.getElementById('btn-memed');
 if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
 let etapa = 'init';
@@ -2943,21 +2973,21 @@ try {
   etapa = 'token';
   if (!memedToken) {
     const data = await apiFetch('/api/memed/token');
-    console.log('[MEMED] token response:', JSON.stringify(data).substring(0, 200));
+    console.log('[MEMED-TOKEN-OK] response:', JSON.stringify(data).substring(0, 200));
     if (!data.ok || !data.token) throw new Error('Token indisponível — resposta: ' + JSON.stringify(data));
     memedToken = data.token;
   }
-  console.log('[MEMED] token ok');
+  console.log('[MEMED-TOKEN-OK] token pronto');
 
   // 2. Script
   etapa = 'script';
   await _carregarScriptMemed(memedToken);
-  console.log('[MEMED] script carregado');
+  console.log('[MEMED-OPEN] script carregado');
 
   // 3. Módulo
   etapa = 'modulo';
   await _esperarModuloPronto();
-  console.log('[MEMED] modulo pronto');
+  console.log('[MEMED-OPEN] modulo pronto');
 
   // 4. setFeatureToggle
   etapa = 'setFeatureToggle';
@@ -2994,11 +3024,11 @@ try {
   // 7. Show
   etapa = 'show';
   MdHub.module.show('plataforma.prescricao');
-  console.log('[MEMED] show chamado');
+  console.log('[MEMED-OPEN] show chamado — aguardando iframe do SDK');
   abrirMemedDrawer();
 
 } catch(e) {
-  console.error('[MEMED] erro na etapa "' + etapa + '":', e);
+  console.error('[MEMED-ERRO] etapa "' + etapa + '":', e);
   memedToken = null;
   _memedScriptProm = null;
   _memedModuloProm = null;
