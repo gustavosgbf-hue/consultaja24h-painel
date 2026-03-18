@@ -1744,8 +1744,7 @@ document.getElementById('atend-actions-hist').style.display=modoHistorico?'flex'
 // Mostrar "Reabrir" só se: modo histórico, status encerrado, e médico atual foi o médico do atendimento
 const btnReabrir = document.getElementById('btn-reabrir-atend');
 if (btnReabrir) {
-  const podeReabrir = modoHistorico && p.status === 'encerrado' && medico && String(p.medico_id) === String(medico.id);
-  btnReabrir.style.display = podeReabrir ? 'flex' : 'none';
+  btnReabrir.style.display = _podeMostrarReabrir(p) ? 'flex' : 'none';
 }
 if (!modoHistorico) {
 document.getElementById('btn-wpp').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
@@ -2748,19 +2747,23 @@ if (_memedScriptProm) return _memedScriptProm;
 _memedScriptProm = new Promise((resolve, reject) => {
 const MEMED_SRC = 'https://partners.memed.com.br/integration.js';
 const existente = document.getElementById('memed-script');
-// Só reaproveira se o script existente for o correto - descarta script "velho" ou incorreto
 if (existente) {
-if (existente.src === MEMED_SRC) { resolve(); return; }
-existente.remove();
+  // Mesmo src mas token diferente: atualiza data-token (não recarrega script)
+  if (existente.getAttribute('data-token') !== token) {
+    existente.setAttribute('data-token', token);
+    console.log('[MEMED] data-token atualizado no script existente');
+  }
+  if (existente.src === MEMED_SRC) { resolve(); return; }
+  existente.remove();
 }
 const script = document.createElement('script');
 script.id = 'memed-script';
 script.type = 'text/javascript';
 script.setAttribute('data-color', '#b4e05a');
 script.setAttribute('data-token', token);
-script.src = 'https://partners.memed.com.br/integration.js';
-script.onload  = () => resolve();
-script.onerror = () => reject(new Error('Falha ao carregar SDK Memed'));
+script.src = MEMED_SRC;
+script.onload  = () => { console.log('[MEMED] script onload ok'); resolve(); };
+script.onerror = (e) => { console.error('[MEMED] script onerror', e); reject(new Error('Falha ao carregar SDK Memed')); };
 document.head.appendChild(script);
 });
 return _memedScriptProm;
@@ -2930,64 +2933,81 @@ return undefined;
 // -- ponto de entrada -----------------------------------------
 async function abrirMemed() {
 if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
+console.log('[MEMED] iniciando');
 const btn = document.getElementById('btn-memed');
 if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
+let etapa = 'init';
 
 try {
-// 1. Token - busca só se ainda não temos
-if (!memedToken) {
-const data = await apiFetch('/api/memed/token');
-if (!data.ok || !data.token) throw new Error('Token indisponível');
-memedToken = data.token;
-}
+  // 1. Token
+  etapa = 'token';
+  if (!memedToken) {
+    const data = await apiFetch('/api/memed/token');
+    console.log('[MEMED] token response:', JSON.stringify(data).substring(0, 200));
+    if (!data.ok || !data.token) throw new Error('Token indisponível — resposta: ' + JSON.stringify(data));
+    memedToken = data.token;
+  }
+  console.log('[MEMED] token ok');
 
-// 2. Script - Promise única, não recarrega na segunda chamada
-await _carregarScriptMemed(memedToken);
+  // 2. Script
+  etapa = 'script';
+  await _carregarScriptMemed(memedToken);
+  console.log('[MEMED] script carregado');
 
-// 3. Módulo - Promise única, cobre race condition de evento precoce
-await _esperarModuloPronto();
+  // 3. Módulo
+  etapa = 'modulo';
+  await _esperarModuloPronto();
+  console.log('[MEMED] modulo pronto');
 
-// 4. Configura features (idempotente - pode chamar de novo sem problema)
-await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
-  historyPrescription: true,
-  buttonClose:         true,
-  allowShareModal:     true
-});
+  // 4. setFeatureToggle
+  etapa = 'setFeatureToggle';
+  await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+    historyPrescription: true,
+    buttonClose:         true,
+    allowShareModal:     true
+  });
+  console.log('[MEMED] features configuradas');
 
-// 5. Dados frescos do paciente - garante nome completo, CPF, nascimento
-const pac    = await _dadosPacienteMemed();
-const partes = (pac.nome||'').trim().split(/\s+/);
-await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
-  idExterno:       'paciente-' + (pac.id || pac.cpf || Date.now()),
-  nome:            partes[0] || '',
-  sobrenome:       partes.slice(1).join(' ') || '',
-  cpf:             (pac.cpf||'').replace(/\D/g,'') || undefined,
-  email:           pac.email || undefined,
-  telefone:        (pac.tel||'').replace(/\D/g,'') || undefined,
-  data_nascimento: _normalizarDataMemed(pac.data_nascimento),
-  sexo:            _normalizarSexoMemed(pac.sexo)
-});
+  // 5. Dados frescos do paciente
+  etapa = 'setPaciente';
+  const pac = await _dadosPacienteMemed();
+  const partes = (pac.nome||'').trim().split(/\s+/);
+  const pacNorm = {
+    idExterno:       'paciente-' + (pac.id || pac.cpf || Date.now()),
+    nome:            partes[0] || '',
+    sobrenome:       partes.slice(1).join(' ') || '',
+    cpf:             (pac.cpf||'').replace(/\D/g,'') || undefined,
+    email:           pac.email || undefined,
+    telefone:        (pac.tel||'').replace(/\D/g,'') || undefined,
+    data_nascimento: _normalizarDataMemed(pac.data_nascimento),
+    sexo:            _normalizarSexoMemed(pac.sexo)
+  };
+  // Remove undefined keys (API rejeita campos undefined)
+  Object.keys(pacNorm).forEach(k => { if (pacNorm[k] === undefined) delete pacNorm[k]; });
+  console.log('[MEMED] paciente normalizado:', JSON.stringify(pacNorm));
+  await MdHub.command.send('plataforma.prescricao', 'setPaciente', pacNorm);
 
-// 6. Registra eventos de prescrição (só na primeira vez)
-_registrarEventosMemed();
+  // 6. Eventos
+  etapa = 'eventos';
+  _registrarEventosMemed();
 
-// 7. Abre
-MdHub.module.show('plataforma.prescricao');
-abrirMemedDrawer();
+  // 7. Show
+  etapa = 'show';
+  MdHub.module.show('plataforma.prescricao');
+  console.log('[MEMED] show chamado');
+  abrirMemedDrawer();
 
 } catch(e) {
-console.error('[Memed]', e);
-// Reset completo - remove script antigo para evitar reaproveitar SDK inconsistente
-// Reset completo: token + script + módulo - evita reaproveitar estado quebrado
-memedToken = null;
-_memedScriptProm = null;
-_memedModuloProm = null;
-_memedEventosOk = false;
-const oldScript = document.getElementById('memed-script');
-if (oldScript) oldScript.remove();
-mostrarToast('Não foi possível abrir a prescrição. Tente novamente.','error');
+  console.error('[MEMED] erro na etapa "' + etapa + '":', e);
+  memedToken = null;
+  _memedScriptProm = null;
+  _memedModuloProm = null;
+  _memedEventosOk = false;
+  const oldScript = document.getElementById('memed-script');
+  if (oldScript) oldScript.remove();
+  mostrarToast('Não foi possível abrir a prescrição. Tente novamente.','error');
 } finally {
-if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+  if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
 }
 }
 
@@ -3004,6 +3024,25 @@ return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${Number(a.id)
 }).join('');
 }
 
+// Helper robusto para decidir se mostra botão Reabrir
+function _podeMostrarReabrir(p) {
+  if (!modoHistorico) return false;
+  if (!p || p.status !== 'encerrado') return false;
+  // Só mostra no "Meu histórico" — não no histórico geral do admin
+  if (p._origemHistorico === 'geral') return false;
+  if (!medico) return false;
+  // Compara por id (numérico ou string)
+  if (p.medico_id != null && String(p.medico_id) === String(medico.id)) return true;
+  // Fallback por nome: normaliza "Dr." / "Dra." e compara
+  if (p.medico_nome && medico.nome) {
+    const norm = s => (s||'').replace(/^Dr[a]?\.?\s*/i,'').replace(/^Dr[a]?\s+/i,'').trim().toLowerCase();
+    const mn = norm(p.medico_nome);
+    const me = norm(medico.nome);
+    if (mn && me && (mn === me || mn.startsWith(me.split(' ')[0]) || me.startsWith(mn.split(' ')[0]))) return true;
+  }
+  return false;
+}
+
 function abrirAtendimentoHistorico(id) {
 // Usa objeto já carregado no cache - sem refetch para /api/atendimento/status
 const atendimento = histGeralCache[String(id)];
@@ -3012,6 +3051,7 @@ if (!atendimento) { mostrarToast('Atendimento não encontrado no cache. Recarreg
 const algumSlotVivo = slots.some(s => s !== null && !modoHistorico);
 if (algumSlotVivo) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.','error'); return; }
 pararPollingSlot(0);
+atendimento._origemHistorico = 'geral';
 slots[0] = criarSlot(atendimento);
 slotAtivo = 0;
 clearInterval(timerInterval); esconderChatPip();
@@ -3032,6 +3072,7 @@ const algumSlotVivo = slots.some(s => s !== null && !modoHistorico);
 if (algumSlotVivo) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.','error'); return; }
 const a=histData.find(item=>String(item.id)===String(id)); if (!a) return;
 // Slot 0 para histórico - garante que não há slots vivos nesse ponto
+a._origemHistorico = 'meu';
 pararPollingSlot(0);
 slots[0] = criarSlot(a);
 slotAtivo = 0;
