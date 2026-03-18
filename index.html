@@ -783,7 +783,6 @@ body.app-autenticado #nav-fila-btn{display:flex}
   <div class="app-body" id="app-body">
     <aside class="sidebar" id="sidebar">
 
-```
   <!-- Toggle desktop: handle na borda direita - oculto até autenticação (BUG 3) -->
   <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebarDesktop()" title="Minimizar/expandir fila" aria-label="Toggle fila" style="display:none">
     <!-- chevron left -->
@@ -968,7 +967,6 @@ body.app-autenticado #nav-fila-btn{display:flex}
     </div>
   </div>
 </main>
-```
 
   </div>
 </div>
@@ -2767,7 +2765,6 @@ _memedModuloProm = new Promise((resolve, reject) => {
 const inicio = Date.now();
 let listenerRegistrado = false;
 
-```
 const finalizar = () => resolve(true);
 
 const tick = () => {
@@ -2802,7 +2799,6 @@ const tick = () => {
 };
 
 tick();
-```
 
 });
 return _memedModuloProm;
@@ -2938,7 +2934,6 @@ if (!data.ok || !data.token) throw new Error('Token indisponível');
 memedToken = data.token;
 }
 
-```
 // 2. Script - Promise única, não recarrega na segunda chamada
 await _carregarScriptMemed(memedToken);
 
@@ -2972,7 +2967,6 @@ _registrarEventosMemed();
 // 7. Abre
 MdHub.module.show('plataforma.prescricao');
 abrirMemedDrawer();
-```
 
 } catch(e) {
 console.error('[Memed]', e);
