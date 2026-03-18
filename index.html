@@ -1233,27 +1233,51 @@ mostrarToast('Senha atualizada com sucesso!','success');
 }
 
 async function fazerLogin() {
+console.log('[LOGIN] Iniciando login...');
 const email = document.getElementById('inp-email').value.trim();
 const senha = document.getElementById('inp-senha').value;
 const err = document.getElementById('login-err');
 const btn = document.getElementById('btn-login');
+if (!email || !senha) {
+  err.textContent = 'Preencha e-mail e senha.';
+  err.style.display = 'block';
+  return;
+}
 err.style.display = 'none'; btn.disabled = true; btn.textContent = 'Entrando...';
 try {
-const res = await fetch(`${API}/api/medico/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email,senha}) });
-const data = await safeJson(res);
-if (!res.ok || !data.ok) { err.textContent = data.error||'E-mail ou senha incorretos.'; err.style.display='block'; return; }
-medico = data.medico;
-localStorage.setItem('medico', JSON.stringify(medico));
-localStorage.setItem('token', data.token||'');
-const adminPwd = document.getElementById('inp-admin-pwd').value;
-if (adminPwd) sessionStorage.setItem('adminPwd', adminPwd);
-entrarApp();
-// Se precisa trocar senha, abre modal obrigatório após entrar
-if (data.precisa_trocar_senha) {
-setTimeout(()=>{ document.getElementById('trocar-overlay').classList.add('open'); }, 300);
-}
-} catch(e) { err.textContent = 'Erro: ' + e.message; err.style.display='block'; }
-finally { btn.disabled=false; btn.textContent='Entrar no painel'; }
+  console.log('[LOGIN] Enviando para API:', API + '/api/medico/login');
+  const res = await fetch(`${API}/api/medico/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email,senha}) });
+  console.log('[LOGIN] Resposta HTTP:', res.status);
+  const data = await safeJson(res);
+  console.log('[LOGIN] Dados recebidos:', data?.ok, 'medico:', data?.medico?.nome);
+  if (!res.ok || !data.ok) {
+    console.warn('[LOGIN] Falhou:', data?.error);
+    err.textContent = data.error||'E-mail ou senha incorretos.';
+    err.style.display='block';
+    return;
+  }
+  if (!data.token) {
+    console.error('[LOGIN] Token ausente na resposta!');
+    err.textContent = 'Erro interno: token não recebido.';
+    err.style.display='block';
+    return;
+  }
+  medico = data.medico;
+  localStorage.setItem('medico', JSON.stringify(medico));
+  localStorage.setItem('token', data.token);
+  console.log('[LOGIN] Token salvo. Entrando no painel...');
+  const adminPwd = document.getElementById('inp-admin-pwd').value;
+  if (adminPwd) sessionStorage.setItem('adminPwd', adminPwd);
+  entrarApp();
+  console.log('[LOGIN] Painel carregado com sucesso.');
+  if (data.precisa_trocar_senha) {
+    setTimeout(()=>{ document.getElementById('trocar-overlay').classList.add('open'); }, 300);
+  }
+} catch(e) {
+  console.error('[LOGIN] Erro inesperado:', e);
+  err.textContent = 'Erro de conexao: ' + e.message;
+  err.style.display='block';
+} finally { btn.disabled=false; btn.textContent='Entrar no painel'; }
 }
 document.getElementById('btn-login').addEventListener('click', fazerLogin);
 document.getElementById('inp-senha').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
@@ -1411,6 +1435,16 @@ restoreSidebarState();
 // NÃO chamado no DOMContentLoaded - o painel pode não estar montado ainda
 
 function entrarApp() {
+console.log('[APP] Carregando painel...');
+// Proteção: só entra se token existir
+const token = localStorage.getItem('token');
+if (!token) {
+  console.warn('[APP] Token ausente - redirecionando para login.');
+  localStorage.removeItem('medico');
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('screen-app').style.display = 'none';
+  return;
+}
 // MELHORIA 1: guard - garante que o DOM do painel existe antes de prosseguir
 const appRoot = document.getElementById('screen-app');
 if (!appRoot) return;
@@ -3063,13 +3097,26 @@ if(chatAtivo&&!modoHistorico) buscarMensagensNovasMedico();
 });
 
 (function init() {
+console.log('[INIT] Painel iniciando...');
 try {
-const saved = localStorage.getItem('medico');
-if (saved) { medico = JSON.parse(saved); entrarApp(); }
+  const token = localStorage.getItem('token');
+  const saved = localStorage.getItem('medico');
+  if (saved && token) {
+    console.log('[INIT] Sessao encontrada, entrando automaticamente...');
+    medico = JSON.parse(saved);
+    entrarApp();
+  } else {
+    if (saved && !token) {
+      console.warn('[INIT] Medico salvo mas sem token - limpando e pedindo login.');
+      localStorage.removeItem('medico');
+    } else {
+      console.log('[INIT] Nenhuma sessao salva, mostrando login.');
+    }
+  }
 } catch(e) {
-console.warn('[init] localStorage corrompido, limpando.', e);
-localStorage.removeItem('medico');
-localStorage.removeItem('token');
+  console.error('[INIT] localStorage corrompido, limpando.', e);
+  localStorage.removeItem('medico');
+  localStorage.removeItem('token');
 }
 })();
 </script>
