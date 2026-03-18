@@ -2758,404 +2758,185 @@ if (histVisible) renderHistorico();
 }
 
 // - MEMED ----------------------------------
-// Estado em 3 camadas - sem dependência de evento solto
-let memedToken         = null;   // token JWT do médico
-let _memedScriptProm   = null;   // Promise única de carregamento do script
-let _memedModuloProm   = null;   // Promise única de prontidão do módulo
-let _memedEventosOk    = false;  // eventos de prescrição já registrados?
+let memedCarregado = false;
+let memedToken = null;
 
-// -- helpers de estado ----------------------------------------
-function _carregarScriptMemed(token) {
-if (_memedScriptProm) return _memedScriptProm;
-_memedScriptProm = new Promise((resolve, reject) => {
-const MEMED_SRC = 'https://partners.memed.com.br/integration.js';
-const existente = document.getElementById('memed-script');
-if (existente) {
-  // Mesmo src mas token diferente: atualiza data-token (não recarrega script)
-  if (existente.getAttribute('data-token') !== token) {
-    existente.setAttribute('data-token', token);
-    console.log('[MEMED] data-token atualizado no script existente');
-  }
-  if (existente.src === MEMED_SRC) { resolve(); return; }
-  existente.remove();
-}
-const script = document.createElement('script');
-script.id = 'memed-script';
-script.type = 'text/javascript';
-script.setAttribute('data-color', '#b4e05a');
-script.setAttribute('data-token', token);
-script.src = MEMED_SRC;
-script.onload  = () => { console.log('[MEMED] script onload ok'); resolve(); };
-script.onerror = (e) => { console.error('[MEMED] script onerror', e); reject(new Error('Falha ao carregar SDK Memed')); };
-document.head.appendChild(script);
-});
-return _memedScriptProm;
-}
-
-function _esperarModuloPronto(timeout = 12000) {
-if (_memedModuloProm) return _memedModuloProm;
-_memedModuloProm = new Promise((resolve, reject) => {
-const inicio = Date.now();
-let listenerRegistrado = false;
-
-const finalizar = () => resolve(true);
-
-const tick = () => {
-  // Módulo já pronto - resolve imediatamente
-  if (typeof MdHub !== 'undefined' && typeof MdHub.module !== 'undefined') {
-    return finalizar();
-  }
-
-  // API de eventos disponível - registra listener UMA única vez e para o polling
-  if (
-    !listenerRegistrado &&
-    typeof MdSinapsePrescricao !== 'undefined' &&
-    MdSinapsePrescricao?.event &&
-    typeof MdSinapsePrescricao.event.add === 'function'
-  ) {
-    try {
-      listenerRegistrado = true; // flag antes do add - evita duplo registro em reentrada
-      MdSinapsePrescricao.event.add('core:moduleInit', finalizar);
-      return; // listener registrado, polling encerrado
-    } catch (_) {
-      listenerRegistrado = false; // add falhou - permite nova tentativa
-    }
-  }
-
-  // Timeout
-  if (Date.now() - inicio >= timeout) {
-    reject(new Error('Timeout ao aguardar inicialização do Memed.'));
-    return;
-  }
-
-  setTimeout(tick, 100);
-};
-
-tick();
-
-});
-return _memedModuloProm;
-}
-
-// -- busca dados frescos do paciente --------------------------
-async function _dadosPacienteMemed() {
-let pac = atendimentoAtual;
-try {
-const d = await apiFetch('/api/atendimento/status/' + pac.id);
-if (d.ok && d.atendimento) pac = d.atendimento;
-} catch(e) {}
-return pac;
-}
-
-// -- registra eventos de prescrição (só uma vez) ---------------
-function _registrarEventosMemed() {
-if (_memedEventosOk) return;
-_memedEventosOk = true;
-
-MdHub.event.add('prescricaoImpressa', async (ev) => {
-const p = ev?.prescricao || ev || {};
-await salvarPrescricaoNoProntuario({
-link: p.link || '',
-medicamentos: p.medicamentos || p.itens || [],
-exames: p.exames || [],
-atestado: p.atestado || ''
-});
-});
-
-MdHub.event.add('prescricaoExcluida', async (ev) => {
-const link = ev?.prescricao?.link || ev?.link || '';
-if (link && atendimentoAtual && atendimentoAtual.prontuario) {
-try {
-const novoPront = atendimentoAtual.prontuario
-.split('\n\n')
-.filter(l => !l.includes(link))
-.join('\n\n');
-await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
-if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
-const out = document.getElementById('pront-output');
-if (out && out.style.display !== 'none') {
-const body = out.querySelector('.pront-card-body');
-if (body) body.textContent = novoPront;
-}
-mostrarToast('Prescricao removida do prontuario','info');
-} catch(e) {}
-}
-});
-
-MdSinapsePrescricao.event.add('core:moduleHide', (mod) => {
-if (mod.moduleName === 'plataforma.prescricao') fecharMemedDrawer();
-});
-}
-
-// -- drawer ---------------------------------------------------
 function fecharMemedDrawer() {
-  var overlay = document.getElementById('memed-overlay');
+  const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
   try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
-  var btn = document.getElementById('btn-memed');
+  const btn = document.getElementById('btn-memed');
   if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-  var dbg = document.getElementById('memed-debug');
-  if (dbg) dbg.classList.remove('visivel');
-}
-
-function _memedVarredura(tentativa) {
-  tentativa = tentativa || 1;
-  var debugEl = document.getElementById('memed-debug');
-  var resultado = { iframeEncontrado: false, containerEncontrado: false, ultimoSeletor: 'nenhum' };
-
-  var FIX_STYLE = [
-    'position:fixed','top:0','right:0',
-    'width:520px','height:100vh',
-    'z-index:2147483647',
-    'border:none','display:block','opacity:1',
-    'background:#fff','pointer-events:auto',
-    'transform:none','visibility:visible','overflow:visible'
-  ].join('!important;') + '!important';
-
-  // Varredura em todos os iframes da página — SDK injeta com src="about:blank"
-  var todosIframes = document.querySelectorAll('iframe');
-  todosIframes.forEach(function(f) {
-    var src = (f.src || '').toLowerCase();
-    var id  = (f.id  || '').toLowerCase();
-    var isMemed = src.indexOf('memed') !== -1 || src.indexOf('sinapse') !== -1 ||
-                  src.indexOf('partners') !== -1 || id.indexOf('memed') !== -1 ||
-                  src === 'about:blank'; // SDK usa about:blank
-    if (!isMemed) return;
-
-    var rect = f.getBoundingClientRect();
-    var cs   = window.getComputedStyle(f);
-    var pai  = f.parentElement;
-    console.log('[MEMED-DOM] iframe encontrado — id:', f.id||'-', 'src:', src.substring(0,60));
-    console.log('  rect: w='+Math.round(rect.width)+' h='+Math.round(rect.height)+' top='+Math.round(rect.top)+' left='+Math.round(rect.left));
-    console.log('  computed: display='+cs.display+' visibility='+cs.visibility+' opacity='+cs.opacity+' z-index='+cs.zIndex);
-    if (pai) console.log('  pai: '+pai.tagName+' #'+(pai.id||'-')+' class='+(pai.className||'').substring(0,50));
-
-    f.style.cssText = FIX_STYLE;
-    console.log('[MEMED-FIX] fix aplicado no iframe');
-
-    // Corrige pai se necessário
-    if (pai && pai !== document.body) {
-      var paiCs = window.getComputedStyle(pai);
-      if (paiCs.display === 'none' || paiCs.visibility === 'hidden' ||
-          parseFloat(paiCs.opacity) < 0.1 || paiCs.overflow === 'hidden' ||
-          (paiCs.zIndex !== 'auto' && parseInt(paiCs.zIndex) < 100)) {
-        pai.style.cssText = FIX_STYLE;
-        console.log('[MEMED-FIX] pai corrigido:', pai.tagName, pai.id);
-      }
-    }
-    resultado.iframeEncontrado = true;
-    resultado.ultimoSeletor = 'iframe (src='+src.substring(0,30)+')';
-  });
-
-  // Varredura em containers/divs do Memed
-  var seletoresDivs = [
-    'div[id*="memed"]:not(#memed-overlay):not(#memed-debug)',
-    'div[class*="memed"]:not(.memed-aviso)',
-    'div[role="dialog"]'
-  ];
-  seletoresDivs.forEach(function(sel) {
-    document.querySelectorAll(sel).forEach(function(el) {
-      var rect = el.getBoundingClientRect();
-      var cs   = window.getComputedStyle(el);
-      console.log('[MEMED-DOM] div seletor:', sel, '| id:', el.id||'-', '| rect w='+Math.round(rect.width)+' h='+Math.round(rect.height));
-      if (rect.width === 0 || rect.height === 0 || cs.display === 'none' || cs.visibility === 'hidden') {
-        el.style.cssText = FIX_STYLE;
-        console.log('[MEMED-FIX] div corrigido:', sel);
-      }
-      resultado.containerEncontrado = true;
-      resultado.ultimoSeletor = sel;
-    });
-  });
-
-  // Painel debug
-  if (debugEl) {
-    debugEl.classList.add('visivel');
-    debugEl.innerHTML =
-      '🔍 Memed Debug — tentativa ' + tentativa + '<br>' +
-      'iframes na página: ' + document.querySelectorAll('iframe').length + '<br>' +
-      'iframe Memed: ' + (resultado.iframeEncontrado ? '✅ fix aplicado' : '❌ não encontrado') + '<br>' +
-      'container: ' + (resultado.containerEncontrado ? '✅' : '❌') + '<br>' +
-      'último: ' + resultado.ultimoSeletor;
-  }
-
-  if (!resultado.iframeEncontrado && tentativa < 4) {
-    console.warn('[MEMED-DOM] iframe não encontrado na tentativa', tentativa, '— retentando em 600ms');
-    setTimeout(function() { _memedVarredura(tentativa + 1); }, 600);
-  }
 }
 
 function abrirMemedDrawer() {
-  console.log('[MEMED-OPEN] abrindo drawer');
-  var overlay = document.getElementById('memed-overlay');
+  const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.add('ativo');
   document.body.classList.add('memed-aberto');
-  // SDK precisa de tempo para injetar o iframe no DOM
-  setTimeout(function() { _memedVarredura(1); }, 400);
 }
 
-// -- salvar prescrição no prontuário --------------------------
 async function salvarPrescricaoNoProntuario(dados) {
-if (!atendimentoAtual) return;
-try {
-const ts = new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-const linhas = ['- Prescrição Memed (' + ts + ') -'];
-if (dados.medicamentos && dados.medicamentos.length) {
-linhas.push('💊 Medicamentos:');
-dados.medicamentos.forEach(m => linhas.push('  • ' + m.nome + (m.posologia?' - '+m.posologia:'')));
-}
-if (dados.exames && dados.exames.length) {
-linhas.push('🔬 Exames:');
-dados.exames.forEach(e => linhas.push('  • ' + (e.nome||e)));
-}
-if (dados.atestado) linhas.push('📄 Atestado: ' + dados.atestado);
-if (dados.link)     linhas.push('🔗 Link: ' + dados.link);
-const obs = linhas.join('\n');
-const prontAtual = atendimentoAtual.prontuario || '';
-const novoPront  = prontAtual ? prontAtual + '\n\n' + obs : obs;
-await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
-if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
-// Atualiza pront-output que é o elemento real do painel
-const out = document.getElementById('pront-output');
-if (out && out.style.display !== 'none') {
-const body = out.querySelector('.pront-card-body');
-if (body) body.textContent = novoPront;
-}
-mostrarToast('Prescricao salva no prontuario','success');
-} catch(e) { console.error('Erro ao salvar prescricao:',e); }
-}
-
-// -- helpers de normalização de dados do paciente ------------
-function _normalizarDataMemed(data) {
-if (!data) return undefined;
-// Se já está em AAAA-MM-DD, retorna direto
-if (/^\d{4}-\d{2}-\d{2}$/.test(data)) return data;
-// Se está em DD/MM/AAAA, converte
-const m = data.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-if (m) return m[3] + '-' + m[2] + '-' + m[1];
-return undefined;
-}
-
-function _normalizarSexoMemed(sexo) {
-if (!sexo) return undefined;
-const s = sexo.trim().toLowerCase();
-if (s === 'f' || s === 'feminino') return 'Feminino';
-if (s === 'm' || s === 'masculino') return 'Masculino';
-return undefined;
-}
-
-// -- ponto de entrada -----------------------------------------
-// Helper: wraps any promise com timeout defensivo
-function withTimeout(promise, ms, label) {
-  var timer;
-  var race = new Promise(function(_, reject) {
-    timer = setTimeout(function() {
-      reject(new Error('Timeout em ' + label + ' (' + ms + 'ms)'));
-    }, ms);
-  });
-  return Promise.race([promise, race]).finally(function() { clearTimeout(timer); });
+  if (!atendimentoAtual) return;
+  try {
+    const ts = new Date().toLocaleString('pt-BR', {timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const linhas = [`--- Prescrição Memed (${ts}) ---`];
+    if (dados.medicamentos && dados.medicamentos.length) {
+      linhas.push('💊 Medicamentos:');
+      dados.medicamentos.forEach(m => linhas.push(`  • ${m.nome}${m.posologia?' — '+m.posologia:''}`));
+    }
+    if (dados.exames && dados.exames.length) {
+      linhas.push('🔬 Exames:');
+      dados.exames.forEach(e => linhas.push(`  • ${e.nome||e}`));
+    }
+    if (dados.atestado) linhas.push(`📄 Atestado: ${dados.atestado}`);
+    if (dados.link) linhas.push(`🔗 Link: ${dados.link}`);
+    const obs = linhas.join('\n');
+    const prontAtual = atendimentoAtual.prontuario || '';
+    const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
+    await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
+    if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+    const out = document.getElementById('pront-output');
+    if (out && out.style.display !== 'none') {
+      const body = out.querySelector('.pront-card-body');
+      if (body) body.textContent = novoPront;
+    }
+    mostrarToast('Prescricao salva no prontuario', 'success');
+  } catch(e) { console.error('Erro ao salvar prescricao:', e); }
 }
 
 async function abrirMemed() {
-if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
-console.log('[MEMED-CLICK] botão prescrever clicado');
-const btn = document.getElementById('btn-memed');
-if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
-let etapa = 'init';
+  if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
+  const btn = document.getElementById('btn-memed');
+  if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
 
-const _resetBtn = () => { if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; } };
-const _resetEstado = () => {
-  memedToken = null; _memedScriptProm = null; _memedModuloProm = null; _memedEventosOk = false;
-  const s = document.getElementById('memed-script'); if (s) s.remove();
-};
-
-try {
-  // 1. Token
-  etapa = 'token';
-  console.log('[MEMED-STEP-IN] token');
-  if (!memedToken) {
-    const data = await withTimeout(apiFetch('/api/memed/token'), 10000, 'token');
-    console.log('[MEMED-TOKEN-OK] response:', JSON.stringify(data).substring(0, 200));
-    if (!data.ok || !data.token) throw new Error('Token indisponível — resposta: ' + JSON.stringify(data));
-    memedToken = data.token;
+  // SDK já carregado — reabre sem recarregar script
+  if (memedCarregado) {
+    try {
+      let pac = atendimentoAtual;
+      try {
+        const dPac = await apiFetch(`/api/atendimento/status/${pac.id}`);
+        if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
+      } catch(e) {}
+      const partes = (pac.nome||'').trim().split(' ');
+      await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+        idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
+        nome: partes[0] || '',
+        sobrenome: partes.slice(1).join(' ') || '',
+        cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
+        email: pac.email || undefined,
+        telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
+        data_nascimento: pac.data_nascimento || undefined,
+        sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
+      });
+      MdHub.module.show('plataforma.prescricao');
+      abrirMemedDrawer();
+      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+      return;
+    } catch(e) {
+      // SDK corrompido — recarrega
+      memedCarregado = false;
+      const s = document.getElementById('memed-script');
+      if (s) s.remove();
+    }
   }
-  console.log('[MEMED-STEP-OUT] token');
 
-  // 2. Script
-  etapa = 'script';
-  console.log('[MEMED-STEP-IN] script');
-  await withTimeout(_carregarScriptMemed(memedToken), 15000, 'script');
-  console.log('[MEMED-STEP-OUT] script');
+  try {
+    // 1. Token
+    const data = await apiFetch('/api/memed/token');
+    if (!data.ok || !data.token) {
+      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+      mostrarToast('Não foi possível carregar a prescrição','error');
+      return;
+    }
+    memedToken = data.token;
+    if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
 
-  // 3. Módulo
-  etapa = 'modulo';
-  console.log('[MEMED-STEP-IN] modulo');
-  await withTimeout(_esperarModuloPronto(), 15000, 'modulo');
-  console.log('[MEMED-STEP-OUT] modulo');
+    // 2. Carrega SDK
+    const script = document.createElement('script');
+    script.id = 'memed-script';
+    script.type = 'text/javascript';
+    script.setAttribute('data-color', '#b4e05a');
+    script.setAttribute('data-token', memedToken);
+    script.src = 'https://partners.memed.com.br/integration.js';
 
-  // 4. setFeatureToggle — MdHub.command.send pode pendurar indefinidamente
-  etapa = 'setFeatureToggle';
-  console.log('[MEMED-STEP-IN] setFeatureToggle');
-  await withTimeout(
-    MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
-      historyPrescription: true,
-      buttonClose:         true,
-      allowShareModal:     true
-    }),
-    8000, 'setFeatureToggle'
-  );
-  console.log('[MEMED-STEP-OUT] setFeatureToggle');
+    script.onload = () => {
+      memedCarregado = true;
 
-  // 5. Dados do paciente
-  etapa = 'dadosPaciente';
-  console.log('[MEMED-STEP-IN] dadosPaciente');
-  const pac = await withTimeout(_dadosPacienteMemed(), 8000, 'dadosPaciente');
-  console.log('[MEMED-STEP-OUT] dadosPaciente');
+      MdSinapsePrescricao.event.add('core:moduleInit', async (module) => {
+        if (module.name !== 'plataforma.prescricao') return;
 
-  const partes = (pac.nome||'').trim().split(/\s+/);
-  if (!partes[0]) throw new Error('Nome do paciente vazio — não é possível abrir prescrição');
-  const pacNorm = {
-    idExterno:       'paciente-' + (pac.id || pac.cpf || Date.now()),
-    nome:            partes[0],
-    sobrenome:       partes.slice(1).join(' ') || partes[0],
-    cpf:             (pac.cpf||'').replace(/\D/g,'') || undefined,
-    email:           pac.email || undefined,
-    telefone:        (pac.tel||'').replace(/\D/g,'') || undefined,
-    data_nascimento: _normalizarDataMemed(pac.data_nascimento),
-    sexo:            _normalizarSexoMemed(pac.sexo)
-  };
-  Object.keys(pacNorm).forEach(k => { if (!pacNorm[k]) delete pacNorm[k]; });
-  console.log('[MEMED-STEP-IN] setPaciente — payload:', JSON.stringify(pacNorm));
+        await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+          historyPrescription: true,
+          buttonClose: true,
+          allowShareModal: true
+        });
 
-  // 6. setPaciente — outro ponto que pode pendurar
-  etapa = 'setPaciente';
-  await withTimeout(
-    MdHub.command.send('plataforma.prescricao', 'setPaciente', pacNorm),
-    8000, 'setPaciente'
-  );
-  console.log('[MEMED-STEP-OUT] setPaciente');
+        const pac = atendimentoAtual;
+        const partes = (pac.nome||'').trim().split(' ');
+        await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+          idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
+          nome: partes[0] || '',
+          sobrenome: partes.slice(1).join(' ') || '',
+          cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
+          email: pac.email || undefined,
+          telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
+          data_nascimento: pac.data_nascimento || undefined,
+          sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
+        });
 
-  // 7. Eventos
-  etapa = 'eventos';
-  console.log('[MEMED-STEP-IN] eventos');
-  _registrarEventosMemed();
-  console.log('[MEMED-STEP-OUT] eventos');
+        MdHub.module.show('plataforma.prescricao');
+        abrirMemedDrawer();
 
-  // 8. Show
-  etapa = 'show';
-  console.log('[MEMED-STEP-IN] show');
-  MdHub.module.show('plataforma.prescricao');
-  console.log('[MEMED-STEP-OUT] show');
-  abrirMemedDrawer();
+        MdHub.event.add('prescricaoImpressa', async (ev) => {
+          const p = ev?.prescricao || ev || {};
+          await salvarPrescricaoNoProntuario({
+            link: p.link || '',
+            medicamentos: p.medicamentos || p.itens || [],
+            exames: p.exames || [],
+            atestado: p.atestado || ''
+          });
+        });
 
-} catch(e) {
-  console.error('[MEMED-ERRO] travou em "' + etapa + '":', e.message);
-  _resetEstado();
-  mostrarToast('Erro ao abrir prescrição (' + etapa + '). Tente novamente.', 'error');
-  fecharMemedDrawer();
-} finally {
-  _resetBtn();
-}
+        MdHub.event.add('prescricaoExcluida', async (ev) => {
+          const link = ev?.prescricao?.link || ev?.link || '';
+          if (link && atendimentoAtual && atendimentoAtual.prontuario) {
+            try {
+              const novoPront = atendimentoAtual.prontuario
+                .split('\n\n')
+                .filter(l => !l.includes(link))
+                .join('\n\n');
+              await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
+              if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+              const out = document.getElementById('pront-output');
+              if (out && out.style.display !== 'none') {
+                const body = out.querySelector('.pront-card-body');
+                if (body) body.textContent = novoPront;
+              }
+              mostrarToast('Prescricao removida do prontuario','info');
+            } catch(e) {}
+          }
+        });
+
+        MdSinapsePrescricao.event.add('core:moduleHide', (mod) => {
+          if (mod.moduleName === 'plataforma.prescricao') fecharMemedDrawer();
+        });
+      });
+    };
+
+    script.onerror = () => {
+      mostrarToast('Erro ao carregar Memed','error');
+      fecharMemedDrawer();
+      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+    };
+
+    document.head.appendChild(script);
+
+  } catch(e) {
+    mostrarToast('Não foi possível abrir a prescrição. Tente novamente.','error');
+    fecharMemedDrawer();
+    if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+  }
 }
 
 function toggleHistorico() { histVisible=!histVisible; document.getElementById('hist-lista').style.display=histVisible?'block':'none'; document.getElementById('hist-busca-wrap').style.display=histVisible?'block':'none'; if(histVisible) buscarHistorico(); }
