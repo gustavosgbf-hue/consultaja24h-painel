@@ -861,6 +861,7 @@ body.app-autenticado #nav-fila-btn{display:flex}
       </div>
       <div class="atend-actions" id="atend-actions-hist" style="display:none">
         <button class="btn-voltar-hist" onclick="fecharHistoricoAtendimento()">← Voltar ao histórico</button>
+        <button id="btn-reabrir-atend" onclick="reabrirAtendimento()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,189,46,.3);background:rgba(255,189,46,.08);color:#ffbd2e;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s">↩ Reabrir consulta</button>
       </div>
     </div>
     <div class="triagem-box">
@@ -1740,6 +1741,12 @@ document.getElementById('atend-hist-badge').style.display=modoHistorico?'inline-
 document.getElementById('atend-timer-wrap').style.display=modoHistorico?'none':'flex';
 document.getElementById('atend-actions-live').style.display=modoHistorico?'none':'flex';
 document.getElementById('atend-actions-hist').style.display=modoHistorico?'flex':'none';
+// Mostrar "Reabrir" só se: modo histórico, status encerrado, e médico atual foi o médico do atendimento
+const btnReabrir = document.getElementById('btn-reabrir-atend');
+if (btnReabrir) {
+  const podeReabrir = modoHistorico && p.status === 'encerrado' && medico && String(p.medico_id) === String(medico.id);
+  btnReabrir.style.display = podeReabrir ? 'flex' : 'none';
+}
 if (!modoHistorico) {
 document.getElementById('btn-wpp').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
 document.getElementById('btn-wpp-consulta').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
@@ -3059,6 +3066,34 @@ container.scrollTop=container.scrollHeight;
 switchTab('consulta');
 }
 }
+async function reabrirAtendimento() {
+if (!atendimentoAtual) return;
+const id = atendimentoAtual.id;
+const nome = atendimentoAtual.nome || 'este paciente';
+if (!confirm('Reabrir a consulta de ' + nome + '? O atendimento voltará para "Em atendimento".')) return;
+// Verificar limite de slots
+const slotsOcupados = slots.filter(Boolean).length;
+if (slotsOcupados >= MAX_SLOTS) {
+  mostrarToast('Encerre um atendimento antes de reabrir outro.', 'error');
+  return;
+}
+try {
+  const d = await apiFetch('/api/atendimento/reabrir', { method: 'POST', json: { filaId: id } });
+  if (!d.ok) { mostrarToast(d.error || 'Erro ao reabrir', 'error'); return; }
+  // Sai do modo histórico e abre o atendimento no slot
+  const slotLivre = slots[0] === null ? 0 : 1;
+  slots[slotLivre] = criarSlot(d.atendimento);
+  slotAtivo = slotLivre;
+  modoHistorico = false;
+  timerSegundos = 0; iniciarTimer();
+  sessionStorage.setItem('atendimentoAtual', JSON.stringify(d.atendimento));
+  renderSlotTabs();
+  renderPainelAtendimento(); renderEstado();
+  mostrarToast('Consulta reaberta!', 'success');
+  buscarHistorico();
+} catch(e) { mostrarToast('Erro ao reabrir', 'error'); }
+}
+
 function fecharHistoricoAtendimento() {
 // Limpa slot usado pelo histórico
 slots[slotAtivo] = null;
