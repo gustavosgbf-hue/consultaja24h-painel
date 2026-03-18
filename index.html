@@ -3045,6 +3045,17 @@ return undefined;
 }
 
 // -- ponto de entrada -----------------------------------------
+// Helper: wraps any promise com timeout defensivo
+function withTimeout(promise, ms, label) {
+  var timer;
+  var race = new Promise(function(_, reject) {
+    timer = setTimeout(function() {
+      reject(new Error('Timeout em ' + label + ' (' + ms + 'ms)'));
+    }, ms);
+  });
+  return Promise.race([promise, race]).finally(function() { clearTimeout(timer); });
+}
+
 async function abrirMemed() {
 if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
 console.log('[MEMED-CLICK] botão prescrever clicado');
@@ -3052,76 +3063,98 @@ const btn = document.getElementById('btn-memed');
 if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
 let etapa = 'init';
 
+const _resetBtn = () => { if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; } };
+const _resetEstado = () => {
+  memedToken = null; _memedScriptProm = null; _memedModuloProm = null; _memedEventosOk = false;
+  const s = document.getElementById('memed-script'); if (s) s.remove();
+};
+
 try {
   // 1. Token
   etapa = 'token';
+  console.log('[MEMED-STEP-IN] token');
   if (!memedToken) {
-    const data = await apiFetch('/api/memed/token');
+    const data = await withTimeout(apiFetch('/api/memed/token'), 10000, 'token');
     console.log('[MEMED-TOKEN-OK] response:', JSON.stringify(data).substring(0, 200));
     if (!data.ok || !data.token) throw new Error('Token indisponível — resposta: ' + JSON.stringify(data));
     memedToken = data.token;
   }
-  console.log('[MEMED-TOKEN-OK] token pronto');
+  console.log('[MEMED-STEP-OUT] token');
 
   // 2. Script
   etapa = 'script';
-  await _carregarScriptMemed(memedToken);
-  console.log('[MEMED-OPEN] script carregado');
+  console.log('[MEMED-STEP-IN] script');
+  await withTimeout(_carregarScriptMemed(memedToken), 15000, 'script');
+  console.log('[MEMED-STEP-OUT] script');
 
   // 3. Módulo
   etapa = 'modulo';
-  await _esperarModuloPronto();
-  console.log('[MEMED-OPEN] modulo pronto');
+  console.log('[MEMED-STEP-IN] modulo');
+  await withTimeout(_esperarModuloPronto(), 15000, 'modulo');
+  console.log('[MEMED-STEP-OUT] modulo');
 
-  // 4. setFeatureToggle
+  // 4. setFeatureToggle — MdHub.command.send pode pendurar indefinidamente
   etapa = 'setFeatureToggle';
-  await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
-    historyPrescription: true,
-    buttonClose:         true,
-    allowShareModal:     true
-  });
-  console.log('[MEMED] features configuradas');
+  console.log('[MEMED-STEP-IN] setFeatureToggle');
+  await withTimeout(
+    MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+      historyPrescription: true,
+      buttonClose:         true,
+      allowShareModal:     true
+    }),
+    8000, 'setFeatureToggle'
+  );
+  console.log('[MEMED-STEP-OUT] setFeatureToggle');
 
-  // 5. Dados frescos do paciente
-  etapa = 'setPaciente';
-  const pac = await _dadosPacienteMemed();
+  // 5. Dados do paciente
+  etapa = 'dadosPaciente';
+  console.log('[MEMED-STEP-IN] dadosPaciente');
+  const pac = await withTimeout(_dadosPacienteMemed(), 8000, 'dadosPaciente');
+  console.log('[MEMED-STEP-OUT] dadosPaciente');
+
   const partes = (pac.nome||'').trim().split(/\s+/);
+  if (!partes[0]) throw new Error('Nome do paciente vazio — não é possível abrir prescrição');
   const pacNorm = {
     idExterno:       'paciente-' + (pac.id || pac.cpf || Date.now()),
-    nome:            partes[0] || '',
-    sobrenome:       partes.slice(1).join(' ') || '',
+    nome:            partes[0],
+    sobrenome:       partes.slice(1).join(' ') || partes[0],
     cpf:             (pac.cpf||'').replace(/\D/g,'') || undefined,
     email:           pac.email || undefined,
     telefone:        (pac.tel||'').replace(/\D/g,'') || undefined,
     data_nascimento: _normalizarDataMemed(pac.data_nascimento),
     sexo:            _normalizarSexoMemed(pac.sexo)
   };
-  // Remove undefined keys (API rejeita campos undefined)
-  Object.keys(pacNorm).forEach(k => { if (pacNorm[k] === undefined) delete pacNorm[k]; });
-  console.log('[MEMED] paciente normalizado:', JSON.stringify(pacNorm));
-  await MdHub.command.send('plataforma.prescricao', 'setPaciente', pacNorm);
+  Object.keys(pacNorm).forEach(k => { if (!pacNorm[k]) delete pacNorm[k]; });
+  console.log('[MEMED-STEP-IN] setPaciente — payload:', JSON.stringify(pacNorm));
 
-  // 6. Eventos
+  // 6. setPaciente — outro ponto que pode pendurar
+  etapa = 'setPaciente';
+  await withTimeout(
+    MdHub.command.send('plataforma.prescricao', 'setPaciente', pacNorm),
+    8000, 'setPaciente'
+  );
+  console.log('[MEMED-STEP-OUT] setPaciente');
+
+  // 7. Eventos
   etapa = 'eventos';
+  console.log('[MEMED-STEP-IN] eventos');
   _registrarEventosMemed();
+  console.log('[MEMED-STEP-OUT] eventos');
 
-  // 7. Show
+  // 8. Show
   etapa = 'show';
+  console.log('[MEMED-STEP-IN] show');
   MdHub.module.show('plataforma.prescricao');
-  console.log('[MEMED-OPEN] show chamado — aguardando iframe do SDK');
+  console.log('[MEMED-STEP-OUT] show');
   abrirMemedDrawer();
 
 } catch(e) {
-  console.error('[MEMED-ERRO] etapa "' + etapa + '":', e);
-  memedToken = null;
-  _memedScriptProm = null;
-  _memedModuloProm = null;
-  _memedEventosOk = false;
-  const oldScript = document.getElementById('memed-script');
-  if (oldScript) oldScript.remove();
-  mostrarToast('Não foi possível abrir a prescrição. Tente novamente.','error');
+  console.error('[MEMED-ERRO] travou em "' + etapa + '":', e.message);
+  _resetEstado();
+  mostrarToast('Erro ao abrir prescrição (' + etapa + '). Tente novamente.', 'error');
+  fecharMemedDrawer();
 } finally {
-  if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+  _resetBtn();
 }
 }
 
