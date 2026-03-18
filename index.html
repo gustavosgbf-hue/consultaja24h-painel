@@ -105,9 +105,8 @@ display:grid !important;
 
 /* Sidebar: overflow:hidden esconde sidebar-inner (min-width:300px) quando colapsada.
 position:sticky para o comportamento de scroll.
-O toggle usa position:absolute - ancoragem previsível garantida por isolation:isolate
-que cria stacking context explícito. position:sticky + isolation:isolate = comportamento
-consistente entre Chrome, Safari e Firefox para filhos position:absolute. */
+NOTA: isolation:isolate removido — criava stacking context que aprisionava z-index
+de elementos position:fixed (como o iframe do Memed) dentro da sidebar. */
 .sidebar{
 position:sticky;
 top:var(--nav-h);
@@ -118,9 +117,6 @@ border-right:1px solid var(--line);
 display:flex;
 flex-direction:column;
 align-self:start;
-/* isolate cria stacking context garantido, tornando position:absolute dos filhos
-previsível em todos os browsers sem quebrar o sticky */
-isolation:isolate;
 }
 
 /*
@@ -321,37 +317,34 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 /* -- PAINEL LATERAL MEMED ----------------------------------- */
 @keyframes memedSpin{to{transform:rotate(360deg)}}
 
-/* Overlay escuro de fundo */
-#memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .3s}
+#memed-overlay{position:fixed;inset:0;z-index:2147483640;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
 
-/* Fix para iframes do Memed (src específico) */
+/*
+  SDK Memed injeta iframes com src="about:blank" (postMessage).
+  CSS cobre casos onde src fica visível; fix real é via JS na varredura.
+*/
 body.memed-aberto iframe[src*="memed.com.br"],
-body.memed-aberto iframe[src*="partners.memed"] {
+body.memed-aberto iframe[src*="partners.memed"],
+body.memed-aberto iframe[src*="sinapse"] {
   position:fixed!important;top:0!important;right:0!important;
   width:520px!important;height:100vh!important;
   z-index:2147483647!important;border:none!important;
   display:block!important;opacity:1!important;background:#fff!important;
   pointer-events:auto!important;transform:none!important;visibility:visible!important;
 }
-
-/* Fix para containers/divs do Memed que possam estar ocultos */
-body.memed-aberto div[id*="memed"]:not(#memed-overlay),
+body.memed-aberto div[id*="memed"]:not(#memed-overlay):not(#memed-debug),
 body.memed-aberto div[class*="memed"]:not(.memed-aviso) {
   display:block!important;visibility:visible!important;opacity:1!important;
-  z-index:2147483647!important;pointer-events:auto!important;
+  z-index:2147483646!important;pointer-events:auto!important;overflow:visible!important;
 }
-
-/* Impede scroll do body enquanto Memed está aberto */
 body.memed-aberto{overflow:hidden!important}
 
-/* Painel debug do Memed */
 #memed-debug{
   position:fixed;bottom:80px;left:16px;z-index:2147483647;
-  background:rgba(0,0,0,.85);border:1px solid rgba(180,224,90,.4);
+  background:rgba(0,0,0,.9);border:1px solid rgba(180,224,90,.5);
   border-radius:10px;padding:10px 14px;font-family:monospace;font-size:.72rem;
-  color:#b4e05a;line-height:1.7;max-width:280px;display:none;
-  pointer-events:none;
+  color:#b4e05a;line-height:1.8;max-width:320px;display:none;pointer-events:none;
 }
 #memed-debug.visivel{display:block}
 /* -- CHAT PICTURE-IN-PICTURE ------------------------------- */
@@ -2896,99 +2889,99 @@ if (mod.moduleName === 'plataforma.prescricao') fecharMemedDrawer();
 
 // -- drawer ---------------------------------------------------
 function fecharMemedDrawer() {
-const overlay = document.getElementById('memed-overlay');
-if (overlay) overlay.classList.remove('ativo');
-document.body.classList.remove('memed-aberto');
-try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
-const btn = document.getElementById('btn-memed');
-if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
-var dbg = document.getElementById('memed-debug');
-if (dbg) dbg.classList.remove('visivel');
+  var overlay = document.getElementById('memed-overlay');
+  if (overlay) overlay.classList.remove('ativo');
+  document.body.classList.remove('memed-aberto');
+  try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
+  var btn = document.getElementById('btn-memed');
+  if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+  var dbg = document.getElementById('memed-debug');
+  if (dbg) dbg.classList.remove('visivel');
 }
 
 function _memedVarredura(tentativa) {
   tentativa = tentativa || 1;
   var debugEl = document.getElementById('memed-debug');
-  var resultado = {
-    iframeEncontrado: false,
-    containerEncontrado: false,
-    ultimoSeletor: 'nenhum'
-  };
+  var resultado = { iframeEncontrado: false, containerEncontrado: false, ultimoSeletor: 'nenhum' };
 
-  var FIX_STYLE = 'position:fixed!important;top:0!important;right:0!important;' +
-    'width:520px!important;height:100vh!important;z-index:2147483647!important;' +
-    'border:none!important;display:block!important;opacity:1!important;' +
-    'background:#fff!important;pointer-events:auto!important;' +
-    'transform:none!important;visibility:visible!important';
+  var FIX_STYLE = [
+    'position:fixed','top:0','right:0',
+    'width:520px','height:100vh',
+    'z-index:2147483647',
+    'border:none','display:block','opacity:1',
+    'background:#fff','pointer-events:auto',
+    'transform:none','visibility:visible','overflow:visible'
+  ].join('!important;') + '!important';
 
-  var seletores = [
-    'iframe[src*="memed.com.br"]',
-    'iframe[src*="partners.memed"]',
-    'div[id*="memed"]:not(#memed-overlay)',
+  // Varredura em todos os iframes da página — SDK injeta com src="about:blank"
+  var todosIframes = document.querySelectorAll('iframe');
+  todosIframes.forEach(function(f) {
+    var src = (f.src || '').toLowerCase();
+    var id  = (f.id  || '').toLowerCase();
+    var isMemed = src.indexOf('memed') !== -1 || src.indexOf('sinapse') !== -1 ||
+                  src.indexOf('partners') !== -1 || id.indexOf('memed') !== -1 ||
+                  src === 'about:blank'; // SDK usa about:blank
+    if (!isMemed) return;
+
+    var rect = f.getBoundingClientRect();
+    var cs   = window.getComputedStyle(f);
+    var pai  = f.parentElement;
+    console.log('[MEMED-DOM] iframe encontrado — id:', f.id||'-', 'src:', src.substring(0,60));
+    console.log('  rect: w='+Math.round(rect.width)+' h='+Math.round(rect.height)+' top='+Math.round(rect.top)+' left='+Math.round(rect.left));
+    console.log('  computed: display='+cs.display+' visibility='+cs.visibility+' opacity='+cs.opacity+' z-index='+cs.zIndex);
+    if (pai) console.log('  pai: '+pai.tagName+' #'+(pai.id||'-')+' class='+(pai.className||'').substring(0,50));
+
+    f.style.cssText = FIX_STYLE;
+    console.log('[MEMED-FIX] fix aplicado no iframe');
+
+    // Corrige pai se necessário
+    if (pai && pai !== document.body) {
+      var paiCs = window.getComputedStyle(pai);
+      if (paiCs.display === 'none' || paiCs.visibility === 'hidden' ||
+          parseFloat(paiCs.opacity) < 0.1 || paiCs.overflow === 'hidden' ||
+          (paiCs.zIndex !== 'auto' && parseInt(paiCs.zIndex) < 100)) {
+        pai.style.cssText = FIX_STYLE;
+        console.log('[MEMED-FIX] pai corrigido:', pai.tagName, pai.id);
+      }
+    }
+    resultado.iframeEncontrado = true;
+    resultado.ultimoSeletor = 'iframe (src='+src.substring(0,30)+')';
+  });
+
+  // Varredura em containers/divs do Memed
+  var seletoresDivs = [
+    'div[id*="memed"]:not(#memed-overlay):not(#memed-debug)',
     'div[class*="memed"]:not(.memed-aviso)',
-    'div[class*="drawer"]',
     'div[role="dialog"]'
   ];
-
-  seletores.forEach(function(sel) {
-    var els = document.querySelectorAll(sel);
-    if (!els.length) return;
-
-    els.forEach(function(el) {
+  seletoresDivs.forEach(function(sel) {
+    document.querySelectorAll(sel).forEach(function(el) {
       var rect = el.getBoundingClientRect();
-      var cs = window.getComputedStyle(el);
-      var pai = el.parentElement;
-      console.log('[MEMED-DOM] seletor:', sel);
-      console.log('  tag:', el.tagName, '| id:', el.id || '-', '| class:', (el.className||'').substring(0,60));
-      console.log('  src:', (el.src||'-').substring(0,80));
-      console.log('  pai:', pai ? (pai.tagName+' #'+(pai.id||'-')+' .'+(pai.className||'').substring(0,40)) : '-');
-      console.log('  rect: w='+Math.round(rect.width)+' h='+Math.round(rect.height)+' top='+Math.round(rect.top)+' left='+Math.round(rect.left));
-      console.log('  computed: display='+cs.display+' visibility='+cs.visibility+' opacity='+cs.opacity+' z-index='+cs.zIndex+' overflow='+cs.overflow);
-
-      var precisa = (
-        rect.width === 0 || rect.height === 0 ||
-        cs.display === 'none' || cs.visibility === 'hidden' ||
-        parseFloat(cs.opacity) === 0 ||
-        rect.top > window.innerHeight || rect.left > window.innerWidth ||
-        (cs.zIndex !== 'auto' && parseInt(cs.zIndex) < 9000)
-      );
-
-      if (precisa) {
-        console.log('[MEMED-FIX] aplicando fix em:', sel);
+      var cs   = window.getComputedStyle(el);
+      console.log('[MEMED-DOM] div seletor:', sel, '| id:', el.id||'-', '| rect w='+Math.round(rect.width)+' h='+Math.round(rect.height));
+      if (rect.width === 0 || rect.height === 0 || cs.display === 'none' || cs.visibility === 'hidden') {
         el.style.cssText = FIX_STYLE;
-
-        // Verifica se o pai também está oculto e corrige
-        if (pai && pai !== document.body) {
-          var paiCs = window.getComputedStyle(pai);
-          if (paiCs.display === 'none' || paiCs.visibility === 'hidden' || parseFloat(paiCs.opacity) === 0 || paiCs.overflow === 'hidden') {
-            console.log('[MEMED-FIX] pai também oculto — corrigindo pai:', pai.tagName, pai.id);
-            pai.style.cssText = FIX_STYLE;
-          }
-        }
-      } else {
-        console.log('[MEMED-DOM] elemento visível, nenhum fix necessário');
+        console.log('[MEMED-FIX] div corrigido:', sel);
       }
-
-      if (el.tagName === 'IFRAME') resultado.iframeEncontrado = true;
-      else resultado.containerEncontrado = true;
+      resultado.containerEncontrado = true;
       resultado.ultimoSeletor = sel;
     });
   });
 
-  // Atualiza painel debug
+  // Painel debug
   if (debugEl) {
     debugEl.classList.add('visivel');
     debugEl.innerHTML =
-      '🔍 Memed Debug (tentativa ' + tentativa + ')<br>' +
-      'iframe: ' + (resultado.iframeEncontrado ? '✅ sim' : '❌ não') + '<br>' +
-      'container: ' + (resultado.containerEncontrado ? '✅ sim' : '❌ não') + '<br>' +
-      'último seletor: ' + resultado.ultimoSeletor;
+      '🔍 Memed Debug — tentativa ' + tentativa + '<br>' +
+      'iframes na página: ' + document.querySelectorAll('iframe').length + '<br>' +
+      'iframe Memed: ' + (resultado.iframeEncontrado ? '✅ fix aplicado' : '❌ não encontrado') + '<br>' +
+      'container: ' + (resultado.containerEncontrado ? '✅' : '❌') + '<br>' +
+      'último: ' + resultado.ultimoSeletor;
   }
 
-  // Se nada encontrado e ainda na 1ª tentativa, tenta de novo em 800ms
-  if (!resultado.iframeEncontrado && !resultado.containerEncontrado && tentativa < 3) {
-    console.warn('[MEMED-DOM] nada encontrado na tentativa ' + tentativa + ' — retentando em 800ms');
-    setTimeout(function() { _memedVarredura(tentativa + 1); }, 800);
+  if (!resultado.iframeEncontrado && tentativa < 4) {
+    console.warn('[MEMED-DOM] iframe não encontrado na tentativa', tentativa, '— retentando em 600ms');
+    setTimeout(function() { _memedVarredura(tentativa + 1); }, 600);
   }
 }
 
@@ -2997,9 +2990,8 @@ function abrirMemedDrawer() {
   var overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.add('ativo');
   document.body.classList.add('memed-aberto');
-
-  // Varredura após 300ms (SDK precisa de tempo para injetar o iframe)
-  setTimeout(function() { _memedVarredura(1); }, 300);
+  // SDK precisa de tempo para injetar o iframe no DOM
+  setTimeout(function() { _memedVarredura(1); }, 400);
 }
 
 // -- salvar prescrição no prontuário --------------------------
