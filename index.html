@@ -1142,9 +1142,9 @@ return s;
 }
 function escAttr(v){ return escHtml(v).replace(/`/g,'`'); }
 function safeUrl(v){
-const u=String(v||'').trim();
-if(!u) return '';
-return /^https?:///i.test(u) ? u : '';
+  const u = String(v || '').trim();
+  if (!u) return '';
+  return /^https?:\/\//i.test(u) ? u : '';
 }
 // Helper seguro: evita "Unexpected end of JSON input" em respostas vazias
 async function safeJson(res) {
