@@ -2790,7 +2790,7 @@ async function abrirMemed() {
         const dPac = await apiFetch(`/api/atendimento/status/${pac.id}`);
         if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
       } catch(e) {}
-      const partes = (pac.nome||'').trim().split(' ');
+      const partes = (pac.nome||'').trim().split(/\s+/);
       await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
         idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
         nome: partes[0] || '',
@@ -2844,8 +2844,12 @@ async function abrirMemed() {
           allowShareModal: true
         });
 
-        const pac = atendimentoAtual;
-        const partes = (pac.nome||'').trim().split(' ');
+        let pac = atendimentoAtual;
+        try {
+          const dPac = await apiFetch(`/api/atendimento/status/${pac.id}`);
+          if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
+        } catch(e) {}
+        const partes = (pac.nome||'').trim().split(/\s+/);
         await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
           idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
           nome: partes[0] || '',
