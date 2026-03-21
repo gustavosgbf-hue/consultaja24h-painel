@@ -1610,15 +1610,13 @@ const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
 const isAtual = slots.some(s => s && !modoHistorico && String(s.atendimento.id) === String(p.id));
 // meuAssumido: assumido por mim mas não é o atendimento ativo agora
 // compara medico_id como string E como número para evitar mismatch de tipo
-const meuMedId = medico ? String(medico.id) : '';
-const _stripDr = s => (s||'').replace(/^Dr.?\s*/i,'').replace(/^Dra.?\s*/i,'').trim();
-const meuAssumido=p.status==='assumido'&&!isAtual&&medico&&(
-String(p.medico_id)===meuMedId ||
-String(p.medico_id)===String(medico.id) ||
-_stripDr(p.medico_nome)===_stripDr(medico.nome) ||
-_stripDr(p.medico_nome).toLowerCase().startsWith(_stripDr(medico.nome).split(' ')[0].toLowerCase())
-);
-const assumido=p.status==='assumido'&&!isAtual&&!meuAssumido;
+const meuMedId = medico && medico.id != null ? String(medico.id) : '';
+const meuAssumido =
+  p.status === 'assumido' &&
+  !isAtual &&
+  !!meuMedId &&
+  String(p.medico_id || '') === meuMedId;
+const assumido = p.status === 'assumido' && !isAtual && !meuAssumido;
 const isAdmin=!!sessionStorage.getItem('adminPwd');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
 const nomeMediacoSafe=escHtml(nomeMediaco);
@@ -1638,6 +1636,12 @@ const data = await apiFetch(`/api/atendimento/status/${id}`);
 if (!data.ok) { mostrarToast('Erro ao retomar atendimento', 'error'); return; }
 const p = filaData.find(p => String(p.id) === String(id));
 const atendimentoRetomado = p || data.atendimento;
+// Valida que este atendimento realmente pertence ao médico logado
+if (!atendimentoRetomado || String(atendimentoRetomado.medico_id || '') !== String(medico.id || '')) {
+  mostrarToast('Este atendimento está com outro médico.', 'error');
+  await buscarFila();
+  return;
+}
 // Encontrar slot livre ou usar slotAtivo se estiver vazio
 const slotLivre = slots[0] === null ? 0 : (slots[1] === null ? 1 : slotAtivo);
 if (slots[slotLivre]) pararPollingSlot(slotLivre);
@@ -2071,7 +2075,7 @@ const msgs = data.mensagens||[];
 msgs.forEach(m => {
 const d = document.createElement('div'); d.className='cmsg '+m.autor;
 const hora = new Date(m.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe = String(m.texto||'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/\n/g,'<br>');
+const safe = String(m.texto||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 d.innerHTML=`<div class="av">${m.autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
 temp.appendChild(d);
 if (slots[slotDono]) slots[slotDono].ultimaMsgId = m.id;
@@ -2096,6 +2100,8 @@ if (slots[slotDono]) slots[slotDono].chatHtml = container.innerHTML;
 }
 async function buscarMensagensNovasMedico() {
 if (!atendimentoAtual||!chatAtivo||modoHistorico||document.hidden) return;
+if (buscarMensagensNovasMedico._busy) return;
+buscarMensagensNovasMedico._busy = true;
 // Captura slot e lastId no momento da chamada
 const slotDono = slotAtivo;
 const atendId = atendimentoAtual.id;
@@ -2113,7 +2119,8 @@ if (slotAtivo === slotDono) {
 const container=document.getElementById('chat-medico-msgs');
 const v=container.querySelector('.chat-vazio'); if(v)v.remove();
 novas.forEach(m=>{
-if(m.autor==='paciente'){adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo,slotDono);adicionarMsgPip('paciente',m.texto);}
+adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo,slotDono);
+if(m.autor==='paciente') adicionarMsgPip('paciente',m.texto);
 });
 } else {
 // Slot não é mais o ativo: acumula as msgs no snapshot do slot dono
@@ -2121,13 +2128,11 @@ if (slots[slotDono]) {
 const temp = document.createElement('div');
 temp.innerHTML = slots[slotDono].chatHtml || '';
 novas.forEach(m=>{
-if (m.autor==='paciente') {
-const d = document.createElement('div'); d.className='cmsg paciente';
+const d = document.createElement('div'); d.className='cmsg '+m.autor;
 const hora = new Date(m.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe = String(m.texto||'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/\n/g,'<br>');
-d.innerHTML=`<div class="av">🧑</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
+const safe = String(m.texto||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+d.innerHTML=`<div class="av">${m.autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
 temp.appendChild(d);
-}
 });
 slots[slotDono].chatHtml = temp.innerHTML;
 // Indicação visual na tab do slot inativo
@@ -2136,6 +2141,7 @@ renderSlotTabs();
 }
 }
 } catch(e) { chatRetryMs=Math.min(chatRetryMs*2,15000); }
+finally { buscarMensagensNovasMedico._busy = false; }
 }
 async function enviarMensagemMedico() {
 if (arquivoSelecionado) { await enviarArquivoChat(); return; }
@@ -2158,7 +2164,7 @@ const temp = document.createElement('div');
 temp.innerHTML = slots[slotDono].chatHtml || '';
 const d = document.createElement('div'); d.className='cmsg '+autor;
 const hora = new Date(timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe = String(texto||'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/\n/g,'<br>');
+const safe = String(texto||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 d.innerHTML=`<div class="av">${autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
 temp.appendChild(d);
 slots[slotDono].chatHtml = temp.innerHTML;
@@ -2169,7 +2175,7 @@ return;
 const container=document.getElementById('chat-medico-msgs');
 const div=document.createElement('div'); div.className='cmsg '+autor;
 const hora=new Date(timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe=String(texto).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/\n/g,'<br>');
+const safe=String(texto).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 let arquivoHtml = '';
 const arquivoSeguro = safeUrl(arquivoUrl);
 if (arquivoSeguro && arquivoTipo === 'imagem') {
@@ -2460,7 +2466,7 @@ lista.forEach(m => {
 const div  = document.createElement('div');
 div.className = 'cmsg ' + m.autor;
 const hora = new Date(m.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-const safe = String(m.texto || '').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/\n/g,'<br>');
+const safe = String(m.texto || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 let arquivoHtml = '';
 const url = safeUrl(m.arquivo_url);
 if (url && m.arquivo_tipo === 'imagem') {
@@ -3087,7 +3093,10 @@ if(!medico) return;
 if(plantaoAtivo) buscarFila();
 buscarAgendamentos();
 // Só faz polling de chat se o slot ativo tem chat ativo e não é histórico
-if(chatAtivo&&!modoHistorico) buscarMensagensNovasMedico();
+if(chatAtivo&&!modoHistorico) {
+  // Aguarda qualquer chamada em andamento terminar antes de disparar nova busca
+  setTimeout(buscarMensagensNovasMedico, 100);
+}
 });
 
 (function init() {
