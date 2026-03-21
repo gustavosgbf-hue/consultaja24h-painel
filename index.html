@@ -2815,11 +2815,10 @@ async function abrirMemed() {
         const dPac = await apiFetch(`/api/atendimento/status/${pac.id}`);
         if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
       } catch(e) {}
-      const partes = (pac.nome||'').trim().split(/\s+/);
+      const nomeCompleto = (pac.nome_completo || pac.paciente_nome || pac.nome || '').trim();
       await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
         idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
-        nome: partes[0] || '',
-        sobrenome: partes.slice(1).join(' ') || '',
+        nome: nomeCompleto,
         cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
         email: pac.email || undefined,
         telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
@@ -2874,11 +2873,10 @@ async function abrirMemed() {
           const dPac = await apiFetch(`/api/atendimento/status/${pac.id}`);
           if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
         } catch(e) {}
-        const partes = (pac.nome||'').trim().split(/\s+/);
+        const nomeCompleto = (pac.nome_completo || pac.paciente_nome || pac.nome || '').trim();
         await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
           idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
-          nome: partes[0] || '',
-          sobrenome: partes.slice(1).join(' ') || '',
+          nome: nomeCompleto,
           cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
           email: pac.email || undefined,
           telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
