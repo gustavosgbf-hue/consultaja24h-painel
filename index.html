@@ -1998,17 +1998,34 @@ async function enviarMensagemPip() {
 const ta = document.getElementById('chat-pip-textarea');
 if (!ta || !ta.value.trim() || !atendimentoAtual) return;
 const texto = ta.value.trim();
-ta.value = ''; ta.style.height = 'auto';
-// Adiciona visualmente nos dois chats imediatamente
-adicionarMsgMedico('medico', texto, new Date().toISOString());
-adicionarMsgPip('medico', texto);
+const slotDono = slotAtivo;
+const atendId = atendimentoAtual.id;
+ta.value = '';
+ta.style.height = 'auto';
+
 try {
-await fetch(`${API}/api/chat/enviar`, {
-method: 'POST',
-headers: {'Content-Type':'application/json'},
-body: JSON.stringify({ atendimentoId: atendimentoAtual.id, autor: 'medico', autorId: medico?.id, texto })
-});
-} catch(e) { chatRetryMs=Math.min(chatRetryMs*2,15000); }
+  const resp = await apiFetch('/api/chat/enviar', {
+    method: 'POST',
+    json: { atendimentoId: atendId, autor: 'medico', autorId: medico?.id, texto }
+  });
+
+  if (!resp || !resp.ok) return;
+
+  const m = resp.mensagem || {
+    autor: 'medico',
+    texto,
+    criado_em: new Date().toISOString()
+  };
+
+  adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
+  adicionarMsgPip(m.autor, m.texto);
+
+  if (m.id && slots[slotDono]) {
+    slots[slotDono].ultimaMsgId = Math.max(slots[slotDono].ultimaMsgId || 0, m.id);
+  }
+} catch(e) {
+  chatRetryMs=Math.min(chatRetryMs*2,15000);
+}
 }
 
 // -- FIM PIP -----------------------------------------------
@@ -2150,9 +2167,28 @@ const texto=ta.value.trim(); if (!texto||!atendimentoAtual) return;
 const slotDono = slotAtivo;
 const atendId = atendimentoAtual.id;
 ta.value=''; ta.style.height='auto';
-adicionarMsgMedico('medico',texto,new Date().toISOString(),null,null,slotDono);
-adicionarMsgPip('medico',texto);
-try { await apiFetch('/api/chat/enviar',{method:'POST',json:{atendimentoId:atendId,autor:'medico',autorId:medico.id,texto}}); } catch(e) {}
+
+try {
+  const resp = await apiFetch('/api/chat/enviar',{
+    method:'POST',
+    json:{atendimentoId:atendId,autor:'medico',autorId:medico.id,texto}
+  });
+
+  if (!resp || !resp.ok) return;
+
+  const m = resp.mensagem || {
+    autor: 'medico',
+    texto,
+    criado_em: new Date().toISOString()
+  };
+
+  adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
+  adicionarMsgPip(m.autor, m.texto);
+
+  if (m.id && slots[slotDono]) {
+    slots[slotDono].ultimaMsgId = Math.max(slots[slotDono].ultimaMsgId || 0, m.id);
+  }
+} catch(e) {}
 }
 function adicionarMsgMedico(autor, texto, timestamp, arquivoUrl, arquivoTipo, slotDono) {
 // slotDono: slot que deve receber a mensagem. Se undefined, usa slotAtivo (compat legada).
