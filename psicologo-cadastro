@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cadastro de Psicólogo · ConsultaJá24h</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f2f0ec;
+  --card:#ffffff;
+  --ink:#16120e;
+  --ink-2:#443e38;
+  --ink-3:#8c857d;
+  --line:rgba(22,18,14,.1);
+  --line-mid:rgba(22,18,14,.15);
+  --psi:#e8eef7;
+  --psi-mid:#8aa4c8;
+  --psi-acc:#26508e;
+  --psi-dark:#132b50;
+  --psi-glow:rgba(38,80,142,.12);
+  --err:#c0392b;
+  --err-bg:rgba(192,57,43,.07);
+  --ok:#1a7a62;
+  --ok-bg:rgba(26,122,98,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='80'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='rgba(255,255,255,0.22)'/%3E%3Cstop offset='50%25' stop-color='rgba(255,255,255,0.05)'/%3E%3Cstop offset='100%25' stop-color='rgba(0,0,0,0.05)'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1' y='1' width='198' height='38' rx='2' fill='url(%23g)' stroke='rgba(22,18,14,0.08)' stroke-width='1'/%3E%3Crect x='101' y='41' width='198' height='38' rx='2' fill='url(%23g)' stroke='rgba(22,18,14,0.08)' stroke-width='1'/%3E%3Crect x='-99' y='41' width='198' height='38' rx='2' fill='url(%23g)' stroke='rgba(22,18,14,0.08)' stroke-width='1'/%3E%3C/svg%3E");
+  color:var(--ink);
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:40px 16px 60px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.15rem;font-weight:500;
+  color:var(--ink);letter-spacing:.01em;
+  margin-bottom:28px;text-align:center;
+}
+.logo em{color:var(--ink-3);font-weight:400;font-style:normal}
+.logo-sub{
+  display:block;font-family:'DM Sans',sans-serif;
+  font-size:.68rem;font-weight:400;
+  color:var(--psi-acc);letter-spacing:.12em;text-transform:uppercase;
+  margin-top:4px;opacity:.8;
+}
+
+.box{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:36px 32px;
+  width:min(500px,100%);
+  box-shadow:0 4px 32px rgba(22,18,14,.09),0 1px 4px rgba(22,18,14,.06);
+}
+
+.box-header{margin-bottom:24px}
+h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.55rem;font-weight:500;
+  color:var(--ink);line-height:1.2;
+  margin-bottom:6px;letter-spacing:-.01em;
+}
+.sub{
+  font-size:.83rem;font-weight:300;
+  color:var(--ink-3);line-height:1.6;
+}
+
+.field{margin-bottom:16px}
+.field label{
+  display:block;font-size:.72rem;font-weight:500;
+  color:var(--ink-3);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:6px;
+}
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  background:#faf9f7;
+  border:1px solid var(--line-mid);
+  border-radius:10px;
+  padding:11px 14px;
+  color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  font-size:.9rem;
+  font-weight:300;
+  outline:none;
+  transition:border .2s,box-shadow .2s;
+  -webkit-appearance:none;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:var(--psi-acc);
+  box-shadow:0 0 0 3px var(--psi-glow);
+  background:#fff;
+}
+.field input::placeholder,
+.field textarea::placeholder{color:rgba(22,18,14,.28)}
+.field select option{background:#fff;color:var(--ink)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.55}
+
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.hint{
+  font-size:.72rem;font-weight:300;
+  color:var(--ink-3);margin-top:5px;line-height:1.5;
+}
+
+/* Section divider */
+.section-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:24px 0 16px;
+}
+.section-divider span{
+  font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--psi-acc);opacity:.7;white-space:nowrap;
+}
+.section-divider::before,.section-divider::after{
+  content:'';flex:1;height:1px;background:var(--line);
+}
+
+/* Toggle row */
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#faf9f7;border:1px solid var(--line-mid);
+  border-radius:10px;padding:11px 14px;margin-bottom:16px;
+}
+.toggle-row-label{
+  font-size:.88rem;font-weight:400;color:var(--ink-2);line-height:1.4;
+}
+.toggle-row-label small{
+  display:block;font-size:.75rem;
+  color:var(--ink-3);font-weight:300;margin-top:2px;
+}
+.toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;margin-left:12px}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{
+  position:absolute;inset:0;border-radius:11px;
+  background:rgba(22,18,14,.1);border:1px solid var(--line-mid);
+  cursor:pointer;transition:background .2s,border-color .2s;
+}
+.toggle-track::after{
+  content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;border-radius:50%;background:rgba(22,18,14,.25);
+  transition:left .2s,background .2s;
+}
+.toggle-switch input:checked ~ .toggle-track{
+  background:rgba(38,80,142,.18);border-color:rgba(38,80,142,.45);
+}
+.toggle-switch input:checked ~ .toggle-track::after{
+  left:21px;background:var(--psi-acc);
+}
+
+/* Sub-field condicional */
+.sub-field{
+  display:none;margin-top:-8px;margin-bottom:16px;
+  animation:fadeIn .2s ease;
+}
+.sub-field.visible{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* Checkbox declaração */
+.check-wrap{margin:16px 0 8px}
+.check-label{display:flex;gap:12px;cursor:pointer;align-items:flex-start}
+.check-label input[type=checkbox]{display:none}
+.check-box{
+  width:18px;height:18px;border-radius:5px;
+  border:1.5px solid var(--psi-mid);
+  background:#faf9f7;flex-shrink:0;
+  margin-top:2px;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.check-label input:checked + .check-box{
+  background:var(--psi);border-color:var(--psi-acc);
+}
+.check-label input:checked + .check-box::after{
+  content:'✓';font-size:.75rem;color:var(--psi-acc);font-weight:700;
+}
+.check-txt{font-size:.8rem;font-weight:300;color:var(--ink-2);line-height:1.55}
+
+/* Botão */
+.btn{
+  width:100%;padding:14px;border-radius:12px;border:none;
+  background:var(--psi-acc);color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:600;
+  cursor:pointer;transition:all .2s;margin-top:8px;
+  box-shadow:0 4px 16px rgba(38,80,142,.28);
+  letter-spacing:.01em;
+}
+.btn:hover{background:var(--psi-dark);box-shadow:0 6px 24px rgba(38,80,142,.36)}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+
+/* Mensagens */
+.msg{display:none;margin-top:16px;padding:12px 16px;border-radius:10px;font-size:.84rem;font-weight:300;line-height:1.55}
+.msg.ok{background:var(--ok-bg);border:1px solid rgba(26,122,98,.2);color:var(--ok)}
+.msg.err{background:var(--err-bg);border:1px solid rgba(192,57,43,.2);color:var(--err)}
+
+/* Senha wrap */
+.senha-wrap{position:relative}
+.senha-wrap input{padding-right:42px}
+.toggle-senha{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--ink-3);cursor:pointer;
+  font-size:.85rem;padding:4px;opacity:.6;transition:opacity .15s;
+}
+.toggle-senha:hover{opacity:1}
+
+.divider{
+  text-align:center;color:var(--ink-3);font-size:.78rem;
+  font-weight:300;margin-top:20px;
+}
+.divider a{color:var(--psi-acc);text-decoration:none}
+.divider a:hover{text-decoration:underline}
+
+.footer-note{
+  margin-top:28px;
+  font-size:.7rem;font-weight:300;
+  color:var(--ink-3);text-align:center;
+  opacity:.7;line-height:1.6;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.logo{animation:fadeUp .5s ease both;animation-delay:.05s}
+.box{animation:fadeUp .5s ease both;animation-delay:.15s}
+</style>
+</head>
+<body>
+
+<div class="logo">
+  Consulta<em>Já</em>24h
+  <span class="logo-sub">Psicologia online</span>
+</div>
+
+<div class="box">
+  <div class="box-header">
+    <h2>Cadastro de Psicólogo</h2>
+    <p class="sub">Preencha seus dados para solicitar entrada na plataforma. Seu perfil será analisado pela equipe antes da ativação.</p>
+  </div>
+
+  <!-- DADOS PESSOAIS -->
+  <div class="field">
+    <label>Nome completo</label>
+    <input type="text" id="nome" placeholder="Maria Souza" autocomplete="name"/>
+  </div>
+
+  <div class="field">
+    <label>Nome de exibição na plataforma</label>
+    <input type="text" id="nome_exibicao" placeholder="Psic. Maria Souza"/>
+    <div class="hint">Como vai aparecer para os pacientes no seu perfil</div>
+  </div>
+
+  <div class="field">
+    <label>E-mail</label>
+    <input type="email" id="email" placeholder="seu@email.com" autocomplete="email"/>
+  </div>
+
+  <div class="field">
+    <label>Senha</label>
+    <div class="senha-wrap">
+      <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+      <button class="toggle-senha" type="button" onclick="toggleSenha('senha',this)">👁</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Confirmar senha</label>
+    <div class="senha-wrap">
+      <input type="password" id="senha2" placeholder="Repita a senha" autocomplete="new-password"/>
+      <button class="toggle-senha" type="button" onclick="toggleSenha('senha2',this)">👁</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>CRP</label>
+      <input type="text" id="crp" placeholder="123456" inputmode="numeric" maxlength="10"/>
+    </div>
+    <div class="field">
+      <label>UF do CRP</label>
+      <select id="uf">
+        <option value="">Selecione</option>
+        <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+        <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+        <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+        <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+        <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+        <option>SE</option><option>SP</option><option>TO</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Telefone / WhatsApp</label>
+    <input type="tel" id="telefone" placeholder="(DDD) 99999-9999" inputmode="numeric" autocomplete="tel"/>
+  </div>
+
+  <!-- DADOS PROFISSIONAIS -->
+  <div class="section-divider"><span>Dados profissionais</span></div>
+
+  <div class="field">
+    <label>Abordagem principal</label>
+    <select id="abordagem">
+      <option value="">Selecione</option>
+      <option>Terapia Cognitivo-Comportamental</option>
+      <option>Psicanálise</option>
+      <option>Humanista</option>
+      <option>Fenomenológica</option>
+      <option>Gestalt-terapia</option>
+      <option>ACT</option>
+      <option>Sistêmica</option>
+      <option>Outra</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Público ou focos de atendimento</label>
+    <input type="text" id="focos" placeholder="Ex: Ansiedade, autoestima, relacionamentos, luto"/>
+    <div class="hint">Vai aparecer no seu perfil como tags de especialidade</div>
+  </div>
+
+  <div class="field">
+    <label>Valor da sessão</label>
+    <input type="text" id="valor_sessao" placeholder="Ex: 120,00" inputmode="decimal"/>
+  </div>
+
+  <!-- Atende online -->
+  <div class="toggle-row">
+    <div class="toggle-row-label">
+      Atende online?
+      <small>Sessões por vídeo via plataforma</small>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="chk-online" checked/>
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+
+  <!-- Avaliação psicológica -->
+  <div class="toggle-row">
+    <div class="toggle-row-label">
+      Oferece avaliação psicológica?
+      <small>Processo de testagem e elaboração de laudos</small>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="chk-avaliacao" onchange="toggleField('chk-avaliacao','field-avaliacao')"/>
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+  <div class="sub-field" id="field-avaliacao">
+    <div class="field" style="margin-bottom:0">
+      <label>Valor da entrevista inicial / avaliação</label>
+      <input type="text" id="valor_avaliacao" placeholder="Ex: 200,00" inputmode="decimal"/>
+    </div>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="section-divider"><span>Perfil e disponibilidade</span></div>
+
+  <div class="field">
+    <label>Mini apresentação profissional</label>
+    <textarea id="apresentacao" placeholder="Escreva uma apresentação breve para aparecer no seu perfil"></textarea>
+    <div class="hint">Máximo recomendado: 3 linhas. Direto e acolhedor.</div>
+  </div>
+
+  <div class="field">
+    <label>Disponibilidade de agenda</label>
+    <input type="text" id="disponibilidade" placeholder="Ex: Segunda à tarde, quarta pela manhã, quinta à noite"/>
+    <div class="hint">Será usado para configurar sua agenda inicial na plataforma</div>
+  </div>
+
+  <!-- DECLARAÇÃO -->
+  <div class="check-wrap">
+    <label class="check-label">
+      <input type="checkbox" id="chk-declaracao"/>
+      <span class="check-box"></span>
+      <span class="check-txt">Declaro que sou psicólogo(a) regularmente inscrito(a) no CRP informado e responsável pelos atendimentos realizados na plataforma.</span>
+    </label>
+  </div>
+
+  <button class="btn" id="btnCadastrar" disabled>Solicitar cadastro</button>
+
+  <div class="msg" id="msg"></div>
+
+  <p class="divider">Já tem conta? <a href="https://painel.consultaja24h.com.br/psicologo">Entrar no painel</a></p>
+</div>
+
+<p class="footer-note">ConsultaJá24h, psicologia online com sigilo e processo de validação profissional.</p>
+
+<script src="./api-config.js"></script>
+<script>
+function toggleSenha(id, btn) {
+  var input = document.getElementById(id);
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
+}
+
+function toggleField(checkId, fieldId) {
+  var checked = document.getElementById(checkId).checked;
+  document.getElementById(fieldId).classList.toggle('visible', checked);
+}
+
+function mostrarMsg(texto, tipo) {
+  var el = document.getElementById('msg');
+  el.textContent = texto;
+  el.className = 'msg ' + tipo;
+  el.style.display = 'block';
+}
+
+function validarCRP(crp) {
+  var digits = String(crp || '').replace(/\D/g,'');
+  return digits.length >= 4 && digits.length <= 10;
+}
+
+function validarTelefone(tel) {
+  var digits = String(tel || '').replace(/\D/g,'');
+  return digits.length === 10 || digits.length === 11;
+}
+
+function validarEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||''));
+}
+
+async function cadastrar() {
+  var nome         = document.getElementById('nome').value.trim();
+  var email        = document.getElementById('email').value.trim();
+  var senha        = document.getElementById('senha').value;
+  var senha2       = document.getElementById('senha2').value;
+  var crp          = document.getElementById('crp').value.trim();
+  var uf           = document.getElementById('uf').value;
+  var telefone     = document.getElementById('telefone').value.trim();
+
+  if (!document.getElementById('chk-declaracao').checked) {
+    mostrarMsg('Você precisa marcar a declaração para continuar.', 'err'); return;
+  }
+  if (!nome || !email || !senha || !crp || !uf) {
+    mostrarMsg('Preencha todos os campos obrigatórios.', 'err'); return;
+  }
+  if (!validarEmail(email)) {
+    mostrarMsg('Informe um e-mail válido.', 'err'); return;
+  }
+  if (senha.length < 6) {
+    mostrarMsg('A senha deve ter ao menos 6 caracteres.', 'err'); return;
+  }
+  if (senha !== senha2) {
+    mostrarMsg('As senhas não coincidem.', 'err'); return;
+  }
+  if (!validarCRP(crp)) {
+    mostrarMsg('Informe um CRP válido (apenas números, entre 4 e 10 dígitos).', 'err'); return;
+  }
+  if (telefone && !validarTelefone(telefone)) {
+    mostrarMsg('Informe um telefone válido com DDD (10 ou 11 dígitos).', 'err'); return;
+  }
+
+  var nome_exibicao  = document.getElementById('nome_exibicao').value.trim() || nome;
+  var abordagem      = document.getElementById('abordagem').value;
+  var focos          = document.getElementById('focos').value.trim();
+  var valor_sessao   = document.getElementById('valor_sessao').value.trim();
+  var atende_online  = document.getElementById('chk-online').checked;
+  var tem_avaliacao  = document.getElementById('chk-avaliacao').checked;
+  var valor_avaliacao = tem_avaliacao ? document.getElementById('valor_avaliacao').value.trim() : '';
+  var apresentacao   = document.getElementById('apresentacao').value.trim();
+  var disponibilidade = document.getElementById('disponibilidade').value.trim();
+
+  var btn = document.getElementById('btnCadastrar');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+
+  try {
+    var res = await fetch(window.API_BASE_URL + '/api/psicologo/cadastro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome, nome_exibicao, email, senha, crp, uf, telefone,
+        abordagem, focos, valor_sessao, atende_online,
+        tem_avaliacao, valor_avaliacao,
+        apresentacao, disponibilidade
+      })
+    });
+    var d = await res.json();
+    if (d.ok) {
+      btn.style.display = 'none';
+      mostrarMsg('Cadastro recebido com sucesso. Seu perfil será analisado pela equipe e você receberá retorno em breve.', 'ok');
+      ['nome','nome_exibicao','email','senha','senha2','crp','telefone',
+       'focos','valor_sessao','valor_avaliacao','apresentacao','disponibilidade'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('uf').value = '';
+      document.getElementById('abordagem').value = '';
+    } else {
+      mostrarMsg(d.error || 'Erro ao enviar cadastro. Tente novamente.', 'err');
+      btn.disabled = false; btn.textContent = 'Solicitar cadastro';
+    }
+  } catch(e) {
+    mostrarMsg('Erro de conexão. Verifique sua internet e tente novamente.', 'err');
+    btn.disabled = false; btn.textContent = 'Solicitar cadastro';
+  }
+}
+
+document.getElementById('btnCadastrar').addEventListener('click', cadastrar);
+document.getElementById('chk-declaracao').addEventListener('change', function() {
+  document.getElementById('btnCadastrar').disabled = !this.checked;
+});
+document.querySelector('.box').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') cadastrar();
+});
+</script>
+</body>
+</html>
