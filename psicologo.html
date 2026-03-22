@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Painel do Psicólogo · ConsultaJá24h</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;height:100%}
+body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-font-smoothing:antialiased;min-height:100vh}
+:root{
+  --cream:#f0ede8;
+  --white:#ffffff;
+  --ink:#16120e;
+  --ink-2:#443e38;
+  --ink-3:#8c857d;
+  --line:rgba(22,18,14,.09);
+  --line-mid:rgba(22,18,14,.14);
+  --psi:#e8eef7;
+  --psi-mid:#8aa4c8;
+  --psi-acc:#26508e;
+  --psi-dark:#132b50;
+  --psi-glow:rgba(38,80,142,.12);
+  --card:#ffffff;
+  --nav-h:60px;
+  --ease:.2s cubic-bezier(.4,0,.2,1);
+  --sh:0 2px 12px rgba(22,18,14,.07);
+  --sh-md:0 6px 28px rgba(22,18,14,.11);
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(22,18,14,.12);border-radius:2px}
+
+/* ── LOGIN SCREEN ─────────────────────────────────────────────── */
+#screen-login{
+  position:fixed;inset:0;z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--cream);
+  padding:20px;
+}
+.login-card{
+  width:100%;max-width:400px;
+  padding:44px 36px;
+  border:1px solid var(--line-mid);
+  border-radius:20px;
+  background:var(--white);
+  box-shadow:var(--sh-md);
+}
+.login-logo{
+  display:flex;align-items:center;justify-content:center;
+  gap:8px;margin-bottom:8px;
+}
+.login-logo-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.15rem;font-weight:500;
+  color:var(--ink);letter-spacing:.01em;
+}
+.login-logo-name em{color:var(--ink-3);font-style:normal}
+.login-logo-badge{
+  font-size:.65rem;font-weight:500;
+  color:var(--psi-acc);letter-spacing:.1em;text-transform:uppercase;
+  text-align:center;margin-bottom:28px;opacity:.75;
+}
+.login-title{font-size:1.1rem;font-weight:600;margin-bottom:4px;color:var(--ink);text-align:center}
+.login-sub{font-size:.83rem;color:var(--ink-3);font-weight:300;text-align:center;margin-bottom:28px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.72rem;font-weight:500;color:var(--ink-3);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
+.field input{
+  width:100%;padding:11px 14px;border-radius:10px;
+  border:1px solid var(--line-mid);
+  background:#faf9f7;
+  color:var(--ink);font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:300;outline:none;
+  transition:border-color var(--ease),box-shadow var(--ease);
+}
+.field input:focus{border-color:var(--psi-acc);box-shadow:0 0 0 3px var(--psi-glow);background:var(--white)}
+.field input::placeholder{color:rgba(22,18,14,.28)}
+.btn-login{
+  width:100%;padding:13px;border-radius:10px;border:none;
+  background:var(--psi-acc);color:#fff;
+  font-family:'DM Sans',sans-serif;font-weight:600;font-size:.92rem;
+  cursor:pointer;transition:all var(--ease);margin-top:4px;
+  box-shadow:0 4px 14px rgba(38,80,142,.28);
+}
+.btn-login:hover{background:var(--psi-dark);box-shadow:0 6px 20px rgba(38,80,142,.36)}
+.btn-login:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.login-err{font-size:.8rem;color:#b91c1c;text-align:center;margin-top:12px;display:none;line-height:1.5}
+.login-cadastro{text-align:center;margin-top:18px;font-size:.78rem;color:var(--ink-3);font-weight:300}
+.login-cadastro a{color:var(--psi-acc);text-decoration:none}
+.login-cadastro a:hover{text-decoration:underline}
+
+/* ── APP SCREEN ───────────────────────────────────────────────── */
+#screen-app{display:none;min-height:100vh}
+
+/* ── NAV ──────────────────────────────────────────────────────── */
+.nav{
+  position:sticky;top:0;z-index:100;
+  height:var(--nav-h);
+  background:rgba(240,237,232,.94);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;padding:0 24px;gap:16px;
+}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.nav-brand-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.95rem;font-weight:500;color:var(--ink);letter-spacing:.01em;
+}
+.nav-brand-name em{color:var(--ink-3);font-style:normal}
+.nav-badge{
+  font-size:.62rem;font-weight:500;
+  color:var(--psi-acc);
+  background:var(--psi);
+  border:1px solid rgba(38,80,142,.15);
+  border-radius:999px;padding:2px 9px;
+  letter-spacing:.06em;text-transform:uppercase;
+  flex-shrink:0;
+}
+.nav-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--psi-acc);flex-shrink:0;
+  box-shadow:0 0 0 3px var(--psi-glow);
+  animation:pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 3px var(--psi-glow)}
+  50%{box-shadow:0 0 0 6px rgba(38,80,142,.04)}
+}
+.nav-spacer{flex:1}
+.nav-user{font-size:.82rem;font-weight:400;color:var(--ink-3);flex-shrink:0}
+.nav-user strong{color:var(--ink);font-weight:500}
+.nav-logout{
+  padding:7px 14px;border-radius:8px;
+  border:1px solid var(--line-mid);
+  background:transparent;color:var(--ink-3);
+  font-family:'DM Sans',sans-serif;font-size:.78rem;
+  cursor:pointer;transition:all var(--ease);flex-shrink:0;
+}
+.nav-logout:hover{border-color:rgba(185,28,28,.25);color:#b91c1c}
+
+/* ── MAIN LAYOUT ──────────────────────────────────────────────── */
+.app-main{
+  max-width:900px;margin:0 auto;
+  padding:36px 24px 60px;
+}
+
+/* ── WELCOME BLOCK ────────────────────────────────────────────── */
+.welcome-block{margin-bottom:32px}
+.welcome-label{
+  font-size:.68rem;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--psi-acc);opacity:.7;
+  margin-bottom:8px;
+}
+.welcome-h{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.6rem,3.5vw,2.2rem);
+  font-weight:400;line-height:1.15;
+  color:var(--ink);letter-spacing:-.01em;
+  margin-bottom:6px;
+}
+.welcome-h em{font-style:italic;color:var(--psi-acc)}
+.welcome-sub{font-size:.88rem;font-weight:300;color:var(--ink-3);line-height:1.6}
+
+/* ── CARDS GRID ───────────────────────────────────────────────── */
+.cards-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+@media(max-width:640px){.cards-grid{grid-template-columns:1fr}}
+
+.card{
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:24px;
+  box-shadow:var(--sh);
+  transition:box-shadow var(--ease),border-color var(--ease);
+}
+.card:hover{box-shadow:var(--sh-md)}
+.card--full{grid-column:1/-1}
+
+.card-label{
+  font-size:.65rem;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--psi-acc);opacity:.65;
+  margin-bottom:10px;
+}
+.card-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.15rem;font-weight:500;color:var(--ink);
+  margin-bottom:16px;line-height:1.2;
+}
+.card-accent{
+  height:3px;background:var(--psi-acc);
+  border-radius:16px 16px 0 0;
+  margin:-24px -24px 20px;
+  opacity:.6;
+}
+
+/* ── EMPTY STATE ──────────────────────────────────────────────── */
+.empty-state{
+  text-align:center;padding:28px 16px;
+  color:var(--ink-3);font-size:.85rem;font-weight:300;line-height:1.7;
+}
+.empty-state svg{opacity:.25;margin-bottom:10px}
+
+/* ── PERFIL ROWS ──────────────────────────────────────────────── */
+.perfil-row{
+  display:flex;flex-direction:column;gap:3px;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+.perfil-row:last-child{border-bottom:none;padding-bottom:0}
+.perfil-row:first-child{padding-top:0}
+.perfil-key{
+  font-size:.68rem;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+.perfil-val{
+  font-size:.88rem;font-weight:300;color:var(--ink);line-height:1.55;
+}
+.perfil-val em{font-style:italic;color:var(--ink-3);font-size:.82rem}
+
+/* ── FOCOS TAGS ───────────────────────────────────────────────── */
+.focos-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.foco-tag{
+  font-size:.72rem;font-weight:300;color:var(--ink-2);
+  background:var(--cream);border:1px solid var(--line-mid);
+  padding:3px 9px;border-radius:6px;
+}
+
+/* ── STATUS CARD ──────────────────────────────────────────────── */
+.status-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(26,122,98,.07);
+  border:1px solid rgba(26,122,98,.18);
+  border-radius:999px;
+  padding:6px 14px;
+  font-size:.8rem;font-weight:500;color:#1a7a62;
+  margin-bottom:12px;
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#1a7a62;flex-shrink:0;
+  animation:pulse-green 2.5s ease-in-out infinite;
+}
+@keyframes pulse-green{
+  0%,100%{box-shadow:0 0 0 0 rgba(26,122,98,.4)}
+  50%{box-shadow:0 0 0 5px rgba(26,122,98,0)}
+}
+.status-sub{font-size:.82rem;font-weight:300;color:var(--ink-3);line-height:1.6}
+
+/* ── AVISO EM BREVE ───────────────────────────────────────────── */
+.em-breve-note{
+  margin-top:28px;padding:16px 20px;
+  background:var(--psi);
+  border:1px solid rgba(38,80,142,.1);
+  border-radius:12px;
+  font-size:.82rem;font-weight:300;color:var(--ink-2);
+  line-height:1.65;
+  text-align:center;
+}
+
+/* ── BTN GHOST ────────────────────────────────────────────────── */
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.78rem;font-weight:500;
+  color:var(--psi-acc);
+  padding:7px 14px;border-radius:8px;
+  border:1px solid rgba(38,80,142,.2);
+  background:var(--psi);
+  cursor:pointer;text-decoration:none;
+  transition:all var(--ease);margin-top:14px;
+}
+.btn-ghost:hover{background:rgba(38,80,142,.12);border-color:rgba(38,80,142,.35)}
+
+/* ── TOAST ────────────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  z-index:9999;
+  background:var(--ink);color:#fff;
+  padding:11px 22px;border-radius:999px;
+  font-size:.83rem;font-weight:500;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;
+  white-space:nowrap;
+  box-shadow:0 8px 24px rgba(22,18,14,.25);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:#b91c1c}
+.toast.success{background:#1a7a62}
+
+/* ── LOADER ───────────────────────────────────────────────────── */
+.loader{
+  display:inline-block;width:16px;height:16px;
+  border:2px solid rgba(38,80,142,.2);
+  border-top-color:var(--psi-acc);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  vertical-align:middle;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:480px){
+  .app-main{padding:24px 16px 48px}
+  .card{padding:18px}
+  .card-accent{margin:-18px -18px 16px}
+  .nav{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ─────────────────────────────────────────────────── -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-name">Consulta<em>Já</em>24h</div>
+    </div>
+    <div class="login-logo-badge">Psicologia Online</div>
+    <div class="login-title">Acesse seu painel</div>
+    <p class="login-sub">E-mail e senha cadastrados na plataforma</p>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="inp-senha" placeholder="sua senha" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" id="btn-login">Entrar no painel</button>
+    <div class="login-err" id="login-err"></div>
+    <p class="login-cadastro">
+      Ainda não tem cadastro? <a href="/psicologo-cadastro">Solicitar acesso</a>
+    </p>
+  </div>
+</div>
+
+<!-- ── APP ───────────────────────────────────────────────────── -->
+<div id="screen-app">
+
+  <nav class="nav">
+    <a href="/psicologo" class="nav-brand">
+      <div class="nav-dot"></div>
+      <span class="nav-brand-name">Consulta<em>Já</em>24h</span>
+    </a>
+    <span class="nav-badge">Psicologia</span>
+    <div class="nav-spacer"></div>
+    <span class="nav-user" id="nav-user-name"></span>
+    <button class="nav-logout" onclick="fazerLogout()">Sair</button>
+  </nav>
+
+  <main class="app-main">
+
+    <!-- BOAS-VINDAS -->
+    <div class="welcome-block">
+      <div class="welcome-label">Área profissional</div>
+      <h1 class="welcome-h">Olá, <em id="nome-display">psicólogo</em></h1>
+      <p class="welcome-sub" id="welcome-sub">Bem-vindo à sua área profissional.</p>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- PRÓXIMOS ATENDIMENTOS -->
+      <div class="card card--full">
+        <div class="card-accent"></div>
+        <div class="card-label">Agenda</div>
+        <div class="card-title">Próximos atendimentos</div>
+        <div class="empty-state" id="atendimentos-empty">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" display="block" style="margin:0 auto 10px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Nenhum atendimento agendado no momento.<br>
+          <span style="font-size:.78rem;opacity:.7">Os próximos agendamentos aparecerão aqui assim que forem marcados.</span>
+        </div>
+      </div>
+
+      <!-- PERFIL PROFISSIONAL -->
+      <div class="card card--full" id="card-perfil">
+        <div class="card-accent"></div>
+        <div class="card-label">Cadastro</div>
+        <div class="card-title">Perfil profissional</div>
+        <div id="perfil-rows"></div>
+        <a href="#" class="btn-ghost" id="btn-editar-perfil">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar perfil
+        </a>
+      </div>
+
+      <!-- DISPONIBILIDADE -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-label">Agenda</div>
+        <div class="card-title">Disponibilidade</div>
+        <p class="perfil-val" id="disp-texto" style="line-height:1.65"></p>
+        <a href="#" class="btn-ghost" style="display:inline-flex">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Editar disponibilidade
+        </a>
+      </div>
+
+      <!-- STATUS NA PLATAFORMA -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-label">Plataforma</div>
+        <div class="card-title">Status</div>
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          Perfil ativo
+        </div>
+        <p class="status-sub">Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.</p>
+      </div>
+
+    </div>
+
+    <div class="em-breve-note">
+      Em breve você poderá acompanhar seus pacientes, agenda completa e histórico de sessões por aqui.
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="./api-config.js"></script>
+<script>
+const API = window.API_BASE_URL || 'https://triagem-api.onrender.com';
+
+// ── helpers ──────────────────────────────────────────────────────
+function getToken() { return localStorage.getItem('psi_token') || ''; }
+function getPsi()   { try { return JSON.parse(localStorage.getItem('psicologo') || 'null'); } catch(e) { return null; } }
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function safeJson(res) {
+  try { return await res.json(); } catch(e) { return {}; }
+}
+
+async function apiFetch(path, opts = {}) {
+  const token = getToken();
+  const headers = { ...(opts.headers || {}) };
+  if (token && !headers['Authorization']) {
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+  if (opts.json) {
+    headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(opts.json);
+    delete opts.json;
+  }
+  const res = await fetch(API + path, { ...opts, headers });
+  if (res.status === 401) {
+    mostrarToast('Sessão expirada. Faça login novamente.', 'error');
+    fazerLogout();
+    return {};
+  }
+  return safeJson(res);
+}
+
+let toastTimer = null;
+function mostrarToast(msg, tipo = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + tipo + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────
+async function fazerLogin() {
+  const email = document.getElementById('inp-email').value.trim();
+  const senha = document.getElementById('inp-senha').value;
+  const err   = document.getElementById('login-err');
+  const btn   = document.getElementById('btn-login');
+
+  err.style.display = 'none';
+  if (!email || !senha) {
+    err.textContent = 'Preencha e-mail e senha.';
+    err.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loader"></span> Entrando...';
+
+  try {
+    const res  = await fetch(API + '/api/psicologo/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha })
+    });
+    const data = await safeJson(res);
+
+    if (!res.ok || !data.ok) {
+      err.textContent = data.error || 'E-mail ou senha incorretos.';
+      err.style.display = 'block';
+      return;
+    }
+
+    localStorage.setItem('psi_token', data.token);
+    localStorage.setItem('psicologo', JSON.stringify(data.psicologo));
+    entrarApp(data.psicologo);
+
+  } catch(e) {
+    err.textContent = 'Erro de conexão: ' + e.message;
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar no painel';
+  }
+}
+
+// ── APP ───────────────────────────────────────────────────────────
+function entrarApp(psi) {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-app').style.display = 'block';
+  renderPainel(psi);
+}
+
+function fazerLogout() {
+  localStorage.removeItem('psi_token');
+  localStorage.removeItem('psicologo');
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('screen-app').style.display = 'none';
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('inp-email').value = '';
+  document.getElementById('inp-senha').value = '';
+}
+
+function renderPainel(p) {
+  if (!p) return;
+
+  // Nav
+  document.getElementById('nav-user-name').innerHTML =
+    '<strong>' + escHtml(p.nome_exibicao || p.nome) + '</strong>';
+
+  // Boas-vindas
+  const primeiroNome = (p.nome_exibicao || p.nome || '').split(' ')[0];
+  document.getElementById('nome-display').textContent = primeiroNome;
+  document.getElementById('welcome-sub').textContent =
+    p.ativo ? 'Seu perfil está ativo na plataforma.' : 'Seu perfil está em análise pela equipe.';
+
+  // Perfil rows
+  const rows = [
+    { key: 'Nome de exibição', val: p.nome_exibicao || p.nome },
+    { key: 'CRP',              val: p.crp ? p.crp + '/' + (p.uf || '') : null },
+    { key: 'Abordagem',        val: p.abordagem },
+    { key: 'Focos',            val: p.focos, tipo: 'focos' },
+    { key: 'Valor da sessão',  val: p.valor_sessao ? 'R$ ' + p.valor_sessao : null },
+    { key: 'Avaliação psicológica', val: p.tem_avaliacao
+        ? 'Sim' + (p.valor_avaliacao ? ' · R$ ' + p.valor_avaliacao : '')
+        : 'Não oferece' },
+    { key: 'Apresentação',     val: p.apresentacao },
+  ];
+
+  const container = document.getElementById('perfil-rows');
+  container.innerHTML = rows.filter(r => r.val).map(r => {
+    if (r.tipo === 'focos' && r.val) {
+      const tags = r.val.split(/[,;]+/).map(f => f.trim()).filter(Boolean);
+      const tagsHtml = tags.map(t => '<span class="foco-tag">' + escHtml(t) + '</span>').join('');
+      return '<div class="perfil-row"><div class="perfil-key">' + escHtml(r.key) + '</div>'
+           + '<div class="focos-wrap">' + tagsHtml + '</div></div>';
+    }
+    return '<div class="perfil-row"><div class="perfil-key">' + escHtml(r.key) + '</div>'
+         + '<div class="perfil-val">' + escHtml(r.val) + '</div></div>';
+  }).join('');
+
+  // Disponibilidade
+  const dispEl = document.getElementById('disp-texto');
+  if (p.disponibilidade) {
+    dispEl.textContent = p.disponibilidade;
+  } else {
+    dispEl.innerHTML = '<em>Nenhuma disponibilidade cadastrada.</em>';
+  }
+
+  // Status card: ajusta se pendente
+  if (!p.ativo) {
+    const badge = document.querySelector('.status-badge');
+    const sub   = document.querySelector('.status-sub');
+    if (badge) {
+      badge.style.background = 'rgba(217,119,6,.07)';
+      badge.style.border     = '1px solid rgba(217,119,6,.2)';
+      badge.style.color      = '#b45309';
+      badge.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#b45309;flex-shrink:0"></span> Em análise';
+    }
+    if (sub) sub.textContent = 'Seu cadastro está sendo avaliado pela equipe. Você receberá um e-mail assim que for aprovado.';
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+(function init() {
+  const token = getToken();
+  const saved = getPsi();
+  if (token && saved) {
+    entrarApp(saved);
+    // Tenta atualizar perfil em background
+    apiFetch('/api/psicologo/me').then(d => {
+      if (d.ok && d.psicologo) {
+        localStorage.setItem('psicologo', JSON.stringify(d.psicologo));
+        renderPainel(d.psicologo);
+      }
+    }).catch(() => {});
+  }
+})();
+
+document.getElementById('btn-login').addEventListener('click', fazerLogin);
+document.getElementById('inp-senha').addEventListener('keydown', e => {
+  if (e.key === 'Enter') fazerLogin();
+});
+document.getElementById('inp-email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('inp-senha').focus();
+});
+</script>
+</body>
+</html>
