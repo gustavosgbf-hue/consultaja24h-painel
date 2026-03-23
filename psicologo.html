@@ -253,6 +253,12 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
   50%{box-shadow:0 0 0 5px rgba(26,122,98,0)}
 }
 .status-sub{font-size:.82rem;font-weight:300;color:var(--ink-3);line-height:1.6}
+.visib-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.82rem;font-weight:400;color:var(--ink-2);cursor:pointer}
+.visib-toggle{position:relative;width:40px;height:22px;border-radius:999px;border:none;cursor:pointer;background:#ccc;flex-shrink:0;transition:background .2s;padding:0}
+.visib-toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.visib-toggle.on{background:var(--psi-acc)}
+.visib-toggle.on::after{transform:translateX(18px)}
+.visib-hint{margin-top:6px;font-size:.72rem;color:var(--ink-3);line-height:1.5}
 
 /* ── AVISO EM BREVE ───────────────────────────────────────────── */
 .em-breve-note{
@@ -462,6 +468,13 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
           Perfil ativo
         </div>
         <p class="status-sub">Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.</p>
+        <div class="visib-toggle-wrap" id="visib-wrap" style="margin-top:16px;display:none">
+          <label class="visib-label">
+            <span>Mostrar meu perfil na plataforma</span>
+            <button class="visib-toggle" id="visib-toggle" onclick="alternarVisibilidade()" title="Alternar visibilidade"></button>
+          </label>
+          <p class="visib-hint" id="visib-hint"></p>
+        </div>
       </div>
 
     </div>
@@ -667,6 +680,48 @@ function renderPainel(p) {
       badge.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#b45309;flex-shrink:0"></span> Em análise';
     }
     if (sub) sub.textContent = 'Seu cadastro está sendo avaliado pela equipe. Você receberá um e-mail assim que for aprovado.';
+  }
+
+  // Toggle de visibilidade — só exibe se aprovado
+  if (p.ativo && p.status === 'aprovado') {
+    const wrap   = document.getElementById('visib-wrap');
+    const toggle = document.getElementById('visib-toggle');
+    const hint   = document.getElementById('visib-hint');
+    if (wrap && toggle && hint) {
+      wrap.style.display = 'block';
+      atualizarToggleVisib(p.visivel !== false, toggle, hint);
+    }
+  }
+}
+
+// ── VISIBILIDADE ──────────────────────────────────────────────────
+function atualizarToggleVisib(visivel, toggle, hint) {
+  if (visivel) {
+    toggle.classList.add('on');
+    hint.textContent = 'Seu perfil está visível na listagem pública.';
+  } else {
+    toggle.classList.remove('on');
+    hint.textContent = 'Seu perfil está oculto. Pacientes não encontrarão você na listagem.';
+  }
+}
+
+async function alternarVisibilidade() {
+  const toggle = document.getElementById('visib-toggle');
+  const hint   = document.getElementById('visib-hint');
+  const novoValor = !toggle.classList.contains('on');
+  toggle.disabled = true;
+  try {
+    const data = await apiFetch('/api/psicologo/visibilidade', {
+      method: 'PATCH',
+      body: JSON.stringify({ visivel: novoValor })
+    });
+    if (!data.ok) { mostrarToast(data.error || 'Erro ao salvar.', 'error'); return; }
+    atualizarToggleVisib(novoValor, toggle, hint);
+    mostrarToast(novoValor ? 'Perfil visível na plataforma.' : 'Perfil ocultado da listagem.', 'success');
+  } catch(_) {
+    mostrarToast('Erro de conexão. Tente novamente.', 'error');
+  } finally {
+    toggle.disabled = false;
   }
 }
 
