@@ -1525,6 +1525,15 @@ document.getElementById('inp-admin-pwd').value=''; document.getElementById('fiel
 adminData=[]; adminVisible=false;
 document.getElementById('admin-tab-btn').style.display='none';
 document.getElementById('admin-medicos-lista').style.display='none';
+// Reset estado histórico geral — evita estado stale entre sessões
+histGeralVisible=false; histGeralMedicos=[]; histGeralCache={};
+document.getElementById('admin-hist-tab-btn').style.display='none';
+document.getElementById('admin-hist-filtros').style.display='none';
+document.getElementById('admin-hist-lista').style.display='none';
+document.getElementById('admin-hist-count').textContent='-';
+// Reset select de médicos — evita options duplicadas/obsoletas na próxima sessão
+const selMedico=document.getElementById('admin-hist-medico');
+if(selMedico) selMedico.innerHTML='<option value="">Todos os médicos</option>';
 }
 
 function togglePlantao() { if(plantaoAtivo) sairPlantao(); else entrarPlantao(); }
@@ -2646,11 +2655,11 @@ return `<div class="fila-card" style="cursor:default;border-color:rgba(66,133,24
 
 let adminVisible=false, adminData=[];
 async function carregarMedicosPendentes() {
-// Histórico geral aparece para qualquer admin autenticado - independe de médicos pendentes
-document.getElementById('admin-hist-tab-btn').style.display='flex';
 try {
 const data=await apiFetch('/api/admin/medicos/pendentes',{_admin:true});
 if (!data.ok && data.ok !== undefined) return;
+// Só exibe área admin após confirmação de autenticação válida
+document.getElementById('admin-hist-tab-btn').style.display='flex';
 adminData=data.medicos||[];
 const count=adminData.length;
 if (count>0) { document.getElementById('admin-tab-btn').style.display='flex'; document.getElementById('admin-pendente-count').textContent=count; }
