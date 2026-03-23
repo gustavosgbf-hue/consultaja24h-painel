@@ -738,7 +738,10 @@ async function uploadFoto(input) {
     });
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'Erro ao enviar foto');
-    avatarEl.innerHTML = '<img src="' + escHtml(data.foto_url) + '" alt="Foto">';
+    // Recarrega /me para garantir que disponibilidade e demais dados não sumam
+    const me = await apiFetch('/api/psicologo/me');
+    if (me.ok && me.psicologo) renderPainel(me.psicologo);
+    else avatarEl.innerHTML = '<img src="' + escHtml(data.foto_url) + '" alt="Foto">';
     mostrarToast('Foto atualizada com sucesso.', 'success');
   } catch(e) {
     avatarEl.innerHTML = '👤';
