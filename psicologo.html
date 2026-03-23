@@ -335,6 +335,41 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
 .btn-edit-cancel{padding:11px 18px;border-radius:10px;border:1px solid rgba(22,18,14,.15);background:transparent;color:var(--ink-3);font-family:inherit;font-size:.88rem;cursor:pointer}
 .edit-msg{font-size:.78rem;margin-top:10px;display:none}
 .edit-msg.ok{color:#1a7a62}.edit-msg.err{color:#b91c1c}
+
+/* ── VISIBILITY TOGGLE ────────────────────────────────────────── */
+.vis-toggle-wrap{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+  margin-top:16px;
+  padding:14px 16px;
+  background:#faf9f7;
+  border:1px solid var(--line-mid);
+  border-radius:12px;
+}
+.vis-toggle-label{
+  display:flex;flex-direction:column;gap:2px;
+}
+.vis-toggle-label span{font-size:.85rem;font-weight:500;color:var(--ink)}
+.vis-toggle-label small{font-size:.75rem;font-weight:300;color:var(--ink-3);line-height:1.4}
+/* Switch */
+.switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch-track{
+  position:absolute;inset:0;border-radius:99px;
+  background:#d1ccc6;cursor:pointer;
+  transition:background var(--ease);
+}
+.switch input:checked + .switch-track{background:var(--psi-acc)}
+.switch input:disabled + .switch-track{opacity:.5;cursor:not-allowed}
+.switch-track::after{
+  content:'';position:absolute;
+  top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.2);
+  transition:transform var(--ease);
+}
+.switch input:checked + .switch-track::after{transform:translateX(20px)}
 </style>
 </head>
 <body>
@@ -457,11 +492,23 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
         <div class="card-accent"></div>
         <div class="card-label">Plataforma</div>
         <div class="card-title">Status</div>
-        <div class="status-badge">
-          <span class="status-dot"></span>
-          Perfil ativo
+        <div class="status-badge" id="status-badge">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="status-badge-texto">Perfil ativo</span>
         </div>
-        <p class="status-sub">Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.</p>
+        <p class="status-sub" id="status-sub">Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.</p>
+
+        <!-- Toggle de visibilidade -->
+        <div class="vis-toggle-wrap" id="vis-toggle-wrap" style="display:none">
+          <div class="vis-toggle-label">
+            <span id="vis-toggle-texto">Visível no site</span>
+            <small id="vis-toggle-sub">Pacientes podem te encontrar e agendar consultas</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="vis-checkbox" onchange="toggleVisibilidade(this)">
+            <span class="switch-track"></span>
+          </label>
+        </div>
       </div>
 
     </div>
@@ -672,15 +719,77 @@ function renderPainel(p) {
 
   // Status card: ajusta se pendente
   if (!p.ativo) {
-    const badge = document.querySelector('.status-badge');
-    const sub   = document.querySelector('.status-sub');
+    const badge = document.getElementById('status-badge');
+    const sub   = document.getElementById('status-sub');
+    const dot   = document.getElementById('status-dot');
+    const texto = document.getElementById('status-badge-texto');
     if (badge) {
       badge.style.background = 'rgba(217,119,6,.07)';
       badge.style.border     = '1px solid rgba(217,119,6,.2)';
       badge.style.color      = '#b45309';
-      badge.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#b45309;flex-shrink:0"></span> Em análise';
     }
+    if (dot) dot.style.background = '#b45309';
+    if (texto) texto.textContent = 'Em análise';
     if (sub) sub.textContent = 'Seu cadastro está sendo avaliado pela equipe. Você receberá um e-mail assim que for aprovado.';
+  } else {
+    // Perfil aprovado — mostra toggle de visibilidade
+    const wrap = document.getElementById('vis-toggle-wrap');
+    const checkbox = document.getElementById('vis-checkbox');
+    if (wrap) wrap.style.display = 'flex';
+    if (checkbox) checkbox.checked = p.visivel !== false;
+    atualizarStatusVisibilidade(p.visivel !== false);
+  }
+}
+
+// ── VISIBILIDADE DO PERFIL ───────────────────────────────────────
+function atualizarStatusVisibilidade(visivel) {
+  const badge  = document.getElementById('status-badge');
+  const dot    = document.getElementById('status-dot');
+  const texto  = document.getElementById('status-badge-texto');
+  const sub    = document.getElementById('status-sub');
+  const tLabel = document.getElementById('vis-toggle-texto');
+  const tSub   = document.getElementById('vis-toggle-sub');
+
+  if (visivel) {
+    if (badge)  { badge.style.background='rgba(26,122,98,.07)'; badge.style.border='1px solid rgba(26,122,98,.18)'; badge.style.color='#1a7a62'; }
+    if (dot)    { dot.style.background='#1a7a62'; }
+    if (texto)  texto.textContent = 'Perfil ativo';
+    if (sub)    sub.textContent   = 'Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.';
+    if (tLabel) tLabel.textContent = 'Visível no site';
+    if (tSub)   tSub.textContent   = 'Pacientes podem te encontrar e agendar consultas';
+  } else {
+    if (badge)  { badge.style.background='rgba(120,53,15,.07)'; badge.style.border='1px solid rgba(120,53,15,.18)'; badge.style.color='#92400e'; }
+    if (dot)    { dot.style.background='#92400e'; }
+    if (texto)  texto.textContent = 'Perfil oculto';
+    if (sub)    sub.textContent   = 'Seu perfil está desativado e não aparece para novos pacientes.';
+    if (tLabel) tLabel.textContent = 'Oculto no site';
+    if (tSub)   tSub.textContent   = 'Ative para aparecer novamente para os pacientes';
+  }
+}
+
+async function toggleVisibilidade(checkbox) {
+  const visivel = checkbox.checked;
+  checkbox.disabled = true;
+
+  try {
+    const data = await apiFetch('/api/psicologo/visibilidade', {
+      method: 'PATCH',
+      json: { visivel }
+    });
+
+    if (!data.ok) throw new Error(data.error || 'Erro ao atualizar visibilidade');
+
+    atualizarStatusVisibilidade(visivel);
+    mostrarToast(
+      visivel ? 'Perfil ativado. Você está visível no site.' : 'Perfil ocultado. Você não aparece mais no site.',
+      visivel ? 'success' : 'info'
+    );
+  } catch(e) {
+    // Reverte o toggle em caso de erro
+    checkbox.checked = !visivel;
+    mostrarToast('Erro: ' + e.message, 'error');
+  } finally {
+    checkbox.disabled = false;
   }
 }
 
