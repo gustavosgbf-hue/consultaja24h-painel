@@ -336,40 +336,30 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
 .edit-msg{font-size:.78rem;margin-top:10px;display:none}
 .edit-msg.ok{color:#1a7a62}.edit-msg.err{color:#b91c1c}
 
-/* ── VISIBILITY TOGGLE ────────────────────────────────────────── */
-.vis-toggle-wrap{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;
-  margin-top:16px;
-  padding:14px 16px;
-  background:#faf9f7;
-  border:1px solid var(--line-mid);
-  border-radius:12px;
-}
-.vis-toggle-label{
-  display:flex;flex-direction:column;gap:2px;
-}
-.vis-toggle-label span{font-size:.85rem;font-weight:500;color:var(--ink)}
-.vis-toggle-label small{font-size:.75rem;font-weight:300;color:var(--ink-3);line-height:1.4}
-/* Switch */
-.switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
-.switch input{opacity:0;width:0;height:0}
-.switch-track{
-  position:absolute;inset:0;border-radius:99px;
-  background:#d1ccc6;cursor:pointer;
-  transition:background var(--ease);
-}
-.switch input:checked + .switch-track{background:var(--psi-acc)}
-.switch input:disabled + .switch-track{opacity:.5;cursor:not-allowed}
-.switch-track::after{
-  content:'';position:absolute;
-  top:3px;left:3px;
-  width:18px;height:18px;border-radius:50%;
-  background:#fff;
-  box-shadow:0 1px 4px rgba(0,0,0,.2);
-  transition:transform var(--ease);
-}
-.switch input:checked + .switch-track::after{transform:translateX(20px)}
+/* ── DISPONIBILIDADE MODAL ──────────────────────────────────────── */
+.disp-overlay{display:none;position:fixed;inset:0;background:rgba(22,18,14,.45);z-index:200;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.disp-overlay.open{display:flex}
+.disp-card{background:#fff;border-radius:16px;padding:28px 24px;width:min(540px,100%);box-shadow:0 16px 56px rgba(22,18,14,.18);margin:auto}
+.disp-card-title{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:6px}
+.disp-card-sub{font-size:.78rem;color:var(--ink-3);font-weight:300;margin-bottom:20px;line-height:1.5}
+.dias-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:20px}
+@media(max-width:480px){.dias-grid{grid-template-columns:repeat(4,1fr)}}
+.dia-btn{padding:8px 4px;border-radius:10px;border:1px solid var(--line-mid);background:var(--cream);color:var(--ink-3);font-family:inherit;font-size:.72rem;font-weight:500;cursor:pointer;text-align:center;transition:all .18s;user-select:none}
+.dia-btn.ativo{background:var(--psi-acc);color:#fff;border-color:var(--psi-acc)}
+.horarios-section{margin-bottom:18px}
+.horarios-section-label{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.horarios-dia-title{font-size:.82rem;font-weight:500;color:var(--ink);margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.horas-grid{display:flex;flex-wrap:wrap;gap:6px}
+.hora-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--line-mid);background:var(--cream);color:var(--ink-3);font-family:inherit;font-size:.78rem;font-weight:400;cursor:pointer;transition:all .18s;user-select:none}
+.hora-btn.ativo{background:var(--psi-acc);color:#fff;border-color:var(--psi-acc)}
+.disp-resumo{font-size:.78rem;color:var(--ink-3);margin-bottom:16px;line-height:1.6;min-height:20px}
+.disp-actions{display:flex;gap:10px;margin-top:4px}
+
+/* ── DISPONIBILIDADE CARD DISPLAY ───────────────────────────────── */
+.disp-dia-row{margin-bottom:10px}
+.disp-dia-nome{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--psi-acc);margin-bottom:5px}
+.disp-horas-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.disp-hora-tag{font-size:.75rem;font-weight:400;color:var(--ink-2);background:var(--psi);border:1px solid rgba(38,80,142,.12);padding:3px 10px;border-radius:6px}
 </style>
 </head>
 <body>
@@ -465,23 +455,8 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
         <div class="card-accent"></div>
         <div class="card-label">Agenda</div>
         <div class="card-title">Disponibilidade</div>
-        <p class="perfil-val" id="disp-texto" style="line-height:1.65"></p>
-        <div id="disp-edit-wrap" style="display:none;margin-top:12px">
-          <input id="disp-input" type="text" placeholder="Ex: Segunda à tarde, quarta pela manhã"
-            style="width:100%;padding:10px 13px;border-radius:9px;border:1px solid rgba(22,18,14,.15);background:#faf9f7;font-family:inherit;font-size:.88rem;font-weight:300;color:var(--ink);outline:none;margin-bottom:8px"/>
-          <div style="display:flex;gap:8px">
-            <button onclick="salvarDisponibilidade()"
-              style="flex:1;padding:9px;border-radius:9px;border:none;background:var(--psi-acc);color:#fff;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer">
-              Salvar
-            </button>
-            <button onclick="toggleEditDisp(false)"
-              style="padding:9px 14px;border-radius:9px;border:1px solid rgba(22,18,14,.15);background:transparent;color:var(--ink-3);font-family:inherit;font-size:.82rem;cursor:pointer">
-              Cancelar
-            </button>
-          </div>
-          <p id="disp-msg" style="display:none;font-size:.75rem;margin-top:8px"></p>
-        </div>
-        <a href="#" class="btn-ghost" style="display:inline-flex" onclick="toggleEditDisp(true);return false;">
+        <div id="disp-display"><em style="font-size:.82rem;color:var(--ink-3);font-weight:300">Nenhuma disponibilidade cadastrada.</em></div>
+        <a href="#" class="btn-ghost" style="display:inline-flex;margin-top:14px" onclick="abrirEditDisp();return false;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           Editar disponibilidade
         </a>
@@ -492,23 +467,11 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
         <div class="card-accent"></div>
         <div class="card-label">Plataforma</div>
         <div class="card-title">Status</div>
-        <div class="status-badge" id="status-badge">
-          <span class="status-dot" id="status-dot"></span>
-          <span id="status-badge-texto">Perfil ativo</span>
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          Perfil ativo
         </div>
-        <p class="status-sub" id="status-sub">Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.</p>
-
-        <!-- Toggle de visibilidade -->
-        <div class="vis-toggle-wrap" id="vis-toggle-wrap" style="display:none">
-          <div class="vis-toggle-label">
-            <span id="vis-toggle-texto">Visível no site</span>
-            <small id="vis-toggle-sub">Pacientes podem te encontrar e agendar consultas</small>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="vis-checkbox" onchange="toggleVisibilidade(this)">
-            <span class="switch-track"></span>
-          </label>
-        </div>
+        <p class="status-sub">Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.</p>
       </div>
 
     </div>
@@ -525,6 +488,10 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
   <div class="edit-card">
     <div class="edit-card-title">Editar perfil</div>
     <div class="edit-field">
+      <label>CRP (número)</label>
+      <input type="text" id="edit-crp" placeholder="Ex: 12345"/>
+    </div>
+    <div class="edit-field">
       <label>Apresentação</label>
       <textarea id="edit-apresentacao" rows="4" placeholder="Breve apresentação para os pacientes"></textarea>
     </div>
@@ -540,6 +507,24 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
     <div class="edit-actions">
       <button class="btn-edit-cancel" onclick="fecharEditPerfil()">Cancelar</button>
       <button class="btn-edit-save" id="btn-edit-save" onclick="salvarPerfil()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL DISPONIBILIDADE -->
+<div class="disp-overlay" id="disp-overlay" onclick="fecharEditDisp(event)">
+  <div class="disp-card">
+    <div class="disp-card-title">Configurar disponibilidade</div>
+    <p class="disp-card-sub">Selecione os dias e depois marque os horários avulsos em que você atende.</p>
+    <div class="horarios-section-label">Dias da semana</div>
+    <div class="dias-grid" id="dias-grid"></div>
+    <div id="horas-por-dia"></div>
+    <div class="disp-resumo" id="disp-resumo">Nenhum horário selecionado.</div>
+    <p id="disp-modal-msg" style="display:none;font-size:.78rem;color:#b91c1c;margin-bottom:10px"></p>
+    <div class="disp-actions">
+      <button class="btn-edit-cancel" onclick="fecharEditDisp()">Cancelar</button>
+      <button class="btn-edit-save" id="btn-disp-save" onclick="salvarDisponibilidade()">Salvar</button>
     </div>
   </div>
 </div>
@@ -710,86 +695,24 @@ function renderPainel(p) {
   }).join('');
 
   // Disponibilidade
-  const dispEl = document.getElementById('disp-texto');
-  if (p.disponibilidade) {
-    dispEl.textContent = p.disponibilidade;
-  } else {
-    dispEl.innerHTML = '<em>Nenhuma disponibilidade cadastrada.</em>';
+  try {
+    const dispObj = p.disponibilidade ? JSON.parse(p.disponibilidade) : {};
+    renderDispDisplay(dispObj);
+  } catch(e) {
+    renderDispDisplay({});
   }
 
   // Status card: ajusta se pendente
   if (!p.ativo) {
-    const badge = document.getElementById('status-badge');
-    const sub   = document.getElementById('status-sub');
-    const dot   = document.getElementById('status-dot');
-    const texto = document.getElementById('status-badge-texto');
+    const badge = document.querySelector('.status-badge');
+    const sub   = document.querySelector('.status-sub');
     if (badge) {
       badge.style.background = 'rgba(217,119,6,.07)';
       badge.style.border     = '1px solid rgba(217,119,6,.2)';
       badge.style.color      = '#b45309';
+      badge.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#b45309;flex-shrink:0"></span> Em análise';
     }
-    if (dot) dot.style.background = '#b45309';
-    if (texto) texto.textContent = 'Em análise';
     if (sub) sub.textContent = 'Seu cadastro está sendo avaliado pela equipe. Você receberá um e-mail assim que for aprovado.';
-  } else {
-    // Perfil aprovado — mostra toggle de visibilidade
-    const wrap = document.getElementById('vis-toggle-wrap');
-    const checkbox = document.getElementById('vis-checkbox');
-    if (wrap) wrap.style.display = 'flex';
-    if (checkbox) checkbox.checked = p.visivel !== false;
-    atualizarStatusVisibilidade(p.visivel !== false);
-  }
-}
-
-// ── VISIBILIDADE DO PERFIL ───────────────────────────────────────
-function atualizarStatusVisibilidade(visivel) {
-  const badge  = document.getElementById('status-badge');
-  const dot    = document.getElementById('status-dot');
-  const texto  = document.getElementById('status-badge-texto');
-  const sub    = document.getElementById('status-sub');
-  const tLabel = document.getElementById('vis-toggle-texto');
-  const tSub   = document.getElementById('vis-toggle-sub');
-
-  if (visivel) {
-    if (badge)  { badge.style.background='rgba(26,122,98,.07)'; badge.style.border='1px solid rgba(26,122,98,.18)'; badge.style.color='#1a7a62'; }
-    if (dot)    { dot.style.background='#1a7a62'; }
-    if (texto)  texto.textContent = 'Perfil ativo';
-    if (sub)    sub.textContent   = 'Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.';
-    if (tLabel) tLabel.textContent = 'Visível no site';
-    if (tSub)   tSub.textContent   = 'Pacientes podem te encontrar e agendar consultas';
-  } else {
-    if (badge)  { badge.style.background='rgba(120,53,15,.07)'; badge.style.border='1px solid rgba(120,53,15,.18)'; badge.style.color='#92400e'; }
-    if (dot)    { dot.style.background='#92400e'; }
-    if (texto)  texto.textContent = 'Perfil oculto';
-    if (sub)    sub.textContent   = 'Seu perfil está desativado e não aparece para novos pacientes.';
-    if (tLabel) tLabel.textContent = 'Oculto no site';
-    if (tSub)   tSub.textContent   = 'Ative para aparecer novamente para os pacientes';
-  }
-}
-
-async function toggleVisibilidade(checkbox) {
-  const visivel = checkbox.checked;
-  checkbox.disabled = true;
-
-  try {
-    const data = await apiFetch('/api/psicologo/visibilidade', {
-      method: 'PATCH',
-      json: { visivel }
-    });
-
-    if (!data.ok) throw new Error(data.error || 'Erro ao atualizar visibilidade');
-
-    atualizarStatusVisibilidade(visivel);
-    mostrarToast(
-      visivel ? 'Perfil ativado. Você está visível no site.' : 'Perfil ocultado. Você não aparece mais no site.',
-      visivel ? 'success' : 'info'
-    );
-  } catch(e) {
-    // Reverte o toggle em caso de erro
-    checkbox.checked = !visivel;
-    mostrarToast('Erro: ' + e.message, 'error');
-  } finally {
-    checkbox.disabled = false;
   }
 }
 
@@ -834,6 +757,7 @@ function abrirEditPerfil(evt) {
     if (!d.ok) return;
     const p = d.psicologo;
     _perfilAtual = p;
+    document.getElementById('edit-crp').value          = p.crp          || '';
     document.getElementById('edit-apresentacao').value = p.apresentacao || '';
     document.getElementById('edit-abordagem').value    = p.abordagem    || '';
     document.getElementById('edit-focos').value        = p.focos        || '';
@@ -849,6 +773,7 @@ function fecharEditPerfil(evt) {
 }
 
 async function salvarPerfil() {
+  const crp          = document.getElementById('edit-crp').value.trim();
   const apresentacao = document.getElementById('edit-apresentacao').value.trim();
   const abordagem    = document.getElementById('edit-abordagem').value.trim();
   const focos        = document.getElementById('edit-focos').value.trim();
@@ -861,7 +786,7 @@ async function salvarPerfil() {
   try {
     const data = await apiFetch('/api/psicologo/perfil', {
       method: 'PATCH',
-      json: { apresentacao, abordagem, focos }
+      json: { crp, apresentacao, abordagem, focos }
     });
     if (!data.ok) throw new Error(data.error || 'Erro ao salvar');
 
@@ -881,38 +806,131 @@ async function salvarPerfil() {
 }
 
 // ── DISPONIBILIDADE ───────────────────────────────────────────────
-function toggleEditDisp(abrir) {
-  const wrap   = document.getElementById('disp-edit-wrap');
-  const msg    = document.getElementById('disp-msg');
-  wrap.style.display = abrir ? 'block' : 'none';
-  if (abrir) {
-    // Pré-preenche com texto atual
-    document.getElementById('disp-input').value =
-      document.getElementById('disp-texto').textContent.trim();
-    if (msg) msg.style.display = 'none';
-    document.getElementById('disp-input').focus();
+const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const HORAS_DIA   = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'];
+
+// Estado da edição de disponibilidade: { 0: ['09:00','10:00'], 1: [...], ... }
+let _dispAtual = {};
+
+function renderDispDisplay(dispObj) {
+  const el = document.getElementById('disp-display');
+  if (!dispObj || !Object.keys(dispObj).length) {
+    el.innerHTML = `<em style="font-size:.82rem;color:var(--ink-3);font-weight:300">Nenhuma disponibilidade cadastrada.</em>`;
+    return;
   }
+  const dias = Object.keys(dispObj).sort((a,b)=>a-b);
+  el.innerHTML = dias.map(d => {
+    const horas = (dispObj[d] || []).sort();
+    if (!horas.length) return '';
+    const tagsHtml = horas.map(h => `<span class="disp-hora-tag">${h}</span>`).join('');
+    return `<div class="disp-dia-row"><div class="disp-dia-nome">${DIAS_SEMANA[d]}</div><div class="disp-horas-wrap">${tagsHtml}</div></div>`;
+  }).filter(Boolean).join('');
+}
+
+function abrirEditDisp() {
+  // Carrega estado atual do servidor
+  apiFetch('/api/psicologo/me').then(d => {
+    if (!d.ok) return;
+    try {
+      _dispAtual = JSON.parse(d.psicologo.disponibilidade || '{}');
+    } catch(e) { _dispAtual = {}; }
+    renderDispModal();
+    document.getElementById('disp-overlay').classList.add('open');
+  });
+}
+
+function fecharEditDisp(evt) {
+  if (evt && evt.target !== document.getElementById('disp-overlay')) return;
+  document.getElementById('disp-overlay').classList.remove('open');
+}
+
+function renderDispModal() {
+  // Dias
+  const diasGrid = document.getElementById('dias-grid');
+  diasGrid.innerHTML = DIAS_SEMANA.map((nome, i) => {
+    const ativo = _dispAtual[i] && _dispAtual[i].length > 0 ? 'ativo' : '';
+    return `<button class="dia-btn ${ativo}" onclick="toggleDia(${i},this)">${nome}</button>`;
+  }).join('');
+  renderHorasModal();
+  atualizarResumo();
+}
+
+function toggleDia(idx, btn) {
+  if (_dispAtual[idx] && _dispAtual[idx].length > 0) {
+    delete _dispAtual[idx];
+    btn.classList.remove('ativo');
+  } else {
+    _dispAtual[idx] = [];
+    btn.classList.add('ativo');
+  }
+  renderHorasModal();
+  atualizarResumo();
+}
+
+function renderHorasModal() {
+  const diasAtivos = Object.keys(_dispAtual).map(Number).sort((a,b)=>a-b);
+  const wrap = document.getElementById('horas-por-dia');
+  if (!diasAtivos.length) { wrap.innerHTML = '<p style="font-size:.78rem;color:var(--ink-3);margin-bottom:12px">Selecione pelo menos um dia acima.</p>'; return; }
+  wrap.innerHTML = `<div class="horarios-section-label" style="margin-bottom:10px">Horários por dia</div>` +
+    diasAtivos.map(d => {
+      const horas = _dispAtual[d] || [];
+      const btns = HORAS_DIA.map(h => {
+        const at = horas.includes(h) ? 'ativo' : '';
+        return `<button class="hora-btn ${at}" onclick="toggleHora(${d},'${h}',this)">${h}</button>`;
+      }).join('');
+      return `<div class="horarios-dia-title">${DIAS_SEMANA[d]}</div><div class="horas-grid">${btns}</div>`;
+    }).join('');
+}
+
+function toggleHora(diaIdx, hora, btn) {
+  if (!_dispAtual[diaIdx]) _dispAtual[diaIdx] = [];
+  const pos = _dispAtual[diaIdx].indexOf(hora);
+  if (pos >= 0) { _dispAtual[diaIdx].splice(pos, 1); btn.classList.remove('ativo'); }
+  else          { _dispAtual[diaIdx].push(hora);      btn.classList.add('ativo'); }
+  // Se removeu todos os horários do dia, desmarca o botão do dia
+  if (_dispAtual[diaIdx].length === 0) {
+    delete _dispAtual[diaIdx];
+    document.querySelectorAll('#dias-grid .dia-btn')[diaIdx]?.classList.remove('ativo');
+  }
+  atualizarResumo();
+}
+
+function atualizarResumo() {
+  const dias = Object.keys(_dispAtual).map(Number).sort((a,b)=>a-b);
+  if (!dias.length) { document.getElementById('disp-resumo').textContent = 'Nenhum horário selecionado.'; return; }
+  const txt = dias.map(d => {
+    const horas = (_dispAtual[d] || []).sort();
+    return DIAS_SEMANA[d] + ': ' + (horas.length ? horas.join(', ') : 'nenhum horário');
+  }).join(' · ');
+  document.getElementById('disp-resumo').textContent = txt;
 }
 
 async function salvarDisponibilidade() {
-  const disponibilidade = document.getElementById('disp-input').value.trim();
-  const msg = document.getElementById('disp-msg');
+  const msg = document.getElementById('disp-modal-msg');
+  const btn = document.getElementById('btn-disp-save');
   msg.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Salvando…';
+
+  // Filtra dias sem horários
+  const limpo = {};
+  for (const [k, v] of Object.entries(_dispAtual)) {
+    if (v && v.length > 0) limpo[k] = v;
+  }
 
   try {
     const data = await apiFetch('/api/psicologo/disponibilidade', {
       method: 'PATCH',
-      json: { disponibilidade }
+      json: { disponibilidade: JSON.stringify(limpo) }
     });
     if (!data.ok) throw new Error(data.error || 'Erro ao salvar');
-    document.getElementById('disp-texto').textContent =
-      disponibilidade || 'Nenhuma disponibilidade cadastrada.';
-    toggleEditDisp(false);
+    renderDispDisplay(limpo);
+    document.getElementById('disp-overlay').classList.remove('open');
     mostrarToast('Disponibilidade atualizada.', 'success');
   } catch(e) {
     msg.textContent = e.message;
-    msg.style.color = '#b91c1c';
     msg.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Salvar';
   }
 }
 
