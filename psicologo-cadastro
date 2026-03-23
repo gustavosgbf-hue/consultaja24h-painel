@@ -309,17 +309,8 @@ h2{
 
   <div class="field">
     <label>Abordagem principal</label>
-    <select id="abordagem">
-      <option value="">Selecione</option>
-      <option>Terapia Cognitivo-Comportamental</option>
-      <option>Psicanálise</option>
-      <option>Humanista</option>
-      <option>Fenomenológica</option>
-      <option>Gestalt-terapia</option>
-      <option>ACT</option>
-      <option>Sistêmica</option>
-      <option>Outra</option>
-    </select>
+    <input type="text" id="abordagem" placeholder="Ex: Terapia Cognitivo-Comportamental, Psicanálise, Gestalt…"/>
+    <div class="hint">Escreva como preferir — aparecerá no seu perfil exatamente assim.</div>
   </div>
 
   <div class="field">
@@ -330,7 +321,8 @@ h2{
 
   <div class="field">
     <label>Valor da sessão</label>
-    <input type="text" id="valor_sessao" placeholder="Ex: 120,00" inputmode="decimal"/>
+    <input type="text" id="valor_sessao" placeholder="Ex: 150,00" inputmode="decimal"/>
+    <div class="hint">Valor mínimo: R$ 130,00. Este valor <strong>não pode ser alterado</strong> após o cadastro (somente após 3 meses).</div>
   </div>
 
   <!-- Atende online -->
@@ -465,6 +457,13 @@ async function cadastrar() {
   var abordagem      = document.getElementById('abordagem').value;
   var focos          = document.getElementById('focos').value.trim();
   var valor_sessao   = document.getElementById('valor_sessao').value.trim();
+
+  // Validação de valor mínimo R$130,00 — antes de enviar ao servidor
+  var valorNum = parseFloat(valor_sessao.replace(',', '.'));
+  if (!valor_sessao || isNaN(valorNum) || valorNum < 130) {
+    mostrarMsg('O valor mínimo da sessão é R$ 130,00.', 'err'); return;
+  }
+
   var atende_online  = document.getElementById('chk-online').checked;
   var tem_avaliacao  = document.getElementById('chk-avaliacao').checked;
   var valor_avaliacao = tem_avaliacao ? document.getElementById('valor_avaliacao').value.trim() : '';
@@ -490,12 +489,11 @@ async function cadastrar() {
       btn.style.display = 'none';
       mostrarMsg('Cadastro recebido com sucesso. Seu perfil será analisado pela equipe e você receberá retorno em breve.', 'ok');
       ['nome','nome_exibicao','email','senha','senha2','crp','telefone',
-       'focos','valor_sessao','valor_avaliacao','apresentacao','disponibilidade'].forEach(function(id){
+       'abordagem','focos','valor_sessao','valor_avaliacao','apresentacao','disponibilidade'].forEach(function(id){
         var el = document.getElementById(id);
         if (el) el.value = '';
       });
       document.getElementById('uf').value = '';
-      document.getElementById('abordagem').value = '';
     } else {
       mostrarMsg(d.error || 'Erro ao enviar cadastro. Tente novamente.', 'err');
       btn.disabled = false; btn.textContent = 'Solicitar cadastro';
