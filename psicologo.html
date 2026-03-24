@@ -391,6 +391,33 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
 .btn-iniciar-sessao{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 14px;border-radius:8px;background:rgba(26,122,98,.1);border:1px solid rgba(26,122,98,.25);color:#1a7a62;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .18s}
 .btn-iniciar-sessao:hover{background:rgba(26,122,98,.18)}
 .btn-iniciar-sessao:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── TOGGLE VISIBILIDADE ────────────────────────────────────────── */
+.vis-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+.vis-toggle-label{font-size:.82rem;font-weight:400;color:var(--ink-2);line-height:1.4}
+.vis-switch{position:relative;width:42px;height:24px;flex-shrink:0}
+.vis-switch input{opacity:0;width:0;height:0;position:absolute}
+.vis-switch-track{
+  position:absolute;inset:0;border-radius:999px;
+  background:rgba(22,18,14,.15);
+  cursor:pointer;transition:background .22s;
+}
+.vis-switch input:checked + .vis-switch-track{background:var(--psi-acc)}
+.vis-switch-track::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;
+  background:#fff;transition:transform .22s;
+  box-shadow:0 1px 4px rgba(22,18,14,.2);
+}
+.vis-switch input:checked + .vis-switch-track::after{transform:translateX(18px)}
+.vis-aviso{
+  display:none;margin-top:12px;padding:10px 14px;
+  background:rgba(217,119,6,.08);
+  border:1px solid rgba(217,119,6,.22);
+  border-radius:10px;
+  font-size:.78rem;color:#92400e;font-weight:400;line-height:1.5;
+}
+.vis-aviso.show{display:block}
 </style>
 </head>
 <body>
@@ -503,7 +530,19 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
           <span class="status-dot"></span>
           Perfil ativo
         </div>
-        <p class="status-sub">Cadastro aprovado pela equipe. Seu perfil está visível para pacientes na plataforma.</p>
+        <p class="status-sub">Cadastro aprovado pela equipe.</p>
+
+        <!-- Toggle visibilidade pública -->
+        <div class="vis-toggle-row">
+          <span class="vis-toggle-label">Aparecer no site para novos pacientes</span>
+          <label class="vis-switch">
+            <input type="checkbox" id="chk-visivel" onchange="alterarVisibilidade(this.checked)"/>
+            <span class="vis-switch-track"></span>
+          </label>
+        </div>
+        <div class="vis-aviso" id="vis-aviso">
+          ⚠️ Seu perfil está oculto e não aparece para novos pacientes.
+        </div>
       </div>
 
     </div>
@@ -747,6 +786,9 @@ function renderPainel(p) {
     }
     if (sub) sub.textContent = 'Seu cadastro está sendo avaliado pela equipe. Você receberá um e-mail assim que for aprovado.';
   }
+
+  // Visibilidade pública
+  aplicarVisibilidade(p.visivel !== false);
 }
 
 // ── UPLOAD DE FOTO ────────────────────────────────────────────────
@@ -1143,6 +1185,40 @@ async function cancelarAgendamentoPsi(id, btn) {
   }
 }
 
+
+// ── VISIBILIDADE PÚBLICA ──────────────────────────────────────────
+function aplicarVisibilidade(visivel) {
+  const chk   = document.getElementById('chk-visivel');
+  const aviso = document.getElementById('vis-aviso');
+  if (chk)   chk.checked = !!visivel;
+  if (aviso) aviso.classList.toggle('show', !visivel);
+}
+
+async function alterarVisibilidade(visivel) {
+  const chk = document.getElementById('chk-visivel');
+  if (chk) chk.disabled = true;
+  try {
+    const data = await apiFetch('/api/psicologo/visibilidade', {
+      method: 'PATCH',
+      json: { visivel }
+    });
+    if (data.ok) {
+      aplicarVisibilidade(visivel);
+      mostrarToast(
+        visivel ? 'Perfil visível no site.' : 'Perfil ocultado. Você não aparece para novos pacientes.',
+        visivel ? 'success' : 'info'
+      );
+    } else {
+      mostrarToast(data.error || 'Erro ao alterar visibilidade.', 'error');
+      if (chk) chk.checked = !visivel; // revert
+    }
+  } catch(e) {
+    mostrarToast('Erro de conexão.', 'error');
+    if (chk) chk.checked = !visivel;
+  } finally {
+    if (chk) chk.disabled = false;
+  }
+}
 
 (function init() {
   const token = getToken();
