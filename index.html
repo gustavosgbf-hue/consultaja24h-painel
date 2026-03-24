@@ -2013,14 +2013,32 @@ try {
   if (!resp || !resp.ok) return;
 
   const m = resp.mensagem;
+  if (!m) return;
 
+  // 👇 MOSTRA A MENSAGEM NA TELA (ISSO QUE FALTAVA)
+  adicionarMsgMedico(
+    m.autor || 'medico',
+    m.texto || texto,
+    m.criado_em || new Date().toISOString(),
+    m.arquivo_url || null,
+    m.arquivo_tipo || null,
+    slotDono
+  );
+
+  adicionarMsgPip(
+    m.autor || 'medico',
+    m.texto || texto
+  );
+
+  // 👇 mantém isso
   if (m?.id && slots[slotDono]) {
     slots[slotDono].ultimaMsgId = m.id;
     ultimaMsgId = m.id;
+    slots[slotDono].chatHtml = document.getElementById('chat-medico-msgs').innerHTML;
   }
+
 } catch(e) {
-  chatRetryMs=Math.min(chatRetryMs*2,15000);
-}
+  chatRetryMs = Math.min(chatRetryMs * 2, 15000);
 }
 
 // -- FIM PIP -----------------------------------------------
@@ -2172,11 +2190,30 @@ try {
   if (!resp || !resp.ok) return;
 
   const m = resp.mensagem;
+  if (!m) return;
 
+  // 👇 ADICIONA ISSO
+  adicionarMsgMedico(
+    m.autor || 'medico',
+    m.texto || texto,
+    m.criado_em || new Date().toISOString(),
+    m.arquivo_url || null,
+    m.arquivo_tipo || null,
+    slotDono
+  );
+
+  adicionarMsgPip(
+    m.autor || 'medico',
+    m.texto || texto
+  );
+
+  // 👇 mantém isso
   if (m?.id && slots[slotDono]) {
     slots[slotDono].ultimaMsgId = m.id;
     ultimaMsgId = m.id;
+    slots[slotDono].chatHtml = document.getElementById('chat-medico-msgs').innerHTML;
   }
+
 } catch(e) {}
 }
 function linkificar(safe) {
