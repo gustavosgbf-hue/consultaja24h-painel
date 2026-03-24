@@ -953,6 +953,142 @@ document.getElementById('inp-senha').addEventListener('keydown', e => {
 document.getElementById('inp-email').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('inp-senha').focus();
 });
+
+<!--
+  ══════════════════════════════════════════════════════════════════
+  PATCH: widget de saldo financeiro para o painel do psicólogo
+  ONDE: inserir no HTML do painel após a seção de agendamentos
+  REQUER: rota GET /api/psicologo/saldo (ver PATCH_backend_saldo_psicologo.js)
+  ══════════════════════════════════════════════════════════════════
+-->
+
+<!-- ── SALDO FINANCEIRO ─────────────────────────────────────────── -->
+<style>
+.saldo-section { max-width: 860px; margin: 32px auto; padding: 0 20px; }
+.saldo-header  { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; color: #16120e; margin-bottom: 4px; }
+.saldo-sub     { font-size: .82rem; color: #8c857d; font-weight: 300; margin-bottom: 20px; }
+
+.saldo-cards   { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.saldo-card    { background: #fff; border: 1px solid rgba(22,18,14,.09); border-radius: 14px; padding: 18px 20px; box-shadow: 0 2px 12px rgba(22,18,14,.06); }
+.saldo-card-label { font-size: .67rem; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: #8c857d; margin-bottom: 8px; }
+.saldo-card-val   { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 500; color: #16120e; line-height: 1; }
+.saldo-card-val.verde   { color: #1a7a62; }
+.saldo-card-val.azul    { color: #26508e; }
+.saldo-card-val.laranja { color: #b45309; }
+.saldo-card-note { font-size: .68rem; color: #8c857d; margin-top: 4px; font-weight: 300; }
+
+.saldo-table-wrap { background: #fff; border: 1px solid rgba(22,18,14,.09); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(22,18,14,.06); }
+.saldo-table-head { padding: 14px 20px; border-bottom: 1px solid rgba(22,18,14,.07); display: flex; align-items: center; justify-content: space-between; }
+.saldo-table-title { font-size: .85rem; font-weight: 600; color: #16120e; }
+.saldo-table-info  { font-size: .75rem; color: #8c857d; }
+table.saldo-table  { width: 100%; border-collapse: collapse; font-size: .82rem; }
+table.saldo-table th { text-align: left; padding: 10px 20px; font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: #8c857d; border-bottom: 1px solid rgba(22,18,14,.07); background: #faf9f7; }
+table.saldo-table td { padding: 12px 20px; border-bottom: 1px solid rgba(22,18,14,.05); color: #443e38; vertical-align: middle; }
+table.saldo-table tr:last-child td { border-bottom: none; }
+table.saldo-table tr:hover td { background: #faf9f7; }
+.saldo-badge { display: inline-block; font-size: .68rem; font-weight: 500; padding: 2px 8px; border-radius: 6px; }
+.saldo-badge.confirmado { background: rgba(26,122,98,.1); color: #1a7a62; }
+.saldo-badge.pendente   { background: rgba(180,83,9,.1);  color: #b45309; }
+.saldo-badge.pix        { background: rgba(38,80,142,.08); color: #26508e; }
+.saldo-badge.cartao     { background: rgba(88,28,135,.08); color: #6b21a8; }
+.saldo-empty { text-align: center; padding: 40px 20px; color: #8c857d; font-size: .85rem; }
+@media(max-width:600px) {
+  .saldo-cards { grid-template-columns: 1fr 1fr; }
+  table.saldo-table th:nth-child(3),
+  table.saldo-table td:nth-child(3) { display: none; }
+}
+</style>
+
+<div class="saldo-section" id="saldo-section">
+  <div class="saldo-header">Financeiro</div>
+  <div class="saldo-sub">Valores dos atendimentos com pagamento confirmado · comissão da plataforma já descontada</div>
+
+  <!-- KPIs -->
+  <div class="saldo-cards" id="saldo-cards">
+    <div class="saldo-card"><div class="saldo-card-label">Total recebido (bruto)</div><div class="saldo-card-val" id="sk-bruto">—</div><div class="saldo-card-note">valor pago pelos pacientes</div></div>
+    <div class="saldo-card"><div class="saldo-card-label">Seu repasse líquido</div><div class="saldo-card-val verde" id="sk-repasse">—</div><div class="saldo-card-note" id="sk-comissao-note">após comissão da plataforma</div></div>
+    <div class="saldo-card"><div class="saldo-card-label">Já transferido</div><div class="saldo-card-val azul" id="sk-pago">—</div><div class="saldo-card-note">repasses realizados</div></div>
+    <div class="saldo-card"><div class="saldo-card-label">Aguardando repasse</div><div class="saldo-card-val laranja" id="sk-pendente">—</div><div class="saldo-card-note">a transferir</div></div>
+    <div class="saldo-card"><div class="saldo-card-label">Sessões confirmadas</div><div class="saldo-card-val" id="sk-sessoes">—</div><div class="saldo-card-note">com pagamento confirmado</div></div>
+  </div>
+
+  <!-- Tabela detalhada -->
+  <div class="saldo-table-wrap">
+    <div class="saldo-table-head">
+      <span class="saldo-table-title">Histórico de atendimentos</span>
+      <span class="saldo-table-info" id="sk-comissao-pct"></span>
+    </div>
+    <div id="saldo-table-body">
+      <div class="saldo-empty">Carregando…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function carregarSaldo() {
+  const API = window.API_BASE_URL || 'https://triagem-api.onrender.com';
+  const token = localStorage.getItem('psi_token'); // ajuste para o nome do token do psicólogo
+
+  function fmt(v) { return 'R$ ' + parseFloat(v||0).toFixed(2).replace('.',','); }
+  function fmtData(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleString('pt-BR', { timeZone: 'America/Fortaleza', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  fetch(API + '/api/psicologo/saldo', {
+    headers: { Authorization: 'Bearer ' + token }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.ok) { document.getElementById('saldo-table-body').innerHTML = `<div class="saldo-empty">Erro ao carregar: ${data.error || 'tente novamente'}</div>`; return; }
+
+    const r = data.resumo;
+    document.getElementById('sk-bruto').textContent     = fmt(r.total_bruto);
+    document.getElementById('sk-repasse').textContent   = fmt(r.total_repasse);
+    document.getElementById('sk-pago').textContent      = fmt(r.total_pago);
+    document.getElementById('sk-pendente').textContent  = fmt(r.total_pendente);
+    document.getElementById('sk-sessoes').textContent   = r.total_sessoes;
+    document.getElementById('sk-comissao-note').textContent = `após ${data.comissao_pct}% de comissão`;
+    document.getElementById('sk-comissao-pct').textContent  = `Comissão da plataforma: ${data.comissao_pct}%`;
+
+    if (!data.sessoes.length) {
+      document.getElementById('saldo-table-body').innerHTML = '<div class="saldo-empty">Nenhum atendimento com pagamento confirmado ainda.</div>';
+      return;
+    }
+
+    const linhas = data.sessoes.map(s => {
+      const metodo = s.pagamento_metodo === 'cartao'
+        ? '<span class="saldo-badge cartao">Cartão</span>'
+        : '<span class="saldo-badge pix">PIX</span>';
+      const repasse = s.valor_repasse ? fmt(s.valor_repasse) : '—';
+      const statusRep = s.pago_psicologo
+        ? '<span class="saldo-badge confirmado">✓ Transferido</span>'
+        : '<span class="saldo-badge pendente">Aguardando</span>';
+      return `<tr>
+        <td><strong>${s.paciente_nome || '—'}</strong><br><span style="font-size:.72rem;color:#8c857d">${fmtData(s.horario_agendado)}</span></td>
+        <td>${fmt(s.valor_cobrado)}<br><span style="font-size:.72rem;color:#1a7a62;font-weight:500">→ ${repasse} p/ você</span></td>
+        <td>${metodo}</td>
+        <td>${statusRep}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('saldo-table-body').innerHTML = `
+      <table class="saldo-table">
+        <thead><tr>
+          <th>Paciente / Data</th>
+          <th>Valor</th>
+          <th>Método</th>
+          <th>Repasse</th>
+        </tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>`;
+  })
+  .catch(() => {
+    document.getElementById('saldo-table-body').innerHTML = '<div class="saldo-empty">Erro de conexão ao carregar financeiro.</div>';
+  });
+})();
+</script>
+  
 </script>
 </body>
 </html>
