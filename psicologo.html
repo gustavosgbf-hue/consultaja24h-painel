@@ -374,6 +374,8 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
 .ag-psi-badge.confirmado{background:rgba(26,122,98,.1);color:#1a7a62}
 .ag-psi-badge.pendente{background:rgba(217,119,6,.1);color:#d97706}
 .ag-psi-badge.cancelado{background:rgba(185,28,28,.08);color:#b91c1c}
+.btn-meet-psi{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;background:rgba(38,80,142,.1);border:1px solid rgba(38,80,142,.2);color:var(--psi-acc);font-size:.75rem;font-weight:600;font-family:'DM Sans',sans-serif;text-decoration:none;margin-top:8px;transition:background var(--ease)}
+.btn-meet-psi:hover{background:rgba(38,80,142,.18)}
 .btn-cancelar-psi{margin-top:6px;padding:5px 12px;border-radius:7px;background:transparent;border:1px solid rgba(185,28,28,.22);color:#b91c1c;font-family:inherit;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .18s}
 .btn-cancelar-psi:hover{background:rgba(185,28,28,.07);border-color:rgba(185,28,28,.4)}
 .btn-cancelar-psi:disabled{opacity:.5;cursor:not-allowed}
@@ -478,6 +480,28 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           Editar disponibilidade
         </a>
+      </div>
+
+      <!-- SALA DO GOOGLE MEET -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-label">Videochamada</div>
+        <div class="card-title">Sala permanente</div>
+        <p style="font-size:.82rem;color:var(--ink-3);font-weight:300;margin-bottom:14px;line-height:1.6">
+          Cole o link da sua sala fixa do Google Meet. Ele será exibido ao paciente no dia da sessão.
+        </p>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="url" id="inp-sala-meet" placeholder="https://meet.google.com/xxx-xxxx-xxx"
+            style="flex:1;padding:10px 13px;border-radius:10px;border:1px solid var(--line-mid);background:#faf9f7;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color var(--ease)"
+            onfocus="this.style.borderColor='var(--psi-acc)'" onblur="this.style.borderColor=''"
+          />
+          <button onclick="salvarSalaMeet()" id="btn-sala-meet"
+            style="padding:10px 18px;border-radius:10px;border:none;background:var(--psi-acc);color:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            Salvar link
+          </button>
+        </div>
+        <div id="sala-meet-msg" style="font-size:.78rem;margin-top:8px;display:none"></div>
       </div>
 
       <!-- STATUS NA PLATAFORMA -->
@@ -669,6 +693,9 @@ function fazerLogout() {
 
 function renderPainel(p) {
   if (!p) return;
+  // Preenche campo sala meet
+  const inpMeet = document.getElementById('inp-sala-meet');
+  if (inpMeet) inpMeet.value = p.sala_meet || '';
 
   // Nav
   document.getElementById('nav-user-name').innerHTML =
@@ -990,6 +1017,12 @@ async function carregarAgendamentosPsi() {
       const cancelBtn = podeCancelar
         ? `<button class="btn-cancelar-psi" onclick="cancelarAgendamentoPsi(${ag.id}, this)">Cancelar</button>`
         : '';
+      const meetBtn = (status === 'confirmado' && ag.sala_meet)
+        ? `<a href="${escHtml(ag.sala_meet)}" target="_blank" rel="noopener" class="btn-meet-psi">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            Entrar na sala
+          </a>`
+        : '';
       const valor = ag.valor_cobrado
         ? ' · R$ ' + parseFloat(ag.valor_cobrado).toFixed(2).replace('.', ',')
         : '';
@@ -1003,6 +1036,7 @@ async function carregarAgendamentosPsi() {
           <div class="ag-psi-nome">${escHtml(ag.paciente_nome)}</div>
           <div class="ag-psi-meta">${escHtml(tipo)} · ${data_hora}${escHtml(valor)}</div>
           <span class="ag-psi-badge ${status}">${statusLabel}</span>
+          ${meetBtn}
           ${cancelBtn}
         </div>
       </div>`;
@@ -1036,6 +1070,27 @@ async function cancelarAgendamentoPsi(id, btn) {
     mostrarToast('Erro de conexão. Tente novamente.', 'error');
     btn.disabled = false;
     btn.textContent = 'Cancelar';
+  }
+}
+
+async function salvarSalaMeet() {
+  const inp = document.getElementById('inp-sala-meet');
+  const btn = document.getElementById('btn-sala-meet');
+  const msg = document.getElementById('sala-meet-msg');
+  const link = inp.value.trim();
+  msg.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Salvando…';
+  try {
+    const d = await apiFetch('/api/psicologo/sala-meet', { method: 'PATCH', json: { sala_meet: link } });
+    if (!d.ok) throw new Error(d.error || 'Erro ao salvar');
+    msg.textContent = link ? '✓ Link salvo. Pacientes verão o link no dia da sessão.' : '✓ Link removido.';
+    msg.style.cssText = 'display:block;color:var(--psi-acc);font-size:.78rem;margin-top:8px';
+    mostrarToast('Sala do Meet atualizada.', 'success');
+  } catch(e) {
+    msg.textContent = e.message;
+    msg.style.cssText = 'display:block;color:#b91c1c;font-size:.78rem;margin-top:8px';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Salvar link';
   }
 }
 
