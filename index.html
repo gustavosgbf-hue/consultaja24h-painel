@@ -2012,17 +2012,11 @@ try {
 
   if (!resp || !resp.ok) return;
 
-  const m = resp.mensagem || {
-    autor: 'medico',
-    texto,
-    criado_em: new Date().toISOString()
-  };
+  const m = resp.mensagem;
 
-  adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
-  adicionarMsgPip(m.autor, m.texto);
-
-  if (m.id && slots[slotDono]) {
-    slots[slotDono].ultimaMsgId = Math.max(slots[slotDono].ultimaMsgId || 0, m.id);
+  if (m?.id && slots[slotDono]) {
+    slots[slotDono].ultimaMsgId = m.id;
+    ultimaMsgId = m.id;
   }
 } catch(e) {
   chatRetryMs=Math.min(chatRetryMs*2,15000);
@@ -2177,17 +2171,11 @@ try {
 
   if (!resp || !resp.ok) return;
 
-  const m = resp.mensagem || {
-    autor: 'medico',
-    texto,
-    criado_em: new Date().toISOString()
-  };
+  const m = resp.mensagem;
 
-  adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
-  adicionarMsgPip(m.autor, m.texto);
-
-  if (m.id && slots[slotDono]) {
-    slots[slotDono].ultimaMsgId = Math.max(slots[slotDono].ultimaMsgId || 0, m.id);
+  if (m?.id && slots[slotDono]) {
+    slots[slotDono].ultimaMsgId = m.id;
+    ultimaMsgId = m.id;
   }
 } catch(e) {}
 }
