@@ -360,6 +360,23 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
 .disp-dia-nome{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--psi-acc);margin-bottom:5px}
 .disp-horas-wrap{display:flex;flex-wrap:wrap;gap:5px}
 .disp-hora-tag{font-size:.75rem;font-weight:400;color:var(--ink-2);background:var(--psi);border:1px solid rgba(38,80,142,.12);padding:3px 10px;border-radius:6px}
+
+/* ── AGENDAMENTOS LIST ───────────────────────────────────────────── */
+.ag-psi-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.ag-psi-item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;position:relative}
+.ag-psi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ag-psi-dot.confirmado{background:#1a7a62}
+.ag-psi-dot.pendente{background:#d97706}
+.ag-psi-dot.cancelado{background:#b91c1c;opacity:.5}
+.ag-psi-nome{font-size:.9rem;font-weight:500;color:var(--ink)}
+.ag-psi-meta{font-size:.76rem;color:var(--ink-3);font-weight:300;margin-top:2px}
+.ag-psi-badge{display:inline-block;font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-top:4px}
+.ag-psi-badge.confirmado{background:rgba(26,122,98,.1);color:#1a7a62}
+.ag-psi-badge.pendente{background:rgba(217,119,6,.1);color:#d97706}
+.ag-psi-badge.cancelado{background:rgba(185,28,28,.08);color:#b91c1c}
+.btn-cancelar-psi{margin-top:6px;padding:5px 12px;border-radius:7px;background:transparent;border:1px solid rgba(185,28,28,.22);color:#b91c1c;font-family:inherit;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .18s}
+.btn-cancelar-psi:hover{background:rgba(185,28,28,.07);border-color:rgba(185,28,28,.4)}
+.btn-cancelar-psi:disabled{opacity:.5;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -424,6 +441,7 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
           Nenhum atendimento agendado no momento.<br>
           <span style="font-size:.78rem;opacity:.7">Os próximos agendamentos aparecerão aqui assim que forem marcados.</span>
         </div>
+        <div class="ag-psi-list" id="ag-psi-list" style="display:none"></div>
       </div>
 
       <!-- PERFIL PROFISSIONAL -->
@@ -637,6 +655,7 @@ function entrarApp(psi) {
   document.getElementById('screen-login').style.display = 'none';
   document.getElementById('screen-app').style.display = 'block';
   renderPainel(psi);
+  carregarAgendamentosPsi();
 }
 
 function fazerLogout() {
@@ -938,6 +957,88 @@ async function salvarDisponibilidade() {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────
+// ── AGENDAMENTOS DO PSICÓLOGO ─────────────────────────────────────
+async function carregarAgendamentosPsi() {
+  try {
+    const data = await apiFetch('/api/psicologo/agendamentos');
+    const empty = document.getElementById('atendimentos-empty');
+    const lista = document.getElementById('ag-psi-list');
+    if (!data.ok || !data.agendamentos || data.agendamentos.length === 0) {
+      empty.style.display = 'block';
+      lista.style.display = 'none';
+      return;
+    }
+    // Mostra só futuros + pendentes recentes (últimos 7 dias passados)
+    const limite = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const filtrados = data.agendamentos.filter(ag =>
+      new Date(ag.horario_agendado) >= limite
+    );
+    if (filtrados.length === 0) {
+      empty.style.display = 'block';
+      lista.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+    lista.style.display = 'flex';
+    lista.innerHTML = filtrados.map(ag => {
+      const status = ag.pagamento_status === 'confirmado' ? 'confirmado'
+                   : ag.status === 'cancelado'            ? 'cancelado'
+                   : 'pendente';
+      const statusLabel = { confirmado: 'Confirmado', pendente: 'Aguardando pagamento', cancelado: 'Cancelado' }[status];
+      const tipo = ag.tipo_consulta === 'avaliacao' ? 'Avaliação psicológica' : 'Psicoterapia';
+      const podeCancelar = status !== 'cancelado' && ag.pagamento_status !== 'confirmado';
+      const cancelBtn = podeCancelar
+        ? `<button class="btn-cancelar-psi" onclick="cancelarAgendamentoPsi(${ag.id}, this)">Cancelar</button>`
+        : '';
+      const valor = ag.valor_cobrado
+        ? ' · R$ ' + parseFloat(ag.valor_cobrado).toFixed(2).replace('.', ',')
+        : '';
+      const data_hora = new Date(ag.horario_agendado).toLocaleString('pt-BR', {
+        timeZone: 'America/Fortaleza', day: '2-digit', month: '2-digit',
+        year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      return `<div class="ag-psi-item" id="ag-psi-item-${ag.id}">
+        <div class="ag-psi-dot ${status}"></div>
+        <div style="flex:1">
+          <div class="ag-psi-nome">${escHtml(ag.paciente_nome)}</div>
+          <div class="ag-psi-meta">${escHtml(tipo)} · ${data_hora}${escHtml(valor)}</div>
+          <span class="ag-psi-badge ${status}">${statusLabel}</span>
+          ${cancelBtn}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('[AG-PSI] Erro ao carregar agendamentos:', e.message);
+  }
+}
+
+async function cancelarAgendamentoPsi(id, btn) {
+  if (!confirm('Cancelar este agendamento? O horário será liberado imediatamente na sua agenda.')) return;
+  btn.disabled = true;
+  btn.textContent = 'Cancelando…';
+  try {
+    const data = await apiFetch(`/api/psicologo/agendamento/${id}`, { method: 'DELETE' });
+    if (data.ok) {
+      const item = document.getElementById(`ag-psi-item-${id}`);
+      if (item) {
+        item.querySelector('.ag-psi-dot').className = 'ag-psi-dot cancelado';
+        item.querySelector('.ag-psi-badge').className = 'ag-psi-badge cancelado';
+        item.querySelector('.ag-psi-badge').textContent = 'Cancelado';
+        btn.remove();
+      }
+      mostrarToast('Agendamento cancelado. Horário liberado.', 'success');
+    } else {
+      mostrarToast(data.error || 'Erro ao cancelar.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Cancelar';
+    }
+  } catch(e) {
+    mostrarToast('Erro de conexão. Tente novamente.', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Cancelar';
+  }
+}
+
 (function init() {
   const token = getToken();
   if (!token) return;
