@@ -1054,14 +1054,11 @@ document.getElementById('inp-senha').addEventListener('keydown', e => {
 document.getElementById('inp-email').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('inp-senha').focus();
 });
+</script>
 
-<!--
-  ══════════════════════════════════════════════════════════════════
-  PATCH: widget de saldo financeiro para o painel do psicólogo
-  ONDE: inserir no HTML do painel após a seção de agendamentos
-  REQUER: rota GET /api/psicologo/saldo (ver PATCH_backend_saldo_psicologo.js)
-  ══════════════════════════════════════════════════════════════════
--->
+<!-- ── PATCH: widget de saldo financeiro ─────────────────────────
+     REQUER: rota GET /api/psicologo/saldo
+  ─────────────────────────────────────────────────────────────── -->
 
 <!-- ── SALDO FINANCEIRO ─────────────────────────────────────────── -->
 <style>
@@ -1188,8 +1185,6 @@ table.saldo-table tr:hover td { background: #faf9f7; }
     document.getElementById('saldo-table-body').innerHTML = '<div class="saldo-empty">Erro de conexão ao carregar financeiro.</div>';
   });
 })();
-</script>
-  
 </script>
 </body>
 </html>
