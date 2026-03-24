@@ -379,6 +379,18 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
 .btn-cancelar-psi{margin-top:6px;padding:5px 12px;border-radius:7px;background:transparent;border:1px solid rgba(185,28,28,.22);color:#b91c1c;font-family:inherit;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .18s}
 .btn-cancelar-psi:hover{background:rgba(185,28,28,.07);border-color:rgba(185,28,28,.4)}
 .btn-cancelar-psi:disabled{opacity:.5;cursor:not-allowed}
+.link-sessao-wrap{display:flex;gap:6px;align-items:center;margin-top:8px}
+.link-sessao-wrap input{flex:1;padding:7px 11px;border-radius:8px;border:1px solid var(--line-mid);background:#faf9f7;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.78rem;outline:none;transition:border-color var(--ease)}
+.link-sessao-wrap input:focus{border-color:var(--psi-acc);background:#fff}
+.btn-link-sessao{padding:7px 13px;border-radius:8px;border:none;background:var(--psi-acc);color:#fff;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.btn-link-sessao:hover{opacity:.85}
+.btn-link-sessao:disabled{opacity:.5;cursor:not-allowed}
+.link-sessao-saved{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:.76rem;color:#1a7a62;font-weight:400}
+.link-sessao-saved a{color:var(--psi-acc);text-decoration:underline;font-size:.76rem;word-break:break-all}
+.link-sessao-err{font-size:.73rem;color:#b91c1c;margin-top:4px;display:none}
+.btn-iniciar-sessao{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 14px;border-radius:8px;background:rgba(26,122,98,.1);border:1px solid rgba(26,122,98,.25);color:#1a7a62;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .18s}
+.btn-iniciar-sessao:hover{background:rgba(26,122,98,.18)}
+.btn-iniciar-sessao:disabled{opacity:.5;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -480,28 +492,6 @@ body{font-family:'DM Sans',sans-serif;background:#f0ede8;color:#16120e;-webkit-f
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           Editar disponibilidade
         </a>
-      </div>
-
-      <!-- SALA DO GOOGLE MEET -->
-      <div class="card">
-        <div class="card-accent"></div>
-        <div class="card-label">Videochamada</div>
-        <div class="card-title">Sala permanente</div>
-        <p style="font-size:.82rem;color:var(--ink-3);font-weight:300;margin-bottom:14px;line-height:1.6">
-          Cole o link da sua sala fixa do Google Meet. Ele será exibido ao paciente no dia da sessão.
-        </p>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="url" id="inp-sala-meet" placeholder="https://meet.google.com/xxx-xxxx-xxx"
-            style="flex:1;padding:10px 13px;border-radius:10px;border:1px solid var(--line-mid);background:#faf9f7;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color var(--ease)"
-            onfocus="this.style.borderColor='var(--psi-acc)'" onblur="this.style.borderColor=''"
-          />
-          <button onclick="salvarSalaMeet()" id="btn-sala-meet"
-            style="padding:10px 18px;border-radius:10px;border:none;background:var(--psi-acc);color:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s"
-            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-            Salvar link
-          </button>
-        </div>
-        <div id="sala-meet-msg" style="font-size:.78rem;margin-top:8px;display:none"></div>
       </div>
 
       <!-- STATUS NA PLATAFORMA -->
@@ -693,9 +683,6 @@ function fazerLogout() {
 
 function renderPainel(p) {
   if (!p) return;
-  // Preenche campo sala meet
-  const inpMeet = document.getElementById('inp-sala-meet');
-  if (inpMeet) inpMeet.value = p.sala_meet || '';
 
   // Nav
   document.getElementById('nav-user-name').innerHTML =
@@ -1017,12 +1004,6 @@ async function carregarAgendamentosPsi() {
       const cancelBtn = podeCancelar
         ? `<button class="btn-cancelar-psi" onclick="cancelarAgendamentoPsi(${ag.id}, this)">Cancelar</button>`
         : '';
-      const meetBtn = (status === 'confirmado' && ag.sala_meet)
-        ? `<a href="${escHtml(ag.sala_meet)}" target="_blank" rel="noopener" class="btn-meet-psi">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            Entrar na sala
-          </a>`
-        : '';
       const valor = ag.valor_cobrado
         ? ' · R$ ' + parseFloat(ag.valor_cobrado).toFixed(2).replace('.', ',')
         : '';
@@ -1030,19 +1011,108 @@ async function carregarAgendamentosPsi() {
         timeZone: 'America/Fortaleza', day: '2-digit', month: '2-digit',
         year: 'numeric', hour: '2-digit', minute: '2-digit'
       });
+
+      // ── Bloco de link da sessão (apenas para confirmados)
+      let linkBlock = '';
+      if (status === 'confirmado') {
+        if (ag.link_sessao) {
+          // Link já cadastrado: exibe com botão "Iniciar sessão"
+          linkBlock = `
+            <div class="link-sessao-saved">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Link: <a href="${escHtml(ag.link_sessao)}" target="_blank" rel="noopener">${escHtml(ag.link_sessao)}</a>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+              <button class="btn-iniciar-sessao" onclick="iniciarSessaoPsi(${ag.id}, this)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                ${ag.iniciado_em ? 'Retomar sessão' : 'Iniciar sessão'}
+              </button>
+              <button class="btn-ghost" style="margin-top:0;padding:6px 12px;font-size:.72rem" onclick="mostrarEditLink(${ag.id})">Alterar link</button>
+            </div>
+            <div id="link-sessao-edit-${ag.id}" style="display:none;margin-top:8px">
+              <div class="link-sessao-wrap">
+                <input type="url" id="inp-link-${ag.id}" placeholder="https://meet.google.com/xxx-xxxx-xxx" value="${escHtml(ag.link_sessao)}"/>
+                <button class="btn-link-sessao" onclick="salvarLinkSessao(${ag.id})">Salvar</button>
+              </div>
+              <div class="link-sessao-err" id="link-err-${ag.id}"></div>
+            </div>`;
+        } else {
+          // Sem link ainda: exibe campo para informar
+          linkBlock = `
+            <div style="font-size:.75rem;color:var(--ink-3);margin-top:8px">🔗 Informe o link desta sessão:</div>
+            <div class="link-sessao-wrap" style="margin-top:4px">
+              <input type="url" id="inp-link-${ag.id}" placeholder="https://meet.google.com/xxx-xxxx-xxx"/>
+              <button class="btn-link-sessao" onclick="salvarLinkSessao(${ag.id})">Salvar link</button>
+            </div>
+            <div class="link-sessao-err" id="link-err-${ag.id}"></div>`;
+        }
+      }
+
       return `<div class="ag-psi-item" id="ag-psi-item-${ag.id}">
         <div class="ag-psi-dot ${status}"></div>
         <div style="flex:1">
           <div class="ag-psi-nome">${escHtml(ag.paciente_nome)}</div>
           <div class="ag-psi-meta">${escHtml(tipo)} · ${data_hora}${escHtml(valor)}</div>
           <span class="ag-psi-badge ${status}">${statusLabel}</span>
-          ${meetBtn}
+          ${linkBlock}
           ${cancelBtn}
         </div>
       </div>`;
     }).join('');
   } catch(e) {
     console.error('[AG-PSI] Erro ao carregar agendamentos:', e.message);
+  }
+}
+
+function mostrarEditLink(agId) {
+  const el = document.getElementById('link-sessao-edit-' + agId);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+async function salvarLinkSessao(agId) {
+  const inp = document.getElementById('inp-link-' + agId);
+  const err = document.getElementById('link-err-' + agId);
+  if (!inp) return;
+  const link = inp.value.trim();
+  err.style.display = 'none';
+  if (!link) { err.textContent = 'Informe o link da sessão.'; err.style.display = 'block'; return; }
+  if (!/^https?:\/\//i.test(link)) { err.textContent = 'Link inválido. Use https://...'; err.style.display = 'block'; return; }
+
+  inp.disabled = true;
+  const btn = inp.nextElementSibling;
+  const btnOrig = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Salvando…';
+
+  try {
+    const d = await apiFetch(`/api/psicologo/sessao/${agId}/link`, {
+      method: 'PATCH',
+      json: { link_sessao: link }
+    });
+    if (!d.ok) throw new Error(d.error || 'Erro ao salvar link');
+    mostrarToast('Link da sessão salvo com sucesso.', 'success');
+    // Recarrega a lista para refletir o novo link
+    await carregarAgendamentosPsi();
+  } catch(e) {
+    err.textContent = e.message;
+    err.style.display = 'block';
+    inp.disabled = false;
+    btn.disabled = false; btn.textContent = btnOrig;
+  }
+}
+
+async function iniciarSessaoPsi(agId, btn) {
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Abrindo…';
+  try {
+    const d = await apiFetch(`/api/psicologo/sessao/${agId}/iniciar`, { method: 'POST' });
+    if (!d.ok) throw new Error(d.error || 'Erro ao iniciar sessão');
+    window.open(d.link_meet, '_blank', 'noopener');
+    mostrarToast('Sessão iniciada. Abrindo Google Meet…', 'success');
+    await carregarAgendamentosPsi();
+  } catch(e) {
+    mostrarToast(e.message, 'error');
+    btn.disabled = false; btn.textContent = orig;
   }
 }
 
@@ -1073,26 +1143,6 @@ async function cancelarAgendamentoPsi(id, btn) {
   }
 }
 
-async function salvarSalaMeet() {
-  const inp = document.getElementById('inp-sala-meet');
-  const btn = document.getElementById('btn-sala-meet');
-  const msg = document.getElementById('sala-meet-msg');
-  const link = inp.value.trim();
-  msg.style.display = 'none';
-  btn.disabled = true; btn.textContent = 'Salvando…';
-  try {
-    const d = await apiFetch('/api/psicologo/sala-meet', { method: 'PATCH', json: { sala_meet: link } });
-    if (!d.ok) throw new Error(d.error || 'Erro ao salvar');
-    msg.textContent = link ? '✓ Link salvo. Pacientes verão o link no dia da sessão.' : '✓ Link removido.';
-    msg.style.cssText = 'display:block;color:var(--psi-acc);font-size:.78rem;margin-top:8px';
-    mostrarToast('Sala do Meet atualizada.', 'success');
-  } catch(e) {
-    msg.textContent = e.message;
-    msg.style.cssText = 'display:block;color:#b91c1c;font-size:.78rem;margin-top:8px';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Salvar link';
-  }
-}
 
 (function init() {
   const token = getToken();
