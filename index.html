@@ -2304,6 +2304,12 @@ if (data.ok && data.mensagem) {
 const m = data.mensagem;
 adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
 adicionarMsgPip(m.autor, m.texto);
+if (m.id) {
+  if (slots[slotDono]) slots[slotDono].ultimaMsgId = m.id;
+  ultimaMsgId = m.id;
+  const cont = document.getElementById('chat-medico-msgs');
+  if (cont && slotDono === slotAtivo && slots[slotDono]) slots[slotDono].chatHtml = cont.innerHTML;
+}
 } else {
 mostrarToast('Erro ao enviar arquivo', 'error');
 }
