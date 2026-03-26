@@ -475,14 +475,14 @@ body.memed-aberto{overflow:hidden}
 	        </div>
         <div class="admin-create">
           <div class="admin-grid">
-            <input class="admin-input" id="admin-new-nome" placeholder="Nome completo"/>
+            <input class="admin-input" id="admin-new-nome" placeholder="Nome"/>
             <input class="admin-input" id="admin-new-nome-exibicao" placeholder="Nome de exibição"/>
-            <input class="admin-input" id="admin-new-email" placeholder="E-mail (para recuperação de senha)"/>
-            <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade (ex: endocrinologia)"/>
+            <input class="admin-input" id="admin-new-email" placeholder="E-mail"/>
+            <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade"/>
             <input class="admin-input" id="admin-new-crm" placeholder="CRM"/>
             <input class="admin-input" id="admin-new-uf" placeholder="UF" maxlength="2"/>
             <input class="admin-input" id="admin-new-telefone" placeholder="Telefone (opcional)"/>
-            <input class="admin-input" id="admin-new-valor" type="number" step="0.01" min="0" placeholder="Valor consulta (ex: 150.00)"/>
+            <input class="admin-input" id="admin-new-senha" type="password" placeholder="Senha inicial"/>
           </div>
 	          <div style="margin-top:8px">
 	            <button class="btn-admin" onclick="adminCriarEspecialista()">Criar especialista</button>
@@ -728,6 +728,7 @@ function renderAdminEspecialistas(){
       <label><input type="checkbox" ${m.ativo?'checked':''} onchange="adminAtualizarCampo(${i},'ativo',this.checked)"/> Ativo</label>
       <label><input type="checkbox" ${m.visivel?'checked':''} onchange="adminAtualizarCampo(${i},'visivel',this.checked)"/> Visível</label>
       <button class="btn-admin" onclick="adminSalvarEspecialista(${i})">Salvar mudanças</button>
+      <button class="btn-admin" style="background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:#f87171" onclick="adminExcluirEspecialista(${i})">Excluir</button>
     </div>
     <div class="admin-disp">
       <div class="disp-row">
@@ -776,10 +777,10 @@ async function adminCriarEspecialista(){
   const crm=(document.getElementById('admin-new-crm')?.value||'').trim();
   const uf=(document.getElementById('admin-new-uf')?.value||'').trim().toUpperCase();
   const telefone=(document.getElementById('admin-new-telefone')?.value||'').trim();
-  const valor_consulta=(document.getElementById('admin-new-valor')?.value||'').trim();
+  const senha=(document.getElementById('admin-new-senha')?.value||'').trim();
   const nome_exibicao=nome_exibicao_raw||nome;
-  if(!nome||!crm||!uf||!especialidade){mostrarToast('Preencha nome, especialidade, CRM e UF.','error');return;}
-  try{const data=await adminFetch('/api/admin/especialista/criar',{method:'POST',json:{nome,nome_exibicao,email,especialidade,crm,uf,telefone,valor_consulta:valor_consulta||null}});if(data.ok===false)throw new Error(data.error||'Erro ao criar especialista.');mostrarToast('Especialista criado.','success');['admin-new-nome','admin-new-nome-exibicao','admin-new-email','admin-new-especialidade','admin-new-crm','admin-new-uf','admin-new-telefone','admin-new-valor'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
+  if(!nome||!email||!senha||!crm||!uf){mostrarToast('Preencha nome, e-mail, senha, CRM e UF.','error');return;}
+  try{const data=await adminFetch('/api/admin/especialista/criar',{method:'POST',json:{nome,nome_exibicao,email,senha,especialidade,crm,uf,telefone}});if(data.ok===false)throw new Error(data.error||'Erro ao criar especialista.');mostrarToast('Especialista criado.','success');['admin-new-nome','admin-new-nome-exibicao','admin-new-email','admin-new-especialidade','admin-new-crm','admin-new-uf','admin-new-telefone','admin-new-senha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
 }
 async function adminSalvarEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
@@ -807,6 +808,16 @@ async function adminSalvarDisponibilidade(i){
   try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{disponibilidade:Array.isArray(m.disponibilidade)?m.disponibilidade:[]}});if(data.ok===false)throw new Error(data.error||'Erro ao salvar disponibilidade.');mostrarToast('Disponibilidade do especialista salva.','success');}catch(e){mostrarToast(e.message||'Erro ao salvar disponibilidade.','error');}
 }
 
+async function adminExcluirEspecialista(i){
+  const m=adminEspecialistas[i];if(!m||!m.id)return;
+  if(!confirm(`Excluir "${m.nome||m.nome_exibicao||'este especialista'}"? Esta ação não pode ser desfeita.`))return;
+  try{
+    const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'DELETE'});
+    if(data.ok===false)throw new Error(data.error||'Erro ao excluir.');
+    mostrarToast('Especialista excluído.','success');
+    await carregarEspecialistasAdmin(false);
+  }catch(e){mostrarToast(e.message||'Erro ao excluir especialista.','error');}
+}
 function normalizarDisponibilidade(arr){
   if(!Array.isArray(arr))return[];
   return arr.filter(it=>it&&typeof it==='object').map(it=>{
