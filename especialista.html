@@ -114,6 +114,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .agenda-header{padding:22px 16px 16px;border-bottom:1px solid var(--line);flex-shrink:0}
 .agenda-header-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:13px}
 .agenda-header-title{font-size:.64rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(156,163,175,.45)}
+.agenda-admin-btn{padding:5px 9px;border-radius:7px;border:1px solid rgba(96,165,250,.22);background:rgba(96,165,250,.08);color:rgba(147,197,253,.85);font-family:'Outfit',sans-serif;font-size:.66rem;cursor:pointer}
+.agenda-admin-btn.on{border-color:rgba(34,197,94,.26);background:rgba(34,197,94,.1);color:rgba(134,239,172,.9)}
 .agenda-count-pill{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:rgba(156,163,175,.4);background:rgba(255,255,255,.04);padding:2px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.05)}
 /* Filtros */
 .agenda-tabs{display:flex;gap:2px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);border-radius:var(--r-sm);padding:3px}
@@ -396,6 +398,7 @@ body.memed-aberto{overflow:hidden}
     <div class="field"><label>E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
     <div class="field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/></div>
     <button class="btn-login" id="btn-login">Entrar no painel</button>
+    <div style="text-align:center;margin-top:8px"><button class="login-link" onclick="abrirAdminModal()">Sou administrador</button></div>
     <div style="text-align:right;margin-top:8px"><button class="login-link" onclick="abrirRecuperacao()">Esqueci minha senha</button></div>
     <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
     <div id="recovery-section" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:16px">
@@ -426,10 +429,13 @@ body.memed-aberto{overflow:hidden}
     <!-- Agenda -->
     <aside class="agenda-col">
       <div class="agenda-header">
-        <div class="agenda-header-row">
-          <span class="agenda-header-title">Agenda</span>
-          <span class="agenda-count-pill" id="agenda-count">0 consultas</span>
-        </div>
+	        <div class="agenda-header-row">
+	          <span class="agenda-header-title">Agenda</span>
+	          <div style="display:flex;align-items:center;gap:6px">
+	            <button class="agenda-admin-btn" id="btn-admin-access-inline" onclick="abrirAdminModal()">Admin</button>
+	            <span class="agenda-count-pill" id="agenda-count">0 consultas</span>
+	          </div>
+	        </div>
         <div class="agenda-tabs">
           <button class="agenda-tab active" onclick="filtrarAgenda('hoje')" id="tab-hoje">Hoje</button>
           <button class="agenda-tab" onclick="filtrarAgenda('proximas')" id="tab-proximas">Próximas</button>
@@ -467,13 +473,17 @@ body.memed-aberto{overflow:hidden}
 	            <button class="btn-admin" onclick="carregarEspecialistasAdmin()">Carregar especialistas</button>
 	          </div>
 	        </div>
-	        <div class="admin-create">
-	          <div class="admin-grid">
-	            <input class="admin-input" id="admin-new-nome" placeholder="Nome"/>
-	            <input class="admin-input" id="admin-new-email" placeholder="E-mail"/>
-	            <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade"/>
-	            <input class="admin-input" id="admin-new-senha" type="password" placeholder="Senha inicial"/>
-	          </div>
+        <div class="admin-create">
+          <div class="admin-grid">
+            <input class="admin-input" id="admin-new-nome" placeholder="Nome"/>
+            <input class="admin-input" id="admin-new-nome-exibicao" placeholder="Nome de exibição"/>
+            <input class="admin-input" id="admin-new-email" placeholder="E-mail"/>
+            <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade"/>
+            <input class="admin-input" id="admin-new-crm" placeholder="CRM"/>
+            <input class="admin-input" id="admin-new-uf" placeholder="UF" maxlength="2"/>
+            <input class="admin-input" id="admin-new-telefone" placeholder="Telefone (opcional)"/>
+            <input class="admin-input" id="admin-new-senha" type="password" placeholder="Senha inicial"/>
+          </div>
 	          <div style="margin-top:8px">
 	            <button class="btn-admin" onclick="adminCriarEspecialista()">Criar especialista</button>
 	          </div>
@@ -679,6 +689,7 @@ function setAdminMode(on){
   isAdmin=!!on;
   const panel=document.getElementById('admin-panel');if(panel)panel.style.display=isAdmin?'':'none';
   const btn=document.getElementById('btn-admin-access');if(btn){btn.classList.toggle('on',isAdmin);btn.textContent=isAdmin?'Admin ✓':'Admin';}
+  const btnInline=document.getElementById('btn-admin-access-inline');if(btnInline){btnInline.classList.toggle('on',isAdmin);btnInline.textContent=isAdmin?'Admin ✓':'Admin';}
 }
 async function adminFetch(path,opts={}){
   if(!adminPassword)throw new Error('Senha admin não informada.');
@@ -752,18 +763,23 @@ async function entrarComoAdmin(){
   btn.disabled=true;btn.textContent='Entrando…';
   const prev=adminPassword;adminPassword=senha;
   const ok=await carregarEspecialistasAdmin(false);
-  if(ok){localStorage.setItem('adminPassword',adminPassword);fecharModal('modal-admin-login');mostrarToast('Admin liberado.','success');}
+  if(ok){localStorage.setItem('adminPassword',adminPassword);if(document.getElementById('screen-app').style.display!=='block')entrarApp();setAdminMode(true);renderAdminEspecialistas();fecharModal('modal-admin-login');mostrarToast('Admin liberado.','success');}
   else{adminPassword=prev||'';}
   btn.disabled=false;btn.textContent='Entrar como admin';
 }
 async function adminCriarEspecialista(){
   if(!isAdmin)return;
   const nome=(document.getElementById('admin-new-nome')?.value||'').trim();
+  const nome_exibicao_raw=(document.getElementById('admin-new-nome-exibicao')?.value||'').trim();
   const email=(document.getElementById('admin-new-email')?.value||'').trim();
   const especialidade=(document.getElementById('admin-new-especialidade')?.value||'').trim();
+  const crm=(document.getElementById('admin-new-crm')?.value||'').trim();
+  const uf=(document.getElementById('admin-new-uf')?.value||'').trim().toUpperCase();
+  const telefone=(document.getElementById('admin-new-telefone')?.value||'').trim();
   const senha=(document.getElementById('admin-new-senha')?.value||'').trim();
-  if(!nome||!email||!senha){mostrarToast('Preencha nome, e-mail e senha.','error');return;}
-  try{const data=await adminFetch('/api/admin/especialistas',{method:'POST',json:{nome,email,especialidade,senha}});if(data.ok===false)throw new Error(data.error||'Erro ao criar especialista.');mostrarToast('Especialista criado.','success');['admin-new-nome','admin-new-email','admin-new-especialidade','admin-new-senha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
+  const nome_exibicao=nome_exibicao_raw||nome;
+  if(!nome||!email||!senha||!crm||!uf){mostrarToast('Preencha nome, e-mail, senha, CRM e UF.','error');return;}
+  try{const data=await adminFetch('/api/admin/especialistas',{method:'POST',json:{nome,nome_exibicao,email,senha,especialidade,crm,uf,telefone}});if(data.ok===false)throw new Error(data.error||'Erro ao criar especialista.');mostrarToast('Especialista criado.','success');['admin-new-nome','admin-new-nome-exibicao','admin-new-email','admin-new-especialidade','admin-new-crm','admin-new-uf','admin-new-telefone','admin-new-senha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
 }
 async function adminSalvarEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
@@ -864,7 +880,7 @@ document.getElementById('inp-senha').addEventListener('keydown',e=>{if(e.key==='
 
 async function trocarSenha(){const senhaAtual=document.getElementById('inp-senha-atual').value;const novaSenha=document.getElementById('inp-nova-senha').value;const confirmarSenha=document.getElementById('inp-confirmar-senha').value;const btn=document.getElementById('btn-trocar-senha');const errEl=document.getElementById('trocar-err');errEl.style.display='none';btn.disabled=true;btn.textContent='Salvando…';try{const res=await fetch(`${API}/api/especialista/trocar-senha`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({senhaAtual,novaSenha,confirmarSenha})});const data=await safeJson(res);if(!data.ok){errEl.textContent=data.error||'Erro ao trocar senha.';errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';return;}document.getElementById('trocar-overlay').classList.remove('open');mostrarToast('Senha atualizada com sucesso!','success');}catch(e){errEl.textContent='Erro: '+e.message;errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';}}
 
-function entrarApp(){document.getElementById('screen-login').style.display='none';document.getElementById('screen-app').style.display='block';document.getElementById('nav-nome').textContent=especialista.nome||'-';document.getElementById('nav-espec').textContent=especialista.especialidade||'Especialista';if(especialista.crm)document.getElementById('nav-crm').textContent='CRM '+especialista.crm;adminPassword=localStorage.getItem('adminPassword')||'';setAdminMode(false);renderAdminEspecialistas();carregarConsultas();carregarDisponibilidade();}
+function entrarApp(){document.getElementById('screen-login').style.display='none';document.getElementById('screen-app').style.display='block';document.getElementById('nav-nome').textContent=(especialista&&especialista.nome)||'Administrador';document.getElementById('nav-espec').textContent=(especialista&&especialista.especialidade)||'Especialista';document.getElementById('nav-crm').textContent=(especialista&&especialista.crm)?('CRM '+especialista.crm):'';adminPassword=localStorage.getItem('adminPassword')||'';setAdminMode(false);renderAdminEspecialistas();if(getToken()&&especialista){carregarConsultas();carregarDisponibilidade();}else{renderAgendaVazia('Entre como especialista para ver agenda e consultas.');disponibilidadeSlots=[];renderDisponibilidade();}}
 function fazerLogout(){localStorage.removeItem('esp_token');localStorage.removeItem('especialista');location.reload();}
 
 async function carregarConsultas(){try{const data=await apiFetch('/api/especialista/consultas');if(!data.ok){renderAgendaVazia('Não foi possível carregar a agenda.');return;}consultasData=data.consultas||[];renderAgenda();}catch(e){renderAgendaVazia('Erro de conexão.');}}
