@@ -475,14 +475,14 @@ body.memed-aberto{overflow:hidden}
 	        </div>
         <div class="admin-create">
           <div class="admin-grid">
-            <input class="admin-input" id="admin-new-nome" placeholder="Nome"/>
+            <input class="admin-input" id="admin-new-nome" placeholder="Nome completo"/>
             <input class="admin-input" id="admin-new-nome-exibicao" placeholder="Nome de exibição"/>
-            <input class="admin-input" id="admin-new-email" placeholder="E-mail"/>
-            <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade"/>
+            <input class="admin-input" id="admin-new-email" placeholder="E-mail (para recuperação de senha)"/>
+            <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade (ex: endocrinologia)"/>
             <input class="admin-input" id="admin-new-crm" placeholder="CRM"/>
             <input class="admin-input" id="admin-new-uf" placeholder="UF" maxlength="2"/>
             <input class="admin-input" id="admin-new-telefone" placeholder="Telefone (opcional)"/>
-            <input class="admin-input" id="admin-new-senha" type="password" placeholder="Senha inicial"/>
+            <input class="admin-input" id="admin-new-valor" type="number" step="0.01" min="0" placeholder="Valor consulta (ex: 150.00)"/>
           </div>
 	          <div style="margin-top:8px">
 	            <button class="btn-admin" onclick="adminCriarEspecialista()">Criar especialista</button>
@@ -776,10 +776,10 @@ async function adminCriarEspecialista(){
   const crm=(document.getElementById('admin-new-crm')?.value||'').trim();
   const uf=(document.getElementById('admin-new-uf')?.value||'').trim().toUpperCase();
   const telefone=(document.getElementById('admin-new-telefone')?.value||'').trim();
-  const senha=(document.getElementById('admin-new-senha')?.value||'').trim();
+  const valor_consulta=(document.getElementById('admin-new-valor')?.value||'').trim();
   const nome_exibicao=nome_exibicao_raw||nome;
-  if(!nome||!email||!senha||!crm||!uf){mostrarToast('Preencha nome, e-mail, senha, CRM e UF.','error');return;}
-  try{const data=await adminFetch('/api/admin/especialista/criar',{method:'POST',json:{nome,nome_exibicao,email,senha,especialidade,crm,uf,telefone}});if(data.ok===false)throw new Error(data.error||'Erro ao criar especialista.');mostrarToast('Especialista criado.','success');['admin-new-nome','admin-new-nome-exibicao','admin-new-email','admin-new-especialidade','admin-new-crm','admin-new-uf','admin-new-telefone','admin-new-senha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
+  if(!nome||!crm||!uf||!especialidade){mostrarToast('Preencha nome, especialidade, CRM e UF.','error');return;}
+  try{const data=await adminFetch('/api/admin/especialista/criar',{method:'POST',json:{nome,nome_exibicao,email,especialidade,crm,uf,telefone,valor_consulta:valor_consulta||null}});if(data.ok===false)throw new Error(data.error||'Erro ao criar especialista.');mostrarToast('Especialista criado.','success');['admin-new-nome','admin-new-nome-exibicao','admin-new-email','admin-new-especialidade','admin-new-crm','admin-new-uf','admin-new-telefone','admin-new-valor'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
 }
 async function adminSalvarEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
