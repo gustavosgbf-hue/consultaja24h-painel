@@ -124,14 +124,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .cc-btn-abrir:hover{color:rgba(255,255,255,.6)}
 
 /* ═══ COLUNA DETALHE ════════════════════════════════════════ */
-.detalhe-col{padding:28px 32px 60px;overflow-y:auto;max-height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;gap:20px}
+.detalhe-col{padding:24px 28px 60px;overflow-y:auto;max-height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;gap:16px}
 
 /* ═══ PERFIL DO ESPECIALISTA (novo) ════════════════════════ */
-.perfil-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 28px 24px;display:flex;flex-direction:column;gap:0;overflow:hidden}
-.perfil-header{display:flex;align-items:flex-start;gap:22px;margin-bottom:22px}
-.perfil-avatar-wrap{position:relative;flex-shrink:0}
-.perfil-avatar{width:88px;height:88px;border-radius:50%;object-fit:cover;border:2.5px solid rgba(34,197,94,.25);background:rgba(31,41,55,.8);display:block}
-.perfil-avatar-placeholder{width:88px;height:88px;border-radius:50%;border:2px dashed rgba(255,255,255,.12);background:rgba(31,41,55,.6);display:flex;align-items:center;justify-content:center;font-size:2rem;color:rgba(255,255,255,.15);cursor:pointer;transition:all .2s}
+.perfil-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 24px 18px;display:flex;flex-direction:column;gap:0;overflow:hidden}
+.perfil-header{display:flex;align-items:flex-start;gap:18px;margin-bottom:16px}
+.perfil-avatar-wrap{position:relative;flex-shrink:0;align-self:flex-start}
+.perfil-avatar{width:88px;height:88px;min-width:88px;min-height:88px;border-radius:50%;object-fit:cover;border:2.5px solid rgba(34,197,94,.25);background:rgba(31,41,55,.8);display:block;aspect-ratio:1/1}
+.perfil-avatar-placeholder{width:88px;height:88px;min-width:88px;min-height:88px;border-radius:50%;border:2px dashed rgba(255,255,255,.12);background:rgba(31,41,55,.6);display:flex;align-items:center;justify-content:center;font-size:2rem;color:rgba(255,255,255,.15);cursor:pointer;transition:all .2s;aspect-ratio:1/1;flex-shrink:0}
 .perfil-avatar-placeholder:hover{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.05);color:rgba(34,197,94,.4)}
 .perfil-avatar-btn{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--green);border:2px solid var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s}
 .perfil-avatar-btn:hover{transform:scale(1.12)}
@@ -143,8 +143,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .perfil-sub span{display:flex;align-items:center;gap:4px}
 .perfil-upload-status{font-size:.72rem;color:var(--muted);margin-top:4px;min-height:16px}
 .perfil-upload-status.ok{color:var(--green)}.perfil-upload-status.err{color:var(--red)}
-.perfil-divider{height:1px;background:var(--line);margin:0 -28px 22px}
-.perfil-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.perfil-divider{height:1px;background:var(--line);margin:0 -24px 18px}
+.perfil-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .perfil-field{display:flex;flex-direction:column;gap:6px}
 .perfil-field.full{grid-column:1/-1}
 .perfil-label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(156,163,175,.5)}
@@ -152,25 +152,25 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .perfil-input:focus{border-color:var(--green-bd);box-shadow:0 0 0 3px rgba(34,197,94,.06)}
 .perfil-input::placeholder{color:rgba(255,255,255,.15)}
 .perfil-textarea{resize:vertical;min-height:80px;line-height:1.6}
-.perfil-save-row{display:flex;justify-content:flex-end;margin-top:18px}
+.perfil-save-row{display:flex;justify-content:flex-end;margin-top:14px}
 .btn-perfil-save{padding:10px 22px;border-radius:var(--r-sm);border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:opacity .15s,transform .1s;box-shadow:0 3px 12px rgba(34,197,94,.2)}
 .btn-perfil-save:hover{opacity:.88;transform:translateY(-1px)}
 .btn-perfil-save:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
 /* ═══ CALENDÁRIO INTERATIVO (novo) ═════════════════════════ */
-.cal-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 28px;animation:fadeIn .3s ease}
-.cal-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.cal-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;animation:fadeIn .3s ease}
+.cal-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .cal-title{font-size:.64rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(156,163,175,.5);display:flex;align-items:center;gap:10px}
 .cal-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
 .cal-nav{display:flex;align-items:center;gap:8px}
 .cal-month-label{font-size:.85rem;font-weight:600;color:var(--text);min-width:120px;text-align:center}
 .cal-nav-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.9rem}
 .cal-nav-btn:hover{border-color:rgba(255,255,255,.18);color:var(--text)}
-.cal-grid-wrap{margin-bottom:20px}
-.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
+.cal-grid-wrap{margin-bottom:10px}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
 .cal-wd{text-align:center;font-size:.62rem;font-weight:600;color:rgba(156,163,175,.4);padding:4px 0;letter-spacing:.04em;text-transform:uppercase}
-.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-day{aspect-ratio:1;border-radius:10px;border:1px solid transparent;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;position:relative;font-size:.78rem;font-weight:400;color:rgba(255,255,255,.4)}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day{aspect-ratio:1;max-height:44px;border-radius:8px;border:1px solid transparent;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;position:relative;font-size:.75rem;font-weight:400;color:rgba(255,255,255,.4)}
 .cal-day:hover:not(.cal-day-empty):not(.cal-day-past){background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08);color:var(--text)}
 .cal-day-empty{cursor:default}
 .cal-day-past{opacity:.25;cursor:default}
@@ -182,10 +182,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .cal-slot-dot{display:none;position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:rgba(34,197,94,.6)}
 
 /* Painel de horários do dia selecionado */
-.cal-slots-panel{border-top:1px solid var(--line);padding-top:18px}
-.cal-slots-title{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.cal-slots-panel{border-top:1px solid var(--line);padding-top:14px}
+.cal-slots-title{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .cal-slots-title span{font-size:.65rem;color:var(--muted);font-weight:300}
-.cal-time-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.cal-time-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
 .cal-time-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-family:'JetBrains Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:6px}
 .cal-time-btn:hover{border-color:rgba(34,197,94,.3);color:var(--green);background:rgba(34,197,94,.06)}
 .cal-time-btn.active-slot{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.12);color:var(--green)}
@@ -198,18 +198,18 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .btn-cal-add:hover{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.4)}
 .btn-cal-save{padding:10px 22px;border-radius:var(--r-sm);border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:opacity .15s,transform .1s;box-shadow:0 3px 12px rgba(34,197,94,.18)}
 .btn-cal-save:hover{opacity:.88;transform:translateY(-1px)}
-.cal-quick-times{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.cal-quick-times{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
 .cal-quick-btn{padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.06);background:transparent;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;font-size:.68rem;cursor:pointer;transition:all .15s}
 .cal-quick-btn:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.65)}
 
 /* ═══ PAINEL ADMIN (melhorado) ═══════════════════════════════ */
-.sec-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 28px;animation:fadeIn .3s ease}
+.sec-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 24px;animation:fadeIn .3s ease}
 .sec-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .sec-title{font-size:.64rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(156,163,175,.5);display:flex;align-items:center;gap:10px;flex:1}
 .sec-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
 .admin-create-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:20px;margin-bottom:20px}
 .admin-create-title{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em}
-.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;row-gap:6px}
 .admin-input{padding:9px 13px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-family:'Outfit',sans-serif;font-size:.82rem;outline:none;transition:border-color .2s;width:100%}
 .admin-input:focus{border-color:var(--green-bd)}
 .admin-input::placeholder{color:rgba(255,255,255,.18)}
@@ -450,12 +450,39 @@ body.memed-aberto{overflow:hidden}
   .toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center}
   .tabs{margin-bottom:14px}
   .tab{padding:9px 6px;font-size:.78rem}
-  .cal-days .cal-day{font-size:.7rem}
-  .perfil-header{flex-direction:column;align-items:center;text-align:center}
+  .cal-days .cal-day{font-size:.68rem;max-height:38px}
+  .cal-box{padding:14px 12px}
+  .cal-header-row{margin-bottom:8px}
+  .perfil-header{flex-direction:column;align-items:center;text-align:center;gap:12px}
+  .perfil-avatar-wrap{align-self:center}
 }
 @media(min-width:769px) and (max-width:1024px){
   .app-body{grid-template-columns:260px 1fr}
   .detalhe-col{padding:24px 26px}
+}
+
+/* ═══ 2-COLUMN LAYOUT: perfil + calendário lado a lado ═════
+   Em telas >= 1200px, perfil e calendário ficam em 2 colunas
+   para evitar que o calendário domine a tela inteira.      */
+@media(min-width:1200px){
+  .perfil-cal-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    align-items:start;
+  }
+  .perfil-cal-grid .perfil-box,
+  .perfil-cal-grid .cal-box{
+    margin:0;
+  }
+}
+@media(min-width:769px) and (max-width:1199px){
+  .perfil-cal-grid{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:16px;
+    align-items:start;
+  }
 }
 </style>
 </head>
@@ -529,6 +556,8 @@ body.memed-aberto{overflow:hidden}
     <!-- ═══ COLUNA PRINCIPAL ══════════════════════════════════ -->
     <main class="detalhe-col" id="detalhe-col">
 
+      <!-- PERFIL + CALENDÁRIO: 2 colunas em desktop -->
+      <div class="perfil-cal-grid">
       <!-- PERFIL DO ESPECIALISTA -->
       <div class="perfil-box" id="perfil-box">
         <div class="perfil-header">
@@ -609,6 +638,7 @@ body.memed-aberto{overflow:hidden}
           ← Selecione um dia para gerenciar horários
         </div>
       </div>
+      </div><!-- /.perfil-cal-grid -->
 
       <!-- PAINEL ADMIN -->
       <div class="sec-box" id="admin-panel" style="display:none">
