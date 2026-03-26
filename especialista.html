@@ -695,10 +695,13 @@ async function adminFetch(path,opts={}){
   if(!adminPassword)throw new Error('Senha admin não informada.');
   const headers={...(opts.headers||{}),'x-admin-password':adminPassword};
   if(opts.json){headers['Content-Type']='application/json';opts.body=JSON.stringify(opts.json);delete opts.json;}
+  console.log('[ADMIN FETCH]',opts.method||'GET',path,'| x-admin-password length:',adminPassword.length,'| headers:',Object.keys(headers));
   const res=await fetch(API+path,{...opts,headers});
+  console.log('[ADMIN FETCH] response status:',res.status,path);
   const data=await safeJson(res);
   if(!res.ok){
     const msg=data.error||data.message||'Acesso admin negado.';
+    console.error('[ADMIN FETCH] ERRO:',msg,'| status:',res.status);
     throw new Error(msg);
   }
   return data;
@@ -761,10 +764,19 @@ async function entrarComoAdmin(){
   const inp=document.getElementById('inp-admin-pass');const btn=document.getElementById('btn-admin-login');
   const senha=(inp?.value||'').trim();if(!senha){mostrarToast('Informe a senha admin.','error');return;}
   btn.disabled=true;btn.textContent='Entrando…';
-  const prev=adminPassword;adminPassword=senha;
+  adminPassword=senha;
+  console.log('[ADMIN] Tentando login com senha length:', senha.length);
   const ok=await carregarEspecialistasAdmin(false);
-  if(ok){localStorage.setItem('adminPassword',adminPassword);if(document.getElementById('screen-app').style.display!=='block')entrarApp();setAdminMode(true);renderAdminEspecialistas();fecharModal('modal-admin-login');mostrarToast('Admin liberado.','success');}
-  else{adminPassword=prev||'';}
+  if(ok){
+    localStorage.setItem('adminPassword',adminPassword);
+    console.log('[ADMIN] Login OK. Senha salva no localStorage.');
+    if(document.getElementById('screen-app').style.display!=='block')entrarApp();
+    setAdminMode(true);renderAdminEspecialistas();fecharModal('modal-admin-login');mostrarToast('Admin liberado.','success');
+  }else{
+    adminPassword='';
+    localStorage.removeItem('adminPassword');
+    console.warn('[ADMIN] Login FALHOU. adminPassword e localStorage limpos.');
+  }
   btn.disabled=false;btn.textContent='Entrar como admin';
 }
 async function adminCriarEspecialista(){
@@ -880,7 +892,7 @@ document.getElementById('inp-senha').addEventListener('keydown',e=>{if(e.key==='
 
 async function trocarSenha(){const senhaAtual=document.getElementById('inp-senha-atual').value;const novaSenha=document.getElementById('inp-nova-senha').value;const confirmarSenha=document.getElementById('inp-confirmar-senha').value;const btn=document.getElementById('btn-trocar-senha');const errEl=document.getElementById('trocar-err');errEl.style.display='none';btn.disabled=true;btn.textContent='Salvando…';try{const res=await fetch(`${API}/api/especialista/trocar-senha`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({senhaAtual,novaSenha,confirmarSenha})});const data=await safeJson(res);if(!data.ok){errEl.textContent=data.error||'Erro ao trocar senha.';errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';return;}document.getElementById('trocar-overlay').classList.remove('open');mostrarToast('Senha atualizada com sucesso!','success');}catch(e){errEl.textContent='Erro: '+e.message;errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';}}
 
-function entrarApp(){document.getElementById('screen-login').style.display='none';document.getElementById('screen-app').style.display='block';document.getElementById('nav-nome').textContent=(especialista&&especialista.nome)||'Administrador';document.getElementById('nav-espec').textContent=(especialista&&especialista.especialidade)||'Especialista';document.getElementById('nav-crm').textContent=(especialista&&especialista.crm)?('CRM '+especialista.crm):'';adminPassword=localStorage.getItem('adminPassword')||'';setAdminMode(false);renderAdminEspecialistas();if(getToken()&&especialista){carregarConsultas();carregarDisponibilidade();}else{renderAgendaVazia('Entre como especialista para ver agenda e consultas.');disponibilidadeSlots=[];renderDisponibilidade();}}
+function entrarApp(){document.getElementById('screen-login').style.display='none';document.getElementById('screen-app').style.display='block';document.getElementById('nav-nome').textContent=(especialista&&especialista.nome)||'Administrador';document.getElementById('nav-espec').textContent=(especialista&&especialista.especialidade)||'Especialista';document.getElementById('nav-crm').textContent=(especialista&&especialista.crm)?('CRM '+especialista.crm):'';adminPassword=localStorage.getItem('adminPassword')||'';console.log('[ADMIN] entrarApp: adminPassword restaurado do localStorage, length:',adminPassword.length);setAdminMode(false);renderAdminEspecialistas();if(getToken()&&especialista){carregarConsultas();carregarDisponibilidade();}else{renderAgendaVazia('Entre como especialista para ver agenda e consultas.');disponibilidadeSlots=[];renderDisponibilidade();}}
 function fazerLogout(){localStorage.removeItem('esp_token');localStorage.removeItem('especialista');location.reload();}
 
 async function carregarConsultas(){try{const data=await apiFetch('/api/especialista/consultas');if(!data.ok){renderAgendaVazia('Não foi possível carregar a agenda.');return;}consultasData=data.consultas||[];renderAgenda();}catch(e){renderAgendaVazia('Erro de conexão.');}}
