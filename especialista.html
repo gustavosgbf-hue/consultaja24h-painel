@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Painel do Especialista · ConsultaJá</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;height:100%}
+
+/* ─────────────────────────────────────────────────────────
+   PALETA — azul-cinza escuro, médico premium
+   Não verde-preto. Não neon. Confiável, limpo, clínico.
+───────────────────────────────────────────────────────── */
+:root{
+  --bg:       #0f172a;
+  --bg2:      #111827;
+  --card:     rgba(31,41,55,.80);
+  --card2:    rgba(31,41,55,.50);
+  --line:     rgba(255,255,255,.07);
+  --line2:    rgba(255,255,255,.04);
+  --muted:    #9ca3af;
+  --text:     #f1f5f9;
+  --green:    #22c55e;
+  --green2:   #16a34a;
+  --green-bg: rgba(34,197,94,.10);
+  --green-bd: rgba(34,197,94,.22);
+  --red:      #f87171;
+  --red-bg:   rgba(248,113,113,.08);
+  --red-bd:   rgba(248,113,113,.18);
+  --amber:    #fbbf24;
+  --blue:     #60a5fa;
+  --blue-bg:  rgba(96,165,250,.09);
+  --blue-bd:  rgba(96,165,250,.20);
+  --nav-h:    64px;
+  --r:        14px;
+  --r-sm:     10px;
+}
+
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80vw 55vh at -5% 5%,rgba(34,197,94,.04) 0%,transparent 60%),radial-gradient(ellipse 60vw 50vh at 108% 88%,rgba(96,165,250,.03) 0%,transparent 55%)}
+
+/* ═══ LOGIN ═══════════════════════════════════════════════ */
+#screen-login{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.login-card{width:100%;max-width:400px;padding:52px 44px;border:1px solid var(--line);border-radius:22px;background:rgba(31,41,55,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:relative;z-index:1;box-shadow:0 24px 64px rgba(0,0,0,.4)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;justify-content:center}
+.login-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2.4s ease-in-out infinite}
+.login-logo span{font-family:'Playfair Display',serif;font-style:italic;font-size:1.15rem;font-weight:700}
+.login-logo .c1{color:var(--text)}
+.login-logo .c2{background:linear-gradient(135deg,#22c55e,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-logo .tag{font-family:'Outfit',sans-serif;font-style:normal;font-size:.64rem;font-weight:500;color:var(--muted);-webkit-text-fill-color:var(--muted);background:none;-webkit-background-clip:unset;background-clip:unset;margin-left:2px}
+.login-title{font-size:1.25rem;font-weight:600;margin-bottom:5px;text-align:center}
+.login-sub{font-size:.86rem;color:var(--muted);text-align:center;margin-bottom:34px;font-weight:300;line-height:1.5}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:7px;letter-spacing:.05em;text-transform:uppercase}
+.field input{width:100%;padding:12px 16px;border-radius:var(--r-sm);border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(--green-bd);box-shadow:0 0 0 3px rgba(34,197,94,.08)}
+.field input::placeholder{color:rgba(255,255,255,.18)}
+.btn-login{width:100%;padding:13px;border-radius:var(--r-sm);border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .15s,transform .1s,box-shadow .2s;margin-top:8px;box-shadow:0 4px 18px rgba(34,197,94,.25)}
+.btn-login:hover{opacity:.91;transform:translateY(-1px);box-shadow:0 8px 28px rgba(34,197,94,.32)}
+.btn-login:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.login-err{font-size:.8rem;color:var(--red);text-align:center;margin-top:12px;display:none}
+.login-link{background:none;border:none;color:var(--muted);font-size:.75rem;cursor:pointer;font-family:inherit;padding:4px;transition:color .2s}
+.login-link:hover{color:var(--text)}
+.recovery-msg{font-size:.8rem;text-align:center;margin-top:12px;display:none;line-height:1.5}
+.recovery-msg.ok{color:var(--green)}.recovery-msg.err{color:var(--red)}
+
+/* Modal trocar senha */
+.trocar-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.75);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px}
+.trocar-overlay.open{display:flex}
+.trocar-card{background:rgba(22,33,50,.97);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:34px 30px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.trocar-title{font-size:1.05rem;font-weight:600;margin-bottom:6px}
+.trocar-sub{font-size:.83rem;color:var(--muted);margin-bottom:24px;line-height:1.55}
+.trocar-err{font-size:.8rem;color:var(--red);margin-top:12px;display:none}
+
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{opacity:.75;box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+
+/* ═══ APP ══════════════════════════════════════════════════ */
+#screen-app{display:none;min-height:100vh;position:relative}
+
+/* ═══ NAVBAR ═══════════════════════════════════════════════ */
+.nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(15,23,42,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 28px;gap:20px}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.nav-brand span{font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;font-weight:700}
+.nav-brand .c1{color:var(--text)}
+.nav-brand .c2{background:linear-gradient(135deg,#22c55e,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-tag-24h{font-family:'Outfit',sans-serif;font-style:normal;font-size:.65rem;font-weight:500;color:var(--muted);-webkit-text-fill-color:var(--muted);background:none;-webkit-background-clip:unset;background-clip:unset;margin-left:2px}
+.nav-divider{width:1px;height:22px;background:var(--line);flex-shrink:0}
+/* Pill de especialidade ao lado do logo */
+.nav-espec-pill{display:flex;align-items:center;gap:7px;padding:5px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);flex-shrink:0}
+.nav-espec-pill .dot-live{width:5px;height:5px;border-radius:50%;background:rgba(34,197,94,.7);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0}
+.nav-espec-text{font-size:.72rem;color:rgba(156,163,175,.6);font-weight:400}
+.nav-spacer{flex:1}
+/* Info do médico alinhada à direita */
+.nav-medico-info{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px}
+.nav-medico-info .nav-nome{font-size:.84rem;font-weight:500;color:rgba(241,245,249,.8)}
+.nav-medico-info .nav-crm{font-size:.68rem;color:rgba(156,163,175,.45);font-weight:400}
+.nav-logout{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:transparent;color:rgba(156,163,175,.45);font-family:'Outfit',sans-serif;font-size:.76rem;cursor:pointer;transition:all .22s;flex-shrink:0}
+.nav-logout:hover{border-color:rgba(248,113,113,.25);color:rgba(248,113,113,.7)}
+
+/* ═══ LAYOUT ═══════════════════════════════════════════════ */
+.app-body{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - var(--nav-h))}
+
+/* ═══ COLUNA AGENDA (esquerda) ═════════════════════════════ */
+.agenda-col{position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.agenda-header{padding:22px 16px 16px;border-bottom:1px solid var(--line);flex-shrink:0}
+.agenda-header-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:13px}
+.agenda-header-title{font-size:.64rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(156,163,175,.45)}
+.agenda-count-pill{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:rgba(156,163,175,.4);background:rgba(255,255,255,.04);padding:2px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.05)}
+/* Filtros */
+.agenda-tabs{display:flex;gap:2px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);border-radius:var(--r-sm);padding:3px}
+.agenda-tab{flex:1;padding:7px 5px;border-radius:8px;border:none;background:transparent;color:rgba(156,163,175,.5);font-family:'Outfit',sans-serif;font-size:.73rem;font-weight:500;cursor:pointer;transition:all .2s;text-align:center}
+.agenda-tab.active{background:rgba(255,255,255,.08);color:var(--text);font-weight:600;border:1px solid rgba(255,255,255,.07);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.agenda-list{flex:1;overflow-y:auto;padding:14px 10px 28px}
+
+/* Cards de consulta — estilo agenda médica */
+.consulta-card{
+  background:var(--card2);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 15px 13px;margin-bottom:8px;cursor:pointer;
+  transition:border-color .2s,background .2s,transform .18s,box-shadow .22s;
+  position:relative;overflow:hidden;
+}
+.consulta-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;transition:background .25s;border-radius:3px 0 0 3px}
+.consulta-card:hover{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.025);transform:translateX(2px);box-shadow:0 4px 18px rgba(0,0,0,.22)}
+.consulta-card:hover::before{background:rgba(255,255,255,.15)}
+.consulta-card.active{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.055);transform:translateX(3px);box-shadow:0 4px 20px rgba(0,0,0,.24)}
+.consulta-card.active::before{background:var(--green)}
+.consulta-card.status-em_andamento{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06)}
+.consulta-card.status-em_andamento::before{background:var(--green);animation:pulso-bar 2s ease-in-out infinite}
+@keyframes pulso-bar{0%,100%{opacity:1}50%{opacity:.4}}
+.consulta-card.status-encerrada,.consulta-card.status-finalizada{opacity:.48}
+.consulta-card.status-cancelada{opacity:.32}
+.cc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px;gap:8px}
+.cc-nome{font-size:.97rem;font-weight:600;color:rgba(241,245,249,.9);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.cc-badge{font-size:.59rem;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;border:1px solid}
+.cc-badge.hoje       {background:rgba(34,197,94,.09);color:rgba(134,239,172,.8);border-color:rgba(34,197,94,.18)}
+.cc-badge.emandamento{background:rgba(34,197,94,.13);color:#4ade80;border-color:rgba(34,197,94,.28);animation:pulso-badge 2s ease-in-out infinite}
+@keyframes pulso-badge{0%,100%{opacity:1}50%{opacity:.55}}
+.cc-badge.proxima    {background:rgba(255,255,255,.04);color:rgba(255,255,255,.32);border-color:var(--line)}
+.cc-badge.finalizada {background:rgba(255,255,255,.03);color:rgba(255,255,255,.22);border-color:var(--line2)}
+.cc-badge.cancelada  {background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
+.cc-horario{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:500;color:rgba(96,165,250,.75);margin-bottom:5px;letter-spacing:.02em}
+.cc-espec{font-size:.7rem;color:rgba(156,163,175,.6);margin-bottom:11px;line-height:1.4;font-weight:300}
+.cc-footer{display:flex;align-items:center;justify-content:space-between}
+.cc-modalidade{font-size:.64rem;font-weight:500;padding:3px 9px;border-radius:999px;border:1px solid}
+.cc-modalidade.video{background:rgba(34,197,94,.07);color:rgba(134,239,172,.7);border-color:rgba(34,197,94,.15)}
+.cc-modalidade.chat {background:rgba(37,211,102,.05);color:rgba(74,222,128,.65);border-color:rgba(37,211,102,.12)}
+.cc-btn-abrir{padding:4px 11px;border-radius:7px;border:1px solid var(--line);background:transparent;color:rgba(255,255,255,.35);font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:500;cursor:pointer;transition:border-color .18s,color .18s,background .18s}
+.cc-btn-abrir:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7);background:rgba(255,255,255,.04)}
+
+.agenda-section-label{font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.18);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.agenda-section-label::before,.agenda-section-label::after{content:'';flex:1;height:1px;background:var(--line)}
+.agenda-section-label.hoje-label{color:rgba(34,197,94,.4)}
+.agenda-section-label.hoje-label::before,.agenda-section-label.hoje-label::after{background:rgba(34,197,94,.1)}
+.agenda-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:52px 18px;text-align:center;gap:12px}
+.agenda-empty svg{opacity:.16}
+.ae-title{font-size:.88rem;font-weight:500;color:rgba(255,255,255,.3);margin-top:2px}
+.ae-sub{font-size:.76rem;font-weight:300;color:rgba(255,255,255,.18);line-height:1.6}
+
+/* ═══ COLUNA DETALHE (direita) ══════════════════════════════ */
+.detalhe-col{min-width:0;padding:36px 42px;overflow-y:auto;max-height:calc(100vh - var(--nav-h));transition:background .4s}
+.detalhe-col.modo-atendimento{background:rgba(10,18,35,.96)}
+
+/* Estado vazio */
+.detalhe-vazio{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:68vh;text-align:center;gap:16px;width:100%}
+.dv-icon{width:72px;height:72px;border-radius:20px;background:rgba(31,41,55,.7);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.dv-icon svg{opacity:.22}
+.detalhe-vazio h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:500;color:rgba(255,255,255,.28)}
+.detalhe-vazio p{font-size:.83rem;font-weight:300;max-width:280px;line-height:1.75;color:rgba(255,255,255,.18)}
+
+/* ── Header do detalhe ── */
+.det-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:16px;padding-bottom:26px;border-bottom:1px solid var(--line);position:relative}
+.det-header::after{content:'';position:absolute;bottom:-1px;left:0;width:48px;height:1px;background:rgba(34,197,94,.4);border-radius:1px}
+.det-paciente{display:flex;flex-direction:column;gap:9px}
+.det-nome{font-family:'Playfair Display',serif;font-size:2rem;font-weight:500;color:var(--text);line-height:1.13;letter-spacing:-.02em}
+.det-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.det-tag{font-size:.67rem;font-weight:600;padding:3px 11px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em;border:1px solid}
+.det-tag.video{background:rgba(34,197,94,.07);color:rgba(134,239,172,.8);border-color:rgba(34,197,94,.18)}
+.det-tag.chat{background:rgba(37,211,102,.06);color:rgba(74,222,128,.75);border-color:rgba(37,211,102,.14)}
+.det-tag.status{background:rgba(255,255,255,.04);color:var(--muted);border-color:var(--line)}
+.det-tag.status.em_andamento{background:rgba(34,197,94,.09);color:rgba(74,222,128,.9);border-color:rgba(34,197,94,.22)}
+.det-tag.status.encerrada,.det-tag.status.finalizada{background:rgba(255,255,255,.03);color:rgba(255,255,255,.25);border-color:var(--line2)}
+.det-tag.status.cancelada{background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
+.det-horario{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:400;color:rgba(96,165,250,.65);letter-spacing:.02em}
+.det-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;padding-top:6px}
+
+/* Botões de ação */
+.btn-prescrever{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--r-sm);border:1px solid var(--green-bd);background:var(--green-bg);color:#86efac;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-prescrever:hover{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.32)}
+.btn-prescrever:disabled{opacity:.38;cursor:not-allowed}
+.btn-iniciar{display:flex;align-items:center;gap:7px;padding:12px 26px;border-radius:var(--r-sm);border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .18s,transform .14s,box-shadow .22s;box-shadow:0 4px 18px rgba(34,197,94,.28),0 2px 6px rgba(0,0,0,.18);letter-spacing:.01em}
+.btn-iniciar:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 28px rgba(34,197,94,.35),0 3px 10px rgba(0,0,0,.22)}
+.btn-cancelar{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:var(--r-sm);border:1px solid rgba(248,113,113,.2);background:rgba(248,113,113,.06);color:rgba(248,113,113,.7);font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-cancelar:hover{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.28);color:var(--red)}
+.btn-encerrar{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--r-sm);border:1px solid rgba(34,197,94,.22);background:rgba(34,197,94,.07);color:rgba(134,239,172,.85);font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-encerrar:hover{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.32)}
+
+/* Blocos de seção */
+.sec-box{background:rgba(31,41,55,.6);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:24px 26px;margin-bottom:16px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 2px 16px rgba(0,0,0,.16)}
+.sec-title{font-size:.64rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(156,163,175,.55);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+
+/* Grid dados do paciente */
+.dados-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
+.dados-item label{display:block;font-size:.64rem;font-weight:500;color:rgba(156,163,175,.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.dados-item span{font-size:.9rem;font-weight:400;color:rgba(241,245,249,.85);line-height:1.45}
+.dados-item.full{grid-column:1/-1}
+
+/* Bloco Meet — card clínico prioritário */
+.meet-box{background:rgba(12,22,40,.65);border:1px solid rgba(34,197,94,.12);border-radius:var(--r);padding:24px 26px;margin-bottom:16px;box-shadow:0 2px 16px rgba(0,0,0,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.meet-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(156,163,175,.6);margin-bottom:16px;display:flex;align-items:center;gap:9px}
+.meet-title svg{opacity:.5}
+.meet-input-row{display:flex;gap:10px;margin-bottom:14px}
+.meet-input{flex:1;padding:12px 15px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.82rem;outline:none;transition:border-color .22s,box-shadow .22s}
+.meet-input:focus{border-color:rgba(34,197,94,.25);box-shadow:0 0 0 3px rgba(34,197,94,.06)}
+.meet-input::placeholder{color:rgba(255,255,255,.16);font-family:'Outfit',sans-serif}
+.btn-meet-save{padding:12px 20px;border-radius:var(--r-sm);border:1px solid rgba(34,197,94,.25);background:rgba(34,197,94,.1);color:#86efac;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-meet-save:hover{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.35)}
+.meet-link-box{display:none;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 15px;border-radius:var(--r-sm);background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.12);margin-bottom:12px}
+.meet-link-box.visible{display:flex}
+.meet-link-box a{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:rgba(134,239,172,.8);text-decoration:none;word-break:break-all;flex:1}
+.meet-link-box a:hover{color:#86efac;text-decoration:underline}
+.meet-link-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-meet-copy,.btn-meet-open{padding:6px 14px;border-radius:7px;font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .18s;text-decoration:none;display:inline-flex;align-items:center;gap:4px;border:1px solid}
+.btn-meet-copy{border-color:rgba(255,255,255,.07);background:transparent;color:rgba(255,255,255,.28)}
+.btn-meet-copy:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.55)}
+.btn-meet-open{border-color:rgba(34,197,94,.3);background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;font-weight:700;box-shadow:0 2px 10px rgba(34,197,94,.2)}
+.btn-meet-open:hover{box-shadow:0 4px 16px rgba(34,197,94,.3);opacity:.92}
+.meet-badge{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid}
+.meet-badge.ok{background:rgba(34,197,94,.07);color:rgba(134,239,172,.75);border-color:rgba(34,197,94,.15)}
+.meet-badge.pendente{background:rgba(248,113,113,.06);color:rgba(248,113,113,.7);border-color:rgba(248,113,113,.15)}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);border-radius:var(--r-sm);padding:3px;margin-bottom:20px;width:100%}
+.tab{flex:1;padding:10px 6px;border-radius:9px;border:none;background:transparent;color:rgba(156,163,175,.45);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;transition:all .22s;text-align:center}
+.tab.active{background:rgba(255,255,255,.08);color:rgba(241,245,249,.9);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* Avaliação clínica */
+.clinic-section-title{font-size:.64rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(156,163,175,.5);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.clinic-section-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+.clinic-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.clinic-field{display:flex;flex-direction:column;gap:6px}.clinic-field.full{grid-column:1/-1}
+.clinic-label{font-size:.67rem;font-weight:500;color:rgba(156,163,175,.5);text-transform:uppercase;letter-spacing:.06em}
+textarea.clinic-input{padding:12px 14px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);color:var(--text);font-family:'Outfit',sans-serif;font-size:.88rem;resize:vertical;outline:none;transition:border-color .22s,box-shadow .22s,background .22s;min-height:84px;line-height:1.65}
+textarea.clinic-input.tall{min-height:116px}
+textarea.clinic-input:focus{border-color:rgba(34,197,94,.2);box-shadow:0 0 0 3px rgba(34,197,94,.05);background:rgba(255,255,255,.035)}
+textarea.clinic-input::placeholder{color:rgba(255,255,255,.1)}
+.conduta-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.conduta-chip{padding:4px 11px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);color:rgba(156,163,175,.5);font-family:'Outfit',sans-serif;font-size:.67rem;cursor:pointer;transition:all .18s}
+.conduta-chip:hover{border-color:rgba(34,197,94,.2);color:rgba(134,239,172,.8);background:rgba(34,197,94,.06)}
+
+/* Docs */
+.docs-section{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.05)}
+.docs-title{font-size:.64rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:rgba(156,163,175,.4);margin-bottom:10px}
+.docs-grid{display:flex;flex-wrap:wrap;gap:7px}
+.doc-check{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);cursor:pointer;transition:all .2s;font-size:.8rem;font-weight:400;color:rgba(255,255,255,.4);user-select:none}
+.doc-check.checked{border-color:rgba(34,197,94,.2);background:rgba(34,197,94,.07);color:rgba(187,247,208,.8)}
+.doc-check input{display:none}
+
+/* Prontuário */
+.pront-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.pront-title{font-size:.72rem;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase}
+.pront-actions{display:flex;align-items:center;gap:8px}
+.autosave-status{font-size:.67rem;color:rgba(156,163,175,.5);align-items:center;gap:4px;display:none}
+.autosave-status.visible{display:flex}.autosave-status.ok{color:rgba(34,197,94,.7)}.autosave-status.err{color:rgba(248,113,113,.7)}
+.btn-copiar{display:none;align-items:center;gap:5px;padding:5px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:transparent;color:rgba(156,163,175,.4);font-family:'Outfit',sans-serif;font-size:.74rem;cursor:pointer;transition:all .2s}
+.btn-copiar:hover{border-color:rgba(255,255,255,.14);color:rgba(255,255,255,.65)}
+.btn-copiar.copied{color:rgba(34,197,94,.7);border-color:rgba(34,197,94,.2)}
+.pront-output{display:none}
+.pront-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.04);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:9px}
+.pront-card-title{font-size:.64rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:8px}
+.pront-card-body{font-size:.86rem;font-weight:300;color:rgba(255,255,255,.68);line-height:1.75;white-space:pre-wrap}
+.pront-empty{color:rgba(255,255,255,.18);font-style:italic}
+.pront-paciente{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:500;margin-bottom:4px;color:rgba(241,245,249,.9)}
+.pront-meta{font-size:.72rem;color:rgba(156,163,175,.5);margin-bottom:3px}
+.btn-gerar{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-gerar:hover{border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.8);background:rgba(255,255,255,.08)}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;right:28px;z-index:500;padding:12px 20px;border-radius:var(--r-sm);font-size:.82rem;font-weight:500;transform:translateY(80px);opacity:0;transition:all .28s cubic-bezier(.4,0,.2,1);pointer-events:none;backdrop-filter:blur(12px)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:rgba(15,23,42,.9);border:1px solid rgba(34,197,94,.2);color:rgba(134,239,172,.85)}
+.toast.error  {background:rgba(15,23,42,.9);border:1px solid rgba(248,113,113,.2);color:rgba(248,113,113,.8)}
+.toast.info   {background:rgba(15,23,42,.9);border:1px solid rgba(96,165,250,.2);color:rgba(96,165,250,.8)}
+
+/* Modais */
+.modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:rgba(22,33,50,.97);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:30px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-title{font-size:1rem;font-weight:600;margin-bottom:5px;color:rgba(241,245,249,.9)}
+.modal-sub{font-size:.83rem;font-weight:300;color:rgba(156,163,175,.6);margin-bottom:24px;line-height:1.6}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.btn-cancel{flex:1;padding:11px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.07);background:transparent;color:rgba(156,163,175,.5);font-family:'Outfit',sans-serif;font-size:.87rem;cursor:pointer;transition:all .2s}
+.btn-cancel:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
+.btn-confirm{flex:1;padding:11px;border-radius:var(--r-sm);border:none;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;font-family:'Outfit',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:opacity .18s;box-shadow:0 3px 12px rgba(34,197,94,.2)}
+.btn-confirm:hover{opacity:.88}
+.btn-confirm.danger{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 3px 12px rgba(239,68,68,.18)}
+
+/* Memed */
+#memed-overlay{display:none;position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);cursor:pointer}
+#memed-overlay.ativo{display:block}
+body.memed-aberto{overflow:hidden}
+.memed-block{background:rgba(31,41,55,.5);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:20px 26px;margin-bottom:16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.memed-block-title{font-size:.64rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(156,163,175,.55);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.memed-block-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+
+/* ═══ MOBILE ═══════════════════════════════════════════════ */
+@media(max-width:768px){
+  .nav{padding:0 14px;gap:10px;height:58px}
+  .nav-divider,.nav-espec-pill{display:none}
+  .nav-medico-info .nav-crm{display:none}
+  .nav-logout{padding:6px 10px;font-size:.74rem}
+  .app-body{display:block;min-height:calc(100dvh - 58px)}
+  .agenda-col{position:relative;top:0;height:auto;max-height:none;border-right:none;border-bottom:1px solid var(--line)}
+  .detalhe-col{padding:22px 18px 72px;max-height:none}
+  .clinic-grid{grid-template-columns:1fr}
+  .dados-grid{grid-template-columns:1fr 1fr;gap:14px 16px}
+  .det-header{flex-direction:column;align-items:flex-start;margin-bottom:24px;padding-bottom:20px;gap:14px}
+  .det-nome{font-size:1.55rem}
+  .det-actions{width:100%;gap:10px}
+  .det-actions .btn-iniciar{flex:1;justify-content:center}
+  .meet-input-row{flex-direction:column;gap:8px}
+  .btn-meet-save{width:100%;justify-content:center}
+  .sec-box{padding:20px 18px}
+  .meet-box{padding:20px 18px}
+  .memed-block{padding:18px}
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal{border-radius:20px 20px 0 0;max-width:100%;padding:24px 18px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center;font-size:.82rem}
+  .tabs{margin-bottom:16px}
+  .tab{padding:10px 6px;font-size:.8rem}
+}
+@media(min-width:769px) and (max-width:1024px){
+  .app-body{grid-template-columns:260px 1fr}
+  .detalhe-col{padding:24px 26px}
+}
+</style>
+</head>
+<body>
+<div class="bg-mesh" aria-hidden="true"></div>
+
+<!-- ═══ LOGIN ═══════════════════════════════════════════════ -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-logo"><div class="dot"></div><span><span class="c1">Consulta</span><span class="c2">Já</span><span class="tag">· Especialista</span></span></div>
+    <div class="login-title">Painel do Especialista</div>
+    <div class="login-sub">Acesse sua agenda e consultas agendadas</div>
+    <div class="field"><label>E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn-login" id="btn-login">Entrar no painel</button>
+    <div style="text-align:right;margin-top:8px"><button class="login-link" onclick="abrirRecuperacao()">Esqueci minha senha</button></div>
+    <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
+    <div id="recovery-section" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:16px">
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px">Digite seu e-mail cadastrado:</div>
+      <div style="margin-bottom:10px"><input type="email" id="inp-recovery-email" placeholder="seu@email.com" autocomplete="email" style="width:100%;padding:11px 14px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text);font-family:inherit;font-size:.88rem;outline:none;box-sizing:border-box"/></div>
+      <button onclick="enviarRecuperacao()" id="btn-recovery" style="width:100%;padding:11px;border-radius:var(--r-sm);border:1px solid var(--green-bd);background:var(--green-bg);color:#86efac;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .18s">Enviar instruções de acesso</button>
+      <div class="recovery-msg" id="recovery-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ══════════════════════════════════════════════════ -->
+<div id="screen-app">
+  <nav class="nav">
+    <a href="#" class="nav-brand">
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0"></div>
+      <span><span class="c1">Consulta</span><span class="c2">Já</span><span class="nav-tag-24h">24h</span></span>
+    </a>
+    <div class="nav-divider"></div>
+    <div class="nav-espec-pill"><div class="dot-live" style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0"></div><span class="nav-espec-text" id="nav-espec">Especialista</span></div>
+    <div class="nav-spacer"></div>
+    <div class="nav-medico-info"><div class="nav-nome" id="nav-nome">-</div><div class="nav-crm" id="nav-crm"></div></div>
+    <button class="nav-logout" onclick="fazerLogout()">Sair</button>
+  </nav>
+
+  <div class="app-body">
+    <!-- Agenda -->
+    <aside class="agenda-col">
+      <div class="agenda-header">
+        <div class="agenda-header-row">
+          <span class="agenda-header-title">Agenda</span>
+          <span class="agenda-count-pill" id="agenda-count">0 consultas</span>
+        </div>
+        <div class="agenda-tabs">
+          <button class="agenda-tab active" onclick="filtrarAgenda('hoje')" id="tab-hoje">Hoje</button>
+          <button class="agenda-tab" onclick="filtrarAgenda('proximas')" id="tab-proximas">Próximas</button>
+          <button class="agenda-tab" onclick="filtrarAgenda('historico')" id="tab-historico">Histórico</button>
+        </div>
+      </div>
+      <div class="agenda-list" id="agenda-list">
+        <div class="agenda-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div class="ae-title">Carregando agenda…</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Detalhe -->
+    <main class="detalhe-col" id="detalhe-col">
+      <div class="detalhe-vazio" id="state-vazio">
+        <div class="dv-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h2>Selecione uma consulta</h2>
+        <p>Escolha uma consulta na agenda ao lado para ver os detalhes e iniciar o atendimento.</p>
+      </div>
+
+      <div id="state-detalhe" style="display:none">
+        <div class="det-header">
+          <div class="det-paciente">
+            <div class="det-nome" id="det-nome">-</div>
+            <div class="det-meta">
+              <span class="det-tag" id="det-modalidade-tag">-</span>
+              <span class="det-tag status" id="det-status-tag">-</span>
+              <span class="det-horario" id="det-horario">-</span>
+            </div>
+          </div>
+          <div class="det-actions" id="det-actions"></div>
+        </div>
+
+        <div class="sec-box">
+          <div class="sec-title">Dados do paciente</div>
+          <div class="dados-grid">
+            <div class="dados-item"><label>Nome completo</label><span id="d-nome">-</span></div>
+            <div class="dados-item"><label>Data · Hora</label><span id="d-datahora">-</span></div>
+            <div class="dados-item"><label>Telefone</label><span id="d-tel">-</span></div>
+            <div class="dados-item"><label>E-mail</label><span id="d-email">-</span></div>
+            <div class="dados-item"><label>Especialidade</label><span id="d-espec">-</span></div>
+            <div class="dados-item"><label>Modalidade</label><span id="d-modalidade">-</span></div>
+            <div class="dados-item full" id="d-obs-wrap" style="display:none"><label>Observações do agendamento</label><span id="d-obs">-</span></div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('consulta')">🎥 Consulta</button>
+          <button class="tab" onclick="switchTab('clinico')">🩺 Avaliação</button>
+          <button class="tab" onclick="switchTab('prontuario')">📄 Prontuário</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-consulta">
+          <div class="meet-box" id="meet-section">
+            <div class="meet-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14"/><rect x="3" y="8" width="12" height="8" rx="2"/></svg>Consulta por vídeo</div>
+            <div class="meet-input-row">
+              <input class="meet-input" id="meetLinkInput" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx"/>
+              <button class="btn-meet-save" onclick="salvarMeetLink()">Salvar link</button>
+            </div>
+            <div class="meet-link-box" id="meetLinkAtual">
+              <a id="meetLinkAtualUrl" href="#" target="_blank" rel="noopener">-</a>
+              <div class="meet-link-actions">
+                <button class="btn-meet-copy" onclick="copiarMeetLink()">Copiar</button>
+                <a class="btn-meet-open" id="meetLinkOpenBtn" href="#" target="_blank" rel="noopener">▶ Abrir consulta</a>
+              </div>
+            </div>
+            <div id="meet-badge-wrap"></div>
+          </div>
+          <div class="memed-block">
+            <div class="memed-block-title">Prescrição médica</div>
+            <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;font-weight:300;line-height:1.6">Emita receitas, solicitações de exames e atestados diretamente pela plataforma Memed. A prescrição é salva automaticamente no prontuário.</p>
+            <button class="btn-prescrever" id="btn-memed" onclick="abrirMemed()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+              Abrir Memed
+            </button>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-clinico">
+          <div class="sec-box">
+            <div class="clinic-section-title">Avaliação clínica</div>
+            <div class="clinic-grid">
+              <div class="clinic-field full"><div class="clinic-label">Queixa principal / HDA</div><textarea class="clinic-input tall" id="cl-hda" placeholder="Descreva a queixa e a história da doença atual…"></textarea></div>
+              <div class="clinic-field"><div class="clinic-label">Comorbidades</div><textarea class="clinic-input" id="cl-comorbidades" placeholder="Ex: HAS, DM2, hipotireoidismo…"></textarea></div>
+              <div class="clinic-field"><div class="clinic-label">Medicações em uso</div><textarea class="clinic-input" id="cl-medicacoes" placeholder="Ex: Losartana 50mg, Metformina 850mg…"></textarea></div>
+              <div class="clinic-field"><div class="clinic-label">Alergias</div><textarea class="clinic-input" id="cl-alergias" placeholder="Ex: Dipirona, Penicilina…"></textarea></div>
+              <div class="clinic-field"><div class="clinic-label">Observações / Exame em telemedicina</div><textarea class="clinic-input" id="cl-obs" placeholder="Achados observados durante a teleconsulta…"></textarea></div>
+              <div class="clinic-field full">
+                <div class="clinic-label" style="display:flex;align-items:center;justify-content:space-between">Conduta<span style="font-size:.62rem;color:rgba(255,255,255,.2);font-weight:400;text-transform:none;letter-spacing:0">clique para inserir</span></div>
+                <div class="conduta-chips">
+                  <button class="conduta-chip" onclick="inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.')">Sinais de alarme</button>
+                  <button class="conduta-chip" onclick="inserirConduta('Quadro estável, sem sinais de urgência identificados.')">Sem urgência</button>
+                  <button class="conduta-chip" onclick="inserirConduta('Receita médica emitida. Orientado sobre posologia e duração do tratamento.')">Receita emitida</button>
+                  <button class="conduta-chip" onclick="inserirConduta('Atestado médico emitido conforme avaliação clínica.')">Atestado emitido</button>
+                  <button class="conduta-chip" onclick="inserirConduta('Solicitados exames complementares para complementação diagnóstica.')">Exames solicitados</button>
+                  <button class="conduta-chip" onclick="inserirConduta('Encaminhado para avaliação presencial. Orientado a procurar serviço de saúde local.')">Encaminhar presencial</button>
+                </div>
+                <textarea class="clinic-input tall" id="cl-conduta" placeholder="Prescrição, orientações, encaminhamentos, retorno…"></textarea>
+              </div>
+            </div>
+            <div class="docs-section">
+              <div class="docs-title">Documentos a emitir</div>
+              <div class="docs-grid">
+                <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="receita"><span class="dc-text">💊 Receita</span></label>
+                <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="atestado"><span class="dc-text">📋 Atestado</span></label>
+                <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="exames"><span class="dc-text">🔬 Exames</span></label>
+                <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="renovacao"><span class="dc-text">🔄 Renovação</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-prontuario">
+          <div class="sec-box">
+            <div class="pront-header">
+              <div class="pront-title">Prontuário da consulta</div>
+              <div class="pront-actions">
+                <span class="autosave-status" id="autosave-status"></span>
+                <button class="btn-gerar" onclick="gerarProntuario()">📄 Gerar prontuário</button>
+                <button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()">📋 Copiar</button>
+              </div>
+            </div>
+            <div class="pront-output" id="pront-output"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modais -->
+<div class="modal-overlay" id="modal-cancelar">
+  <div class="modal">
+    <div class="modal-title">Cancelar consulta</div>
+    <div class="modal-sub">Tem certeza que deseja cancelar esta consulta? O paciente será notificado.</div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="fecharModal('modal-cancelar')">Voltar</button><button class="btn-confirm danger" onclick="confirmarCancelamento()">Cancelar consulta</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-encerrar">
+  <div class="modal">
+    <div class="modal-title">Encerrar consulta</div>
+    <div class="modal-sub">Confirme o encerramento. O prontuário será salvo automaticamente.</div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="fecharModal('modal-encerrar')">Voltar</button><button class="btn-confirm" onclick="confirmarEncerramento()">Confirmar encerramento</button></div>
+  </div>
+</div>
+<div class="trocar-overlay" id="trocar-overlay">
+  <div class="trocar-card">
+    <div class="trocar-title">🔐 Defina sua nova senha</div>
+    <div class="trocar-sub">Você está usando uma senha temporária. Por segurança, defina uma senha permanente agora para continuar.</div>
+    <div class="field"><label>Senha temporária (atual)</label><input type="password" id="inp-senha-atual" placeholder="••••••••" autocomplete="current-password"/></div>
+    <div class="field"><label>Nova senha</label><input type="password" id="inp-nova-senha" placeholder="mínimo 6 caracteres" autocomplete="new-password"/></div>
+    <div class="field"><label>Confirmar nova senha</label><input type="password" id="inp-confirmar-senha" placeholder="repita a nova senha" autocomplete="new-password"/></div>
+    <button class="btn-confirm" id="btn-trocar-senha" onclick="trocarSenha()" style="width:100%;margin-top:8px">Salvar nova senha</button>
+    <div class="trocar-err" id="trocar-err"></div>
+  </div>
+</div>
+<div id="memed-overlay" onclick="fecharMemedDrawer()"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ═══ JAVASCRIPT (lógica 100% preservada) ═══════════════════ -->
+<script>
+// Endpoints esperados:
+// POST /api/especialista/login
+// GET  /api/especialista/consultas
+// GET  /api/especialista/consulta/:id
+// PUT  /api/especialista/consulta/:id/link_sessao
+// PUT  /api/especialista/consulta/:id/iniciar
+// PUT  /api/especialista/consulta/:id/encerrar   { prontuario }
+// PUT  /api/especialista/consulta/:id/cancelar
+// PUT  /api/especialista/consulta/:id/prontuario { prontuario, append? }
+// POST /api/especialista/esqueci-senha
+// POST /api/especialista/trocar-senha
+// GET  /api/memed/token
+
+const API='https://triagem-api.onrender.com';
+let especialista=null,consultaAtual=null,consultasData=[],filtroAtivo='hoje';
+let autosaveTimer=null,memedCarregado=false,memedToken='',toastTimer=null;
+
+function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function safeUrl(v){const u=String(v||'').trim();return /^https?:\/\//i.test(u)?u:'';}
+async function safeJson(res){const ct=res.headers.get('content-type')||'';if(!ct.includes('application/json'))return{};const text=await res.text();if(!text||!text.trim())return{};try{return JSON.parse(text);}catch(e){return{};}}
+function getToken(){return localStorage.getItem('esp_token')||'';}
+
+async function apiFetch(path,opts={}){
+  const token=getToken();const headers={...(opts.headers||{})};
+  if(token)headers['Authorization']='Bearer '+token;
+  if(opts.json){headers['Content-Type']='application/json';opts.body=JSON.stringify(opts.json);delete opts.json;}
+  const res=await fetch(API+path,{...opts,headers});
+  if(res.status===401){mostrarToast('Sessão expirada. Faça login novamente.','error');localStorage.removeItem('esp_token');localStorage.removeItem('especialista');location.reload();return{};}
+  return safeJson(res);
+}
+
+function mostrarToast(msg,tipo='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+tipo+' show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3500);}
+
+function abrirRecuperacao(){const sec=document.getElementById('recovery-section');sec.style.display=sec.style.display==='none'?'block':'none';if(sec.style.display==='block')setTimeout(()=>document.getElementById('inp-recovery-email').focus(),50);}
+async function enviarRecuperacao(){const email=document.getElementById('inp-recovery-email').value.trim();const btn=document.getElementById('btn-recovery');const msg=document.getElementById('recovery-msg');msg.style.display='none';btn.disabled=true;btn.textContent='Enviando…';try{await fetch(`${API}/api/especialista/esqueci-senha`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});msg.textContent='Se o e-mail existir na plataforma, enviamos as instruções de acesso.';msg.className='recovery-msg ok';msg.style.display='block';btn.textContent='Enviado ✓';}catch(e){msg.textContent='Erro ao enviar. Tente novamente.';msg.className='recovery-msg err';msg.style.display='block';btn.disabled=false;btn.textContent='Enviar instruções de acesso';}}
+
+async function fazerLogin(){
+  const email=document.getElementById('inp-email').value.trim();const senha=document.getElementById('inp-senha').value;
+  const err=document.getElementById('login-err');const btn=document.getElementById('btn-login');
+  if(!email||!senha){err.textContent='Preencha e-mail e senha.';err.style.display='block';return;}
+  err.style.display='none';btn.disabled=true;btn.textContent='Entrando…';
+  try{const res=await fetch(`${API}/api/especialista/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});const data=await safeJson(res);if(!res.ok||!data.ok){err.textContent=data.error||'E-mail ou senha incorretos.';err.style.display='block';return;}if(!data.token){err.textContent='Erro interno: token não recebido.';err.style.display='block';return;}especialista=data.especialista;localStorage.setItem('especialista',JSON.stringify(especialista));localStorage.setItem('esp_token',data.token);entrarApp();if(data.precisa_trocar_senha)setTimeout(()=>{document.getElementById('trocar-overlay').classList.add('open');},300);}catch(e){err.textContent='Erro de conexão: '+e.message;err.style.display='block';}
+  finally{btn.disabled=false;btn.textContent='Entrar no painel';}
+}
+document.getElementById('btn-login').addEventListener('click',fazerLogin);
+document.getElementById('inp-senha').addEventListener('keydown',e=>{if(e.key==='Enter')fazerLogin();});
+
+async function trocarSenha(){const senhaAtual=document.getElementById('inp-senha-atual').value;const novaSenha=document.getElementById('inp-nova-senha').value;const confirmarSenha=document.getElementById('inp-confirmar-senha').value;const btn=document.getElementById('btn-trocar-senha');const errEl=document.getElementById('trocar-err');errEl.style.display='none';btn.disabled=true;btn.textContent='Salvando…';try{const res=await fetch(`${API}/api/especialista/trocar-senha`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({senhaAtual,novaSenha,confirmarSenha})});const data=await safeJson(res);if(!data.ok){errEl.textContent=data.error||'Erro ao trocar senha.';errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';return;}document.getElementById('trocar-overlay').classList.remove('open');mostrarToast('Senha atualizada com sucesso!','success');}catch(e){errEl.textContent='Erro: '+e.message;errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';}}
+
+function entrarApp(){document.getElementById('screen-login').style.display='none';document.getElementById('screen-app').style.display='block';document.getElementById('nav-nome').textContent=especialista.nome||'-';document.getElementById('nav-espec').textContent=especialista.especialidade||'Especialista';if(especialista.crm)document.getElementById('nav-crm').textContent='CRM '+especialista.crm;carregarConsultas();}
+function fazerLogout(){localStorage.removeItem('esp_token');localStorage.removeItem('especialista');location.reload();}
+
+async function carregarConsultas(){try{const data=await apiFetch('/api/especialista/consultas');if(!data.ok){renderAgendaVazia('Não foi possível carregar a agenda.');return;}consultasData=data.consultas||[];renderAgenda();}catch(e){renderAgendaVazia('Erro de conexão.');}}
+
+function filtrarAgenda(filtro){filtroAtivo=filtro;document.querySelectorAll('.agenda-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+filtro).classList.add('active');renderAgenda();}
+
+function renderAgenda(){
+  const agora=new Date();const hoje=agora.toDateString();let lista=[];
+  if(filtroAtivo==='hoje'){lista=consultasData.filter(c=>{const d=c.horario_agendado?new Date(c.horario_agendado):null;return d&&d.toDateString()===hoje;});}
+  else if(filtroAtivo==='proximas'){lista=consultasData.filter(c=>{const d=c.horario_agendado?new Date(c.horario_agendado):null;return d&&d>agora&&d.toDateString()!==hoje;});}
+  else{lista=consultasData.filter(c=>['encerrada','cancelada','finalizada'].includes(c.status));}
+  const total=consultasData.filter(c=>!['cancelada'].includes(c.status)).length;
+  document.getElementById('agenda-count').textContent=total+' consulta'+(total===1?'':'s');
+  if(!lista.length){const msgs={hoje:'Nenhuma consulta hoje.',proximas:'Nenhuma consulta futura agendada.',historico:'Nenhum histórico encontrado.'};renderAgendaVazia(msgs[filtroAtivo]||'Nenhuma consulta encontrada.');return;}
+  const sorted=lista.sort((a,b)=>{const da=a.horario_agendado?new Date(a.horario_agendado):0;const db=b.horario_agendado?new Date(b.horario_agendado):0;return da-db;});
+  let html='';
+  if(filtroAtivo==='hoje'){const andamento=sorted.filter(c=>c.status==='em_andamento');const demais=sorted.filter(c=>c.status!=='em_andamento');if(andamento.length){html+=`<div class="agenda-section-label hoje-label">Em andamento</div>`;html+=andamento.map(c=>gerarCardHTML(c)).join('');}if(demais.length){html+=`<div class="agenda-section-label hoje-label">Hoje</div>`;html+=demais.map(c=>gerarCardHTML(c)).join('');}
+  }else{html+=sorted.map(c=>gerarCardHTML(c)).join('');}
+  document.getElementById('agenda-list').innerHTML=html;
+}
+function renderAgendaVazia(msg){document.getElementById('agenda-list').innerHTML=`<div class="agenda-empty"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div class="ae-title">${escHtml(msg)}</div><div class="ae-sub">Use os filtros acima para ver outras consultas.</div></div>`;}
+
+function gerarCardHTML(c){const horario=c.horario_agendado?new Date(c.horario_agendado).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(',',' ·'):'-';const status=mapStatus(c.status);const isAtivo=consultaAtual&&String(consultaAtual.id)===String(c.id);return `<div class="consulta-card status-${escHtml(c.status||'')} ${isAtivo?'active':''}" onclick="abrirConsulta(${c.id})"><div class="cc-header"><div class="cc-nome">${escHtml(c.paciente_nome||'-')}</div><span class="cc-badge ${status.cls}">${status.label}</span></div><div class="cc-horario">${horario}</div><div class="cc-espec">${escHtml(c.especialidade||'-')}</div><div class="cc-footer"><span class="cc-modalidade ${c.modalidade==='video'?'video':'chat'}">${c.modalidade==='video'?'🎥 Vídeo':'💬 Chat'}</span><button class="cc-btn-abrir">Abrir →</button></div></div>`;}
+
+function mapStatus(s){const map={'agendada':{cls:'proxima',label:'Agendada'},'confirmada':{cls:'hoje',label:'Confirmada'},'em_andamento':{cls:'emandamento',label:'● Em andamento'},'encerrada':{cls:'finalizada',label:'Encerrada'},'finalizada':{cls:'finalizada',label:'Finalizada'},'cancelada':{cls:'cancelada',label:'Cancelada'}};return map[s]||{cls:'proxima',label:s||'Agendada'};}
+
+async function abrirConsulta(id){try{const data=await apiFetch(`/api/especialista/consulta/${id}`);if(!data.ok){mostrarToast('Não foi possível carregar a consulta.','error');return;}consultaAtual=data.consulta;renderAgenda();renderDetalhe();}catch(e){mostrarToast('Erro ao carregar consulta.','error');}}
+
+function renderDetalhe(){
+  const c=consultaAtual;if(!c)return;
+  document.getElementById('state-vazio').style.display='none';document.getElementById('state-detalhe').style.display='block';
+  const col=document.getElementById('detalhe-col');col.classList.add('modo-atendimento');
+  const horario=c.horario_agendado?new Date(c.horario_agendado).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',weekday:'short',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace(',',' ·'):'-';
+  document.getElementById('det-nome').textContent=c.paciente_nome||'-';document.getElementById('det-horario').textContent=horario;
+  const modTag=document.getElementById('det-modalidade-tag');modTag.textContent=c.modalidade==='video'?'🎥 Vídeo':'💬 Chat';modTag.className='det-tag '+(c.modalidade==='video'?'video':'chat');
+  const stTag=document.getElementById('det-status-tag');const st=mapStatus(c.status);stTag.textContent=st.label;stTag.className='det-tag status '+(c.status||'');
+  document.getElementById('d-nome').textContent=c.paciente_nome||'-';document.getElementById('d-datahora').textContent=horario;document.getElementById('d-tel').textContent=c.paciente_tel||'-';document.getElementById('d-email').textContent=c.paciente_email||'-';document.getElementById('d-espec').textContent=c.especialidade||'-';document.getElementById('d-modalidade').textContent=c.modalidade==='video'?'Vídeo (Google Meet / Link)':'Chat';
+  if(c.obs){document.getElementById('d-obs').textContent=c.obs;document.getElementById('d-obs-wrap').style.display='';}else document.getElementById('d-obs-wrap').style.display='none';
+  renderDetActions(c);renderMeetSection(c);
+  ['cl-hda','cl-comorbidades','cl-medicacoes','cl-alergias','cl-obs','cl-conduta'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.querySelectorAll('.doc-check').forEach(d=>d.classList.remove('checked'));
+  document.getElementById('pront-output').style.display='none';document.getElementById('btn-copiar').style.display='none';document.getElementById('autosave-status').className='autosave-status';
+  registrarAutosave();switchTab('consulta');
+}
+function renderDetActions(c){const wrap=document.getElementById('det-actions');const enc=c.status==='encerrada'||c.status==='finalizada';const can=c.status==='cancelada';const andamento=c.status==='em_andamento';const agendada=!enc&&!can&&!andamento;let html='';if(agendada){html+=`<button class="btn-iniciar" onclick="iniciarConsulta()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Iniciar consulta</button><button class="btn-cancelar" onclick="abrirModalCancelar()">Cancelar</button>`;}if(andamento)html+=`<button class="btn-encerrar" onclick="abrirModalEncerrar()">✓ Encerrar consulta</button>`;wrap.innerHTML=html;}
+
+function renderMeetSection(c){const sec=document.getElementById('meet-section');sec.style.display=c.modalidade==='video'?'':'none';if(c.modalidade!=='video')return;const input=document.getElementById('meetLinkInput');const atualDiv=document.getElementById('meetLinkAtual');const atualUrl=document.getElementById('meetLinkAtualUrl');const openBtn=document.getElementById('meetLinkOpenBtn');const badgeWrap=document.getElementById('meet-badge-wrap');if(c.link_sessao){const url=safeUrl(c.link_sessao);input.value=c.link_sessao;if(url){atualUrl.textContent=c.link_sessao;atualUrl.href=url;openBtn.href=url;atualDiv.classList.add('visible');badgeWrap.innerHTML='<span class="meet-badge ok">Link configurado</span>';}}else{input.value='';atualDiv.classList.remove('visible');badgeWrap.innerHTML='<span class="meet-badge pendente">Link pendente</span>';}}
+
+async function iniciarConsulta(){if(!consultaAtual)return;try{const data=await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/iniciar`,{method:'PUT'});if(!data.ok){mostrarToast(data.error||'Erro ao iniciar.','error');return;}consultaAtual.status='em_andamento';renderDetActions(consultaAtual);atualizarStatusTag();renderAgenda();mostrarToast('Consulta iniciada!','success');}catch(e){mostrarToast('Erro de conexão.','error');}}
+function atualizarStatusTag(){const c=consultaAtual;if(!c)return;const el=document.getElementById('det-status-tag');const st=mapStatus(c.status);el.textContent=st.label;el.className='det-tag status '+(c.status||'');}
+function abrirModalCancelar(){document.getElementById('modal-cancelar').classList.add('open');}
+async function confirmarCancelamento(){if(!consultaAtual){fecharModal('modal-cancelar');return;}try{const data=await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/cancelar`,{method:'PUT'});if(!data.ok){mostrarToast(data.error||'Erro ao cancelar.','error');fecharModal('modal-cancelar');return;}consultaAtual.status='cancelada';renderDetActions(consultaAtual);atualizarStatusTag();renderAgenda();fecharModal('modal-cancelar');mostrarToast('Consulta cancelada.','info');}catch(e){mostrarToast('Erro de conexão.','error');fecharModal('modal-cancelar');}}
+function abrirModalEncerrar(){document.getElementById('modal-encerrar').classList.add('open');}
+async function confirmarEncerramento(){if(!consultaAtual){fecharModal('modal-encerrar');return;}const prontuario=montarTextoProntuario();try{const data=await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/encerrar`,{method:'PUT',json:{prontuario}});if(!data.ok){mostrarToast(data.error||'Erro ao encerrar.','error');fecharModal('modal-encerrar');return;}consultaAtual.status='encerrada';renderDetActions(consultaAtual);atualizarStatusTag();renderAgenda();fecharModal('modal-encerrar');mostrarToast('Consulta encerrada. Prontuário salvo.','success');}catch(e){mostrarToast('Erro de conexão.','error');fecharModal('modal-encerrar');}}
+function fecharModal(id){document.getElementById(id).classList.remove('open');}
+
+async function salvarMeetLink(){if(!consultaAtual)return;const val=document.getElementById('meetLinkInput').value.trim();if(!val){mostrarToast('Informe um link válido.','error');return;}try{const data=await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/link_sessao`,{method:'PUT',json:{link_sessao:val}});if(!data.ok){mostrarToast(data.error||'Erro ao salvar link.','error');return;}consultaAtual.link_sessao=val;renderMeetSection(consultaAtual);mostrarToast('Link salvo e disponível para o paciente!','success');}catch(e){mostrarToast('Erro de conexão.','error');}}
+function copiarMeetLink(){const url=safeUrl(consultaAtual?.link_sessao||'');if(!url)return;navigator.clipboard.writeText(url).then(()=>mostrarToast('Link copiado!','success'));}
+
+function inserirConduta(texto){const campo=document.getElementById('cl-conduta');if(!campo)return;campo.value=campo.value.trim()?(campo.value.trim()+'\n'+texto):texto;campo.dispatchEvent(new Event('input'));campo.focus();}
+function toggleDoc(el){el.classList.toggle('checked');}
+function registrarAutosave(){['cl-hda','cl-comorbidades','cl-medicacoes','cl-alergias','cl-obs','cl-conduta'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.removeEventListener('input',agendarAutosave);el.addEventListener('input',agendarAutosave);});}
+function agendarAutosave(){if(!consultaAtual)return;clearTimeout(autosaveTimer);const s=document.getElementById('autosave-status');s.className='autosave-status visible';s.textContent='💾 Salvando…';autosaveTimer=setTimeout(executarAutosave,2500);}
+async function executarAutosave(){if(!consultaAtual)return;const texto=montarTextoProntuario();const s=document.getElementById('autosave-status');try{const data=await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/prontuario`,{method:'PUT',json:{prontuario:texto}});if(data.ok){s.className='autosave-status visible ok';s.textContent='✓ Salvo';setTimeout(()=>{s.className='autosave-status';},3000);}else{s.className='autosave-status visible err';s.textContent='⚠ Não salvo';}}catch(e){s.className='autosave-status visible err';s.textContent='⚠ Não salvo';}}
+
+function montarTextoProntuario(){const c=consultaAtual;if(!c)return'';const hda=document.getElementById('cl-hda').value.trim();const comorbidades=document.getElementById('cl-comorbidades').value.trim();const medicacoes=document.getElementById('cl-medicacoes').value.trim();const alergias=document.getElementById('cl-alergias').value.trim();const obs=document.getElementById('cl-obs').value.trim();const conduta=document.getElementById('cl-conduta').value.trim();const docs=[...document.querySelectorAll('.doc-check.checked')].map(d=>d.querySelector('.dc-text').textContent).join(', ')||'Nenhum';const sep='-----------';const dataHora=new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});const linhas=[`CONSULTA ESPECIALIZADA ONLINE · ${dataHora}`,sep,`Especialidade: ${c.especialidade||'-'}`,`Paciente: ${c.paciente_nome||'-'}`,`Modalidade: ${c.modalidade==='video'?'Vídeo':'Chat'}`,'',sep,'QUEIXA PRINCIPAL / HDA',sep,hda||'(não informado)','',sep,'ANTECEDENTES',sep,`Comorbidades: ${comorbidades||'Nega comorbidades referidas'}`,`Medicações em uso: ${medicacoes||'Nega uso contínuo de medicações'}`,`Alergias: ${alergias||'Nega alergias medicamentosas'}`];if(obs)linhas.push('',sep,'OBSERVAÇÕES / EXAME TELEMEDICINA',sep,obs);linhas.push('',sep,'CONDUTA',sep,conduta||'(não informado)','',sep,`Documentos emitidos: ${docs}`,`Atendimento realizado por telemedicina conforme Res. CFM 2.314/2022.`,sep);return linhas.join('\n');}
+
+function gerarProntuario(){if(!consultaAtual)return;const c=consultaAtual;const hda=document.getElementById('cl-hda').value.trim();const comorbidades=document.getElementById('cl-comorbidades').value.trim();const medicacoes=document.getElementById('cl-medicacoes').value.trim();const alergias=document.getElementById('cl-alergias').value.trim();const obs=document.getElementById('cl-obs').value.trim();const conduta=document.getElementById('cl-conduta').value.trim();const docs=[...document.querySelectorAll('.doc-check.checked')].map(d=>d.querySelector('.dc-text').textContent).join(', ')||'Nenhum';const dataHora=new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});const empty=v=>v?`<span>${escHtml(v)}</span>`:`<span class="pront-empty">Não informado</span>`;const out=document.getElementById('pront-output');out.style.display='block';out.innerHTML=`<div class="pront-card" style="border-color:rgba(34,197,94,.15);background:rgba(34,197,94,.04)"><div class="pront-paciente">${escHtml(c.paciente_nome||'-')}</div><div class="pront-meta">${escHtml(c.especialidade||'-')} · ${c.modalidade==='video'?'📹 Vídeo':'💬 Chat'}</div><div class="pront-meta">${dataHora} · Res. CFM 2.314/2022</div></div><div class="pront-card"><div class="pront-card-title">Queixa principal / HDA</div><div class="pront-card-body">${empty(hda)}</div></div><div class="pront-card"><div class="pront-card-title">Antecedentes</div><div class="pront-card-body">Comorbidades: ${escHtml(comorbidades||'Nega comorbidades referidas')}\nMedicações em uso: ${escHtml(medicacoes||'Nega uso contínuo de medicações')}\nAlergias: ${escHtml(alergias||'Nega alergias medicamentosas')}</div></div>${obs?`<div class="pront-card"><div class="pront-card-title">Observações (telemedicina)</div><div class="pront-card-body">${escHtml(obs)}</div></div>`:''}<div class="pront-card"><div class="pront-card-title">Conduta</div><div class="pront-card-body">${empty(conduta)}</div></div><div class="pront-card"><div class="pront-card-title">Documentos emitidos</div><div class="pront-card-body">${escHtml(docs)}</div></div>`;const btnCopiar=document.getElementById('btn-copiar');btnCopiar.style.display='inline-flex';btnCopiar.classList.remove('copied');btnCopiar.textContent='📋 Copiar';executarAutosave();}
+function copiarProntuario(){navigator.clipboard.writeText(montarTextoProntuario()).then(()=>{const btn=document.getElementById('btn-copiar');btn.classList.add('copied');btn.textContent='✓ Copiado!';mostrarToast('Prontuário copiado!','success');setTimeout(()=>{btn.classList.remove('copied');btn.textContent='📋 Copiar';},3000);});}
+function switchTab(nome){document.querySelectorAll('.tabs .tab').forEach((t,i)=>{t.classList.toggle('active',['consulta','clinico','prontuario'][i]===nome);});document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+nome).classList.add('active');}
+
+function fecharMemedDrawer(){const overlay=document.getElementById('memed-overlay');if(overlay)overlay.classList.remove('ativo');document.body.classList.remove('memed-aberto');try{MdHub.module.hide('plataforma.prescricao');}catch(e){}const btn=document.getElementById('btn-memed');if(btn){btn.disabled=false;btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg> Abrir Memed';}}
+function abrirMemedDrawer(){const overlay=document.getElementById('memed-overlay');if(overlay)overlay.classList.add('ativo');document.body.classList.add('memed-aberto');}
+async function salvarPrescricaoNoProntuario(dados){if(!consultaAtual)return;try{const ts=new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});const linhas=[`--- Prescrição Memed (${ts}) ---`];if(dados.medicamentos&&dados.medicamentos.length){linhas.push('💊 Medicamentos:');dados.medicamentos.forEach(m=>linhas.push(`  • ${m.nome}${m.posologia?' — '+m.posologia:''}`));}if(dados.exames&&dados.exames.length){linhas.push('🔬 Exames:');dados.exames.forEach(e=>linhas.push(`  • ${e.nome||e}`));}if(dados.atestado)linhas.push(`📄 Atestado: ${dados.atestado}`);if(dados.link)linhas.push(`🔗 Link: ${dados.link}`);await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/prontuario`,{method:'PUT',json:{prontuario:linhas.join('\n'),append:true}});mostrarToast('Prescrição salva no prontuário','success');}catch(e){console.error('Erro ao salvar prescrição:',e);}}
+
+async function abrirMemed(){
+  if(!consultaAtual)return mostrarToast('Nenhuma consulta ativa','error');
+  const btn=document.getElementById('btn-memed');if(btn){btn.disabled=true;btn.textContent='⏳ Carregando…';}
+  if(memedCarregado){try{const pac=consultaAtual;await MdHub.command.send('plataforma.prescricao','setPaciente',{idExterno:`paciente-${pac.id||Date.now()}`,nome:(pac.paciente_nome||'').trim(),cpf:(pac.cpf||'').replace(/\D/g,'')||undefined,email:pac.paciente_email||undefined,telefone:(pac.paciente_tel||'').replace(/\D/g,'')||undefined,data_nascimento:pac.data_nascimento||undefined,sexo:pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined});MdHub.module.show('plataforma.prescricao');abrirMemedDrawer();if(btn){btn.disabled=false;btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg> Abrir Memed';}return;}catch(e){memedCarregado=false;const s=document.getElementById('memed-script');if(s)s.remove();}}
+  try{const data=await apiFetch('/api/memed/token');if(!data.ok||!data.token){if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}mostrarToast('Não foi possível carregar a prescrição','error');return;}memedToken=data.token;if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}const script=document.createElement('script');script.id='memed-script';script.type='text/javascript';script.setAttribute('data-color','#22c55e');script.setAttribute('data-token',memedToken);script.src='https://partners.memed.com.br/integration.js';script.onload=()=>{memedCarregado=true;MdSinapsePrescricao.event.add('core:moduleInit',async(module)=>{if(module.name!=='plataforma.prescricao')return;await MdHub.command.send('plataforma.prescricao','setFeatureToggle',{historyPrescription:true,buttonClose:true,allowShareModal:true});const pac=consultaAtual;await MdHub.command.send('plataforma.prescricao','setPaciente',{idExterno:`paciente-${pac.id||Date.now()}`,nome:(pac.paciente_nome||'').trim(),cpf:(pac.cpf||'').replace(/\D/g,'')||undefined,email:pac.paciente_email||undefined,telefone:(pac.paciente_tel||'').replace(/\D/g,'')||undefined,data_nascimento:pac.data_nascimento||undefined,sexo:pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined});MdHub.module.show('plataforma.prescricao');abrirMemedDrawer();MdHub.event.add('prescricaoImpressa',async(ev)=>{const p=ev?.prescricao||ev||{};await salvarPrescricaoNoProntuario({link:p.link||'',medicamentos:p.medicamentos||p.itens||[],exames:p.exames||[],atestado:p.atestado||''});});MdHub.event.add('prescricaoExcluida',()=>{});MdSinapsePrescricao.event.add('core:moduleHide',(mod)=>{if(mod.moduleName==='plataforma.prescricao')fecharMemedDrawer();});});};script.onerror=()=>{mostrarToast('Erro ao carregar Memed','error');fecharMemedDrawer();if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}};document.head.appendChild(script);}catch(e){mostrarToast('Não foi possível abrir a prescrição.','error');fecharMemedDrawer();if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}}
+}
+
+document.addEventListener('visibilitychange',function(){if(document.hidden||!especialista)return;carregarConsultas();});
+(function init(){try{const token=localStorage.getItem('esp_token');const saved=localStorage.getItem('especialista');if(saved&&token){especialista=JSON.parse(saved);entrarApp();}}catch(e){localStorage.removeItem('esp_token');localStorage.removeItem('especialista');}})();
+</script>
+</body>
+</html>
