@@ -221,7 +221,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .admin-esp-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:20px;margin-bottom:12px;transition:border-color .2s}
 .admin-esp-card:hover{border-color:rgba(255,255,255,.09)}
 .admin-esp-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.admin-esp-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(255,255,255,.08);background:rgba(31,41,55,.8);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:rgba(255,255,255,.2)}
+.admin-esp-avatar{width:44px;height:44px;min-width:44px;min-height:44px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(255,255,255,.08);background:rgba(31,41,55,.8);flex-shrink:0;aspect-ratio:1/1}
+div.admin-esp-avatar{display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:rgba(255,255,255,.2)}
 .admin-esp-info{flex:1;min-width:0}
 .admin-esp-nome{font-size:.92rem;font-weight:600;color:rgba(241,245,249,.88);margin-bottom:2px}
 .admin-esp-meta{font-size:.72rem;color:rgba(156,163,175,.5);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -915,7 +916,7 @@ function renderAdminEspecialistas(){
   if(!isAdmin){wrap.innerHTML='<div class="disp-empty">Admin bloqueado. Entre com senha.</div>';return;}
   if(!adminEspecialistas.length){wrap.innerHTML='<div class="disp-empty">Nenhum especialista carregado.</div>';return;}
   wrap.innerHTML=adminEspecialistas.map((m,i)=>{
-    const avatarHtml=m.foto_url?`<img class="admin-esp-avatar" src="${escHtml(m.foto_url)}" onerror="this.style.display='none'" style="display:block"/>`:`<div class="admin-esp-avatar">👤</div>`;
+    const avatarHtml=m.foto_url?`<img class="admin-esp-avatar" src="${escHtml(m.foto_url)}" onerror="this.outerHTML='<div class=\'admin-esp-avatar\'>👤</div>'" style="display:block"/>`:`<div class="admin-esp-avatar">👤</div>`;
     const slots=(m.disponibilidade||[]).map((s,idx)=>`<div class="admin-disp-slot"><span>${escHtml(s.dia||'-')} · ${escHtml(s.hora||'-')}</span><button class="btn-disp-remove" onclick="adminRemoverDisp(${i},${idx})">✕</button></div>`).join('')||'<div class="disp-empty">Sem horários.</div>';
     return `<div class="admin-esp-card">
       <div class="admin-esp-head">
