@@ -102,6 +102,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-web
 .nav-medico-info .nav-crm{font-size:.68rem;color:rgba(156,163,175,.45);font-weight:400}
 .nav-logout{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:transparent;color:rgba(156,163,175,.45);font-family:'Outfit',sans-serif;font-size:.76rem;cursor:pointer;transition:all .22s;flex-shrink:0}
 .nav-logout:hover{border-color:rgba(248,113,113,.25);color:rgba(248,113,113,.7)}
+.nav-admin{padding:7px 14px;border-radius:8px;border:1px solid rgba(96,165,250,.22);background:rgba(96,165,250,.08);color:rgba(147,197,253,.85);font-family:'Outfit',sans-serif;font-size:.76rem;cursor:pointer;transition:all .22s;flex-shrink:0}
+.nav-admin:hover{background:rgba(96,165,250,.14)}
+.nav-admin.on{border-color:rgba(34,197,94,.26);background:rgba(34,197,94,.1);color:rgba(134,239,172,.9)}
 
 /* ═══ LAYOUT ═══════════════════════════════════════════════ */
 .app-body{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - var(--nav-h))}
@@ -282,6 +285,42 @@ textarea.clinic-input::placeholder{color:rgba(255,255,255,.1)}
 .btn-gerar{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s}
 .btn-gerar:hover{border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.8);background:rgba(255,255,255,.08)}
 
+/* Disponibilidade */
+.disp-box{background:rgba(31,41,55,.55);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:16px 18px;margin-bottom:14px}
+.disp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.disp-title{font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(156,163,175,.55)}
+.disp-row{display:flex;gap:8px;flex-wrap:wrap}
+.disp-input{padding:9px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem}
+.btn-disp-add,.btn-disp-save,.btn-disp-remove{border-radius:8px;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .18s}
+.btn-disp-add{padding:9px 12px;border:1px solid rgba(96,165,250,.22);background:rgba(96,165,250,.1);color:rgba(147,197,253,.95);font-size:.78rem;font-weight:600}
+.btn-disp-add:hover{background:rgba(96,165,250,.16)}
+.btn-disp-save{padding:9px 12px;border:1px solid rgba(34,197,94,.24);background:rgba(34,197,94,.1);color:#86efac;font-size:.78rem;font-weight:700}
+.btn-disp-save:hover{background:rgba(34,197,94,.16)}
+.disp-list{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.disp-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+.disp-item-text{font-size:.78rem;color:rgba(241,245,249,.84);line-height:1.4}
+.btn-disp-remove{padding:5px 9px;border:1px solid rgba(248,113,113,.25);background:rgba(248,113,113,.08);color:rgba(248,113,113,.8);font-size:.72rem}
+.btn-disp-remove:hover{background:rgba(248,113,113,.12)}
+.disp-empty{font-size:.75rem;color:rgba(156,163,175,.6);padding:6px 2px}
+
+/* Admin especialistas */
+.admin-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.admin-title{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(96,165,250,.7)}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-admin{padding:8px 12px;border-radius:8px;border:1px solid rgba(96,165,250,.24);background:rgba(96,165,250,.1);color:rgba(191,219,254,.95);font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer}
+.admin-create{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);margin-bottom:10px}
+.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-input{padding:9px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:var(--text);font-family:'Outfit',sans-serif;font-size:.78rem;width:100%}
+.admin-checks{display:flex;gap:14px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.admin-checks label{display:flex;align-items:center;gap:6px;font-size:.75rem;color:rgba(241,245,249,.82)}
+.admin-list{display:flex;flex-direction:column;gap:8px}
+.admin-item{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+.admin-item-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.admin-item-name{font-size:.85rem;font-weight:600;color:rgba(241,245,249,.9)}
+.admin-disp{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.admin-disp-list{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.admin-disp-slot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.74rem;color:rgba(241,245,249,.82);padding:7px 8px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(255,255,255,.02)}
+
 /* Toast */
 .toast{position:fixed;bottom:28px;right:28px;z-index:500;padding:12px 20px;border-radius:var(--r-sm);font-size:.82rem;font-weight:500;transform:translateY(80px);opacity:0;transition:all .28s cubic-bezier(.4,0,.2,1);pointer-events:none;backdrop-filter:blur(12px)}
 .toast.show{transform:translateY(0);opacity:1}
@@ -323,16 +362,19 @@ body.memed-aberto{overflow:hidden}
   .dados-grid{grid-template-columns:1fr 1fr;gap:14px 16px}
   .det-header{flex-direction:column;align-items:flex-start;margin-bottom:24px;padding-bottom:20px;gap:14px}
   .det-nome{font-size:1.55rem}
-  .det-actions{width:100%;gap:10px}
-  .det-actions .btn-iniciar{flex:1;justify-content:center}
-  .meet-input-row{flex-direction:column;gap:8px}
-  .btn-meet-save{width:100%;justify-content:center}
-  .sec-box{padding:20px 18px}
-  .meet-box{padding:20px 18px}
-  .memed-block{padding:18px}
-  .modal-overlay{padding:0;align-items:flex-end}
-  .modal{border-radius:20px 20px 0 0;max-width:100%;padding:24px 18px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
-  .toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center;font-size:.82rem}
+	  .det-actions{width:100%;gap:10px}
+	  .det-actions .btn-iniciar{flex:1;justify-content:center}
+	  .meet-input-row{flex-direction:column;gap:8px}
+	  .btn-meet-save{width:100%;justify-content:center}
+	  .disp-row{flex-direction:column}
+	  .btn-disp-add,.btn-disp-save{width:100%}
+	  .admin-grid{grid-template-columns:1fr}
+	  .sec-box{padding:20px 18px}
+	  .meet-box{padding:20px 18px}
+	  .memed-block{padding:18px}
+	  .modal-overlay{padding:0;align-items:flex-end}
+	  .modal{border-radius:20px 20px 0 0;max-width:100%;padding:24px 18px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+	  .toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center;font-size:.82rem}
   .tabs{margin-bottom:16px}
   .tab{padding:10px 6px;font-size:.8rem}
 }
@@ -374,10 +416,11 @@ body.memed-aberto{overflow:hidden}
     </a>
     <div class="nav-divider"></div>
     <div class="nav-espec-pill"><div class="dot-live" style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0"></div><span class="nav-espec-text" id="nav-espec">Especialista</span></div>
-    <div class="nav-spacer"></div>
-    <div class="nav-medico-info"><div class="nav-nome" id="nav-nome">-</div><div class="nav-crm" id="nav-crm"></div></div>
-    <button class="nav-logout" onclick="fazerLogout()">Sair</button>
-  </nav>
+	    <div class="nav-spacer"></div>
+	    <div class="nav-medico-info"><div class="nav-nome" id="nav-nome">-</div><div class="nav-crm" id="nav-crm"></div></div>
+	    <button class="nav-admin" id="btn-admin-access" onclick="abrirAdminModal()">Admin</button>
+	    <button class="nav-logout" onclick="fazerLogout()">Sair</button>
+	  </nav>
 
   <div class="app-body">
     <!-- Agenda -->
@@ -401,11 +444,47 @@ body.memed-aberto{overflow:hidden}
       </div>
     </aside>
 
-    <!-- Detalhe -->
-    <main class="detalhe-col" id="detalhe-col">
-      <div class="detalhe-vazio" id="state-vazio">
-        <div class="dv-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-        <h2>Selecione uma consulta</h2>
+	    <!-- Detalhe -->
+	    <main class="detalhe-col" id="detalhe-col">
+	      <div class="disp-box">
+	        <div class="disp-head">
+	          <div class="disp-title">Disponibilidade pública</div>
+	        </div>
+	        <div class="disp-row">
+	          <input class="disp-input" type="date" id="disp-date"/>
+	          <input class="disp-input" type="time" id="disp-time"/>
+	          <button class="btn-disp-add" onclick="adicionarDisponibilidade()">Adicionar horário</button>
+	          <button class="btn-disp-save" onclick="salvarDisponibilidade()">Salvar disponibilidade</button>
+	        </div>
+	        <div class="disp-list" id="disp-list">
+	          <div class="disp-empty">Nenhum horário adicionado.</div>
+	        </div>
+	      </div>
+	      <div class="sec-box" id="admin-panel" style="display:none">
+	        <div class="admin-top">
+	          <div class="admin-title">Painel admin · Especialistas</div>
+	          <div class="admin-actions">
+	            <button class="btn-admin" onclick="carregarEspecialistasAdmin()">Carregar especialistas</button>
+	          </div>
+	        </div>
+	        <div class="admin-create">
+	          <div class="admin-grid">
+	            <input class="admin-input" id="admin-new-nome" placeholder="Nome"/>
+	            <input class="admin-input" id="admin-new-email" placeholder="E-mail"/>
+	            <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade"/>
+	            <input class="admin-input" id="admin-new-senha" type="password" placeholder="Senha inicial"/>
+	          </div>
+	          <div style="margin-top:8px">
+	            <button class="btn-admin" onclick="adminCriarEspecialista()">Criar especialista</button>
+	          </div>
+	        </div>
+	        <div class="admin-list" id="admin-list">
+	          <div class="disp-empty">Admin bloqueado. Entre com senha.</div>
+	        </div>
+	      </div>
+	      <div class="detalhe-vazio" id="state-vazio">
+	        <div class="dv-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+	        <h2>Selecione uma consulta</h2>
         <p>Escolha uma consulta na agenda ao lado para ver os detalhes e iniciar o atendimento.</p>
       </div>
 
@@ -534,6 +613,17 @@ body.memed-aberto{overflow:hidden}
     <div class="modal-actions"><button class="btn-cancel" onclick="fecharModal('modal-encerrar')">Voltar</button><button class="btn-confirm" onclick="confirmarEncerramento()">Confirmar encerramento</button></div>
   </div>
 </div>
+<div class="modal-overlay" id="modal-admin-login">
+  <div class="modal">
+    <div class="modal-title">Acesso admin</div>
+    <div class="modal-sub">Digite a senha administrativa para liberar controles de especialistas.</div>
+    <div class="field"><label>Senha admin</label><input type="password" id="inp-admin-pass" placeholder="••••••••"/></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal('modal-admin-login')">Cancelar</button>
+      <button class="btn-confirm" id="btn-admin-login" onclick="entrarComoAdmin()">Entrar como admin</button>
+    </div>
+  </div>
+</div>
 <div class="trocar-overlay" id="trocar-overlay">
   <div class="trocar-card">
     <div class="trocar-title">🔐 Defina sua nova senha</div>
@@ -566,6 +656,8 @@ body.memed-aberto{overflow:hidden}
 const API='https://triagem-api.onrender.com';
 let especialista=null,consultaAtual=null,consultasData=[],filtroAtivo='hoje';
 let autosaveTimer=null,memedCarregado=false,memedToken='',toastTimer=null;
+let disponibilidadeSlots=[];
+let isAdmin=false,adminPassword='',adminEspecialistas=[];
 
 function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function safeUrl(v){const u=String(v||'').trim();return /^https?:\/\//i.test(u)?u:'';}
@@ -582,6 +674,179 @@ async function apiFetch(path,opts={}){
 }
 
 function mostrarToast(msg,tipo='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+tipo+' show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3500);}
+function abrirAdminModal(){document.getElementById('modal-admin-login').classList.add('open');setTimeout(()=>document.getElementById('inp-admin-pass')?.focus(),50);}
+function setAdminMode(on){
+  isAdmin=!!on;
+  const panel=document.getElementById('admin-panel');if(panel)panel.style.display=isAdmin?'':'none';
+  const btn=document.getElementById('btn-admin-access');if(btn){btn.classList.toggle('on',isAdmin);btn.textContent=isAdmin?'Admin ✓':'Admin';}
+}
+async function adminFetch(path,opts={}){
+  if(!adminPassword)throw new Error('Senha admin não informada.');
+  const headers={...(opts.headers||{}),'x-admin-password':adminPassword};
+  if(opts.json){headers['Content-Type']='application/json';opts.body=JSON.stringify(opts.json);delete opts.json;}
+  const res=await fetch(API+path,{...opts,headers});
+  const data=await safeJson(res);
+  if(!res.ok){
+    const msg=data.error||data.message||'Acesso admin negado.';
+    throw new Error(msg);
+  }
+  return data;
+}
+function adminWeekdayLabel(dateStr){return new Date(dateStr+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'short'});}
+function adminSlotFromDateTime(dateVal,timeVal){
+  const hora=String(timeVal||'').slice(0,5);
+  const iso=`${dateVal}T${hora}:00-03:00`;
+  const now=new Date();const hoje=new Date(now.getFullYear(),now.getMonth(),now.getDate());const alvoRaw=new Date(dateVal+'T00:00:00');const alvo=new Date(alvoRaw.getFullYear(),alvoRaw.getMonth(),alvoRaw.getDate());
+  const diff=Math.round((alvo-hoje)/86400000);
+  const dia=diff===0?'Hoje':diff===1?'Amanhã':adminWeekdayLabel(dateVal);
+  return {dia,hora,iso};
+}
+function renderAdminEspecialistas(){
+  const wrap=document.getElementById('admin-list');if(!wrap)return;
+  if(!isAdmin){wrap.innerHTML='<div class="disp-empty">Admin bloqueado. Entre com senha.</div>';return;}
+  if(!adminEspecialistas.length){wrap.innerHTML='<div class="disp-empty">Nenhum especialista carregado.</div>';return;}
+  wrap.innerHTML=adminEspecialistas.map((m,i)=>`<div class="admin-item">
+    <div class="admin-item-head"><div class="admin-item-name">${escHtml(m.nome||m.email||('ID '+m.id))}</div><div style="font-size:.7rem;color:rgba(156,163,175,.6)">ID ${escHtml(m.id)}</div></div>
+    <div class="admin-grid">
+      <input class="admin-input" value="${escHtml(m.nome_exibicao||'')}" onchange="adminAtualizarCampo(${i},'nome_exibicao',this.value)" placeholder="Nome de exibição"/>
+      <input class="admin-input" type="number" step="0.01" value="${escHtml(String(m.valor_consulta??''))}" onchange="adminAtualizarCampo(${i},'valor_consulta',this.value)" placeholder="Valor consulta"/>
+      <input class="admin-input" value="${escHtml(m.especialidade||'')}" disabled/>
+      <input class="admin-input" value="${escHtml(m.email||'')}" disabled/>
+    </div>
+    <div class="admin-checks">
+      <label><input type="checkbox" ${m.ativo?'checked':''} onchange="adminAtualizarCampo(${i},'ativo',this.checked)"/> Ativo</label>
+      <label><input type="checkbox" ${m.visivel?'checked':''} onchange="adminAtualizarCampo(${i},'visivel',this.checked)"/> Visível</label>
+      <button class="btn-admin" onclick="adminSalvarEspecialista(${i})">Salvar mudanças</button>
+    </div>
+    <div class="admin-disp">
+      <div class="disp-row">
+        <input class="disp-input" type="date" id="admin-disp-date-${m.id}"/>
+        <input class="disp-input" type="time" id="admin-disp-time-${m.id}"/>
+        <button class="btn-disp-add" onclick="adminAdicionarDisp(${i})">Adicionar horário</button>
+        <button class="btn-disp-save" onclick="adminSalvarDisponibilidade(${i})">Salvar disponibilidade</button>
+      </div>
+      <div class="admin-disp-list">${(m.disponibilidade||[]).length?(m.disponibilidade||[]).map((s,idx)=>`<div class="admin-disp-slot"><span>${escHtml(s.dia||'-')} · ${escHtml(s.hora||'-')}</span><button class="btn-disp-remove" onclick="adminRemoverDisp(${i},${idx})">Remover</button></div>`).join(''):'<div class="disp-empty">Sem horários.</div>'}</div>
+    </div>
+  </div>`).join('');
+}
+function adminAtualizarCampo(i,campo,valor){if(!adminEspecialistas[i])return;adminEspecialistas[i][campo]=valor;}
+async function carregarEspecialistasAdmin(showToast=true){
+  try{
+    const data=await adminFetch('/api/admin/especialistas');
+    const lista=Array.isArray(data)?data:(Array.isArray(data.especialistas)?data.especialistas:[]);
+    adminEspecialistas=lista.map(m=>({...m,valor_consulta:m.valor_consulta??'',ativo:!!m.ativo,visivel:!!m.visivel,disponibilidade:normalizarDisponibilidade(m.disponibilidade)}));
+    setAdminMode(true);
+    renderAdminEspecialistas();
+    if(showToast)mostrarToast('Especialistas carregados.','success');
+    return true;
+  }catch(e){
+    setAdminMode(false);
+    renderAdminEspecialistas();
+    mostrarToast(e.message||'Senha admin inválida.','error');
+    return false;
+  }
+}
+async function entrarComoAdmin(){
+  const inp=document.getElementById('inp-admin-pass');const btn=document.getElementById('btn-admin-login');
+  const senha=(inp?.value||'').trim();if(!senha){mostrarToast('Informe a senha admin.','error');return;}
+  btn.disabled=true;btn.textContent='Entrando…';
+  const prev=adminPassword;adminPassword=senha;
+  const ok=await carregarEspecialistasAdmin(false);
+  if(ok){localStorage.setItem('adminPassword',adminPassword);fecharModal('modal-admin-login');mostrarToast('Admin liberado.','success');}
+  else{adminPassword=prev||'';}
+  btn.disabled=false;btn.textContent='Entrar como admin';
+}
+async function adminCriarEspecialista(){
+  if(!isAdmin)return;
+  const nome=(document.getElementById('admin-new-nome')?.value||'').trim();
+  const email=(document.getElementById('admin-new-email')?.value||'').trim();
+  const especialidade=(document.getElementById('admin-new-especialidade')?.value||'').trim();
+  const senha=(document.getElementById('admin-new-senha')?.value||'').trim();
+  if(!nome||!email||!senha){mostrarToast('Preencha nome, e-mail e senha.','error');return;}
+  try{const data=await adminFetch('/api/admin/especialistas',{method:'POST',json:{nome,email,especialidade,senha}});if(data.ok===false)throw new Error(data.error||'Erro ao criar especialista.');mostrarToast('Especialista criado.','success');['admin-new-nome','admin-new-email','admin-new-especialidade','admin-new-senha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
+}
+async function adminSalvarEspecialista(i){
+  const m=adminEspecialistas[i];if(!m||!m.id)return;
+  try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PATCH',json:{nome_exibicao:m.nome_exibicao||'',valor_consulta:m.valor_consulta===''?null:Number(m.valor_consulta),ativo:!!m.ativo,visivel:!!m.visivel}});if(data.ok===false)throw new Error(data.error||'Erro ao salvar especialista.');mostrarToast('Especialista atualizado.','success');}catch(e){mostrarToast(e.message||'Erro ao salvar especialista.','error');}
+}
+function adminAdicionarDisp(i){
+  const m=adminEspecialistas[i];if(!m)return;
+  const d=(document.getElementById(`admin-disp-date-${m.id}`)?.value||'').trim();
+  const t=(document.getElementById(`admin-disp-time-${m.id}`)?.value||'').trim();
+  if(!d||!t){mostrarToast('Informe data e hora.','error');return;}
+  const slot=adminSlotFromDateTime(d,t);
+  m.disponibilidade=Array.isArray(m.disponibilidade)?m.disponibilidade:[];
+  if(m.disponibilidade.some(s=>s.iso===slot.iso)){mostrarToast('Horário já adicionado.','info');return;}
+  m.disponibilidade.push(slot);
+  m.disponibilidade.sort((a,b)=>new Date(a.iso)-new Date(b.iso));
+  renderAdminEspecialistas();
+}
+function adminRemoverDisp(i,idx){
+  const m=adminEspecialistas[i];if(!m||!Array.isArray(m.disponibilidade))return;
+  m.disponibilidade.splice(idx,1);
+  renderAdminEspecialistas();
+}
+async function adminSalvarDisponibilidade(i){
+  const m=adminEspecialistas[i];if(!m||!m.id)return;
+  try{const data=await adminFetch(`/api/admin/especialista/${m.id}/disponibilidade`,{method:'PATCH',json:{disponibilidade:Array.isArray(m.disponibilidade)?m.disponibilidade:[]}});if(data.ok===false)throw new Error(data.error||'Erro ao salvar disponibilidade.');mostrarToast('Disponibilidade do especialista salva.','success');}catch(e){mostrarToast(e.message||'Erro ao salvar disponibilidade.','error');}
+}
+
+function normalizarDisponibilidade(arr){
+  if(!Array.isArray(arr))return[];
+  return arr.filter(it=>it&&typeof it==='object').map(it=>{
+    const iso=String(it.iso||'').trim();
+    const hora=String(it.hora||'').trim();
+    const dia=String(it.dia||'').trim();
+    if(!iso||!hora)return null;
+    return {dia:dia||'Horário',hora,iso};
+  }).filter(Boolean);
+}
+function formatDiaDisponibilidade(dateStr){
+  const now=new Date();const baseHoje=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const alvoRaw=new Date(dateStr+'T00:00:00');const alvo=new Date(alvoRaw.getFullYear(),alvoRaw.getMonth(),alvoRaw.getDate());
+  const diff=Math.round((alvo-baseHoje)/86400000);
+  if(diff===0)return'Hoje';
+  if(diff===1)return'Amanhã';
+  return alvo.toLocaleDateString('pt-BR',{weekday:'short'});
+}
+function renderDisponibilidade(){
+  const wrap=document.getElementById('disp-list');if(!wrap)return;
+  if(!disponibilidadeSlots.length){wrap.innerHTML='<div class="disp-empty">Nenhum horário adicionado.</div>';return;}
+  wrap.innerHTML=disponibilidadeSlots.map((s,idx)=>`<div class="disp-item"><div class="disp-item-text">${escHtml(s.dia)} · ${escHtml(s.hora)}</div><button class="btn-disp-remove" onclick="removerDisponibilidade(${idx})">Remover</button></div>`).join('');
+}
+function adicionarDisponibilidade(){
+  const dateEl=document.getElementById('disp-date');const timeEl=document.getElementById('disp-time');
+  const dateVal=(dateEl?.value||'').trim();const timeVal=(timeEl?.value||'').trim();
+  if(!dateVal||!timeVal){mostrarToast('Selecione data e hora.','error');return;}
+  const hora=timeVal.slice(0,5);
+  const dia=formatDiaDisponibilidade(dateVal);
+  const iso=`${dateVal}T${hora}:00-03:00`;
+  if(disponibilidadeSlots.some(s=>s.iso===iso)){mostrarToast('Horário já adicionado.','info');return;}
+  disponibilidadeSlots.push({dia,hora,iso});
+  disponibilidadeSlots.sort((a,b)=>new Date(a.iso)-new Date(b.iso));
+  renderDisponibilidade();
+  if(timeEl)timeEl.value='';
+}
+function removerDisponibilidade(idx){
+  if(idx<0||idx>=disponibilidadeSlots.length)return;
+  disponibilidadeSlots.splice(idx,1);
+  renderDisponibilidade();
+}
+async function carregarDisponibilidade(){
+  try{
+    const data=await apiFetch('/api/especialista/me');
+    if(!data||data.ok===false){disponibilidadeSlots=[];renderDisponibilidade();return;}
+    disponibilidadeSlots=normalizarDisponibilidade(data.disponibilidade);
+    renderDisponibilidade();
+  }catch(e){disponibilidadeSlots=[];renderDisponibilidade();}
+}
+async function salvarDisponibilidade(){
+  try{
+    const data=await apiFetch('/api/especialista/disponibilidade',{method:'PATCH',json:{disponibilidade:disponibilidadeSlots}});
+    if(!data.ok){mostrarToast(data.error||'Erro ao salvar disponibilidade.','error');return;}
+    mostrarToast('Disponibilidade salva com sucesso!','success');
+  }catch(e){mostrarToast('Erro de conexão ao salvar disponibilidade.','error');}
+}
 
 function abrirRecuperacao(){const sec=document.getElementById('recovery-section');sec.style.display=sec.style.display==='none'?'block':'none';if(sec.style.display==='block')setTimeout(()=>document.getElementById('inp-recovery-email').focus(),50);}
 async function enviarRecuperacao(){const email=document.getElementById('inp-recovery-email').value.trim();const btn=document.getElementById('btn-recovery');const msg=document.getElementById('recovery-msg');msg.style.display='none';btn.disabled=true;btn.textContent='Enviando…';try{await fetch(`${API}/api/especialista/esqueci-senha`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});msg.textContent='Se o e-mail existir na plataforma, enviamos as instruções de acesso.';msg.className='recovery-msg ok';msg.style.display='block';btn.textContent='Enviado ✓';}catch(e){msg.textContent='Erro ao enviar. Tente novamente.';msg.className='recovery-msg err';msg.style.display='block';btn.disabled=false;btn.textContent='Enviar instruções de acesso';}}
@@ -599,7 +864,7 @@ document.getElementById('inp-senha').addEventListener('keydown',e=>{if(e.key==='
 
 async function trocarSenha(){const senhaAtual=document.getElementById('inp-senha-atual').value;const novaSenha=document.getElementById('inp-nova-senha').value;const confirmarSenha=document.getElementById('inp-confirmar-senha').value;const btn=document.getElementById('btn-trocar-senha');const errEl=document.getElementById('trocar-err');errEl.style.display='none';btn.disabled=true;btn.textContent='Salvando…';try{const res=await fetch(`${API}/api/especialista/trocar-senha`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({senhaAtual,novaSenha,confirmarSenha})});const data=await safeJson(res);if(!data.ok){errEl.textContent=data.error||'Erro ao trocar senha.';errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';return;}document.getElementById('trocar-overlay').classList.remove('open');mostrarToast('Senha atualizada com sucesso!','success');}catch(e){errEl.textContent='Erro: '+e.message;errEl.style.display='block';btn.disabled=false;btn.textContent='Salvar nova senha';}}
 
-function entrarApp(){document.getElementById('screen-login').style.display='none';document.getElementById('screen-app').style.display='block';document.getElementById('nav-nome').textContent=especialista.nome||'-';document.getElementById('nav-espec').textContent=especialista.especialidade||'Especialista';if(especialista.crm)document.getElementById('nav-crm').textContent='CRM '+especialista.crm;carregarConsultas();}
+function entrarApp(){document.getElementById('screen-login').style.display='none';document.getElementById('screen-app').style.display='block';document.getElementById('nav-nome').textContent=especialista.nome||'-';document.getElementById('nav-espec').textContent=especialista.especialidade||'Especialista';if(especialista.crm)document.getElementById('nav-crm').textContent='CRM '+especialista.crm;adminPassword=localStorage.getItem('adminPassword')||'';setAdminMode(false);renderAdminEspecialistas();carregarConsultas();carregarDisponibilidade();}
 function fazerLogout(){localStorage.removeItem('esp_token');localStorage.removeItem('especialista');location.reload();}
 
 async function carregarConsultas(){try{const data=await apiFetch('/api/especialista/consultas');if(!data.ok){renderAgendaVazia('Não foi possível carregar a agenda.');return;}consultasData=data.consultas||[];renderAgenda();}catch(e){renderAgendaVazia('Erro de conexão.');}}
