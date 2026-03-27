@@ -1154,10 +1154,10 @@ async function apiFetch(path, opts={}) {
 const token = getToken();
 const adminPwd = sessionStorage.getItem('adminPwd') || '';
 const headers = { ...(opts.headers || {}) };
+if (opts._admin) { headers['x-admin-password'] = adminPwd; delete opts._admin; }
 if (token && !headers['Authorization'] && !headers['x-admin-password']) {
 headers['Authorization'] = 'Bearer ' + token;
 }
-if (opts._admin) { headers['x-admin-password'] = adminPwd; delete opts._admin; }
 if (opts.json) {
 headers['Content-Type'] = 'application/json';
 opts.body = JSON.stringify(opts.json);
@@ -2721,7 +2721,7 @@ if(inicio) params.set('data_inicio',inicio);
 if(fim) params.set('data_fim',fim);
 if(busca) params.set('busca',busca);
 const data=await apiFetch(`/api/admin/historico?${params}`,{_admin:true});
-if(!data.ok) { lista.innerHTML='<div style="color:#ff8080;font-size:.78rem;padding:8px 0">Erro ao carregar</div>'; return; }
+if(data.ok === false) { lista.innerHTML='<div style="color:#ff8080;font-size:.78rem;padding:8px 0">Erro ao carregar</div>'; return; }
 // Popula select de médicos na primeira carga
 if(data.medicos&&data.medicos.length&&!histGeralMedicos.length) {
 histGeralMedicos=data.medicos;
@@ -2735,7 +2735,7 @@ if(!hist.length){lista.innerHTML='<div style="color:var(--muted);font-size:.78re
 histGeralCache={};
 hist.forEach(a=>{ histGeralCache[String(a.id)]=a; });
 lista.innerHTML=hist.map(a=>{
-const data_fmt=a.criado_em?new Date(a.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+const data_fmt=a.criado_em?new Date(a.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
 const statusColor=a.status==='encerrado'?'#5ee0a0':a.status==='assumido'?'#ffbd2e':a.status==='cancelado'?'#ff8080':'#aaa';
 return `<div class="hist-card" onclick="abrirAtendimentoHistorico(${a.id})" style="cursor:pointer;margin-bottom:10px"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"> <strong style="font-size:.88rem">${escHtml(a.nome||'-')}</strong> <span style="font-size:.7rem;color:${statusColor};background:${statusColor}22;padding:2px 7px;border-radius:20px">${a.status}</span> </div> <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px"> ${a.medico_nome?`Dr(a) ${escHtml(a.medico_nome)} · `:''}${escHtml(data_fmt)} </div> <div style="font-size:.77rem;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml((a.queixa||a.triagem||'').substring(0,60))}</div> </div>`;
 }).join('');
