@@ -1014,7 +1014,26 @@ function adminAdicionarDisp(i){
 function adminRemoverDisp(i,idx){const m=adminEspecialistas[i];if(!m||!Array.isArray(m.disponibilidade))return;m.disponibilidade.splice(idx,1);renderAdminEspecialistas();}
 async function adminSalvarDisponibilidade(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
-  try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{disponibilidade:Array.isArray(m.disponibilidade)?m.disponibilidade:[]}});if(data.ok===false)throw new Error(data.error||'Erro.');mostrarToast('Disponibilidade salva.','success');}catch(e){mostrarToast(e.message||'Erro.','error');}
+  const slots=Array.isArray(m.disponibilidade)?m.disponibilidade:[];
+  // Tenta primeiro o endpoint dedicado de disponibilidade (evita sobrescrever outros campos)
+  // Se não existir (404), cai no PUT genérico como fallback
+  try{
+    const res=await fetch(API+`/api/admin/especialista/${m.id}/disponibilidade`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','x-admin-password':adminPassword}
+    ,body:JSON.stringify({disponibilidade:slots})});
+    if(res.status===404){
+      // fallback: PUT genérico
+      const data2=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{disponibilidade:slots}});
+      if(data2.ok===false)throw new Error(data2.error||'Erro.');
+    }else{
+      const data=await safeJson(res);
+      if(!res.ok||data.ok===false)throw new Error(data.error||'Erro ao salvar disponibilidade.');
+    }
+    mostrarToast('Disponibilidade salva!','success');
+    // Recarrega para confirmar que ficou persistido
+    await carregarEspecialistasAdmin(false);
+  }catch(e){mostrarToast(e.message||'Erro ao salvar disponibilidade.','error');}
 }
 async function adminDesativarEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
