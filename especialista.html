@@ -943,6 +943,7 @@ function renderAdminEspecialistas(){
       </div>
       <div class="admin-esp-actions">
         <button class="btn-admin" onclick="adminSalvarEspecialista(${i})">✓ Salvar</button>
+        <button class="btn-admin" onclick="adminForcarVisibilidade(${i})">Forçar visível</button>
         <button class="btn-admin-danger" onclick="adminDesativarEspecialista(${i})">Desativar</button>
         <button class="btn-admin-danger" style="border-color:rgba(248,113,113,.45);background:rgba(248,113,113,.14)" onclick="adminExcluirEspecialista(${i})">🗑 Excluir</button>
       </div>
@@ -952,6 +953,7 @@ function renderAdminEspecialistas(){
           <input class="disp-input" type="date" id="admin-disp-date-${m.id}"/>
           <input class="disp-input" type="time" id="admin-disp-time-${m.id}"/>
           <button class="btn-disp-add" onclick="adminAdicionarDisp(${i})">+ Adicionar</button>
+          <button class="btn-disp-add" onclick="adminAdicionarHojeAmanha(${i})">Hoje + amanhã</button>
           <button class="btn-disp-save" onclick="adminSalvarDisponibilidade(${i})">Salvar</button>
         </div>
         <div class="admin-disp-slots">${slots}</div>
@@ -1012,6 +1014,25 @@ function adminAdicionarDisp(i){
   renderAdminEspecialistas();
 }
 function adminRemoverDisp(i,idx){const m=adminEspecialistas[i];if(!m||!Array.isArray(m.disponibilidade))return;m.disponibilidade.splice(idx,1);renderAdminEspecialistas();}
+function adminDateToISODate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function adminAdicionarHojeAmanha(i){
+  const m=adminEspecialistas[i];if(!m)return;
+  const agora=new Date();
+  const hojeStr=adminDateToISODate(agora);
+  const amanhaDate=new Date(agora.getFullYear(),agora.getMonth(),agora.getDate()+1);
+  const amanhaStr=adminDateToISODate(amanhaDate);
+  const horariosPadrao=['09:00','14:00','18:00'];
+  m.disponibilidade=Array.isArray(m.disponibilidade)?m.disponibilidade:[];
+  [hojeStr,amanhaStr].forEach(data=>{
+    horariosPadrao.forEach(hora=>{
+      const slot=adminSlotFromDateTime(data,hora);
+      if(!m.disponibilidade.some(s=>s.iso===slot.iso))m.disponibilidade.push(slot);
+    });
+  });
+  m.disponibilidade.sort((a,b)=>new Date(a.iso)-new Date(b.iso));
+  renderAdminEspecialistas();
+  mostrarToast('Horários de hoje e amanhã adicionados. Clique em Salvar.','success');
+}
 async function adminSalvarDisponibilidade(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
   const slots=Array.isArray(m.disponibilidade)?m.disponibilidade:[];
@@ -1039,6 +1060,16 @@ async function adminDesativarEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
   if(!confirm(`Desativar "${m.nome||m.nome_exibicao||'este especialista'}"? Ele ficará inativo e invisível.`))return;
   try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{ativo:false,visivel:false}});if(data.ok===false)throw new Error(data.error||'Erro.');mostrarToast('Especialista desativado.','success');await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro.','error');}
+}
+async function adminForcarVisibilidade(i){
+  const m=adminEspecialistas[i];if(!m||!m.id)return;
+  m.ativo=true;m.visivel=true;
+  try{
+    const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{ativo:true,visivel:true}});
+    if(data.ok===false)throw new Error(data.error||'Erro.');
+    mostrarToast('Especialista marcado como ativo e visível.','success');
+    renderAdminEspecialistas();
+  }catch(e){mostrarToast(e.message||'Erro ao forçar visibilidade.','error');}
 }
 async function adminExcluirEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
@@ -1283,12 +1314,26 @@ function calRemoverSlot(iso){
 }
 
 function normalizarDisponibilidade(arr){
-  if(!Array.isArray(arr))return[];
-  return arr.filter(it=>it&&typeof it==='object').map(it=>{
-    const iso=String(it.iso||'').trim();const hora=String(it.hora||'').trim();const dia=String(it.dia||'').trim();
-    if(!iso||!hora)return null;
+  let source=arr;
+  if(typeof source==='string'){
+    try{source=JSON.parse(source);}catch(e){source=[];}
+  }
+  if(!Array.isArray(source))return[];
+  return source.filter(it=>it&&typeof it==='object').map(it=>{
+    const iso=String(it.iso||'').trim();
+    if(!iso)return null;
+    const d=new Date(iso);
+    const hora=String(it.hora||'').trim()||(isNaN(d.getTime())?'':`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`);
+    if(!hora)return null;
+    let dia=String(it.dia||'').trim();
+    if(!dia&&!isNaN(d.getTime())){
+      const now=new Date();const hoje=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+      const alvo=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+      const diff=Math.round((alvo-hoje)/86400000);
+      dia=diff===0?'Hoje':diff===1?'Amanhã':alvo.toLocaleDateString('pt-BR',{weekday:'short'});
+    }
     return {dia:dia||'Horário',hora,iso};
-  }).filter(Boolean);
+  }).filter(Boolean).sort((a,b)=>new Date(a.iso)-new Date(b.iso));
 }
 
 async function carregarDisponibilidade(){
