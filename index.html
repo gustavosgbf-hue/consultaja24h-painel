@@ -1049,7 +1049,9 @@ chatRetryMs: 3000,
 // Rascunho dos campos clínicos (salvo antes de trocar de slot)
 rascunho: { 'cl-hda':'', 'cl-comorbidades':'', 'cl-medicacoes':'', 'cl-alergias':'', 'cl-obs':'', 'cl-conduta':'' },
 // HTML das mensagens do chat (snapshot antes de trocar de slot)
-chatHtml: ''
+chatHtml: '',
+// IDs de mensagens já renderizadas — evita duplicação por race condition entre envio e polling
+msgIdsRendered: new Set()
 };
 }
 
@@ -2034,6 +2036,9 @@ try {
   if (m?.id && slots[slotDono]) {
     slots[slotDono].ultimaMsgId = m.id;
     ultimaMsgId = m.id;
+    // Marca como já renderizado para o polling não duplicar
+    if (!slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered = new Set();
+    slots[slotDono].msgIdsRendered.add(m.id);
     slots[slotDono].chatHtml = document.getElementById('chat-medico-msgs').innerHTML;
   }
 
@@ -2120,7 +2125,7 @@ const msgs=data.mensagens||[];
 // Limpa o container antes de renderizar - evita duplicação se chamado mais de uma vez
 container.innerHTML = '';
 if (msgs.length>0) {
-msgs.forEach(m=>{ adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo,slotDono); ultimaMsgId=m.id; });
+msgs.forEach(m=>{ adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo,slotDono); ultimaMsgId=m.id; if(slots[slotDono] && slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered.add(m.id); });
 container.scrollTop = container.scrollHeight;
 } else {
 container.innerHTML = '<div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div>';
@@ -2140,7 +2145,9 @@ const lastId = ultimaMsgId;
 try {
 const data=await apiFetch(`/api/chat/${atendId}`,{headers:{}}); if (!data.ok) { chatRetryMs=Math.min(chatRetryMs*2,15000); return; }
 chatRetryMs=3000;
-const novas=(data.mensagens||[]).filter(m=>m.id>lastId);
+const slot = slots[slotDono];
+const rendered = slot ? slot.msgIdsRendered : null;
+const novas=(data.mensagens||[]).filter(m=>m.id>lastId && (!rendered || !rendered.has(m.id)));
 if (novas.length>0) {
 // Atualiza ultimaMsgId no slot dono (independente de qual slot está ativo)
 const maiorId = novas[novas.length-1].id;
@@ -2152,6 +2159,7 @@ const v=container.querySelector('.chat-vazio'); if(v)v.remove();
 novas.forEach(m=>{
 adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo,slotDono);
 if(m.autor==='paciente') adicionarMsgPip('paciente',m.texto);
+if(rendered) rendered.add(m.id);
 });
 } else {
 // Slot não é mais o ativo: acumula as msgs no snapshot do slot dono
@@ -2307,6 +2315,10 @@ adicionarMsgPip(m.autor, m.texto);
 if (m.id) {
   if (slots[slotDono]) slots[slotDono].ultimaMsgId = m.id;
   ultimaMsgId = m.id;
+  if (slots[slotDono]) {
+    if (!slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered = new Set();
+    slots[slotDono].msgIdsRendered.add(m.id);
+  }
   const cont = document.getElementById('chat-medico-msgs');
   if (cont && slotDono === slotAtivo && slots[slotDono]) slots[slotDono].chatHtml = cont.innerHTML;
 }
