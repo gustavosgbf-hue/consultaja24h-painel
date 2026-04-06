@@ -304,39 +304,6 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .btn-wpp:hover{background:rgba(37,211,102,.15)}
 .btn-encerrar{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,95,87,.2);background:rgba(255,95,87,.06);color:#ff8080;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-encerrar:hover{background:rgba(255,95,87,.12);border-color:rgba(255,95,87,.35)}
-
-/* FAB Encerrar — fixo no mobile */
-.fab-encerrar{
-  position:fixed;
-  bottom:calc(20px + env(safe-area-inset-bottom,0px));
-  left:50%;transform:translateX(-50%);
-  z-index:120;
-  display:none;
-  align-items:center;gap:8px;
-  padding:14px 32px;
-  border-radius:999px;border:none;
-  background:rgba(220,60,50,.92);
-  color:#fff;
-  font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:700;
-  cursor:pointer;
-  box-shadow:0 6px 28px rgba(255,80,70,.5);
-  white-space:nowrap;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  transition:opacity .2s,box-shadow .2s;
-}
-.fab-encerrar:active{opacity:.85}
-
-/* Toggle triagem */
-.btn-toggle-triagem{
-  display:none;align-items:center;justify-content:space-between;
-  width:100%;background:none;border:none;
-  color:rgba(255,255,255,.75);
-  font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;
-  cursor:pointer;padding:4px 0 10px;
-}
-.btn-toggle-triagem .toggle-arrow{transition:transform .25s;display:inline-block;font-size:.85rem}
-.triagem-box-content{transition:max-height .3s ease,opacity .25s ease;overflow:hidden;max-height:2000px;opacity:1}
-.triagem-box-content.collapsed{max-height:0;opacity:0;pointer-events:none}
 .triagem-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:24px}
 .triagem-box-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1);margin-bottom:14px}
 .triagem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
@@ -615,11 +582,11 @@ overflow-x:hidden!important;
 .tabs{gap:4px;margin-bottom:12px;padding:3px}
 .tab{padding:11px 6px;font-size:.78rem;font-weight:600;border-radius:8px}
 
-/* Chat — ocupa 70-80% da tela no mobile */
+/* Chat */
 .chat-medico-wrap{
 display:flex;flex-direction:column;
-height:calc(100dvh - var(--nav-h) - 180px);
-min-height:360px;border-radius:12px;margin-bottom:0;overflow:hidden;
+height:calc(100dvh - var(--nav-h) - 370px);
+min-height:280px;border-radius:12px;margin-bottom:0;overflow:hidden;
 }
 .chat-medico-msgs{
 flex:1 1 0;height:auto!important;min-height:0;
@@ -632,10 +599,10 @@ padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
 }
 .chat-medico-input textarea{
 font-size:max(.9rem,16px);padding:10px 12px;
-min-height:44px;max-height:100px;border-radius:22px;line-height:1.5;
+min-height:40px;max-height:88px;border-radius:22px;line-height:1.5;
 }
-.chat-medico-send{width:48px;height:48px}
-.chat-clip-btn{width:36px;height:36px}
+.chat-medico-send{width:40px;height:40px}
+.chat-clip-btn{width:32px;height:32px}
 .chat-preview-wrap{flex-shrink:0;padding:6px 10px}
 
 /* Bolhas */
@@ -675,8 +642,6 @@ padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
 
 /* FAB - visível no mobile */
 .fab-fila{display:flex!important;bottom:20px;right:14px}
-
-/* FAB encerrar — controlado por JS */
 
 /* iOS scroll lock quando drawer aberto */
 body.drawer-open{overflow:hidden;position:fixed;width:100%}
@@ -894,12 +859,7 @@ body.app-autenticado #nav-fila-btn{display:flex}
         <button id="btn-reabrir-atend" onclick="reabrirAtendimento()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,189,46,.3);background:rgba(255,189,46,.08);color:#ffbd2e;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s">↩ Reabrir consulta</button>
       </div>
     </div>
-    <div class="triagem-box" id="triagem-box-main">
-      <button class="btn-toggle-triagem" id="btn-toggle-triagem" onclick="toggleTriagemMobile()" style="display:none">
-        <span>Dados do paciente &amp; triagem</span>
-        <span class="toggle-arrow">▾</span>
-      </button>
-      <div class="triagem-box-content" id="triagem-box-content">
+    <div class="triagem-box">
       <div class="triagem-box-title">Dados do paciente</div>
       <div class="triagem-grid" style="margin-bottom:12px">
         <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">-</span></div>
@@ -920,7 +880,6 @@ body.app-autenticado #nav-fila-btn{display:flex}
         <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
         <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">-</span></div>
       </div>
-      </div><!-- /triagem-box-content -->
     </div>
     <div class="tabs" id="atend-tabs">
       <button class="tab active" onclick="switchTab('consulta')">💬   Consulta</button>
@@ -1764,10 +1723,7 @@ await buscarAgendamentos();
 renderSlotTabs();
 renderPainelAtendimento(); renderEstado();
 mostrarToast('Atendimento assumido!','success');
-if(isMobile()){const s=document.querySelector('.sidebar');if(s){s.classList.remove('open');s.classList.remove('idle');}
-  atualizarFabEncerrar(true);
-}
-document.getElementById('fila-preview')?.classList.remove('open');
+if(isMobile()){const s=document.querySelector('.sidebar');if(s){s.classList.remove('open');s.classList.remove('idle');}}
 document.getElementById('fila-preview')?.classList.remove('open');
 } catch(e) { mostrarToast('Erro ao assumir atendimento.','error'); }
 finally {
@@ -2420,14 +2376,11 @@ const temAtendimento = atendimentoAtual || modoHistorico;
 if (temAtendimento) {
 offline.style.display='none'; empty.style.display='none'; atend.style.display='block';
 if(fab && isMobile()) fab.style.display='flex';
-// Mobile UX: inicializar triagem colapsável e FAB encerrar
-if(isMobile()){ initTriagemMobile(); atualizarFabEncerrar(!!atendimentoAtual && !modoHistorico); }
 return;
 }
 // Sem atendimento ativo em nenhum slot
 atend.style.display='none';
 if(fab) fab.style.display = isMobile() ? 'flex' : 'none';
-atualizarFabEncerrar(false);
 if (!plantaoAtivo) { offline.style.display='flex'; empty.style.display='none'; }
 else { offline.style.display='none'; empty.style.display=filaData.length===0?'flex':'none'; }
 }
@@ -3252,50 +3205,6 @@ try {
   localStorage.removeItem('medico');
   localStorage.removeItem('token');
 }
-
-// ── UX MOBILE: FAB Encerrar ──────────────────────────────────────────────────
-function atualizarFabEncerrar(ativo) {
-  const fab = document.getElementById('fab-encerrar');
-  if (!fab) return;
-  if (isMobile()) {
-    fab.style.display = ativo ? 'flex' : 'none';
-  } else {
-    fab.style.display = 'none';
-  }
-}
-
-// ── UX MOBILE: Triagem colapsável ────────────────────────────────────────────
-function toggleTriagemMobile() {
-  const content = document.getElementById('triagem-box-content');
-  const arrow   = document.querySelector('.btn-toggle-triagem .toggle-arrow');
-  if (!content) return;
-  const collapsed = content.classList.toggle('collapsed');
-  if (arrow) arrow.style.transform = collapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
-}
-
-function initTriagemMobile() {
-  const btn = document.getElementById('btn-toggle-triagem');
-  if (!btn) return;
-  if (isMobile()) {
-    btn.style.display = 'flex';
-    // Começa colapsado
-    const content = document.getElementById('triagem-box-content');
-    if (content) content.classList.add('collapsed');
-    const arrow = btn.querySelector('.toggle-arrow');
-    if (arrow) arrow.style.transform = 'rotate(-90deg)';
-  } else {
-    btn.style.display = 'none';
-    const content = document.getElementById('triagem-box-content');
-    if (content) content.classList.remove('collapsed');
-  }
-}
-
-// Inicializar no load e em resize
-window.addEventListener('resize', () => {
-  initTriagemMobile();
-  atualizarFabEncerrar(!!slots.find(Boolean));
-}, { passive: true });
-
 })();
 </script>
 
@@ -3355,12 +3264,5 @@ window.addEventListener('resize', () => {
     <div class="trocar-err" id="trocar-err"></div>
   </div>
 </div>
-
-<!-- FAB Encerrar Atendimento — mobile only -->
-<button class="fab-encerrar" id="fab-encerrar" onclick="abrirModalEncerrar()">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-  Encerrar atendimento
-</button>
-
 </body>
 </html>
