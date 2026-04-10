@@ -14,63 +14,7 @@
 html{scroll-behavior:smooth;height:100%}
 body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.9);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
 :root{--g1:#b4e05a;--g2:#5ee0a0;--red:#ff5f57;--amber:#ffbd2e;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.05);--muted:rgba(255,255,255,.45);--card:rgba(255,255,255,.03);--card2:rgba(255,255,255,.055);--nav-h:60px}
-::-webkit-scrollbar{width:4px}
-/* ── MULTI-FILE PREVIEW ─────────────────────────────────────── */
-.chat-preview-wrap{flex-wrap:wrap;gap:8px}
-.chat-preview-item{display:flex;align-items:center;gap:6px;
-  background:rgba(180,224,90,.06);border:1px solid rgba(180,224,90,.15);
-  border-radius:8px;padding:5px 10px;font-size:.75rem;color:rgba(255,255,255,.7);
-  max-width:200px;overflow:hidden}
-.chat-preview-item img{width:36px;height:36px;border-radius:5px;object-fit:cover;flex-shrink:0}
-.chat-preview-item .pv-nome{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.72rem}
-.chat-preview-item .pv-rm{background:none;border:none;color:rgba(255,95,87,.7);cursor:pointer;font-size:.85rem;padding:0 2px;line-height:1;flex-shrink:0}
-.chat-preview-item .pv-rm:hover{color:#ff5f57}
-
-/* ── ANTI-AUTOCLICK OVERLAY ─────────────────────────────────── */
-#anti-autoclick-overlay{
-  position:fixed;inset:0;z-index:9998;
-  background:rgba(0,0,0,.82);backdrop-filter:blur(6px);
-  display:none;align-items:center;justify-content:center;
-  flex-direction:column;gap:16px;
-}
-#anti-autoclick-overlay.ativo{display:flex}
-.aac-card{
-  background:#0d1f18;border:2px solid rgba(255,95,87,.35);border-radius:20px;
-  padding:32px 28px;max-width:360px;width:90%;text-align:center;
-}
-.aac-icon{font-size:2.4rem;margin-bottom:10px}
-.aac-title{font-size:1.05rem;font-weight:700;color:#ff8080;margin-bottom:8px}
-.aac-sub{font-size:.83rem;color:rgba(255,255,255,.5);font-weight:300;line-height:1.6;margin-bottom:20px}
-.aac-timer{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;
-  color:#ffbd2e;margin-bottom:6px}
-.aac-hint{font-size:.72rem;color:rgba(255,255,255,.3);font-weight:300}
-
-/* ── PRIORIDADE: banner de notificação ──────────────────────── */
-#prio-banner{
-  position:fixed;top:calc(var(--nav-h) + 8px);left:50%;transform:translateX(-50%);
-  z-index:6000;
-  background:linear-gradient(135deg,#0d1f18,#0a1810);
-  border:1px solid rgba(255,189,46,.4);border-radius:14px;
-  padding:14px 20px;max-width:min(400px,92vw);width:100%;
-  box-shadow:0 8px 32px rgba(0,0,0,.6),0 0 0 1px rgba(255,189,46,.15);
-  display:none;flex-direction:column;gap:8px;
-  animation:slideDown .3s ease;
-}
-#prio-banner.ativo{display:flex}
-@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.prio-banner-header{display:flex;align-items:center;gap:10px}
-.prio-banner-icon{font-size:1.3rem;flex-shrink:0}
-.prio-banner-txt{flex:1}
-.prio-banner-txt strong{display:block;font-size:.88rem;font-weight:700;color:#ffbd2e;margin-bottom:2px}
-.prio-banner-txt span{font-size:.77rem;color:rgba(255,255,255,.55);font-weight:300}
-.prio-banner-close{background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:1rem;padding:0;line-height:1;flex-shrink:0}
-.prio-banner-close:hover{color:rgba(255,255,255,.7)}
-.prio-timer-bar{height:3px;border-radius:2px;background:rgba(255,189,46,.15);overflow:hidden}
-.prio-timer-fill{height:100%;background:linear-gradient(90deg,#ffbd2e,#b4e05a);border-radius:2px;
-  transition:width 1s linear;width:100%}
-
-
-::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
 .bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70vw 60vh at 0% 0%,rgba(94,224,160,.06) 0%,transparent 55%),radial-gradient(ellipse 50vw 40vh at 100% 80%,rgba(180,224,90,.04) 0%,transparent 50%)}
 #screen-login{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:#07100d}
 .login-card{width:100%;max-width:400px;padding:48px 40px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.03);backdrop-filter:blur(20px);position:relative;z-index:1}
@@ -529,7 +473,7 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .toast.info{background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
 
 /* ==========================================================
-MOBILE — app-like, chat dominante
+MOBILE - drawer sidebar, chat-first
 ========================================================== */
 @media(max-width:768px){
 
@@ -541,171 +485,125 @@ MOBILE — app-like, chat dominante
 .plantao-btn .plantao-indicator{width:9px;height:9px}
 .nav-logout{padding:6px 10px;font-size:.72rem}
 
-/* Ocultar toggles desktop */
+/* Esconde toggle handle no mobile */
 .sidebar-toggle{display:none!important}
 .sidebar-rail{display:none!important}
 
-/* Layout: coluna simples */
+/* Layout mobile: bloco simples, sem grid.
+Usa seletor de screen-app para ganhar especificidade sem !important */
 #screen-app .app-body{
-  display:block;
-  min-height:calc(100dvh - var(--nav-h));
-  grid-template-columns:unset;
-  transition:none;
+display:block;
+min-height:calc(100dvh - var(--nav-h));
+grid-template-columns:unset;
+transition:none;
 }
 
-/* Sidebar: drawer */
+/* Sidebar: drawer que desliza da esquerda */
 .sidebar,
 .app-body .sidebar{
-  position:fixed!important;
-  top:var(--nav-h)!important;left:0!important;
-  width:min(300px,88vw)!important;
-  height:calc(100dvh - var(--nav-h))!important;
-  max-height:none!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
-  padding:16px 14px 60px!important;
-  background:#0a1810!important;
-  border-right:1px solid rgba(94,224,160,.15)!important;
-  box-shadow:4px 0 32px rgba(0,0,0,.6)!important;
-  z-index:150!important;
-  transform:translateX(-100%)!important;
-  transition:transform .28s cubic-bezier(.4,0,.2,1)!important;
-  will-change:transform;
-  opacity:1!important;pointer-events:auto!important;
+position:fixed!important;
+top:var(--nav-h)!important;
+left:0!important;
+width:min(300px,88vw)!important;
+height:calc(100dvh - var(--nav-h))!important;
+max-height:none!important;
+overflow-y:auto!important;
+-webkit-overflow-scrolling:touch;
+overscroll-behavior:contain;
+padding:16px 14px 60px!important;
+background:#0a1810!important;
+border-right:1px solid rgba(94,224,160,.15)!important;
+box-shadow:4px 0 32px rgba(0,0,0,.6)!important;
+z-index:150!important;
+transform:translateX(-100%)!important;
+transition:transform .28s cubic-bezier(.4,0,.2,1)!important;
+will-change:transform;
+/* sobrescreve qualquer sticky/grid residual */
+opacity:1!important;
+pointer-events:auto!important;
 }
-.sidebar.open,.app-body .sidebar.open{transform:translateX(0)!important}
+.sidebar.open,
+.app-body .sidebar.open{
+transform:translateX(0)!important;
+}
 .sidebar-inner{
-  min-width:0!important;padding:0!important;
-  opacity:1!important;pointer-events:auto!important;display:block!important;
+min-width:0!important;
+padding:0!important;
+opacity:1!important;
+pointer-events:auto!important;
+display:block!important;
 }
 
-/* Overlay */
+/* Overlay backdrop */
 .sidebar-overlay{
-  display:none;position:fixed;inset:0;top:var(--nav-h);
-  background:rgba(0,0,0,.55);z-index:149;
-  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);touch-action:none;
+display:none;
+position:fixed;inset:0;
+top:var(--nav-h);
+background:rgba(0,0,0,.55);
+z-index:149;
+backdrop-filter:blur(2px);
+-webkit-backdrop-filter:blur(2px);
+touch-action:none;
 }
 .sidebar-overlay.open{display:block}
 
-/* Main: padding-bottom para botão encerrar fixo */
+/* Main: tela cheia */
 .main{
-  width:100%!important;
-  padding:10px 10px 90px!important;
-  overflow-x:hidden!important;
+width:100%!important;
+padding:10px 10px 80px!important;
+overflow-x:hidden!important;
 }
 
-/* ── Header: 2 linhas limpas ── */
-.atend-header{
-  flex-direction:column;gap:7px;
-  margin-bottom:8px;padding:8px 0 10px;
-  border-bottom:1px solid var(--line);
-}
-.atend-paciente{width:100%}
-.atend-nome{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.atend-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.atend-tag{font-size:.65rem;padding:3px 8px}
+/* Header atendimento compacto */
+.atend-header{flex-direction:row;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:nowrap;padding:8px 0 10px;border-bottom:1px solid var(--line)}
+.atend-paciente{flex:1;min-width:0}
+.atend-nome{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.atend-meta{gap:5px;flex-wrap:wrap}
+.atend-tag{font-size:.62rem;padding:3px 7px}
 .atend-tag.crm{display:none}
-.atend-timer{font-size:.7rem}
-/* Linha 2: ações em row full-width */
-.atend-actions{display:flex;gap:6px;width:100%;flex-wrap:nowrap}
-.atend-actions .btn-wpp{flex:1;justify-content:center;padding:9px 6px;font-size:.76rem;gap:4px}
+.atend-timer{font-size:.68rem}
+.atend-actions{display:flex;gap:5px;flex-wrap:nowrap;flex-shrink:0}
+.atend-actions .btn-wpp{padding:8px 9px;font-size:.72rem;gap:3px}
+.atend-actions .btn-wpp svg{width:13px;height:13px}
 .atend-actions .btn-wpp .wpp-txt{display:none}
-.atend-actions .btn-wpp svg{width:14px;height:14px}
-#btn-memed{flex:1;justify-content:center;padding:9px 6px;font-size:.76rem}
-/* Encerrar: oculto no header — aparece como botão fixo no bottom */
-.atend-actions .btn-encerrar{display:none!important}
-.atend-actions .btn-voltar-hist{padding:9px 10px;font-size:.74rem}
+#btn-memed{padding:8px 9px;font-size:.72rem}
+.atend-actions .btn-encerrar{padding:8px 9px;font-size:.72rem;gap:3px}
+.atend-actions .btn-encerrar svg{width:13px;height:13px}
+.atend-actions .btn-voltar-hist{padding:8px 10px;font-size:.72rem}
 #memed-aviso{font-size:.72rem;padding:8px 10px;margin-top:6px}
 
-/* ── Botão Encerrar fixo no bottom ── */
-.btn-encerrar-fab{
-  display:none;
-  position:fixed;
-  bottom:calc(14px + env(safe-area-inset-bottom,0px));
-  left:50%;transform:translateX(-50%);
-  z-index:490;
-  width:calc(100% - 28px);max-width:320px;
-  padding:15px;border-radius:14px;border:none;
-  background:linear-gradient(135deg,#ff5f57,#ff8080);
-  color:#fff;font-family:'Outfit',sans-serif;
-  font-size:.95rem;font-weight:700;cursor:pointer;
-  box-shadow:0 4px 24px rgba(255,95,87,.45);
-  align-items:center;justify-content:center;gap:8px;
-  white-space:nowrap;
-}
-.btn-encerrar-fab.ativo{display:flex}
-
-/* ── Triagem: accordion colapsável ── */
-.triagem-box{padding:0;margin-bottom:8px;background:transparent;border:none;border-radius:0}
-
-/* botão toggle */
-.triagem-toggle{
-  display:flex;width:100%;
-  padding:9px 13px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.09);border-radius:10px;
-  color:rgba(255,255,255,.65);
-  font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;
-  cursor:pointer;text-align:left;
-  align-items:center;justify-content:space-between;gap:8px;
-}
-.triagem-toggle-chevron{
-  font-size:.7rem;color:rgba(255,255,255,.3);
-  transition:transform .22s ease;flex-shrink:0;
-}
-.triagem-toggle.open .triagem-toggle-chevron{transform:rotate(180deg)}
-
-/* corpo colapsável */
-.triagem-corpo{
-  overflow:hidden;max-height:0;opacity:0;
-  transition:max-height .3s ease,opacity .22s ease;
-}
-.triagem-corpo.open{max-height:700px;opacity:1;padding-top:6px}
-
-/* resumo queixa sempre visível */
-.triagem-resumo-queixa{
-  margin-top:6px;padding:8px 12px;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.06);border-radius:8px;
-  font-size:.8rem;font-weight:300;color:rgba(255,255,255,.7);line-height:1.5;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
-
+/* Triagem */
+.triagem-box{padding:10px;margin-bottom:12px}
 .triagem-grid{grid-template-columns:1fr 1fr;gap:6px}
 .triagem-item span{font-size:.78rem}
-.triagem-box-title{font-size:.66rem;margin-bottom:7px;padding-top:8px}
+.triagem-box-title{font-size:.66rem;margin-bottom:8px}
 
 /* Tabs */
-.tabs{gap:3px;margin-bottom:8px;padding:3px}
-.tab{padding:12px 5px;font-size:.8rem;font-weight:600;border-radius:8px}
+.tabs{gap:4px;margin-bottom:12px;padding:3px}
+.tab{padding:11px 6px;font-size:.78rem;font-weight:600;border-radius:8px}
 
-/* ── Chat: espaço máximo ── */
-/* Altura: tela - nav - header2linhas(~100px) - triagemCollapsed(~40px) - tabs(~46px) - safe */
+/* Chat */
 .chat-medico-wrap{
-  display:flex;flex-direction:column;
-  height:calc(100dvh - var(--nav-h) - 100px - 40px - 46px - env(safe-area-inset-bottom,16px));
-  min-height:280px;
-  border-radius:12px;margin-bottom:0;overflow:hidden;
+display:flex;flex-direction:column;
+height:calc(100dvh - var(--nav-h) - 370px);
+min-height:280px;border-radius:12px;margin-bottom:0;overflow:hidden;
 }
 .chat-medico-msgs{
-  flex:1 1 0;height:auto!important;min-height:0;
-  overflow-y:auto;-webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;padding:12px;
+flex:1 1 0;height:auto!important;min-height:0;
+overflow-y:auto;-webkit-overflow-scrolling:touch;
+overscroll-behavior:contain;padding:12px;
 }
 .chat-medico-input{
-  flex-shrink:0;
-  padding:10px 12px;gap:9px;
-  padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
-  border-top:1px solid var(--line);
-  background:rgba(7,16,13,.96);
+flex-shrink:0;padding:10px 11px;gap:8px;
+padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
 }
 .chat-medico-input textarea{
-  font-size:max(.9rem,16px);padding:10px 13px;
-  min-height:42px;max-height:96px;border-radius:22px;line-height:1.5;
+font-size:max(.9rem,16px);padding:10px 12px;
+min-height:40px;max-height:88px;border-radius:22px;line-height:1.5;
 }
-.chat-medico-send{width:44px;height:44px}
-.chat-clip-btn{width:34px;height:34px}
-.chat-preview-wrap{flex-shrink:0;padding:6px 10px;flex-wrap:wrap;gap:6px}
+.chat-medico-send{width:40px;height:40px}
+.chat-clip-btn{width:32px;height:32px}
+.chat-preview-wrap{flex-shrink:0;padding:6px 10px}
 
 /* Bolhas */
 .cmsg .bub{font-size:.875rem;line-height:1.6;overflow-wrap:anywhere;word-break:break-word}
@@ -713,18 +611,17 @@ MOBILE — app-like, chat dominante
 .cmsg .av{width:24px;height:24px;font-size:.65rem;flex-shrink:0}
 .msg-arquivo-img{max-width:min(200px,72%);max-height:150px}
 
-/* Avaliação clínica: campos compactos */
+/* Avaliação clínica */
 .clinic-grid{grid-template-columns:1fr}
 .clinic-label{font-size:.75rem}
-textarea.clinic-input{font-size:max(.88rem,16px);padding:9px 11px;min-height:64px}
-textarea.clinic-input.tall{min-height:80px}
+textarea.clinic-input{font-size:max(.88rem,16px);padding:10px 12px}
 
-/* Modais bottom-sheet */
+/* Modais */
 .modal-overlay{padding:0;align-items:flex-end}
 .modal{
-  border-radius:20px 20px 0 0;max-width:100%;
-  padding:24px 16px;
-  padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
+border-radius:20px 20px 0 0;max-width:100%;
+padding:24px 16px;
+padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
 }
 
 /* Agendamentos */
@@ -740,19 +637,13 @@ textarea.clinic-input.tall{min-height:80px}
 .fila-count{font-size:.65rem;padding:1px 6px}
 .fila-card,.paciente-card{padding:10px}
 
-/* Toast acima do botão encerrar */
+/* Toast */
 .toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center;font-size:.82rem}
 
-/* FAB fila: sobe para não colidir com botão encerrar */
-.fab-fila{display:flex!important;bottom:80px;right:14px}
+/* FAB - visível no mobile */
+.fab-fila{display:flex!important;bottom:20px;right:14px}
 
-/* PiP: sobe no mobile */
-#chat-pip{bottom:80px!important;width:calc(100vw - 24px)!important;right:12px!important}
-
-/* Slot tabs */
-.slot-tab-btn{padding:10px 12px;font-size:.82rem}
-
-/* iOS scroll lock */
+/* iOS scroll lock quando drawer aberto */
 body.drawer-open{overflow:hidden;position:fixed;width:100%}
 }
 
@@ -969,12 +860,6 @@ body.app-autenticado #nav-fila-btn{display:flex}
       </div>
     </div>
     <div class="triagem-box">
-      <!-- accordion mobile: toggle + resumo queixa sempre visível -->
-      <button class="triagem-toggle" id="triagem-toggle" onclick="toggleTriagemMobile()" style="display:none">
-        <span>📋 Paciente · <span id="triagem-queixa-resumo" style="font-weight:300;font-size:.77rem;color:rgba(255,255,255,.4)">—</span></span>
-        <span class="triagem-toggle-chevron">▼</span>
-      </button>
-      <div class="triagem-corpo" id="triagem-corpo">
       <div class="triagem-box-title">Dados do paciente</div>
       <div class="triagem-grid" style="margin-bottom:12px">
         <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">-</span></div>
@@ -995,7 +880,6 @@ body.app-autenticado #nav-fila-btn{display:flex}
         <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
         <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">-</span></div>
       </div>
-      </div><!-- /triagem-corpo -->
     </div>
     <div class="tabs" id="atend-tabs">
       <button class="tab active" onclick="switchTab('consulta')">💬   Consulta</button>
@@ -1018,7 +902,7 @@ body.app-autenticado #nav-fila-btn{display:flex}
           <button class="chat-preview-cancel" onclick="cancelarArquivo()" title="Remover">✕</button>
         </div>
         <div class="chat-medico-input">
-          <input type="file" id="chat-file-input" accept="image/*,.pdf" multiple style="display:none" onchange="onArquivoSelecionado(this)"/>
+          <input type="file" id="chat-file-input" accept="image/*,.pdf" style="display:none" onchange="onArquivoSelecionado(this)"/>
           <button class="chat-clip-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar imagem ou PDF">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
@@ -1120,275 +1004,6 @@ body.app-autenticado #nav-fila-btn{display:flex}
 </div>
 <script>
 const API = 'https://triagem-api.onrender.com';
-
-// ══════════════════════════════════════════════════════════════════════════
-// SISTEMA DE PRIORIDADE DE ATENDIMENTO
-// ══════════════════════════════════════════════════════════════════════════
-// Médicas prioritárias pela manhã (06h–13h), recebem primeiros 2 pacientes
-// durante 40s antes da fila aparecer para os demais.
-// Admin (gustavosgbf@gmail.com) tem prioridade máxima sempre.
-const PRIO_CONFIG = {
-  admin:    ['gustavosgbf@gmail.com'],
-  manha:    ['marianamartinsc1@gmail.com','raquellimaleite09@gmail.com'],
-  // janela: 06h até 13h (horário local do médico)
-  hIni: 6, hFim: 13,
-  // segundos de exclusividade por paciente para cada prioritária
-  janela: 40,
-  // máx de pacientes reservados simultaneamente por prioritária
-  maxReserva: 2,
-};
-
-// Mapa: pacienteId → { email, expireTs }
-// Mantém quais pacientes estão "reservados" para uma prioritária
-const _prioReservas = {};
-
-function _isPrioAtiva() {
-  const h = new Date().getHours();
-  return h >= PRIO_CONFIG.hIni && h < PRIO_CONFIG.hFim;
-}
-
-function _emailMedico() {
-  return medico && medico.email ? medico.email.toLowerCase().trim() : '';
-}
-
-function _isAdmin(email) {
-  return PRIO_CONFIG.admin.map(e=>e.toLowerCase()).includes((email||'').toLowerCase());
-}
-
-function _isPrioritaria(email) {
-  return PRIO_CONFIG.manha.map(e=>e.toLowerCase()).includes((email||'').toLowerCase());
-}
-
-// Limpa reservas expiradas
-function _limparReservasExpiradas() {
-  const now = Date.now();
-  for (const id in _prioReservas) {
-    if (_prioReservas[id].expireTs < now) delete _prioReservas[id];
-  }
-}
-
-// Cria reservas para pacientes aguardando, se a janela de prioridade estiver ativa
-function _atualizarReservas(filaAtual) {
-  if (!_isPrioAtiva()) return;
-  _limparReservasExpiradas();
-  const aguardando = filaAtual.filter(p => p.status === 'aguardando');
-  for (const email of PRIO_CONFIG.manha) {
-    const jaReservados = Object.values(_prioReservas).filter(r => r.email === email.toLowerCase()).length;
-    if (jaReservados >= PRIO_CONFIG.maxReserva) continue;
-    // Reserva os próximos pacientes sem reserva
-    for (const p of aguardando) {
-      if (_prioReservas[p.id]) continue; // já reservado
-      const quantasPrecisa = PRIO_CONFIG.maxReserva - jaReservados;
-      const jaDele = Object.values(_prioReservas).filter(r=>r.email===email.toLowerCase()).length;
-      if (jaDele >= PRIO_CONFIG.maxReserva) break;
-      _prioReservas[p.id] = {
-        email: email.toLowerCase(),
-        expireTs: Date.now() + PRIO_CONFIG.janela * 1000
-      };
-    }
-  }
-}
-
-// Retorna true se o médico logado pode VER o botão assumir para este paciente
-function _podeAssumirPaciente(p) {
-  const mEmail = _emailMedico();
-  const isAdmin = _isAdmin(mEmail);
-  if (isAdmin) return true; // admin sempre pode
-
-  _limparReservasExpiradas();
-  const reserva = _prioReservas[p.id];
-  if (!reserva) return true; // sem reserva ativa → todos podem
-
-  // Há reserva → só a prioritária dona pode
-  if (reserva.email === mEmail) return true;
-  // Outros médicos não veem o botão ainda
-  return false;
-}
-
-// Retorna ms restantes da reserva de um paciente (0 se sem reserva ou expirada)
-function _msRestantesReserva(pid) {
-  _limparReservasExpiradas();
-  const r = _prioReservas[pid];
-  if (!r) return 0;
-  return Math.max(0, r.expireTs - Date.now());
-}
-
-// Banner de prioridade para a médica prioritária
-let _prioBannerTimer = null;
-let _prioBannerInterval = null;
-
-function mostrarPrioBanner(paciente) {
-  const banner = document.getElementById('prio-banner');
-  const fill = document.getElementById('prio-timer-fill');
-  const titulo = document.getElementById('prio-banner-titulo');
-  const sub = document.getElementById('prio-banner-sub');
-  if (!banner || !fill) return;
-
-  titulo.textContent = `⭐ Novo paciente: ${escHtml(paciente.nome||'Paciente')}`;
-  sub.textContent = `Você tem ${PRIO_CONFIG.janela}s de prioridade para assumir este atendimento`;
-
-  banner.classList.add('ativo');
-  fill.style.width = '100%';
-  fill.style.transition = 'none';
-
-  clearTimeout(_prioBannerTimer);
-  clearInterval(_prioBannerInterval);
-
-  const durMs = PRIO_CONFIG.janela * 1000;
-  const inicio = Date.now();
-
-  // Anima a barra
-  setTimeout(() => {
-    fill.style.transition = `width ${PRIO_CONFIG.janela}s linear`;
-    fill.style.width = '0%';
-  }, 50);
-
-  _prioBannerTimer = setTimeout(() => fecharPrioBanner(), durMs);
-}
-
-function fecharPrioBanner() {
-  const banner = document.getElementById('prio-banner');
-  if (banner) banner.classList.remove('ativo');
-  clearTimeout(_prioBannerTimer);
-  clearInterval(_prioBannerInterval);
-}
-
-// IDs de pacientes já notificados (evita re-notificar no mesmo polling)
-const _prioJaNotificados = new Set();
-
-function _verificarNovosParaPrioritaria(filaAtual) {
-  const mEmail = _emailMedico();
-  if (!_isPrioritaria(mEmail) && !_isAdmin(mEmail)) return;
-  if (!_isPrioAtiva() && !_isAdmin(mEmail)) return;
-
-  for (const p of filaAtual) {
-    if (p.status !== 'aguardando') continue;
-    const reserva = _prioReservas[p.id];
-    if (!reserva) continue;
-    if (reserva.email !== mEmail) continue;
-    if (_prioJaNotificados.has(p.id)) continue;
-    _prioJaNotificados.add(p.id);
-    // banner removido — prioridade é silenciosa
-    break; // notifica um de cada vez
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-// ANTI-AUTOCLICK
-// ══════════════════════════════════════════════════════════════════════════
-const _clickTs = [];
-let _aacBloqueado = false;
-let _aacTimer = null;
-
-function _registrarClick() {
-  const now = Date.now();
-  _clickTs.push(now);
-  // Mantém só os últimos 5s
-  while (_clickTs.length > 0 && now - _clickTs[0] > 5000) _clickTs.shift();
-  // Se >8 cliques em 5s → bloquear
-  if (_clickTs.length >= 8 && !_aacBloqueado) {
-    _ativarBloqueioAutoclick();
-  }
-}
-
-function _ativarBloqueioAutoclick() {
-  _aacBloqueado = true;
-  _clickTs.length = 0;
-  const overlay = document.getElementById('anti-autoclick-overlay');
-  const timerEl = document.getElementById('aac-timer');
-  if (overlay) overlay.classList.add('ativo');
-  let restante = 30;
-  if (timerEl) timerEl.textContent = restante;
-  clearInterval(_aacTimer);
-  _aacTimer = setInterval(() => {
-    restante--;
-    if (timerEl) timerEl.textContent = restante;
-    if (restante <= 0) {
-      clearInterval(_aacTimer);
-      _aacBloqueado = false;
-      if (overlay) overlay.classList.remove('ativo');
-    }
-  }, 1000);
-}
-
-function _checkBloqueioAutoclick() {
-  if (_aacBloqueado) {
-    mostrarToast('Clique automático detectado. Aguarde.', 'error');
-    return true;
-  }
-  _registrarClick();
-  return false;
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-// MULTI-ARQUIVO: fila de arquivos selecionados
-// ══════════════════════════════════════════════════════════════════════════
-let arquivosFilaEnvio = []; // array de File
-
-function onArquivoSelecionado(input) {
-  const files = Array.from(input.files || []);
-  if (!files.length) return;
-  files.forEach(f => { if (!arquivosFilaEnvio.find(x=>x.name===f.name&&x.size===f.size)) arquivosFilaEnvio.push(f); });
-  _renderPreviewMulti();
-  input.value = '';
-}
-
-function _renderPreviewMulti() {
-  const wrap = document.getElementById('chat-preview-wrap');
-  if (!wrap) return;
-  if (arquivosFilaEnvio.length === 0) { wrap.classList.remove('visivel'); wrap.innerHTML = ''; return; }
-  wrap.classList.add('visivel');
-  wrap.innerHTML = arquivosFilaEnvio.map((f,i) => {
-    const isImg = f.type.startsWith('image/');
-    const imgTag = isImg ? `<img src="${URL.createObjectURL(f)}" alt=""/>` : '📄';
-    return `<div class="chat-preview-item">${imgTag}<span class="pv-nome" title="${escHtml(f.name)}">${escHtml(f.name)}</span><button class="pv-rm" onclick="removerArquivoFila(${i})" title="Remover">✕</button></div>`;
-  }).join('');
-}
-
-function removerArquivoFila(idx) {
-  arquivosFilaEnvio.splice(idx,1);
-  _renderPreviewMulti();
-}
-
-function cancelarArquivo() {
-  arquivosFilaEnvio = [];
-  _renderPreviewMulti();
-}
-
-async function enviarArquivoChat() {
-  if (!arquivosFilaEnvio.length || !atendimentoAtual) return;
-  const slotDono = slotAtivo;
-  const atendId = atendimentoAtual.id;
-  const filasLocal = [...arquivosFilaEnvio];
-  cancelarArquivo();
-  for (const file of filasLocal) {
-    const fd = new FormData();
-    fd.append('arquivo', file);
-    fd.append('atendimentoId', atendId);
-    fd.append('autor', 'medico');
-    fd.append('autorId', medico?.id || '');
-    try {
-      const res = await fetch(`${API}/api/chat/upload`, { method: 'POST', body: fd });
-      const data = await safeJson(res);
-      if (data.ok && data.mensagem) {
-        const m = data.mensagem;
-        adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
-        adicionarMsgPip(m.autor, m.texto);
-        if (m.id) {
-          if (slots[slotDono]) slots[slotDono].ultimaMsgId = m.id;
-          ultimaMsgId = m.id;
-          if (slots[slotDono]) {
-            if (!slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered = new Set();
-            slots[slotDono].msgIdsRendered.add(m.id);
-          }
-          const cont = document.getElementById('chat-medico-msgs');
-          if (cont && slotDono === slotAtivo && slots[slotDono]) slots[slotDono].chatHtml = cont.innerHTML;
-        }
-      } else { mostrarToast(`Erro ao enviar ${escHtml(file.name)}`, 'error'); }
-    } catch(e) { mostrarToast(`Erro ao enviar ${escHtml(file.name)}`, 'error'); }
-  }
-}
-
 let medico = null, plantaoAtivo = false, modoHistorico = false;
 let autosaveBound = false, autosaveTimer = null, timerInterval = null, timerSegundos = 0;
 let filaInterval = null, filaData = [], filaRetryMs = 15000, agendRetryMs = 20000;
@@ -1537,42 +1152,6 @@ try { return JSON.parse(text); } catch(e) { console.warn('[safeJson] parse error
 
 // -- FETCH CENTRALIZADO ------------------------------------------------------
 // Centraliza: token de autorização, safeJson, erros 401/500 e toast automático
-// Renovação automática de token: chamada 30min antes do vencimento
-let _renovacaoAgendada = false;
-function _agendarRenovacaoToken() {
-  if (_renovacaoAgendada) return;
-  const token = getToken();
-  if (!token) return;
-  try {
-    // Decodifica payload sem verificar assinatura (só para ler exp)
-    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    if (!payload.exp) return;
-    const msAteExp = payload.exp * 1000 - Date.now();
-    const msAteRenovar = msAteExp - 30 * 60 * 1000; // 30min antes
-    if (msAteRenovar <= 0) { _renovarToken(); return; }
-    _renovacaoAgendada = true;
-    setTimeout(async () => { _renovacaoAgendada = false; await _renovarToken(); }, msAteRenovar);
-    console.log('[TOKEN] Renovação agendada em', Math.round(msAteRenovar/60000), 'min');
-  } catch(e) { console.warn('[TOKEN] Não foi possível agendar renovação:', e.message); }
-}
-async function _renovarToken() {
-  try {
-    const res = await fetch(API + '/api/medico/renovar-token', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + getToken() }
-    });
-    const data = await res.json();
-    if (data.ok && data.token) {
-      localStorage.setItem('token', data.token);
-      if (data.medico) localStorage.setItem('medico', JSON.stringify(data.medico));
-      console.log('[TOKEN] Renovado com sucesso.');
-      _agendarRenovacaoToken(); // reagenda para o novo token
-    } else {
-      console.warn('[TOKEN] Renovação recusada — mantendo token atual.');
-    }
-  } catch(e) { console.warn('[TOKEN] Falha na renovação:', e.message); }
-}
-
 async function apiFetch(path, opts={}) {
 const token = getToken();
 const adminPwd = sessionStorage.getItem('adminPwd') || '';
@@ -1588,27 +1167,11 @@ delete opts.json;
 }
 const res = await fetch(API + path, { ...opts, headers });
 if (res.status === 401) {
-  // Tenta renovar antes de deslogar (cobre token expirado por inatividade)
-  try {
-    const renovRes = await fetch(API + '/api/medico/renovar-token', {
-      method: 'POST', headers: { 'Authorization': 'Bearer ' + token }
-    });
-    const renovData = await renovRes.json();
-    if (renovData.ok && renovData.token) {
-      localStorage.setItem('token', renovData.token);
-      if (renovData.medico) localStorage.setItem('medico', JSON.stringify(renovData.medico));
-      // Retenta a requisição original com o novo token
-      headers['Authorization'] = 'Bearer ' + renovData.token;
-      const retry = await fetch(API + path, { ...opts, headers });
-      if (retry.status !== 401) return safeJson(retry);
-    }
-  } catch(e) {}
-  // Se renovação falhou também → desloga
-  mostrarToast('Sessão expirada. Faça login novamente.', 'error');
-  localStorage.removeItem('token');
-  localStorage.removeItem('medico');
-  location.reload();
-  return {};
+mostrarToast('Sessão expirada. Faça login novamente.', 'error');
+localStorage.removeItem('token');
+localStorage.removeItem('medico');
+location.reload();
+return {};
 }
 return safeJson(res);
 }
@@ -1693,7 +1256,6 @@ try {
   localStorage.setItem('medico', JSON.stringify(medico));
   localStorage.setItem('token', data.token);
   console.log('[LOGIN] Token salvo. Entrando no painel...');
-  _agendarRenovacaoToken();
   const adminPwd = document.getElementById('inp-admin-pwd').value;
   if (adminPwd) sessionStorage.setItem('adminPwd', adminPwd);
   entrarApp();
@@ -1852,11 +1414,9 @@ fecharSidebarMobile();
 // Remover estado colapsado do desktop (não se aplica no mobile)
 const body = document.getElementById('app-body');
 if (body) body.classList.remove('sidebar-collapsed');
-initMobileUX();
 } else {
 // Entrou no desktop: restaurar estado salvo
 restoreSidebarState();
-initMobileUX();
 }
 }, 200); // debounce para não executar durante o resize contínuo
 });
@@ -1913,11 +1473,9 @@ clearInterval(agendInterval);
 iniciarPollingAgendamentos();
 if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
 mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
-_agendarRenovacaoToken(); // agenda renovação 30min antes do token expirar
 setTimeout(function() {
 setupMobileSidebar();      // drawer mobile: fecha e ajusta
 restoreSidebarState();     // desktop: restaura colapso se salvo - aqui o DOM já está montado
-initMobileUX();            // accordion + FAB encerrar
 }, 100);
 // Detecta se veio via link de assumir do e-mail
 const urlParams = new URLSearchParams(window.location.search);
@@ -2045,27 +1603,22 @@ railBadge.classList.remove('visivel', 'animar');
 if (!plantaoAtivo&&!atendimentoAtual) { lista.innerHTML='<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>'; return; }
 if (filaData.length===0) { lista.innerHTML='<div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Fila vazia</p></div>'; return; }
 try {
-_atualizarReservas(filaData);
-_verificarNovosParaPrioritaria(filaData);
 lista.innerHTML=filaData.map(p=>{
 const nome=p.nome||'Paciente', tipo=p.tipo||'chat';
 const nomeSafe=escHtml(String(nome));
 const triagemSafe=escHtml(p.triagem||'-');
 const criado=p.criado_em||new Date().toISOString();
+const mins=Math.floor((Date.now()-new Date(criado))/60000);
+const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
 const isAtual = slots.some(s => s && !modoHistorico && String(s.atendimento.id) === String(p.id));
+// meuAssumido: assumido por mim mas não é o atendimento ativo agora
+// compara medico_id como string E como número para evitar mismatch de tipo
 const meuMedId = medico && medico.id != null ? String(medico.id) : '';
 const meuAssumido =
   p.status === 'assumido' &&
   !isAtual &&
   !!meuMedId &&
   String(p.medico_id || '') === meuMedId;
-// Para cards "Em atendimento" de terceiros: exibe tempo a partir de criado_em + 40s
-// evita que apareça 0min e denuncie a prioridade
-const _criadoBase = (p.status==='assumido' && !isAtual && !meuAssumido)
-  ? new Date(new Date(criado).getTime() + (PRIO_CONFIG.janela * 1000))
-  : new Date(criado);
-const mins=Math.max(0, Math.floor((Date.now()-_criadoBase)/60000));
-const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
 const assumido = p.status === 'assumido' && !isAtual && !meuAssumido;
 const isAdmin=!!sessionStorage.getItem('adminPwd');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
@@ -2125,7 +1678,6 @@ document.getElementById('fila-preview').classList.remove('open');
 
 async function assumirAtendimento(id, evt) {
 evt.stopPropagation();
-if (_checkBloqueioAutoclick()) return;
 if (!medico||!medico.id||!medico.nome) { mostrarToast('Faça login novamente.','error'); return; }
 
 // Verificar se este paciente já está em algum slot
@@ -2286,8 +1838,6 @@ document.getElementById('chat-section').style.display='block'; iniciarChatMedico
 switchTab('consulta');
 } else { switchTab(p.prontuario_salvo?'prontuario':'clinico'); }
 atualizarBtnVerChat();
-atualizarResumoQueixa();
-atualizarFabEncerrar();
 }
 
 function inserirConduta(texto) {
@@ -2633,7 +2183,7 @@ renderSlotTabs();
 finally { buscarMensagensNovasMedico._busy = false; }
 }
 async function enviarMensagemMedico() {
-if (arquivosFilaEnvio && arquivosFilaEnvio.length > 0) { await enviarArquivoChat(); return; }
+if (arquivoSelecionado) { await enviarArquivoChat(); return; }
 const ta=document.getElementById('chat-medico-textarea');
 const texto=ta.value.trim(); if (!texto||!atendimentoAtual) return;
 const slotDono = slotAtivo;
@@ -2715,12 +2265,68 @@ div.innerHTML=`<div class="av">${autor==='medico'?'🩺':'🧑'}</div><div class
 container.appendChild(div); container.scrollTop=container.scrollHeight;
 }
 
-// -- UPLOAD DE ARQUIVO NO CHAT (multi-arquivo) --------------
-// arquivoSelecionado substituído por arquivosFilaEnvio (array)
+// -- UPLOAD DE ARQUIVO NO CHAT ------------------------------
+let arquivoSelecionado = null;
 
-// onArquivoSelecionado, cancelarArquivo e enviarArquivoChat
-// definidas no bloco MULTI-ARQUIVO acima
-// -- removidas daqui para evitar redefinição --
+function onArquivoSelecionado(input) {
+const file = input.files[0];
+if (!file) return;
+arquivoSelecionado = file;
+const wrap = document.getElementById('chat-preview-wrap');
+const nome = document.getElementById('chat-preview-nome');
+const img = document.getElementById('chat-preview-img');
+nome.textContent = file.name;
+wrap.classList.add('visivel');
+if (file.type.startsWith('image/')) {
+img.style.display = 'block';
+img.src = URL.createObjectURL(file);
+} else {
+img.style.display = 'none';
+}
+input.value = '';
+}
+
+function cancelarArquivo() {
+arquivoSelecionado = null;
+const wrap = document.getElementById('chat-preview-wrap');
+wrap.classList.remove('visivel');
+document.getElementById('chat-preview-img').src = '';
+document.getElementById('chat-preview-nome').textContent = '';
+}
+
+async function enviarArquivoChat() {
+if (!arquivoSelecionado || !atendimentoAtual) return;
+const file = arquivoSelecionado;
+const slotDono = slotAtivo;
+const atendId = atendimentoAtual.id;
+cancelarArquivo();
+const fd = new FormData();
+fd.append('arquivo', file);
+fd.append('atendimentoId', atendId);
+fd.append('autor', 'medico');
+fd.append('autorId', medico?.id || '');
+try {
+const res = await fetch(`${API}/api/chat/upload`, { method: 'POST', body: fd });
+const data = await safeJson(res);
+if (data.ok && data.mensagem) {
+const m = data.mensagem;
+adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
+adicionarMsgPip(m.autor, m.texto);
+if (m.id) {
+  if (slots[slotDono]) slots[slotDono].ultimaMsgId = m.id;
+  ultimaMsgId = m.id;
+  if (slots[slotDono]) {
+    if (!slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered = new Set();
+    slots[slotDono].msgIdsRendered.add(m.id);
+  }
+  const cont = document.getElementById('chat-medico-msgs');
+  if (cont && slotDono === slotAtivo && slots[slotDono]) slots[slotDono].chatHtml = cont.innerHTML;
+}
+} else {
+mostrarToast('Erro ao enviar arquivo', 'error');
+}
+} catch(e) { mostrarToast('Erro ao enviar arquivo', 'error'); }
+}
 
 function copiarLinkPaciente() {
   const el = document.getElementById('tr-link-paciente');
@@ -3543,7 +3149,6 @@ try {
 }
 
 function fecharHistoricoAtendimento() {
-atualizarFabEncerrar();
 // Limpa slot usado pelo histórico
 slots[slotAtivo] = null;
 modoHistorico=false;
@@ -3578,53 +3183,6 @@ if(chatAtivo&&!modoHistorico) {
 }
 });
 
-
-// ── UX MOBILE ──────────────────────────────────────────────────────────────
-function _mob() { return window.innerWidth <= 768; }
-
-// Accordion triagem
-function toggleTriagemMobile() {
-  const btn   = document.getElementById('triagem-toggle');
-  const corpo = document.getElementById('triagem-corpo');
-  if (!btn || !corpo) return;
-  const open = corpo.classList.contains('open');
-  corpo.classList.toggle('open', !open);
-  btn.classList.toggle('open', !open);
-}
-
-// Inicializa UX mobile: toggle visível, corpo fechado, FAB encerrar
-function initMobileUX() {
-  const btn   = document.getElementById('triagem-toggle');
-  const corpo = document.getElementById('triagem-corpo');
-  const fab   = document.getElementById('btn-encerrar-fab');
-  if (_mob()) {
-    if (btn)   btn.style.display = 'flex';
-    if (corpo) corpo.classList.remove('open');
-    if (btn)   btn.classList.remove('open');
-  } else {
-    if (btn)   btn.style.display = 'none';
-    if (corpo) { corpo.classList.add('open'); corpo.style.maxHeight = 'none'; corpo.style.opacity = '1'; }
-  }
-  atualizarFabEncerrar();
-}
-
-// Atualiza resumo queixa no botão do accordion
-function atualizarResumoQueixa() {
-  const el = document.getElementById('triagem-queixa-resumo');
-  const q  = document.getElementById('tr-queixa');
-  if (!el || !q) return;
-  const txt = (q.textContent || '').trim();
-  el.textContent = txt && txt !== '-' ? txt.slice(0, 38) + (txt.length > 38 ? '…' : '') : '—';
-}
-
-// Mostra/esconde FAB encerrar
-function atualizarFabEncerrar() {
-  const fab = document.getElementById('btn-encerrar-fab');
-  if (!fab) return;
-  const deve = _mob() && !!atendimentoAtual && !modoHistorico;
-  fab.classList.toggle('ativo', deve);
-}
-// ───────────────────────────────────────────────────────────────────────────
 (function init() {
 console.log('[INIT] Painel iniciando...');
 try {
@@ -3706,36 +3264,5 @@ try {
     <div class="trocar-err" id="trocar-err"></div>
   </div>
 </div>
-
-<!-- Botão encerrar fixo mobile (FAB) -->
-<button class="btn-encerrar-fab" id="btn-encerrar-fab" onclick="abrirModalEncerrar()">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-  Encerrar atendimento
-</button>
-
-<!-- ── ANTI-AUTOCLICK OVERLAY ───────────────────────────── -->
-<div id="anti-autoclick-overlay">
-  <div class="aac-card">
-    <div class="aac-icon">🤖</div>
-    <div class="aac-title">Clique automático detectado</div>
-    <div class="aac-sub">Identificamos cliques muito rápidos em sequência. Por segurança, seu acesso foi pausado temporariamente.</div>
-    <div class="aac-timer" id="aac-timer">30</div>
-    <div class="aac-hint">Aguarde para continuar usando o painel normalmente.</div>
-  </div>
-</div>
-
-<!-- ── BANNER DE PRIORIDADE ─────────────────────────────── -->
-<div id="prio-banner">
-  <div class="prio-banner-header">
-    <div class="prio-banner-icon">⭐</div>
-    <div class="prio-banner-txt">
-      <strong id="prio-banner-titulo">Novo paciente prioritário</strong>
-      <span id="prio-banner-sub">Você tem prioridade neste atendimento por 40s</span>
-    </div>
-    <button class="prio-banner-close" onclick="fecharPrioBanner()">✕</button>
-  </div>
-  <div class="prio-timer-bar"><div class="prio-timer-fill" id="prio-timer-fill"></div></div>
-</div>
-
 </body>
 </html>
