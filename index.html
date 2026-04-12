@@ -1473,6 +1473,12 @@ clearInterval(agendInterval);
 iniciarPollingAgendamentos();
 if (sessionStorage.getItem('adminPwd')) carregarMedicosPendentes();
 mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
+if (medico.status_online) {
+  plantaoAtivo=true;
+  document.getElementById('btn-plantao').className='plantao-btn online';
+  document.getElementById('plantao-txt').textContent='Sair do plantão';
+  iniciarPollingFila();
+}
 setTimeout(function() {
 setupMobileSidebar();      // drawer mobile: fecha e ajusta
 restoreSidebarState();     // desktop: restaura colapso se salvo - aqui o DOM já está montado
