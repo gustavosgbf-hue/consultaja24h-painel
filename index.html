@@ -305,7 +305,11 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .btn-encerrar{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,95,87,.2);background:rgba(255,95,87,.06);color:#ff8080;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-encerrar:hover{background:rgba(255,95,87,.12);border-color:rgba(255,95,87,.35)}
 .triagem-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:24px}
-.triagem-box-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1);margin-bottom:14px}
+.triagem-box-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.triagem-toggle-btn{background:none;border:none;color:var(--g1);font-size:.85rem;cursor:pointer;padding:0;line-height:1;transition:transform .25s}
+.triagem-toggle-btn.collapsed{transform:rotate(-90deg)}
+.triagem-body{overflow:hidden;max-height:1000px;transition:max-height .35s ease,opacity .25s ease;opacity:1}
+.triagem-body.collapsed{max-height:0;opacity:0}
 .triagem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
 .triagem-item{display:flex;flex-direction:column;gap:4px}
 .triagem-item label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
@@ -314,7 +318,9 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .triagem-queixa label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);display:block;margin-bottom:8px}
 .triagem-queixa span{font-size:.95rem;font-weight:400;color:rgba(255,255,255,.88);line-height:1.6}
 .tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
-.tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
+.tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;position:relative}
+.tab-badge{position:absolute;top:4px;right:6px;min-width:16px;height:16px;border-radius:8px;background:#ff5f57;color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 3px}
+.tab-badge.visivel{display:flex}
 /* -- PAINEL LATERAL MEMED ----------------------------------- */
 #memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
@@ -555,14 +561,14 @@ overflow-x:hidden!important;
 }
 
 /* Header atendimento compacto */
-.atend-header{flex-direction:row;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:nowrap;padding:8px 0 10px;border-bottom:1px solid var(--line)}
+.atend-header{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:nowrap;padding:8px 0 10px;border-bottom:1px solid var(--line)}
 .atend-paciente{flex:1;min-width:0}
 .atend-nome{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .atend-meta{gap:5px;flex-wrap:wrap}
 .atend-tag{font-size:.62rem;padding:3px 7px}
 .atend-tag.crm{display:none}
 .atend-timer{font-size:.68rem}
-.atend-actions{display:flex;gap:5px;flex-wrap:nowrap;flex-shrink:0}
+.atend-actions{display:flex;gap:5px;flex-wrap:nowrap;flex-shrink:0;width:100%;justify-content:flex-end}
 .atend-actions .btn-wpp{padding:8px 9px;font-size:.72rem;gap:3px}
 .atend-actions .btn-wpp svg{width:13px;height:13px}
 .atend-actions .btn-wpp .wpp-txt{display:none}
@@ -580,12 +586,12 @@ overflow-x:hidden!important;
 
 /* Tabs */
 .tabs{gap:4px;margin-bottom:12px;padding:3px}
-.tab{padding:11px 6px;font-size:.78rem;font-weight:600;border-radius:8px}
+.tab{padding:13px 8px;font-size:.8rem;font-weight:600;border-radius:8px;min-height:44px}
 
 /* Chat */
 .chat-medico-wrap{
 display:flex;flex-direction:column;
-height:calc(100dvh - var(--nav-h) - 370px);
+height:calc(100dvh - var(--nav-h) - 320px);
 min-height:280px;border-radius:12px;margin-bottom:0;overflow:hidden;
 }
 .chat-medico-msgs{
@@ -830,6 +836,7 @@ body.app-autenticado #nav-fila-btn{display:flex}
     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
     <h2>Você está offline</h2><p>Entre em plantão para receber e visualizar pacientes na fila.</p>
     <div class="offline-badge"><div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></div>Plantão inativo</div>
+    <button class="plantao-btn offline" style="margin-top:16px" onclick="togglePlantao()"><div class="plantao-indicator"></div><span>Entrar em plantão</span></button>
   </div>
   <div class="empty-state" id="state-empty" style="display:none">
     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -860,7 +867,8 @@ body.app-autenticado #nav-fila-btn{display:flex}
       </div>
     </div>
     <div class="triagem-box">
-      <div class="triagem-box-title">Dados do paciente</div>
+      <div class="triagem-box-title" onclick="toggleTriagem()">Dados do paciente<button class="triagem-toggle-btn" id="triagem-toggle-btn" tabindex="-1">▾</button></div>
+      <div class="triagem-body" id="triagem-body">
       <div class="triagem-grid" style="margin-bottom:12px">
         <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">-</span></div>
         <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">-</span></div>
@@ -880,9 +888,10 @@ body.app-autenticado #nav-fila-btn{display:flex}
         <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
         <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">-</span></div>
       </div>
+    </div><!-- /triagem-body -->
     </div>
     <div class="tabs" id="atend-tabs">
-      <button class="tab active" onclick="switchTab('consulta')">💬   Consulta</button>
+      <button class="tab active" onclick="switchTab('consulta')">💬   Consulta<span class="tab-badge" id="tab-consulta-badge"></span></button>
       <button class="tab" onclick="switchTab('clinico')">🩺   Avaliação clínica</button>
       <button class="tab" onclick="switchTab('prontuario')">📄   Prontuário</button>
     </div>
@@ -1537,6 +1546,21 @@ if(selMedico) selMedico.innerHTML='<option value="">Todos os médicos</option>';
 }
 
 function togglePlantao() { if(plantaoAtivo) sairPlantao(); else entrarPlantao(); }
+function toggleTriagem() {
+  const body = document.getElementById('triagem-body');
+  const btn = document.getElementById('triagem-toggle-btn');
+  if (!body) return;
+  const collapsed = body.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed', collapsed);
+  sessionStorage.setItem('triagem-collapsed', collapsed ? '1' : '0');
+}
+(function initTriagem() {
+  if (sessionStorage.getItem('triagem-collapsed') === '1') {
+    const body = document.getElementById('triagem-body');
+    const btn = document.getElementById('triagem-toggle-btn');
+    if (body) { body.classList.add('collapsed'); btn && btn.classList.add('collapsed'); }
+  }
+})();
 async function entrarPlantao() {
 try { await apiFetch('/api/plantao/entrar',{method:'POST'}); } catch(e) {}
 plantaoAtivo=true;
@@ -1923,6 +1947,7 @@ function switchTab(nome) {
 document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',['consulta','clinico','prontuario'][i]===nome);});
 document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
 document.getElementById('tab-'+nome).classList.add('active');
+if (nome === 'consulta') document.getElementById('tab-consulta-badge')?.classList.remove('visivel');
 if (isMobile()) fecharSidebarMobile();
 // PiP: mostra quando sai da aba de consulta e chat está ativo
 if (nome !== 'consulta' && chatAtivo) {
@@ -2269,6 +2294,11 @@ arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="no
 }
 div.innerHTML=`<div class="av">${autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${arquivoUrl?'':linkificar(safe)}${arquivoHtml}</div><div class="ts">${hora}</div></div>`;
 container.appendChild(div); container.scrollTop=container.scrollHeight;
+if (autor === 'paciente') {
+  const tabAtiva = document.querySelector('.tab.active');
+  const isConsulta = tabAtiva && tabAtiva.getAttribute('onclick') && tabAtiva.getAttribute('onclick').includes('consulta');
+  if (!isConsulta) document.getElementById('tab-consulta-badge')?.classList.add('visivel');
+}
 }
 
 // -- UPLOAD DE ARQUIVO NO CHAT ------------------------------
