@@ -3161,10 +3161,14 @@ if (!atendimentoAtual) return;
 const id = atendimentoAtual.id;
 const nome = atendimentoAtual.nome || 'este paciente';
 if (!confirm('Reabrir a consulta de ' + nome + '? O atendimento voltará para "Em atendimento".')) return;
-// Verificar limite de slots
-const slotsOcupados = slots.filter(Boolean).length;
-if (slotsOcupados >= MAX_SLOTS) {
-  mostrarToast('Encerre um atendimento antes de reabrir outro.', 'error');
+// Verificar limite de slots — slot de histórico não conta pois será substituído
+const slotsVivos = slots.filter((s, i) => {
+  if (!s) return false;
+  if (modoHistorico && i === slotAtivo) return false;
+  return true;
+}).length;
+if (slotsVivos >= MAX_SLOTS) {
+  mostrarToast('Encerre um atendimento ativo antes de reabrir outro.', 'error');
   return;
 }
 try {
