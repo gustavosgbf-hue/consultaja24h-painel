@@ -2526,6 +2526,7 @@ async function enviarArquivoChat() {
   const slot = slots[slotAtivo];
   if (!slot || !slot.atendimento) return;
   const pendentes = arquivosPendentes.splice(0);
+  cancelarArquivo(); // limpa preview visual após envio
   pendentes.forEach(file => { enviarArquivoUnico(file, slot.atendimento.id); });
 }
 
