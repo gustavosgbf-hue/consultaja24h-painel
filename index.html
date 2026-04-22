@@ -260,6 +260,8 @@ sem isso o conteúdo pode forçar a coluna a crescer ou colapsar */
 .slot-tab-btn.active{border-color:rgba(94,224,160,.4);background:rgba(94,224,160,.07);color:rgba(255,255,255,.9)}
 .slot-tab-btn .slot-dot{width:7px;height:7px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 .slot-tab-btn .slot-name{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.paciente-card.clicavel-slot{cursor:pointer;transition:border-color .15s,background .15s}
+.paciente-card.clicavel-slot:hover{border-color:rgba(94,224,160,.35);background:rgba(94,224,160,.04)}
 
 /* -- FIX LAYOUT RAIZ: sidebar-overlay é filho do grid no desktop.
 Sem display:none global ele ocupa a 2ª coluna e empurra .main para
@@ -363,7 +365,7 @@ body.memed-aberto{overflow:hidden}
 .chat-medico-header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:rgba(6,13,11,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .chat-medico-header h3{font-size:.9rem;font-weight:500;display:flex;align-items:center;gap:8px;color:#eaeaea}
 .chat-online-dot{width:6px;height:6px;border-radius:50%;background:var(--g2);animation:pulse 2.2s ease-in-out infinite}
-.chat-medico-msgs{height:360px;overflow-y:auto;padding:20px 14px 24px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;background:#060d0b;scroll-behavior:smooth}
+.chat-medico-msgs{height:280px;overflow-y:auto;padding:20px 14px 24px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;background:#060d0b;scroll-behavior:smooth}
 .chat-medico-msgs::-webkit-scrollbar{width:2px}
 .chat-medico-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
 /* [UX v3] Mensagens estilo app — minimalistas, sem avatar, sem nome */
@@ -395,7 +397,8 @@ body.memed-aberto{overflow:hidden}
 .chat-medico-send:active{transform:scale(.92)}
 .chat-clip-btn{width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,.09);background:transparent;color:rgba(255,255,255,.55);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;align-self:center}
 .chat-clip-btn:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.15)}
-/* Rodapé segurança */
+.conduta-btn{position:relative;padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255, .1);background:rgba(255, 255, 255, .04);color:rgba(255, 255, 255, .55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s}
+.conduta-btn:hover{border-color:rgba(180, 224, 90, .3);color:#b4e05a}
 .chat-sec-foot{padding:7px 14px calc(9px + env(safe-area-inset-bottom,0px));text-align:center;font-size:.64rem;color:rgba(255,255,255,.3);font-weight:400;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;gap:5px;border-top:1px solid rgba(255,255,255,.04)}
 .chat-sec-foot svg{opacity:.5}
 /* Badge "mensagem nova" na tab do slot inativo */
@@ -412,7 +415,8 @@ body.memed-aberto{overflow:hidden}
 .msg-arquivo-pdf .pdf-nome{font-size:.88rem;font-weight:500;color:#eaeaea;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .msg-arquivo-pdf .pdf-sub{font-size:.7rem;color:rgba(255,255,255,.3);font-weight:400;margin-top:2px}
 .msg-arquivo-pdf .pdf-arrow{flex-shrink:0;color:var(--g2);opacity:.75}
-.chat-preview-wrap{padding:8px 14px;background:rgba(180,224,90,.05);border-top:1px solid rgba(180,224,90,.12);display:none;align-items:center;gap:10px}
+.chat-preview-wrap{padding:8px 14px;background:rgba(180,224,90,.05);border-top:1px solid rgba(180,224,90,.12);display:none;flex-direction:column;gap:6px;overflow-y:auto;max-height:120px}
+.chat-preview-item{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,.04);min-width:0}
 .chat-preview-wrap.visivel{display:flex}
 .chat-preview-img{width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,.1)}
 .chat-preview-nome{flex:1;font-size:.78rem;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1005,7 +1009,7 @@ z-index:5;
           <button class="chat-medico-send" onclick="enviarMensagemMedico()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
         </div>
         <!-- [UX v2] Rodapé de segurança -->
-        <div class="chat-sec-foot"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Conversa segura e criptografada</div>
+        <div class="chat-sec-foot" title="Conversa segura e criptografada"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
       </div>
       <div id="wpp-consulta-section" style="display:none;text-align:center;padding:32px 20px">
         <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Consulta via WhatsApp - entre em contato diretamente com o paciente.</p>
@@ -1029,12 +1033,12 @@ z-index:5;
               <span style="font-size:.65rem;color:rgba(255,255,255,.25);font-weight:400;letter-spacing:0;text-transform:none">clique para inserir</span>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
-              <button onclick="inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Sinais de alarme</button>
-              <button onclick="inserirConduta('Quadro compatível com síndrome viral leve. Tratamento sintomático orientado.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Síndrome viral leve</button>
-              <button onclick="inserirConduta('Sem sinais de urgência ou emergência identificados no momento.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Sem urgência</button>
-              <button onclick="inserirConduta('Atestado médico emitido conforme solicitação e avaliação clínica.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Atestado emitido</button>
-              <button onclick="inserirConduta('Receita médica emitida. Orientado sobre posologia e duração do tratamento.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Receita emitida</button>
-              <button onclick="inserirConduta('Encaminhado para avaliação presencial. Orientado a procurar serviço de saúde local.')" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:Outfit,sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='rgba(180,224,90,.3)';this.style.color='#b4e05a'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.55)'">Encaminhar presencial</button>
+<button class="conduta-btn" onclick="inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.')">Sinais de alarme</button>
+<button class="conduta-btn" onclick="inserirConduta('Quadro compatível com síndrome viral leve. Tratamento sintomático orientado.')">Síndrome viral leve</button>
+<button class="conduta-btn" onclick="inserirConduta('Sem sinais de urgência ou emergência identificados no momento.')">Sem urgência</button>
+<button class="conduta-btn" onclick="inserirConduta('Atestado médico emitido conforme solicitação e avaliação clínica.')">Atestado emitido</button>
+<button class="conduta-btn" onclick="inserirConduta('Receita médica emitida. Orientado sobre posologia e duração do tratamento.')">Receita emitida</button>
+<button class="conduta-btn" onclick="inserirConduta('Encaminhado para avaliação presencial. Orientado a procurar serviço de saúde local.')">Encaminhar presencial</button>
             </div>
             <textarea class="clinic-input tall" id="cl-conduta" placeholder="Prescrição, orientações, encaminhamentos, retorno..."></textarea>
           </div>
@@ -1827,7 +1831,17 @@ const isAdmin=!!sessionStorage.getItem('adminPwd');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
 const nomeMediacoSafe=escHtml(nomeMediaco);
 const clicavel = !assumido && !meuAssumido && !isAtual;
-return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''}" ${clicavel?`onclick="abrirPreviewFila('${p.id}')"`:''}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge">Em atendimento</span>':meuAssumido?`<button onclick="retomarAtendimento('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:600;cursor:pointer;">↩ Retomar</button>`:isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
+// Para pacientes já em slot (isAtual), encontrar o índice do slot para ativar ao clicar
+const slotIdx = isAtual ? slots.findIndex(s => s && String(s.atendimento.id) === String(p.id)) : -1;
+// Para pacientes meuAssumido (assumidos mas não ativos no painel), o card chama retomarAtendimento
+const cardOnClick = isAtual
+  ? `onclick="ativarSlot(${slotIdx})"`
+  : meuAssumido
+    ? `onclick="retomarAtendimento('${p.id}',event)"`
+    : clicavel
+      ? `onclick="abrirPreviewFila('${p.id}')"`
+      : '';
+return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge" style="pointer-events:none">▶ Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">↩ Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
 }).join('');
 } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
@@ -2434,69 +2448,96 @@ if (!isConsulta) document.getElementById('tab-consulta-badge')?.classList.add('v
 }
 }
 
-// -- UPLOAD DE ARQUIVO NO CHAT ------------------------------
-let arquivoSelecionado = null;
+// -- UPLOAD DE ARQUIVOS NO CHAT (múltiplo) -------------
+const arquivosPendentes = [];
 
 function onArquivoSelecionado(input) {
-const file = input.files[0];
-if (!file) return;
-arquivoSelecionado = file;
-const wrap = document.getElementById('chat-preview-wrap');
-const nome = document.getElementById('chat-preview-nome');
-const img = document.getElementById('chat-preview-img');
-nome.textContent = file.name;
-wrap.classList.add('visivel');
-if (file.type.startsWith('image/')) {
-img.style.display = 'block';
-img.src = URL.createObjectURL(file);
-} else {
-img.style.display = 'none';
+  Array.from(input.files).forEach(file => {
+    if (!file) return;
+    arquivosPendentes.push(file);
+    renderPreviewItem(file);
+  });
+  input.value = '';
 }
-input.value = '';
+
+function renderPreviewItem(file) {
+  const wrap = document.getElementById('chat-preview-wrap');
+  if (!wrap) return;
+  const item = document.createElement('div');
+  item.className = 'chat-preview-item';
+  item.dataset.name = file.name;
+  if (file.type.startsWith('image/')) {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.style.cssText = 'width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid rgba(255,255,255,.1)';
+    item.appendChild(img);
+  } else {
+    const ico = document.createElement('span');
+    ico.style.cssText = 'width:48px;height:48px;border-radius:6px;background:rgba(94,224,160,.08);display:flex;align-items:center;justify-content:center;color:#5ee0a0;font-size:.85rem;font-weight:700;flex-shrink:0';
+    ico.textContent = 'PDF';
+    item.appendChild(ico);
+  }
+  const nome = document.createElement('span');
+  nome.className = 'chat-preview-nome';
+  nome.textContent = file.name;
+  nome.style.cssText = 'flex:1;font-size:.78rem;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+  item.appendChild(nome);
+  const btn = document.createElement('button');
+  btn.className = 'chat-preview-cancel';
+  btn.style.cssText = 'width:22px;height:22px;border-radius:6px;border:none;background:rgba(255,95,87,.15);color:#ff5f57;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0';
+  btn.textContent = '✕';
+  btn.onclick = () => {
+    arquivosPendentes.splice(arquivosPendentes.findIndex(f => f.name === file.name), 1);
+    item.remove();
+    if (!arquivosPendentes.length) wrap.classList.remove('visivel');
+  };
+  item.appendChild(btn);
+  wrap.appendChild(item);
+  wrap.classList.add('visivel');
 }
 
 function cancelarArquivo() {
-arquivoSelecionado = null;
-const wrap = document.getElementById('chat-preview-wrap');
-wrap.classList.remove('visivel');
-document.getElementById('chat-preview-img').src = '';
-document.getElementById('chat-preview-nome').textContent = '';
+  arquivosPendentes.length = 0;
+  const wrap = document.getElementById('chat-preview-wrap');
+  wrap.innerHTML = '';
+  wrap.classList.remove('visivel');
 }
 
 async function enviarArquivoChat() {
-if (!arquivoSelecionado) return;
-// [FIX-SLOTS] Lê atendimento do slot ativo
-const slotDono = slotAtivo;
-const slot = slots[slotDono];
-if (!slot || !slot.atendimento) return;
-const file = arquivoSelecionado;
-const atendId = slot.atendimento.id;
-cancelarArquivo();
-const fd = new FormData();
-fd.append('arquivo', file);
-fd.append('atendimentoId', atendId);
-fd.append('autor', 'medico');
-fd.append('autorId', medico?.id || '');
-try {
-const res = await fetch(`${API}/api/chat/upload`, { method: 'POST', body: fd });
-const data = await safeJson(res);
-if (data.ok && data.mensagem) {
-const m = data.mensagem;
-if (m.id) {
-pushMsgSlot(slotDono, {
-id: m.id,
-autor: m.autor,
-texto: m.texto,
-criado_em: m.criado_em,
-arquivo_url: m.arquivo_url,
-arquivo_tipo: m.arquivo_tipo
-});
-if (slotDono === slotAtivo) adicionarMsgPip(m.autor, m.texto);
+  if (!arquivosPendentes.length) return;
+  const slot = slots[slotAtivo];
+  if (!slot || !slot.atendimento) return;
+  const pendentes = arquivosPendentes.splice(0);
+  pendentes.forEach(file => { enviarArquivoUnico(file, slot.atendimento.id); });
 }
-} else {
-mostrarToast('Erro ao enviar arquivo', 'error');
-}
-} catch(e) { mostrarToast('Erro ao enviar arquivo', 'error'); }
+
+async function enviarArquivoUnico(file, atendId) {
+  if (!file) return;
+  const slot = slots[slotAtivo];
+  if (!slot || !file) return;
+  const fd = new FormData();
+  fd.append('arquivo', file);
+  fd.append('atendimentoId', atendId);
+  fd.append('autor', 'medico');
+  fd.append('autorId', medico?.id || '');
+  try {
+    const res = await fetch(`${API}/api/chat/upload`, { method: 'POST', body: fd });
+    const data = await safeJson(res);
+    if (data.ok && data.mensagem) {
+      const m = data.mensagem;
+      pushMsgSlot(slotAtivo, {
+        id: m.id,
+        autor: m.autor,
+        texto: m.texto,
+        criado_em: m.criado_em,
+        arquivo_url: m.arquivo_url,
+        arquivo_tipo: m.arquivo_tipo
+      });
+      adicionarMsgPip(m.autor, m.texto);
+    } else {
+      mostrarToast('Erro ao enviar arquivo', 'error');
+    }
+  } catch(e) { mostrarToast('Erro ao enviar arquivo', 'error'); }
 }
 
 function copiarLinkPaciente() {
