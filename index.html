@@ -904,7 +904,11 @@ body.app-autenticado #nav-fila-btn{display:flex}
       </div>
       <div class="chat-medico-wrap" id="chat-section" style="display:none">
         <div class="chat-medico-header"><h3><div class="chat-online-dot"></div> Chat com o paciente</h3><span style="font-size:.72rem;color:var(--muted)">Atualiza a cada 3s</span></div>
-        <div class="chat-medico-msgs" id="chat-medico-msgs"><div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div></div>
+        <!-- [FIX-SLOTS] Um container real de chat por slot. Slot inativo fica com [hidden].
+             Elimina toda a classe de bugs de troca de conversa causados pelo DOM compartilhado
+             + snapshot via innerHTML. Fonte única de verdade agora é slots[i].mensagens (array). -->
+        <div class="chat-medico-msgs" id="chat-medico-msgs-0" data-slot="0"><div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div></div>
+        <div class="chat-medico-msgs" id="chat-medico-msgs-1" data-slot="1" hidden></div>
         <div class="chat-preview-wrap" id="chat-preview-wrap">
           <img class="chat-preview-img" id="chat-preview-img" src="" style="display:none"/>
           <span class="chat-preview-nome" id="chat-preview-nome"></span>
@@ -1057,11 +1061,77 @@ chatAtivo: false,
 chatRetryMs: 3000,
 // Rascunho dos campos clínicos (salvo antes de trocar de slot)
 rascunho: { 'cl-hda':'', 'cl-comorbidades':'', 'cl-medicacoes':'', 'cl-alergias':'', 'cl-obs':'', 'cl-conduta':'' },
-// HTML das mensagens do chat (snapshot antes de trocar de slot)
-chatHtml: '',
-// IDs de mensagens já renderizadas — evita duplicação por race condition entre envio e polling
-msgIdsRendered: new Set()
+// [FIX-SLOTS] Array de mensagens é a ÚNICA fonte de verdade. Cada item:
+//   { id, autor, texto, criado_em, arquivo_url, arquivo_tipo }
+// O DOM é sempre reconstruído a partir daqui. Elimina o bug de troca entre pacientes.
+mensagens: [],
+// Set de IDs já presentes em mensagens[] — dedupe rápido no polling/envio
+msgIdsRendered: new Set(),
+// [UX] Badge de "mensagem nova não lida" na tab do slot inativo
+temMsgNova: false
 };
+}
+
+// [FIX-SLOTS] Helper: retorna o container DOM do slot dado.
+function msgsContainer(idx) {
+return document.getElementById('chat-medico-msgs-' + idx);
+}
+
+// [FIX-SLOTS] Fonte única de render do chat de um slot. Reconstrói o DOM a partir de slot.mensagens.
+// Chamada em: iniciarChatMedico (carga inicial), envio/polling (via adicionarMsgMedico que delega).
+function renderSlotMsgs(idx) {
+const slot = slots[idx];
+const container = msgsContainer(idx);
+if (!slot || !container) return;
+if (!slot.mensagens || slot.mensagens.length === 0) {
+container.innerHTML = '<div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div>';
+return;
+}
+container.innerHTML = '';
+const frag = document.createDocumentFragment();
+slot.mensagens.forEach(m => frag.appendChild(_renderMsgBolha(m)));
+container.appendChild(frag);
+container.scrollTop = container.scrollHeight;
+}
+
+// [FIX-SLOTS] Helper que cria UM elemento de bolha. Mantém consistência entre todos os caminhos
+// (envio, polling, carga inicial). Usa linkificar e suporta arquivo. Única definição do visual.
+function _renderMsgBolha(m) {
+const div = document.createElement('div');
+div.className = 'cmsg ' + (m.autor || 'paciente');
+if (m.id) div.dataset.msgId = m.id;
+const hora = (function(){ try { return new Date(m.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); } catch(e){ return ''; } })();
+const safe = String(m.texto||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+let arquivoHtml = '';
+const arquivoSeguro = (typeof safeUrl==='function') ? safeUrl(m.arquivo_url) : m.arquivo_url;
+if (arquivoSeguro && m.arquivo_tipo === 'imagem') {
+const href = (typeof escAttr==='function') ? escAttr(arquivoSeguro) : arquivoSeguro;
+arquivoHtml = `<a href="${href}" target="_blank" rel="noopener noreferrer"><img class="msg-arquivo-img" src="${href}" alt="imagem"/></a>`;
+} else if (arquivoSeguro && m.arquivo_tipo === 'pdf') {
+const href = (typeof escAttr==='function') ? escAttr(arquivoSeguro) : arquivoSeguro;
+arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="noopener noreferrer">📄 Abrir PDF</a>`;
+}
+const corpo = m.arquivo_url ? arquivoHtml : (typeof linkificar==='function' ? linkificar(safe) : safe);
+div.innerHTML = `<div class="av">${m.autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${corpo}</div><div class="ts">${hora}</div></div>`;
+return div;
+}
+
+// [FIX-SLOTS] Adiciona uma mensagem ao estado do slot e ao DOM (se houver container).
+// Retorna true se adicionou, false se era duplicata.
+function pushMsgSlot(idx, m) {
+const slot = slots[idx];
+if (!slot || !m || !m.id) return false;
+if (slot.msgIdsRendered.has(m.id)) return false;
+slot.msgIdsRendered.add(m.id);
+slot.mensagens.push(m);
+if (m.id > (slot.ultimaMsgId||0)) slot.ultimaMsgId = m.id;
+const container = msgsContainer(idx);
+if (container) {
+const v = container.querySelector('.chat-vazio'); if (v) v.remove();
+container.appendChild(_renderMsgBolha(m));
+container.scrollTop = container.scrollHeight;
+}
+return true;
 }
 
 // Salva os campos clínicos do DOM no rascunho do slot atual ANTES de trocar
@@ -1071,9 +1141,7 @@ CAMPOS_CLINICOS.forEach(id => {
 const el = document.getElementById(id);
 if (el) slots[idx].rascunho[id] = el.value;
 });
-// Snapshot do chat
-const msgs = document.getElementById('chat-medico-msgs');
-if (msgs) slots[idx].chatHtml = msgs.innerHTML;
+// [FIX-SLOTS] Snapshot de chatHtml removido. DOM próprio de cada slot já persiste.
 }
 
 // Restaura os campos clínicos do rascunho do slot ativo para o DOM
@@ -1083,12 +1151,9 @@ CAMPOS_CLINICOS.forEach(id => {
 const el = document.getElementById(id);
 if (el) el.value = slots[idx].rascunho[id] || '';
 });
-// Restaura chat
-const msgs = document.getElementById('chat-medico-msgs');
-if (msgs && slots[idx].chatHtml) {
-msgs.innerHTML = slots[idx].chatHtml;
-msgs.scrollTop = msgs.scrollHeight;
-}
+// [FIX-SLOTS] Restauração via innerHTML removida. Apenas rola até o fim no container deste slot.
+const msgs = msgsContainer(idx);
+if (msgs) msgs.scrollTop = msgs.scrollHeight;
 }
 
 function pararPollingSlot(idx) {
@@ -1099,24 +1164,36 @@ slots[idx].chatAtivo = false;
 }
 }
 
+// [FIX-SLOTS] Alterna a visibilidade dos containers conforme slotAtivo. Deve ser chamado SEMPRE que
+// slotAtivo muda (ativarSlot, assumirAtendimento, retomarAtendimento, reabrirAtendimento, carga inicial).
+function sincronizarVisibilidadeSlots() {
+for (let i = 0; i < MAX_SLOTS; i++) {
+const c = msgsContainer(i);
+if (c) c.hidden = (i !== slotAtivo);
+}
+}
+
 function ativarSlot(idx) {
 if (idx === slotAtivo) return;
-// 1. Salva rascunho clínico e snapshot do chat do slot atual antes de trocar
+// 1. Salva rascunho clínico do slot atual antes de trocar
 salvarRascunhoSlot(slotAtivo);
-// 2. Para polling do slot saindo
-pararPollingSlot(slotAtivo);
 slotAtivo = idx;
+// [FIX-SLOTS] 3. Alterna visibilidade dos containers de chat (o slot NÃO ativo fica com [hidden]).
+sincronizarVisibilidadeSlots();
+// [UX] Slot recém-ativado perde o badge de "mensagem nova"
+if (slots[slotAtivo]) slots[slotAtivo].temMsgNova = false;
 renderSlotTabs();
 modoHistorico = false;
 timerSegundos = 0;
 if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
 if (slots[slotAtivo]) {
 iniciarTimer();
-// 3. Repopula o painel com dados do novo slot
+// 4. Repopula o painel com dados do novo slot
 renderPainelAtendimento();
-// 4. Restaura rascunho clínico e chat deste slot (sobrescreve o que renderPainelAtendimento preencheu)
+// 5. Restaura rascunho clínico deste slot (sobrescreve o que renderPainelAtendimento preencheu)
 restaurarRascunhoSlot(slotAtivo);
-// 5. Polling de chat é retomado pelo iniciarChatMedico chamado dentro de renderPainelAtendimento — não iniciar aqui para evitar polling duplo
+// 6. PiP passa a refletir o novo slot ativo
+sincronizarMsgsPip();
 }
 renderEstado();
 }
@@ -1131,7 +1208,9 @@ wrap.innerHTML = slots.map((s, i) => {
 if (!s) return '';
 const nome = (s.atendimento.nome || 'Paciente').split(' ')[0];
 const tipo = s.atendimento.tipo === 'video' ? '📹' : '💬';
-return `<button class="slot-tab-btn ${i === slotAtivo ? 'active' : ''}" onclick="ativarSlot(${i})"> <span class="slot-dot"></span><span class="slot-name">${tipo} ${escHtml(nome)}</span> </button>`;
+// [UX] Badge "nova msg" só aparece na tab inativa
+const badge = (s.temMsgNova && i !== slotAtivo) ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '';
+return `<button class="slot-tab-btn ${i === slotAtivo ? 'active' : ''}" onclick="ativarSlot(${i})"> <span class="slot-dot"></span><span class="slot-name">${tipo} ${escHtml(nome)}</span>${badge}</button>`;
 }).join('');
 }
 
@@ -1466,6 +1545,7 @@ apiFetch('/api/atendimento/status/'+atendParsed.id)
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 slots[0] = criarSlot(d.atendimento);
 slotAtivo = 0;
+sincronizarVisibilidadeSlots();
 modoHistorico = false;
 timerSegundos = 0; iniciarTimer();
 renderSlotTabs();
@@ -1504,6 +1584,7 @@ if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
 const slotLivre = slots[0] === null ? 0 : 1;
 slots[slotLivre] = criarSlot(d.atendimento);
 slotAtivo = slotLivre;
+sincronizarVisibilidadeSlots();
 sessionStorage.setItem('atendimentoAtual', JSON.stringify(d.atendimento));
 modoHistorico = false;
 timerSegundos = 0; iniciarTimer();
@@ -1521,6 +1602,7 @@ if (plantaoAtivo) sairPlantao();
 // Para polling de todos os slots antes de sair
 slots.forEach((_, i) => pararPollingSlot(i));
 slots[0] = null; slots[1] = null; slotAtivo = 0;
+sincronizarVisibilidadeSlots();
 clearInterval(agendInterval); agendInterval=null;
 localStorage.removeItem('token'); localStorage.removeItem('medico'); medico=null; autosaveBound=false;
 document.getElementById('screen-app').style.display='none';
@@ -1680,6 +1762,7 @@ const slotLivre = slots[0] === null ? 0 : (slots[1] === null ? 1 : slotAtivo);
 if (slots[slotLivre]) pararPollingSlot(slotLivre);
 slots[slotLivre] = criarSlot(atendimentoRetomado);
 slotAtivo = slotLivre;
+sincronizarVisibilidadeSlots();
 modoHistorico = false;
 if (atendimentoRetomado) sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoRetomado));
 timerSegundos = 0; iniciarTimer();
@@ -1742,6 +1825,7 @@ pararPollingSlot(slotAtivo);
 }
 slots[slotLivre] = criarSlot(atendimentoNovo);
 slotAtivo = slotLivre;
+sincronizarVisibilidadeSlots();
 
 // Salvar apenas o slot 0 no sessionStorage (compatibilidade)
 if (slotAtivo === 0 && atendimentoNovo) sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoNovo));
@@ -1859,9 +1943,12 @@ document.getElementById('meet-section').style.display='none';
 document.getElementById('chat-section').style.display='none';
 document.getElementById('wpp-consulta-section').style.display='none';
 if (!modoHistorico) {
+// [UX] Vídeo AGORA também mostra o chat com anexos. Antes, consulta por vídeo só tinha o botão do
+// Meet — paciente não conseguia mandar foto/exame. Agora: meet-section no topo, chat-section abaixo.
 if (tipo==='video') {
 document.getElementById('meet-section').style.display='block';
 if (p.meet_link) { document.getElementById('meetLinkInput').value=p.meet_link; document.getElementById('meetLinkAtualUrl').textContent=p.meet_link; document.getElementById('meetLinkAtualUrl').href=p.meet_link; document.getElementById('meetLinkAtual').style.display='block'; }
+document.getElementById('chat-section').style.display='block'; iniciarChatMedico();
 } else if (tipo==='chat') {
 document.getElementById('chat-section').style.display='block'; iniciarChatMedico();
 } else { document.getElementById('wpp-consulta-section').style.display='block'; }
@@ -2002,8 +2089,8 @@ badge.classList.remove('visivel');
 }
 
 function sincronizarMsgsPip() {
-// Copia as mensagens do chat principal para o PiP
-const origem = document.getElementById('chat-medico-msgs');
+// [FIX-SLOTS] Copia as mensagens do container do SLOT ATIVO para o PiP (não do DOM global).
+const origem = msgsContainer(slotAtivo);
 const destino = document.getElementById('chat-pip-msgs');
 if (!origem || !destino) return;
 destino.innerHTML = origem.innerHTML;
@@ -2030,10 +2117,13 @@ atualizarBadgePip();
 
 async function enviarMensagemPip() {
 const ta = document.getElementById('chat-pip-textarea');
-if (!ta || !ta.value.trim() || !atendimentoAtual) return;
-const texto = ta.value.trim();
+if (!ta || !ta.value.trim()) return;
+// [FIX-SLOTS] Lê atendimento do slot ativo
 const slotDono = slotAtivo;
-const atendId = atendimentoAtual.id;
+const slot = slots[slotDono];
+if (!slot || !slot.atendimento) return;
+const texto = ta.value.trim();
+const atendId = slot.atendimento.id;
 ta.value = '';
 ta.style.height = 'auto';
 
@@ -2046,35 +2136,22 @@ try {
   if (!resp || !resp.ok) return;
 
   const m = resp.mensagem;
-  if (!m) return;
+  if (!m || !m.id) return;
 
-  // 👇 MOSTRA A MENSAGEM NA TELA (ISSO QUE FALTAVA)
-  adicionarMsgMedico(
-    m.autor || 'medico',
-    m.texto || texto,
-    m.criado_em || new Date().toISOString(),
-    m.arquivo_url || null,
-    m.arquivo_tipo || null,
-    slotDono
-  );
+  // [FIX-SLOTS] Uma só escrita no estado via pushMsgSlot (dedupe + DOM + ultimaMsgId)
+  pushMsgSlot(slotDono, {
+    id: m.id,
+    autor: m.autor || 'medico',
+    texto: m.texto || texto,
+    criado_em: m.criado_em || new Date().toISOString(),
+    arquivo_url: m.arquivo_url || null,
+    arquivo_tipo: m.arquivo_tipo || null
+  });
 
-  adicionarMsgPip(
-    m.autor || 'medico',
-    m.texto || texto
-  );
-
-  // 👇 mantém isso
-  if (m?.id && slots[slotDono]) {
-    slots[slotDono].ultimaMsgId = m.id;
-    ultimaMsgId = m.id;
-    // Marca como já renderizado para o polling não duplicar
-    if (!slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered = new Set();
-    slots[slotDono].msgIdsRendered.add(m.id);
-    slots[slotDono].chatHtml = document.getElementById('chat-medico-msgs').innerHTML;
-  }
+  adicionarMsgPip(m.autor || 'medico', m.texto || texto);
 
 } catch(e) {
-  chatRetryMs = Math.min(chatRetryMs * 2, 15000);
+  if (slot) slot.chatRetryMs = Math.min((slot.chatRetryMs||3000) * 2, 15000);
 }
 } // fim enviarMensagemPip
 
@@ -2087,18 +2164,17 @@ slot.chatAtivo = true;
 if (slot.chatInterval) { clearInterval(slot.chatInterval); slot.chatInterval = null; }
 const capturedSlot = slotAtivo;
 
-// Se já temos snapshot do chat deste slot, restaura direto - não recarrega do servidor.
-// Isso evita duplicação de mensagens ao voltar para um slot já visitado.
-const container = document.getElementById('chat-medico-msgs');
-if (slot.chatHtml) {
-if (container) { container.innerHTML = slot.chatHtml; container.scrollTop = container.scrollHeight; }
-// Polling já pode começar com o ultimaMsgId correto (foi mantido no slot)
+// [FIX-SLOTS] Se o slot já tem mensagens carregadas (revisita), apenas re-renderiza do array e retoma polling.
+// Não recarrega do servidor — isso causaria flicker e duplicação.
+if (slot.mensagens && slot.mensagens.length > 0) {
+renderSlotMsgs(capturedSlot);
+sincronizarMsgsPip();
 _iniciarPollingChat(capturedSlot);
 } else {
 // Primeira vez neste slot: zera ID e carrega do servidor
 slot.ultimaMsgId = 0;
-if (container) container.innerHTML = '<div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div>';
-carregarHistoricoMedico().then(()=>{ _iniciarPollingChat(capturedSlot); });
+renderSlotMsgs(capturedSlot); // mostra estado vazio
+carregarHistoricoMedico(capturedSlot).then(()=>{ sincronizarMsgsPip(); _iniciarPollingChat(capturedSlot); });
 }
 
 // Listeners no textarea principal - usa flag _chatInit para não duplicar
@@ -2120,105 +2196,83 @@ taPip.addEventListener('keydown', function(e){ if(e.key==='Enter'&&!e.shiftKey){
 function _iniciarPollingChat(capturedSlot) {
 if (!slots[capturedSlot]) return;
 if (slots[capturedSlot].chatInterval) { clearInterval(slots[capturedSlot].chatInterval); slots[capturedSlot].chatInterval = null; }
+// [FIX-SLOTS] Polling roda INDEPENDENTE do slot ativo. Cada slot continua buscando mensagens
+// mesmo quando não visível — escreve no próprio DOM (oculto por [hidden]) e acende badge.
+// Aba em background (document.hidden) pausa para economizar requisições.
 slots[capturedSlot].chatInterval = setInterval(function(){
-if (document.hidden || slotAtivo !== capturedSlot) return;
-buscarMensagensNovasMedico();
+if (document.hidden) return;
+buscarMensagensNovasMedico(capturedSlot);
 }, slots[capturedSlot].chatRetryMs || 3000);
-sincronizarMsgsPip();
 }
-async function carregarHistoricoMedico() {
-if (!atendimentoAtual) return;
-// Captura slot e ID no momento da chamada - o await pode demorar
-const slotDono = slotAtivo;
-const atendId = atendimentoAtual.id;
+
+// [FIX-SLOTS] Recebe capturedSlot explícito. Opera sobre slot.atendimento, não atendimentoAtual global.
+async function carregarHistoricoMedico(capturedSlot) {
+if (capturedSlot === undefined) capturedSlot = slotAtivo;
+const slot = slots[capturedSlot];
+if (!slot || !slot.atendimento) return;
+const atendId = slot.atendimento.id;
 try {
-const data=await apiFetch(`/api/chat/${atendId}`,{headers:{}}); if (!data.ok) return;
-// Após o await: só escreve no DOM se este slot ainda for o ativo
-if (slotAtivo !== slotDono) {
-// Slot não é mais o ativo - salva as mensagens no snapshot do slot dono
-if (slots[slotDono]) {
-const temp = document.createElement('div');
-const msgs = data.mensagens||[];
-msgs.forEach(m => {
-const d = document.createElement('div'); d.className='cmsg '+m.autor;
-const hora = new Date(m.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe = String(m.texto||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-d.innerHTML=`<div class="av">${m.autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
-temp.appendChild(d);
-if (slots[slotDono]) slots[slotDono].ultimaMsgId = m.id;
+const data = await apiFetch(`/api/chat/${atendId}`, {headers:{}});
+if (!data.ok) return;
+// Reset do array e Set para evitar qualquer duplicação com carregamento anterior
+slot.mensagens = [];
+slot.msgIdsRendered = new Set();
+slot.ultimaMsgId = 0;
+(data.mensagens || []).forEach(m => {
+slot.mensagens.push(m);
+slot.msgIdsRendered.add(m.id);
+if (m.id > slot.ultimaMsgId) slot.ultimaMsgId = m.id;
 });
-if (slots[slotDono]) slots[slotDono].chatHtml = temp.innerHTML || slots[slotDono].chatHtml;
-}
-return;
-}
-const container=document.getElementById('chat-medico-msgs');
-const msgs=data.mensagens||[];
-// Limpa o container antes de renderizar - evita duplicação se chamado mais de uma vez
-container.innerHTML = '';
-if (msgs.length>0) {
-msgs.forEach(m=>{ adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo,slotDono); ultimaMsgId=m.id; if(slots[slotDono] && slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered.add(m.id); });
-container.scrollTop = container.scrollHeight;
-} else {
-container.innerHTML = '<div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div>';
-}
-// Salva snapshot imediatamente após carga inicial
-if (slots[slotDono]) slots[slotDono].chatHtml = container.innerHTML;
+renderSlotMsgs(capturedSlot);
 } catch(e) {}
 }
-async function buscarMensagensNovasMedico() {
-if (!atendimentoAtual||!chatAtivo||modoHistorico||document.hidden) return;
-if (buscarMensagensNovasMedico._busy) return;
-buscarMensagensNovasMedico._busy = true;
-// Captura slot e lastId no momento da chamada
-const slotDono = slotAtivo;
-const atendId = atendimentoAtual.id;
-const lastId = ultimaMsgId;
+
+// [FIX-SLOTS] Recebe capturedSlot explícito. Busy flag é POR SLOT para permitir polls simultâneos
+// dos dois slots em paralelo. Escreve direto no DOM próprio do slot (inativo ou ativo, não importa).
+async function buscarMensagensNovasMedico(capturedSlot) {
+if (capturedSlot === undefined) capturedSlot = slotAtivo;
+const slot = slots[capturedSlot];
+if (!slot || !slot.chatAtivo || !slot.atendimento || document.hidden) return;
+// modoHistorico só pausa o polling do slot ativo (onde o histórico está sendo visualizado)
+if (modoHistorico && capturedSlot === slotAtivo) return;
+if (slot._busyFetch) return;
+slot._busyFetch = true;
+const atendId = slot.atendimento.id;
+const lastId = slot.ultimaMsgId || 0;
 try {
-const data=await apiFetch(`/api/chat/${atendId}`,{headers:{}}); if (!data.ok) { chatRetryMs=Math.min(chatRetryMs*2,15000); return; }
-chatRetryMs=3000;
-const slot = slots[slotDono];
-const rendered = slot ? slot.msgIdsRendered : null;
-const novas=(data.mensagens||[]).filter(m=>m.id>lastId && (!rendered || !rendered.has(m.id)));
-if (novas.length>0) {
-// Atualiza ultimaMsgId no slot dono (independente de qual slot está ativo)
-const maiorId = novas[novas.length-1].id;
-if (slots[slotDono]) slots[slotDono].ultimaMsgId = maiorId;
-if (slotAtivo === slotDono) {
-// Slot ainda é o ativo: escreve no DOM normalmente
-const container=document.getElementById('chat-medico-msgs');
-const v=container.querySelector('.chat-vazio'); if(v)v.remove();
-novas.forEach(m=>{
-adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo,slotDono);
-if(m.autor==='paciente') adicionarMsgPip('paciente',m.texto);
-if(rendered) rendered.add(m.id);
-});
+const data = await apiFetch(`/api/chat/${atendId}`, {headers:{}});
+if (!data.ok) { slot.chatRetryMs = Math.min((slot.chatRetryMs||3000)*2, 15000); return; }
+slot.chatRetryMs = 3000;
+const novas = (data.mensagens||[]).filter(m => m.id > lastId && !slot.msgIdsRendered.has(m.id));
+if (novas.length === 0) return;
+novas.forEach(m => {
+pushMsgSlot(capturedSlot, m);
+// PiP e tab-badge de consulta só reagem se for o slot ativo
+if (capturedSlot === slotAtivo) {
+if (m.autor === 'paciente') {
+adicionarMsgPip('paciente', m.texto);
+const tabAtiva = document.querySelector('.tab.active');
+const isConsulta = tabAtiva && tabAtiva.getAttribute('onclick') && tabAtiva.getAttribute('onclick').includes('consulta');
+if (!isConsulta) document.getElementById('tab-consulta-badge')?.classList.add('visivel');
+}
 } else {
-// Slot não é mais o ativo: acumula as msgs no snapshot do slot dono
-if (slots[slotDono]) {
-const temp = document.createElement('div');
-temp.innerHTML = slots[slotDono].chatHtml || '';
-novas.forEach(m=>{
-const d = document.createElement('div'); d.className='cmsg '+m.autor;
-const hora = new Date(m.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe = String(m.texto||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-d.innerHTML=`<div class="av">${m.autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
-temp.appendChild(d);
+// [UX] Slot inativo: acende badge na tab se vier mensagem do paciente
+if (m.autor === 'paciente') { slot.temMsgNova = true; }
+}
 });
-slots[slotDono].chatHtml = temp.innerHTML;
-// Indicação visual na tab do slot inativo
-renderSlotTabs();
-}
-}
-}
-} catch(e) { chatRetryMs=Math.min(chatRetryMs*2,15000); }
-finally { buscarMensagensNovasMedico._busy = false; }
+if (capturedSlot !== slotAtivo) renderSlotTabs();
+} catch(e) { slot.chatRetryMs = Math.min((slot.chatRetryMs||3000)*2, 15000); }
+finally { slot._busyFetch = false; }
 }
 async function enviarMensagemMedico() {
 if (arquivoSelecionado) { await enviarArquivoChat(); return; }
 const ta=document.getElementById('chat-medico-textarea');
-const texto=ta.value.trim(); if (!texto||!atendimentoAtual) return;
+const texto=ta.value.trim();
+// [FIX-SLOTS] Lê atendimento a partir do slot ativo — não de variável global
 const slotDono = slotAtivo;
-const atendId = atendimentoAtual.id;
+const slot = slots[slotDono];
+if (!texto || !slot || !slot.atendimento) return;
+const atendId = slot.atendimento.id;
 ta.value=''; ta.style.height='auto';
 
 try {
@@ -2230,29 +2284,20 @@ try {
   if (!resp || !resp.ok) return;
 
   const m = resp.mensagem;
-  if (!m) return;
+  if (!m || !m.id) return;
 
-  // 👇 ADICIONA ISSO
-  adicionarMsgMedico(
-    m.autor || 'medico',
-    m.texto || texto,
-    m.criado_em || new Date().toISOString(),
-    m.arquivo_url || null,
-    m.arquivo_tipo || null,
-    slotDono
-  );
+  // [FIX-SLOTS] Uma única escrita no estado: pushMsgSlot faz dedupe via Set e atualiza DOM+ultimaMsgId.
+  pushMsgSlot(slotDono, {
+    id: m.id,
+    autor: m.autor || 'medico',
+    texto: m.texto || texto,
+    criado_em: m.criado_em || new Date().toISOString(),
+    arquivo_url: m.arquivo_url || null,
+    arquivo_tipo: m.arquivo_tipo || null
+  });
 
-  adicionarMsgPip(
-    m.autor || 'medico',
-    m.texto || texto
-  );
-
-  // 👇 mantém isso
-  if (m?.id && slots[slotDono]) {
-    slots[slotDono].ultimaMsgId = m.id;
-    ultimaMsgId = m.id;
-    slots[slotDono].chatHtml = document.getElementById('chat-medico-msgs').innerHTML;
-  }
+  // PiP só espelha slot ativo (que é sempre o dono aqui, pois enviamos do slot ativo)
+  if (slotDono === slotAtivo) adicionarMsgPip(m.autor || 'medico', m.texto || texto);
 
 } catch(e) {}
 }
@@ -2261,43 +2306,40 @@ function linkificar(safe) {
     return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:var(--g2);text-decoration:underline;word-break:break-all">' + url + '</a>';
   });
 }
+// [FIX-SLOTS] Agora é um delegador para pushMsgSlot. Mantida para compat com chamadas legadas
+// (ex: verAtendimentoHistorico). Recebe args na ordem antiga e monta o objeto mensagem.
 function adicionarMsgMedico(autor, texto, timestamp, arquivoUrl, arquivoTipo, slotDono) {
-// slotDono: slot que deve receber a mensagem. Se undefined, usa slotAtivo (compat legada).
 if (slotDono === undefined) slotDono = slotAtivo;
-// Se o slot dono não é o ativo, acumula no snapshot - não toca no DOM
-if (slotDono !== slotAtivo) {
-if (slots[slotDono]) {
-const temp = document.createElement('div');
-temp.innerHTML = slots[slotDono].chatHtml || '';
-const d = document.createElement('div'); d.className='cmsg '+autor;
-const hora = new Date(timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe = String(texto||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-d.innerHTML=`<div class="av">${autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${safe}</div><div class="ts">${hora}</div></div>`;
-temp.appendChild(d);
-slots[slotDono].chatHtml = temp.innerHTML;
+// Gera um id sintético negativo se a mensagem não tem id (modo histórico read-only)
+// — negativo para não colidir com ids reais do banco.
+const m = {
+id: (arguments.length >= 7 && arguments[6]) ? arguments[6] : ('_tmp_' + Date.now() + '_' + Math.random()),
+autor,
+texto,
+criado_em: timestamp,
+arquivo_url: arquivoUrl || null,
+arquivo_tipo: arquivoTipo || null
+};
+const slot = slots[slotDono];
+if (!slot) return;
+// Se é tmp, força append direto (não vai haver dedupe via Set pois id é string única).
+if (!slot.mensagens) slot.mensagens = [];
+if (!slot.msgIdsRendered) slot.msgIdsRendered = new Set();
+if (!slot.msgIdsRendered.has(m.id)) {
+slot.msgIdsRendered.add(m.id);
+slot.mensagens.push(m);
+const container = msgsContainer(slotDono);
+if (container) {
+const v = container.querySelector('.chat-vazio'); if (v) v.remove();
+container.appendChild(_renderMsgBolha(m));
+container.scrollTop = container.scrollHeight;
 }
-return;
 }
-// Caminho normal: slot dono é o ativo, escreve direto no DOM
-const container=document.getElementById('chat-medico-msgs');
-const div=document.createElement('div'); div.className='cmsg '+autor;
-const hora=new Date(timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const safe=String(texto).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-let arquivoHtml = '';
-const arquivoSeguro = safeUrl(arquivoUrl);
-if (arquivoSeguro && arquivoTipo === 'imagem') {
-const href = escAttr(arquivoSeguro);
-arquivoHtml = `<a href="${href}" target="_blank" rel="noopener noreferrer"><img class="msg-arquivo-img" src="${href}" alt="imagem"/></a>`;
-} else if (arquivoSeguro && arquivoTipo === 'pdf') {
-const href = escAttr(arquivoSeguro);
-arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="noopener noreferrer">📄 Abrir PDF</a>`;
-}
-div.innerHTML=`<div class="av">${autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap"><div class="bub">${arquivoUrl?'':linkificar(safe)}${arquivoHtml}</div><div class="ts">${hora}</div></div>`;
-container.appendChild(div); container.scrollTop=container.scrollHeight;
-if (autor === 'paciente') {
-  const tabAtiva = document.querySelector('.tab.active');
-  const isConsulta = tabAtiva && tabAtiva.getAttribute('onclick') && tabAtiva.getAttribute('onclick').includes('consulta');
-  if (!isConsulta) document.getElementById('tab-consulta-badge')?.classList.add('visivel');
+// Badge "mensagem de paciente" na tab da consulta (apenas se slot ativo)
+if (autor === 'paciente' && slotDono === slotAtivo) {
+const tabAtiva = document.querySelector('.tab.active');
+const isConsulta = tabAtiva && tabAtiva.getAttribute('onclick') && tabAtiva.getAttribute('onclick').includes('consulta');
+if (!isConsulta) document.getElementById('tab-consulta-badge')?.classList.add('visivel');
 }
 }
 
@@ -2331,10 +2373,13 @@ document.getElementById('chat-preview-nome').textContent = '';
 }
 
 async function enviarArquivoChat() {
-if (!arquivoSelecionado || !atendimentoAtual) return;
-const file = arquivoSelecionado;
+if (!arquivoSelecionado) return;
+// [FIX-SLOTS] Lê atendimento do slot ativo
 const slotDono = slotAtivo;
-const atendId = atendimentoAtual.id;
+const slot = slots[slotDono];
+if (!slot || !slot.atendimento) return;
+const file = arquivoSelecionado;
+const atendId = slot.atendimento.id;
 cancelarArquivo();
 const fd = new FormData();
 fd.append('arquivo', file);
@@ -2346,17 +2391,16 @@ const res = await fetch(`${API}/api/chat/upload`, { method: 'POST', body: fd });
 const data = await safeJson(res);
 if (data.ok && data.mensagem) {
 const m = data.mensagem;
-adicionarMsgMedico(m.autor, m.texto, m.criado_em, m.arquivo_url, m.arquivo_tipo, slotDono);
-adicionarMsgPip(m.autor, m.texto);
 if (m.id) {
-  if (slots[slotDono]) slots[slotDono].ultimaMsgId = m.id;
-  ultimaMsgId = m.id;
-  if (slots[slotDono]) {
-    if (!slots[slotDono].msgIdsRendered) slots[slotDono].msgIdsRendered = new Set();
-    slots[slotDono].msgIdsRendered.add(m.id);
-  }
-  const cont = document.getElementById('chat-medico-msgs');
-  if (cont && slotDono === slotAtivo && slots[slotDono]) slots[slotDono].chatHtml = cont.innerHTML;
+pushMsgSlot(slotDono, {
+id: m.id,
+autor: m.autor,
+texto: m.texto,
+criado_em: m.criado_em,
+arquivo_url: m.arquivo_url,
+arquivo_tipo: m.arquivo_tipo
+});
+if (slotDono === slotAtivo) adicionarMsgPip(m.autor, m.texto);
 }
 } else {
 mostrarToast('Erro ao enviar arquivo', 'error');
@@ -2699,10 +2743,16 @@ modoHistorico = false;
 const outroSlot = slots.findIndex(s => s !== null);
 if (outroSlot >= 0) {
 slotAtivo = outroSlot;
+sincronizarVisibilidadeSlots();
 timerSegundos = 0; iniciarTimer();
 renderPainelAtendimento();
 } else {
 slotAtivo = 0;
+sincronizarVisibilidadeSlots();
+}
+// [FIX-SLOTS] Limpa DOM dos slots vazios — container pode ter ficado com mensagens do paciente anterior
+for (let i = 0; i < MAX_SLOTS; i++) {
+if (!slots[i]) { const c = msgsContainer(i); if (c) c.innerHTML = ''; }
 }
 fecharModal(); buscarHistorico(); renderSlotTabs(); renderFila(); renderEstado();
 mostrarToast('Atendimento encerrado','success');
@@ -2847,6 +2897,7 @@ const atendNovo = d.atendimento || { id: d.atendimentoId, nome, tel, tipo, triag
 const slotLivre = slots[0] === null ? 0 : 1;
 slots[slotLivre] = criarSlot(atendNovo);
 slotAtivo = slotLivre;
+sincronizarVisibilidadeSlots();
 modoHistorico = false;
 timerSegundos = 0; iniciarTimer();
 renderSlotTabs();
@@ -3103,6 +3154,7 @@ pararPollingSlot(0);
 atendimento._origemHistorico = 'geral';
 slots[0] = criarSlot(atendimento);
 slotAtivo = 0;
+sincronizarVisibilidadeSlots();
 clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true;
 const sidebar=document.querySelector('.sidebar'); if(sidebar){sidebar.classList.remove('open');sidebar.classList.remove('idle');}
@@ -3125,6 +3177,7 @@ a._origemHistorico = 'meu';
 pararPollingSlot(0);
 slots[0] = criarSlot(a);
 slotAtivo = 0;
+sincronizarVisibilidadeSlots();
 clearInterval(timerInterval); esconderChatPip();
 modoHistorico=true;
 const sidebar = document.querySelector('.sidebar');
@@ -3136,23 +3189,28 @@ histVisible=false; document.getElementById('hist-lista').style.display='none';
 const main = document.getElementById('main-content');
 if (main) main.scrollTop = 0;
 window.scrollTo(0,0);
-// Carregar chat do histórico na aba consulta
-if (a.tipo === 'chat') {
-const container = document.getElementById('chat-medico-msgs');
-container.innerHTML = '<div class="chat-vazio"><span>Carregando conversa...</span></div>';
+// [UX] Histórico: carrega mensagens tanto para chat QUANTO para vídeo (vídeo agora pode ter anexos).
+if (a.tipo === 'chat' || a.tipo === 'video') {
+// [FIX-SLOTS] Container do slot ativo (o slot de histórico). Popula slot.mensagens
+// para manter o modelo consistente — qualquer chamada futura a renderSlotMsgs vai funcionar.
+const container = msgsContainer(slotAtivo);
+const slot = slots[slotAtivo];
+if (container) container.innerHTML = '<div class="chat-vazio"><span>Carregando conversa...</span></div>';
 fetch(`${API}/api/chat/${a.id}`)
 .then(r=>safeJson(r))
 .then(data=>{
-container.innerHTML='';
-const msgs=data.mensagens||[];
-if (msgs.length===0) {
-container.innerHTML='<div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Sem mensagens registradas</span></div>';
-} else {
-msgs.forEach(m=>adicionarMsgMedico(m.autor,m.texto,m.criado_em,m.arquivo_url,m.arquivo_tipo));
-container.scrollTop=container.scrollHeight;
-}
+if (!container || !slot) return;
+const msgs = data.mensagens||[];
+// Reset e popula o array do slot
+slot.mensagens = [];
+slot.msgIdsRendered = new Set();
+msgs.forEach(m => {
+slot.mensagens.push(m);
+slot.msgIdsRendered.add(m.id);
+});
+renderSlotMsgs(slotAtivo); // fonte única de render, já trata caso vazio
 })
-.catch(()=>{ container.innerHTML='<div class="chat-vazio"><span>Erro ao carregar conversa</span></div>'; });
+.catch(()=>{ if (container) container.innerHTML='<div class="chat-vazio"><span>Erro ao carregar conversa</span></div>'; });
 switchTab('consulta');
 }
 }
@@ -3178,6 +3236,7 @@ try {
   const slotLivre = slots[0] === null ? 0 : 1;
   slots[slotLivre] = criarSlot(d.atendimento);
   slotAtivo = slotLivre;
+  sincronizarVisibilidadeSlots();
   modoHistorico = false;
   timerSegundos = 0; iniciarTimer();
   sessionStorage.setItem('atendimentoAtual', JSON.stringify(d.atendimento));
@@ -3216,10 +3275,12 @@ if(document.hidden) return;
 if(!medico) return;
 if(plantaoAtivo) buscarFila();
 buscarAgendamentos();
-// Só faz polling de chat se o slot ativo tem chat ativo e não é histórico
-if(chatAtivo&&!modoHistorico) {
-  // Aguarda qualquer chamada em andamento terminar antes de disparar nova busca
-  setTimeout(buscarMensagensNovasMedico, 100);
+// [FIX-SLOTS] Ao voltar para a aba, atualiza AMBOS os slots (cada um com seu capturedSlot).
+// Antes, só o slot ativo era atualizado — paciente do outro slot ficava com mensagens em atraso.
+for (let i = 0; i < MAX_SLOTS; i++) {
+if (slots[i] && slots[i].chatAtivo && !(modoHistorico && i === slotAtivo)) {
+setTimeout(((idx)=>()=>buscarMensagensNovasMedico(idx))(i), 100 + i*50);
+}
 }
 });
 
