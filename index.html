@@ -1119,6 +1119,8 @@ let filaInterval = null, filaData = [], filaRetryMs = 15000, agendRetryMs = 2000
 const MAX_SLOTS = 2;
 const slots = [null, null];
 let slotAtivo = 0;
+let arquivoSelecionado = null;
+let arquivosPendentes = [];
 
 // Campos clínicos salvos por slot (rascunho DOM → memória antes de trocar)
 const CAMPOS_CLINICOS = ['cl-hda','cl-comorbidades','cl-medicacoes','cl-alergias','cl-obs','cl-conduta'];
@@ -2386,7 +2388,7 @@ if (capturedSlot !== slotAtivo) renderSlotTabs();
 finally { slot._busyFetch = false; }
 }
 async function enviarMensagemMedico() {
-if (arquivoSelecionado) { await enviarArquivoChat(); return; }
+if (arquivosPendentes && arquivosPendentes.length) { await enviarArquivoChat(); return; }
 const ta=document.getElementById('chat-medico-textarea');
 const texto=ta.value.trim();
 // [FIX-SLOTS] Lê atendimento a partir do slot ativo — não de variável global
@@ -2465,7 +2467,7 @@ if (!isConsulta) document.getElementById('tab-consulta-badge')?.classList.add('v
 }
 
 // -- UPLOAD DE ARQUIVOS NO CHAT (múltiplo) -------------
-const arquivosPendentes = [];
+// arquivosPendentes declarado globalmente acima
 
 function onArquivoSelecionado(input) {
   Array.from(input.files).forEach(file => {
