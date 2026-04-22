@@ -360,51 +360,58 @@ body.memed-aberto{overflow:hidden}
 .tab.active{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
 .tab-panel{display:none}.tab-panel.active{display:block;width:100%}
 .chat-medico-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:24px}
-.chat-medico-header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.chat-medico-header h3{font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:8px}
-.chat-online-dot{width:6px;height:6px;border-radius:50%;background:var(--g2);animation:pulse 2s ease-in-out infinite}
-.chat-medico-msgs{height:340px;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent;background:#060d0b;scroll-behavior:smooth}
-.chat-medico-msgs::-webkit-scrollbar{width:3px}
-.chat-medico-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
-.cmsg{display:flex;gap:8px;align-items:flex-end;animation:fadeIn .22s ease;max-width:78%}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.cmsg.paciente{align-self:flex-start}
-.cmsg.medico{align-self:flex-end}
-/* [UX v2] Sem avatares nem nomes — layout limpo tipo iMessage */
+.chat-medico-header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:rgba(6,13,11,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.chat-medico-header h3{font-size:.9rem;font-weight:500;display:flex;align-items:center;gap:8px;color:#eaeaea}
+.chat-online-dot{width:6px;height:6px;border-radius:50%;background:var(--g2);animation:pulse 2.2s ease-in-out infinite}
+.chat-medico-msgs{height:360px;overflow-y:auto;padding:20px 14px 24px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;background:#060d0b;scroll-behavior:smooth}
+.chat-medico-msgs::-webkit-scrollbar{width:2px}
+.chat-medico-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+/* [UX v3] Mensagens estilo app — minimalistas, sem avatar, sem nome */
+.cmsg{display:flex;flex-direction:column;max-width:88%;animation:rise .2s ease}
+@keyframes rise{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.cmsg.medico{align-self:flex-end;align-items:flex-end}
+.cmsg.paciente{align-self:flex-start;align-items:flex-start}
 .cmsg .av{display:none}
 .cmsg .sender{display:none}
-.cmsg .bub-wrap{display:flex;flex-direction:column;min-width:0;flex:1 1 auto}
-.cmsg.medico .bub-wrap{align-items:flex-end}
-.cmsg .bub{padding:11px 15px;border-radius:16px;font-size:.9rem;font-weight:300;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}
-/* Paciente: cinza escuro translúcido à esquerda */
-.cmsg.paciente .bub{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-bottom-left-radius:4px;color:rgba(255,255,255,.92)}
-/* Médico: verde escuro sólido com borda verde clara à direita */
-.cmsg.medico .bub{background:#0d3d28;border:1px solid rgba(94,224,160,.4);border-bottom-right-radius:4px;color:#d5f5e6;font-weight:400}
-.cmsg .bub a{color:#b4e05a}
-.cmsg .ts{font-size:.62rem;color:rgba(255,255,255,.28);margin-top:4px;padding:0 4px;display:flex;align-items:center;gap:4px}
-.cmsg.medico .ts{justify-content:flex-end}
-.cmsg.medico .ts::after{content:'✓✓';color:var(--g2);font-size:.7rem}
+.cmsg .bub-wrap{display:flex;flex-direction:column;min-width:0}
+.cmsg .bub{padding:10px 14px;border-radius:14px;font-size:.93rem;font-weight:400;line-height:1.5;word-break:break-word;overflow-wrap:anywhere}
+.cmsg.paciente .bub{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-bottom-left-radius:4px;color:#eaeaea}
+.cmsg.medico .bub{background:#0f3d2e;border:1px solid rgba(94,224,160,.28);border-bottom-right-radius:4px;color:#d9fbe8;font-weight:400}
+.cmsg .bub a{color:var(--g2)}
+/* Agrupamento sutil quando mensagens vêm em sequência do mesmo autor */
+.cmsg + .cmsg.medico, .cmsg + .cmsg.paciente{margin-top:-4px}
+.cmsg.medico + .cmsg.medico .bub{border-top-right-radius:8px}
+.cmsg.paciente + .cmsg.paciente .bub{border-top-left-radius:8px}
+.cmsg .ts{display:flex;align-items:center;gap:4px;font-size:.62rem;color:rgba(255,255,255,.3);margin-top:3px;padding:0 4px}
+.cmsg.medico .ts{flex-direction:row-reverse}
+.cmsg.medico .ts::before{content:'';width:12px;height:7px;flex-shrink:0;background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10' fill='none' stroke='%235ee0a0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='1 5 5 9 11 1'/><polyline points='6 9 11 4 15 1'/></svg>")}
 .chat-vazio{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.83rem;font-weight:300;text-align:center;flex-direction:column;gap:8px;opacity:.6}
-.chat-medico-input{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:10px;background:#0d1f14;align-items:flex-end}
-.chat-medico-input textarea{flex:1;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);color:#fff;font-family:'Outfit',sans-serif;font-size:.875rem;font-weight:300;resize:none;outline:none;min-height:40px;max-height:100px;line-height:1.5;transition:border-color .2s}
-.chat-medico-input textarea:focus{border-color:rgba(94,224,160,.35)}
-.chat-medico-input textarea::placeholder{color:rgba(255,255,255,.2)}
-.chat-medico-send{width:42px;height:42px;border-radius:999px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .12s}
-.chat-medico-send:hover{transform:scale(1.08)}
-.chat-clip-btn{width:38px;height:38px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:rgba(255,255,255,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;align-self:center}
-.chat-clip-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.18)}
-/* [UX] Badge "mensagem nova" na tab do slot inativo */
+.chat-medico-input{padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;background:rgba(0,0,0,.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);align-items:flex-end}
+.chat-medico-input textarea{flex:1;padding:10px 16px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);color:#eaeaea;font-family:'Outfit',sans-serif;font-size:max(.95rem,16px);font-weight:400;resize:none;outline:none;min-height:40px;max-height:120px;line-height:1.45;transition:border-color .15s,background .15s}
+.chat-medico-input textarea:focus{border-color:rgba(94,224,160,.3);background:rgba(255,255,255,.06)}
+.chat-medico-input textarea::placeholder{color:rgba(255,255,255,.25)}
+.chat-medico-send{width:42px;height:42px;border-radius:999px;border:none;background:linear-gradient(135deg,#b4e05a,#5ee0a0);color:#051208;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(94,224,160,.22);transition:transform .12s,filter .15s}
+.chat-medico-send:hover{filter:brightness(1.05)}
+.chat-medico-send:active{transform:scale(.92)}
+.chat-clip-btn{width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,.09);background:transparent;color:rgba(255,255,255,.55);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;align-self:center}
+.chat-clip-btn:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.15)}
+/* Rodapé segurança */
+.chat-sec-foot{padding:7px 14px calc(9px + env(safe-area-inset-bottom,0px));text-align:center;font-size:.64rem;color:rgba(255,255,255,.3);font-weight:400;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;gap:5px;border-top:1px solid rgba(255,255,255,.04)}
+.chat-sec-foot svg{opacity:.5}
+/* Badge "mensagem nova" na tab do slot inativo */
 .slot-badge-nova{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff5f57;margin-left:6px;animation:pulse 1.4s ease-in-out infinite}
 .slot-tab-btn{min-height:38px}
-.msg-arquivo-img{max-width:220px;max-height:200px;border-radius:10px;display:block;margin-top:6px;cursor:pointer;transition:opacity .15s}
-.msg-arquivo-img:hover{opacity:.85}
-/* [UX v2] Anexo PDF: card próprio fora da bolha */
-.msg-arquivo-pdf{display:flex;align-items:center;gap:12px;margin-top:6px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(94,224,160,.22);color:rgba(255,255,255,.9);font-size:.82rem;font-weight:500;text-decoration:none;transition:all .15s;min-width:240px}
-.msg-arquivo-pdf:hover{background:rgba(94,224,160,.08);border-color:rgba(94,224,160,.4)}
-.msg-arquivo-pdf::before{content:'📄';font-size:1.4rem;flex-shrink:0}
-.msg-arquivo-pdf .pdf-abrir{margin-left:auto;color:var(--g2);font-weight:600;font-size:.78rem;white-space:nowrap}
-/* Dentro da bolha do médico o card PDF herda cores compatíveis */
-.cmsg.medico .msg-arquivo-pdf{background:rgba(255,255,255,.06);border-color:rgba(94,224,160,.35)}
+.msg-arquivo-img{max-width:220px;max-height:200px;border-radius:12px;display:block;margin-top:6px;cursor:pointer;border:1px solid rgba(255,255,255,.09);transition:opacity .15s}
+.msg-arquivo-img:hover{opacity:.9}
+/* [UX v3] Card PDF minimalista — linha horizontal com ícone + nome real + seta */
+.msg-arquivo-pdf{display:flex;align-items:center;gap:12px;margin-top:6px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);color:#eaeaea;font-size:.88rem;font-weight:500;text-decoration:none;transition:background .15s,border-color .15s,transform .1s;min-width:0;max-width:100%}
+.msg-arquivo-pdf:hover{background:rgba(255,255,255,.06);border-color:rgba(94,224,160,.25)}
+.msg-arquivo-pdf:active{transform:scale(.995)}
+.msg-arquivo-pdf .pdf-ico{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:rgba(94,224,160,.08);display:flex;align-items:center;justify-content:center;color:var(--g2)}
+.msg-arquivo-pdf .pdf-meta{min-width:0;flex:1;display:flex;flex-direction:column}
+.msg-arquivo-pdf .pdf-nome{font-size:.88rem;font-weight:500;color:#eaeaea;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg-arquivo-pdf .pdf-sub{font-size:.7rem;color:rgba(255,255,255,.3);font-weight:400;margin-top:2px}
+.msg-arquivo-pdf .pdf-arrow{flex-shrink:0;color:var(--g2);opacity:.75}
 .chat-preview-wrap{padding:8px 14px;background:rgba(180,224,90,.05);border-top:1px solid rgba(180,224,90,.12);display:none;align-items:center;gap:10px}
 .chat-preview-wrap.visivel{display:flex}
 .chat-preview-img{width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,.1)}
@@ -998,7 +1005,7 @@ z-index:5;
           <button class="chat-medico-send" onclick="enviarMensagemMedico()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
         </div>
         <!-- [UX v2] Rodapé de segurança -->
-        <div style="padding:8px 14px;text-align:center;font-size:.68rem;color:rgba(255,255,255,.22);background:#0d1f14;border-top:1px solid rgba(255,255,255,.04)">🔒 Conversa segura e criptografada</div>
+        <div class="chat-sec-foot"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Conversa segura e criptografada</div>
       </div>
       <div id="wpp-consulta-section" style="display:none;text-align:center;padding:32px 20px">
         <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Consulta via WhatsApp - entre em contato diretamente com o paciente.</p>
@@ -1186,16 +1193,17 @@ const href = (typeof escAttr==='function') ? escAttr(arquivoSeguro) : arquivoSeg
 arquivoHtml = `<a href="${href}" target="_blank" rel="noopener noreferrer"><img class="msg-arquivo-img" src="${href}" alt="imagem"/></a>`;
 } else if (arquivoSeguro && m.arquivo_tipo === 'pdf') {
 const href = (typeof escAttr==='function') ? escAttr(arquivoSeguro) : arquivoSeguro;
-// [UX v2] Card de PDF estilo anexo: nome do arquivo + "Abrir PDF"
-const nomeArq = (m.arquivo_nome ? String(m.arquivo_nome) : 'Documento.pdf').replace(/[<>"']/g,'');
-arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="noopener noreferrer"><span style="flex:1;min-width:0"><span style="display:block;color:#fff;font-weight:600">${nomeArq}</span><span style="display:block;font-size:.7rem;color:rgba(255,255,255,.45);margin-top:2px">PDF</span></span><span class="pdf-abrir">Abrir PDF →</span></a>`;
+// [UX v3] Card PDF minimalista: ícone + nome REAL do arquivo + tipo + seta
+const nomeArq = escHtml(String(m.arquivo_nome || 'documento.pdf').slice(0,80));
+arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="noopener noreferrer"><span class="pdf-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="pdf-meta"><span class="pdf-nome">${nomeArq}</span><span class="pdf-sub">PDF</span></span><svg class="pdf-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></a>`;
 }
 const corpo = m.arquivo_url ? arquivoHtml : (typeof linkificar==='function' ? linkificar(safe) : safe);
-// [UX] Nome do remetente acima das bolhas do paciente (só paciente — médico é ele mesmo)
-const slot = slots[slotAtivo];
-const nomePaciente = (slot && slot.atendimento && slot.atendimento.nome) ? escHtml(String(slot.atendimento.nome).split(' ')[0]) : 'Paciente';
-const senderHtml = m.autor === 'paciente' ? `<div class="sender">${nomePaciente}</div>` : '';
-div.innerHTML = `<div class="av">${m.autor==='medico'?'🩺':'🧑'}</div><div class="bub-wrap">${senderHtml}<div class="bub">${corpo}</div><div class="ts">${hora}</div></div>`;
+// [UX v3] Sem avatar, sem sender. Se é anexo (PDF/imagem), renderiza fora da bub pra ficar card standalone.
+if (m.arquivo_url) {
+div.innerHTML = `<div class="bub-wrap">${corpo}<div class="ts">${hora}</div></div>`;
+} else {
+div.innerHTML = `<div class="bub-wrap"><div class="bub">${corpo}</div><div class="ts">${hora}</div></div>`;
+}
 return div;
 }
 
@@ -2712,21 +2720,8 @@ return;
 }
 msgs.innerHTML = '';
 lista.forEach(m => {
-const div  = document.createElement('div');
-div.className = 'cmsg ' + m.autor;
-const hora = new Date(m.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-const safe = String(m.texto || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-let arquivoHtml = '';
-const url = safeUrl(m.arquivo_url);
-if (url && m.arquivo_tipo === 'imagem') {
-const href = escAttr(url);
-arquivoHtml = `<a href="${href}" target="_blank" rel="noopener noreferrer"><img class="msg-arquivo-img" src="${href}" alt="imagem"/></a>`;
-} else if (url && m.arquivo_tipo === 'pdf') {
-const href = escAttr(url);
-arquivoHtml = `<a class="msg-arquivo-pdf" href="${href}" target="_blank" rel="noopener noreferrer">📄 Abrir PDF</a>`;
-}
-div.innerHTML = `<div class="av">${m.autor === 'medico' ? '🩺' : '🧑'}</div><div class="bub-wrap"><div class="bub">${m.arquivo_url ? '' : safe}${arquivoHtml}</div><div class="ts">${hora}</div></div>`;
-msgs.appendChild(div);
+// [UX] Usa _renderMsgBolha pra consistência total com o chat ativo (sem avatar, card PDF com nome real)
+msgs.appendChild(_renderMsgBolha(m));
 });
 msgs.scrollTop = msgs.scrollHeight;
 } catch(e) {
