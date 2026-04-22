@@ -746,6 +746,65 @@ line-height:1;
 @media(max-width:768px){
 body.app-autenticado #nav-fila-btn{display:flex}
 }
+
+/* [UX-MOBILE] Melhorias PR3: chat fullscreen, ações scrolláveis, slot tabs touch-friendly */
+@media(max-width:768px){
+/* Ações do atendimento: rolagem horizontal em vez de quebrar/apertar */
+.atend-actions{
+flex-wrap:nowrap!important;
+overflow-x:auto;
+overflow-y:hidden;
+-webkit-overflow-scrolling:touch;
+scrollbar-width:none;
+gap:7px!important;
+padding-bottom:4px;
+justify-content:flex-start!important;
+}
+.atend-actions::-webkit-scrollbar{display:none}
+.atend-actions > *{flex-shrink:0;white-space:nowrap}
+/* Mostra o texto do WhatsApp de novo — com scroll horiz cabe */
+.atend-actions .btn-wpp .wpp-txt{display:inline!important}
+.atend-actions .btn-wpp,
+.atend-actions .btn-encerrar,
+.atend-actions #btn-memed{
+padding:10px 14px!important;font-size:.78rem!important;min-height:40px
+}
+
+/* Tabs de slot: touch-friendly. Hoje .slot-tab-btn já min-height:38, subo pra 44 no mobile */
+.slot-tab-btn{min-height:44px!important;padding:0 14px!important;font-size:.85rem!important}
+
+/* Chat mobile: quando a aba consulta está ativa, vira fullscreen com input sticky.
+   Só quando não tá em modo histórico (histórico preserva o layout atual). */
+#tab-consulta.active .chat-medico-wrap{
+display:flex;flex-direction:column;
+position:relative;
+height:calc(100dvh - var(--nav-h) - 180px);
+min-height:360px;
+border-radius:12px;
+overflow:hidden;
+background:#060d0b;
+}
+#tab-consulta.active .chat-medico-msgs{
+flex:1 1 0;min-height:0;
+padding:14px 12px 16px;
+}
+#tab-consulta.active .chat-medico-input{
+position:sticky;bottom:0;
+background:#0d1f14;
+border-top:1px solid rgba(255,255,255,.06);
+padding:10px 11px calc(10px + env(safe-area-inset-bottom,0px));
+z-index:5;
+}
+/* Bolhas um pouco mais legíveis no mobile */
+.cmsg .bub{font-size:.9rem!important}
+.cmsg .bub-wrap{max-width:85%!important}
+
+/* Meet section compacto acima do chat em vídeo */
+.meet-section{padding:12px 14px!important;margin-bottom:10px!important}
+.meet-title{font-size:.66rem!important;margin-bottom:8px!important}
+.meet-input-row{flex-direction:column;gap:8px}
+.btn-meet-save{width:100%;justify-content:center}
+}
 </style>
 
 </head>
