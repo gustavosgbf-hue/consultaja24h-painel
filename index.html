@@ -99,6 +99,9 @@ grid-template-columns:var(--sb-w-min) 1fr;
 /* Força desktop a manter grid mesmo quando outras regras tentam sobrescrever.
 Usa min-width:769px para não conflitar com o bloco mobile que usa display:block. */
 @media(min-width:769px){
+/* Chat: main vira flex pra chat ocupar espaço restante sem crescer */
+.main{display:flex!important;flex-direction:column!important;height:calc(100vh - var(--nav-h))!important;}
+#tab-consulta.active{flex:1 1 0;min-height:0;overflow:hidden;}
 .app-body, .app-body.sidebar-collapsed {
 display:grid !important;
 }
@@ -251,7 +254,7 @@ transform:rotate(180deg);
 .pc-status-badge{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:999px;background:rgba(255,189,46,.1);color:#ffbd2e}
 /* BUG 1: min-width:0 é obrigatório em células de grid -
 sem isso o conteúdo pode forçar a coluna a crescer ou colapsar */
-.main{min-width:0;width:100%;padding:28px 32px;overflow-y:auto;display:flex;flex-direction:column;height:calc(100vh - var(--nav-h));max-height:calc(100vh - var(--nav-h))}
+.main{min-width:0;width:100%;padding:28px 32px;overflow-y:auto;display:block;max-height:calc(100vh - var(--nav-h))}
 
 /* -- SLOT TABS: seletor de atendimentos simultâneos -- */
 .slot-tabs{display:none;gap:8px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);width:100%;box-sizing:border-box}
