@@ -102,7 +102,8 @@ Usa min-width:769px para não conflitar com o bloco mobile que usa display:block
 /* Chat: main vira flex pra chat ocupar espaço restante sem crescer */
 .main{display:flex!important;flex-direction:column!important;height:calc(100vh - var(--nav-h))!important;overflow:hidden!important;}
 /* Propaga flex pela cadeia: main → state-atend → tab-consulta → chat-medico-wrap */
-#state-atend{flex:1 1 0;min-height:0;display:flex!important;flex-direction:column!important;overflow-y:auto;}
+/* state-atend: sem !important para JS poder fazer display:none ao encerrar */
+#state-atend[style*="display: block"],#state-atend[style*="display:block"]{flex:1 1 0;min-height:0;display:flex!important;flex-direction:column!important;overflow-y:auto;}
 #tab-consulta.active{flex:1 1 0;min-height:0;overflow:hidden;display:flex!important;flex-direction:column!important;}
 #tab-consulta.active .chat-medico-wrap{flex:1 1 0;min-height:0;overflow:hidden;display:flex!important;flex-direction:column!important;}
 #tab-consulta.active .chat-medico-msgs{flex:1 1 0;min-height:0;overflow-y:auto;}
