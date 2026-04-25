@@ -100,8 +100,12 @@ grid-template-columns:var(--sb-w-min) 1fr;
 Usa min-width:769px para não conflitar com o bloco mobile que usa display:block. */
 @media(min-width:769px){
 /* Chat: main vira flex pra chat ocupar espaço restante sem crescer */
-.main{display:flex!important;flex-direction:column!important;height:calc(100vh - var(--nav-h))!important;}
-#tab-consulta.active{flex:1 1 0;min-height:0;overflow:hidden;}
+.main{display:flex!important;flex-direction:column!important;height:calc(100vh - var(--nav-h))!important;overflow:hidden!important;}
+/* Propaga flex pela cadeia: main → state-atend → tab-consulta → chat-medico-wrap */
+#state-atend{flex:1 1 0;min-height:0;display:flex!important;flex-direction:column!important;overflow-y:auto;}
+#tab-consulta.active{flex:1 1 0;min-height:0;overflow:hidden;display:flex!important;flex-direction:column!important;}
+#tab-consulta.active .chat-medico-wrap{flex:1 1 0;min-height:0;overflow:hidden;display:flex!important;flex-direction:column!important;}
+#tab-consulta.active .chat-medico-msgs{flex:1 1 0;min-height:0;overflow-y:auto;}
 .app-body, .app-body.sidebar-collapsed {
 display:grid !important;
 }
@@ -279,7 +283,7 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 
 /* -- DESKTOP: garantia de largura nos blocos internos do atendimento -- */
 /* Estes blocos vivem dentro de .main (célula de grid) e devem ocupar 100% */
-#state-atend{width:100%;display:block}
+#state-atend{width:100%;display:block;min-height:0}
 .atend-header{width:100%}
 .triagem-box{width:100%;box-sizing:border-box}
 .tabs{width:100%;box-sizing:border-box}
