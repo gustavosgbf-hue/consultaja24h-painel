@@ -804,14 +804,12 @@ padding:10px 14px!important;font-size:.78rem!important;min-height:40px
 /* Tabs de slot: touch-friendly. Hoje .slot-tab-btn já min-height:38, subo pra 44 no mobile */
 .slot-tab-btn{min-height:44px!important;padding:0 14px!important;font-size:.85rem!important}
 
-/* Chat mobile: layout flex simples, sem height fixo calculado.
-   O wrap cresce com o conteúdo e os msgs scrollam internamente. */
-#tab-consulta.active{overflow:visible!important;}
+/* Chat mobile: layout flex com altura calculada e scroll nativo iOS */
 #tab-consulta.active .chat-medico-wrap{
 display:flex;flex-direction:column;
 position:relative;
-height:calc(100dvh - var(--nav-h) - 230px);
-min-height:280px;
+height:calc(100dvh - var(--nav-h) - 220px);
+min-height:300px;
 border-radius:12px;
 overflow:hidden;
 background:#060d0b;
@@ -828,11 +826,9 @@ display:none!important;
 }
 #tab-consulta.active .chat-medico-input{
 flex-shrink:0;
-position:relative;
 background:#0d1f14;
 border-top:1px solid rgba(255,255,255,.06);
 padding:10px 11px calc(10px + env(safe-area-inset-bottom,0px));
-z-index:5;
 }
 /* Bolhas um pouco mais legíveis no mobile */
 .cmsg .bub{font-size:.9rem!important}
@@ -844,6 +840,179 @@ z-index:5;
 .meet-input-row{flex-direction:column;gap:8px}
 .btn-meet-save{width:100%;justify-content:center}
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE CHAT FULLSCREEN — UX tipo WhatsApp
+   Quando body.chat-fullscreen está ativo:
+   - atend-header, triagem-box e tabs somem
+   - chat ocupa 100dvh abaixo da nav
+   - header compacto mostra nome + timer + ações
+═══════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+
+/* Esconde os elementos acima quando chat está fullscreen */
+body.chat-fullscreen .atend-header,
+body.chat-fullscreen .triagem-box,
+body.chat-fullscreen .slot-tabs,
+body.chat-fullscreen #atend-tabs{
+  display:none!important;
+}
+
+/* .main para de scrollar */
+body.chat-fullscreen .main{
+  overflow:hidden!important;
+  padding:0!important;
+}
+
+/* state-atend ocupa tudo */
+body.chat-fullscreen #state-atend{
+  height:calc(100dvh - var(--nav-h));
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden;
+}
+
+/* tab-consulta ocupa tudo */
+body.chat-fullscreen #tab-consulta.active{
+  flex:1 1 0;
+  min-height:0;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden;
+}
+
+/* Header compacto fixo no topo do chat */
+#chat-mobile-header{
+  display:none;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  padding-top:calc(10px + env(safe-area-inset-top,0px));
+  background:#0a1810;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  flex-shrink:0;
+  min-height:56px;
+}
+body.chat-fullscreen #chat-mobile-header{
+  display:flex;
+}
+#chat-mobile-header .cmh-back{
+  background:none;border:none;color:#5ee0a0;
+  font-size:1.3rem;cursor:pointer;padding:4px 6px;
+  flex-shrink:0;line-height:1;
+}
+#chat-mobile-header .cmh-info{
+  flex:1;min-width:0;
+}
+#chat-mobile-header .cmh-nome{
+  font-size:.95rem;font-weight:600;
+  color:rgba(255,255,255,.95);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#chat-mobile-header .cmh-meta{
+  font-size:.72rem;color:var(--muted);
+  display:flex;align-items:center;gap:6px;margin-top:1px;
+}
+#chat-mobile-header .cmh-timer{
+  font-variant-numeric:tabular-nums;
+  color:#5ee0a0;font-weight:500;
+}
+#chat-mobile-header .cmh-actions{
+  display:flex;gap:6px;flex-shrink:0;
+}
+#chat-mobile-header .cmh-btn{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;color:rgba(255,255,255,.8);
+  font-size:.72rem;font-weight:600;
+  padding:6px 10px;cursor:pointer;
+  display:flex;align-items:center;gap:4px;
+  white-space:nowrap;font-family:'Outfit',sans-serif;
+}
+#chat-mobile-header .cmh-btn.green{
+  border-color:rgba(94,224,160,.3);
+  color:#5ee0a0;background:rgba(94,224,160,.08);
+}
+#chat-mobile-header .cmh-btn.red{
+  border-color:rgba(255,95,87,.3);
+  color:#ff8080;background:rgba(255,95,87,.06);
+}
+
+/* chat-medico-wrap ocupa o restante */
+body.chat-fullscreen #tab-consulta.active .chat-medico-wrap{
+  flex:1 1 0;min-height:0;
+  display:flex!important;flex-direction:column!important;
+  overflow:hidden;
+  border-radius:0;margin:0;border:none;
+  height:auto!important;
+}
+body.chat-fullscreen #tab-consulta.active .chat-medico-wrap .chat-medico-header{
+  display:none; /* header antigo fica oculto, usamos o novo */
+}
+body.chat-fullscreen #tab-consulta.active .chat-medico-msgs{
+  flex:1 1 0;min-height:0;
+  overflow-y:scroll!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain;
+  padding:14px 12px 8px;
+}
+body.chat-fullscreen #tab-consulta.active .chat-medico-input{
+  flex-shrink:0;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));
+  background:#0a1810;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+
+/* Bottom sheet de dados do paciente */
+#chat-dados-sheet{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:500;
+}
+#chat-dados-sheet.open{display:block;}
+#chat-dados-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(4px);
+}
+#chat-dados-panel{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  background:#0d1f14;
+  border-radius:20px 20px 0 0;
+  border-top:1px solid rgba(94,224,160,.15);
+  max-height:82dvh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:0 0 calc(24px + env(safe-area-inset-bottom,0px));
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+#chat-dados-sheet.open #chat-dados-panel{
+  transform:translateY(0);
+}
+#chat-dados-panel-header{
+  position:sticky;top:0;
+  background:#0d1f14;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px 12px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  z-index:1;
+}
+#chat-dados-panel-header h4{
+  font-size:.9rem;font-weight:600;
+  color:rgba(255,255,255,.9);margin:0;
+}
+#chat-dados-close{
+  background:none;border:none;
+  color:var(--muted);font-size:1.1rem;
+  cursor:pointer;padding:4px;
+}
+#chat-dados-panel-body{
+  padding:16px 18px 0;
+}
+} /* fim @media mobile */
 </style>
 
 </head>
@@ -997,6 +1166,39 @@ z-index:5;
       </div>
     </div><!-- /triagem-body -->
     </div>
+    <!-- [MOBILE-UX] Header compacto do chat fullscreen -->
+    <div id="chat-mobile-header">
+      <button class="cmh-back" onclick="sairChatFullscreen()" title="Voltar">‹</button>
+      <div class="cmh-info">
+        <div class="cmh-nome" id="cmh-nome">-</div>
+        <div class="cmh-meta">
+          <div class="chat-online-dot" style="width:6px;height:6px;border-radius:50%;background:#5ee0a0;animation:pulse 2s ease-in-out infinite"></div>
+          <span>Chat ativo</span>
+          <span>·</span>
+          <span class="cmh-timer" id="cmh-timer">00:00</span>
+        </div>
+      </div>
+      <div class="cmh-actions">
+        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()">👤 Dados</button>
+        <button class="cmh-btn green" onclick="abrirMemed()">💊</button>
+        <button class="cmh-btn red" onclick="abrirModalEncerrar()">✓ Enc.</button>
+      </div>
+    </div>
+
+    <!-- [MOBILE-UX] Bottom sheet com dados do paciente -->
+    <div id="chat-dados-sheet">
+      <div id="chat-dados-overlay" onclick="fecharDadosPacienteSheet()"></div>
+      <div id="chat-dados-panel">
+        <div id="chat-dados-panel-header">
+          <h4>Dados do paciente</h4>
+          <button id="chat-dados-close" onclick="fecharDadosPacienteSheet()">✕</button>
+        </div>
+        <div id="chat-dados-panel-body">
+          <!-- Conteúdo copiado dinamicamente do triagem-body via JS -->
+        </div>
+      </div>
+    </div>
+
     <div class="tabs" id="atend-tabs">
       <button class="tab active" onclick="switchTab('consulta')">💬   Consulta<span class="tab-badge" id="tab-consulta-badge"></span></button>
       <button class="tab" onclick="switchTab('clinico')">🩺   Avaliação clínica</button>
@@ -1985,6 +2187,7 @@ function renderPainelAtendimento() {
 const p=atendimentoAtual; if (!p) return;
 const nome=p.nome||'-', tel=p.tel||'', tipo=p.tipo||'chat';
 document.getElementById('atend-nome').textContent=nome;
+const cmhNomeEl = document.getElementById('cmh-nome'); if(cmhNomeEl) cmhNomeEl.textContent=nome;
 const tipoTag=document.getElementById('atend-tipo-tag');
 tipoTag.textContent=tipo==='video'?'📹 Consulta por vídeo':'💬 Consulta por chat';
 tipoTag.className='atend-tag '+tipo;
@@ -2177,6 +2380,14 @@ mostrarChatPip();
 } else {
 esconderChatPip();
 }
+// [MOBILE FULLSCREEN] Entra/sai do chat fullscreen
+if (isMobile()) {
+  if (nome === 'consulta' && chatAtivo) {
+    entrarChatFullscreen();
+  } else {
+    sairChatFullscreen();
+  }
+}
 }
 
 // -- CHAT PIP ----------------------------------------------
@@ -2296,6 +2507,13 @@ function iniciarChatMedico() {
 if (!slots[slotAtivo]) return;
 const slot = slots[slotAtivo];
 slot.chatAtivo = true;
+// [MOBILE] Ativa chat fullscreen se estiver na aba consulta
+if (isMobile()) {
+  const tabConsulta = document.getElementById('tab-consulta');
+  if (tabConsulta && tabConsulta.classList.contains('active')) {
+    setTimeout(entrarChatFullscreen, 50);
+  }
+}
 if (slot.chatInterval) { clearInterval(slot.chatInterval); slot.chatInterval = null; }
 const capturedSlot = slotAtivo;
 
@@ -2637,6 +2855,7 @@ timerSegundos++;
 const m=String(Math.floor(timerSegundos/60)).padStart(2,'0');
 const s=String(timerSegundos%60).padStart(2,'0');
 const el=document.getElementById('atend-timer'); if(el) el.textContent=m+':'+s;
+const elC=document.getElementById('cmh-timer'); if(elC) elC.textContent=m+':'+s;
 },1000);
 }
 function toggleDoc(el) { el.classList.toggle('checked'); }
@@ -2877,6 +3096,7 @@ const slotEncerrado = slotAtivo;
 // Para polling do slot sendo encerrado
 pararPollingSlot(slotEncerrado);
 esconderChatPip();
+sairChatFullscreen();
 // Gerar e salvar prontuário AGORA com docs marcados antes de encerrar
 try {
 const textoPront = montarTextoProntuarioComDocs(docs);
@@ -3460,6 +3680,58 @@ try {
   localStorage.removeItem('token');
 }
 })();
+
+// ── MOBILE CHAT FULLSCREEN ──────────────────────────────────────────────────
+function entrarChatFullscreen() {
+  if (!isMobile()) return;
+  document.body.classList.add('chat-fullscreen');
+  // Sincroniza nome e timer no header compacto
+  const nome = document.getElementById('atend-nome');
+  const cmhNome = document.getElementById('cmh-nome');
+  if (nome && cmhNome) cmhNome.textContent = nome.textContent;
+  // Sincroniza timer
+  sincronizarTimerCompacto();
+}
+
+function sairChatFullscreen() {
+  document.body.classList.remove('chat-fullscreen');
+  fecharDadosPacienteSheet();
+}
+
+// Mantém o timer compacto sincronizado com o timer principal
+function sincronizarTimerCompacto() {
+  const timerPrincipal = document.getElementById('atend-timer');
+  const timerCompacto = document.getElementById('cmh-timer');
+  if (!timerPrincipal || !timerCompacto) return;
+  timerCompacto.textContent = timerPrincipal.textContent;
+}
+
+// Intercepta iniciarTimer para sincronizar também o compacto
+const _originalIniciarTimer = typeof iniciarTimer === 'function' ? iniciarTimer : null;
+
+function abrirDadosPacienteSheet() {
+  const sheet = document.getElementById('chat-dados-sheet');
+  const body = document.getElementById('chat-dados-panel-body');
+  const triagem = document.getElementById('triagem-body');
+  if (!sheet || !body || !triagem) return;
+  // Copia o conteúdo da triagem para o sheet
+  body.innerHTML = triagem.innerHTML;
+  sheet.classList.add('open');
+  // Força reflow pra animação funcionar
+  requestAnimationFrame(() => {
+    document.getElementById('chat-dados-panel').style.transform = 'translateY(0)';
+  });
+}
+
+function fecharDadosPacienteSheet() {
+  const sheet = document.getElementById('chat-dados-sheet');
+  if (!sheet) return;
+  sheet.classList.remove('open');
+}
+
+// switchTab mobile fullscreen: integrado diretamente na função original abaixo
+
+// ── FIM MOBILE CHAT FULLSCREEN ───────────────────────────────────────────────
 </script>
 
 <!-- FAB removido - fila acessível pelo botão #nav-fila-btn no nav -->
