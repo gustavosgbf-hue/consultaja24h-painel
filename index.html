@@ -1,14 +1,17 @@
 <!doctype html>
 
-<html lang="pt-BR">
-<head>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<html data-src-ver="7a51b7dc" lang="pt-BR" data-src-loc="17:36:237852" data-om-id="7a51b7dc:0">
+<head data-src-loc="37:43:93399" data-om-id="7a51b7dc:1">
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var A=["https://claude.ai","https://preview.claude.ai","https://eap-omelette.claude.ai"];var L=30000;var u=3000;document.addEventListener("DOMContentLoaded",()=>{const V=window.Babel;const $="om-src-id";if(V&&V.registerPlugin&&!(V.availablePlugins&&V.availablePlugins[$])){V.registerPlugin($,({types:Q})=>({visitor:{JSXOpeningElement(W,X){const K=W.node;if(K.name&&K.name.type==="JSXMemberExpression")return;for(let J=0;J<K.attributes.length;J++){const w=K.attributes[J];if(w.type==="JSXAttribute"&&w.name&&w.name.name==="data-om-id")return}const z=X.file&&X.file.opts&&X.file.opts.filename||"?";const k=K.loc&&K.loc.start;const C=`jsx:${z}:${K.start??0}:${k?k.line:0}:${k?k.column+1:0}`;K.attributes.push(Q.jsxAttribute(Q.jsxIdentifier("data-om-id"),Q.stringLiteral(C)))}}}))}const Z=["transform-react-jsx-source",$];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Q,W)=>{const X=Q.getAttribute("data-plugins")||"";const K=Z.filter((z)=>X.indexOf(z)<0);if(K.length){Q.setAttribute("data-plugins",X?`${X},${K.join(",")}`:K.join(","))}if(!Q.hasAttribute("data-filename")){Q.setAttribute("data-filename",Q.getAttribute("src")||`inline-${W}`)}})});var b=window.parent;if(b&&b!==window){const V=(z,k)=>{try{b.postMessage({__omelette_log:true,type:z,data:k},"*")}catch{}};["log","warn","error"].forEach((z)=>{const k=console[z];console[z]=(...C)=>{const J=C.map((w)=>{try{return typeof w==="object"?JSON.stringify(w):String(w)}catch{try{return String(w)}catch{return"[unstringifiable]"}}}).join(" ");V(z,J);k.apply(console,C)}});window.addEventListener("error",(z)=>{const k=z.target;if(k&&k!==window&&k.tagName){const C=k.src||k.href||"";V("resource_error",`${k.tagName} failed to load: ${C}`)}else{V("error",`${z.message||"Unknown error"} at ${z.filename||"?"}:${z.lineno||0}:${z.colno||0}`)}},true);window.addEventListener("unhandledrejection",(z)=>{const k=z.reason;const C=k instanceof Error?`${k.message} ${k.stack}`:String(k);V("error",`Unhandled rejection: ${C}`)});const $=()=>{try{b.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")$();else window.addEventListener("load",$);if(window.ResizeObserver)new ResizeObserver($).observe(document.documentElement);const Z={};let Q=0;window.claude={complete(z){return new Promise((k,C)=>{if(!A.length){C(new Error("claude.complete: no parent origin"));return}const J=`c${++Q}`;const w=()=>setTimeout(()=>{delete Z[J];C(new Error(`claude.complete: no data for ${L/1000}s`))},L);const Y=w();Z[J]={resolve:k,reject:C,text:"",t:Y,arm:w};try{for(const F of A){b.postMessage({__om_api:true,id:J,body:z},F)}}catch(F){clearTimeout(Y);delete Z[J];C(F)}})}};const W={};let X=0;window.omelette={writeFile:(z,k)=>new Promise((C,J)=>{if(!A.length){C();return}const w=`f${++X}`;const Y=setTimeout(()=>{delete W[w];C()},u);W[w]={resolve:C,reject:J,t:Y};try{for(const F of A){b.postMessage({__om_file:true,id:w,op:"write",path:z,content:k},F)}}catch{clearTimeout(Y);delete W[w];C()}})};const K=(z)=>{try{return JSON.stringify(z)}catch{return JSON.stringify(String(z))}};window.addEventListener("message",(z)=>{if(A.indexOf(z.origin)<0)return;if(z.source!==b)return;const k=z.data;if(!k)return;if(k.__om_file_r){const w=W[k.id];if(!w)return;clearTimeout(w.t);delete W[k.id];if(k.ok)w.resolve();else w.reject(new Error(k.error||"write failed"));return}if(k.__om_api_r){const w=Z[k.id];if(!w)return;if(k.error!=null){clearTimeout(w.t);delete Z[k.id];w.reject(new Error(k.error));return}if(k.chunk!=null){clearTimeout(w.t);w.t=w.arm();w.text+=k.chunk;return}if(k.done){clearTimeout(w.t);delete Z[k.id];w.resolve(k.text!=null?k.text:w.text);return}return}if(!k.__om_eval)return;const C=k;const J=(w)=>{z.source.postMessage({...w,__om_eval_r:1,id:C.id},z.origin)};try{const w=(0,eval)(C.code);if(w&&typeof w.then==="function"){w.then((Y)=>J({ok:1,v:K(Y)}),(Y)=>J({ok:0,e:String(Y)}))}else{J({ok:1,v:K(w)})}}catch(w){J({ok:0,e:String(w)})}})}})();
+</script>
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" data-src-loc="46:103:103" data-om-id="7a51b7dc:2">
+<meta charset="utf-8" data-src-loc="104:127:127" data-om-id="7a51b7dc:3"/>
+<meta name="viewport" content="width=device-width,initial-scale=1" data-src-loc="128:196:196" data-om-id="7a51b7dc:4"/>
 <title>Painel Médico · ConsultaJá24h</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" data-src-loc="245:304:304" data-om-id="7a51b7dc:5">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-src-loc="305:373:373" data-om-id="7a51b7dc:6">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" data-src-loc="374:571:571" data-om-id="7a51b7dc:7">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;height:100%}
@@ -1017,277 +1020,1094 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
   padding:16px 18px 0;
 }
 } /* fim @media mobile */
+
+/* ════════════════════════════════════════════════════════════════════
+   PREMIUM UX OVERLAY — desktop & mobile refinements
+   Refina: tipografia, paleta, hierarquia, densidade, microinterações.
+   Não toca em IDs nem comportamento JS.
+   ════════════════════════════════════════════════════════════════════ */
+:root{
+  /* Paleta refinada (mais sóbria que o neon original) */
+  --bg-0:#06100c;           /* fundo base — antes #07100d */
+  --bg-1:#0a1612;           /* superfície 1 */
+  --bg-2:#0e1e18;           /* superfície 2 */
+  --bg-3:#13261f;           /* superfície 3 / hover */
+  --line-1:rgba(255,255,255,.06);
+  --line-2:rgba(255,255,255,.10);
+  --line-3:rgba(255,255,255,.14);
+  --ink-1:#f3f7f5;          /* texto principal */
+  --ink-2:rgba(243,247,245,.74);
+  --ink-3:rgba(243,247,245,.50);
+  --ink-4:rgba(243,247,245,.32);
+  --acc:#6ee5a6;            /* verde principal — mais limpo */
+  --acc-2:#a8d96a;          /* verde lima secundário */
+  --acc-soft:rgba(110,229,166,.10);
+  --acc-line:rgba(110,229,166,.22);
+  --warn:#f4b740;           /* âmbar refinado */
+  --warn-soft:rgba(244,183,64,.10);
+  --warn-line:rgba(244,183,64,.22);
+  --danger:#ef6b66;         /* vermelho refinado */
+  --danger-soft:rgba(239,107,102,.10);
+  --danger-line:rgba(239,107,102,.22);
+  --info:#7ec5ff;
+  --info-soft:rgba(126,197,255,.10);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 4px 18px rgba(0,0,0,.35);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.5);
+  --r-sm:8px; --r-md:10px; --r-lg:14px; --r-xl:18px;
+  --nav-h:64px;
+  --sb-w:288px;
+}
+html, body{ background:var(--bg-0); }
+body{ color:var(--ink-1); letter-spacing:-0.005em; font-feature-settings:"ss01","cv11"; }
+
+/* Numerais tabulares onde importa (timers, contadores, badges) */
+.atend-timer, #atend-timer, .cmh-timer, .fila-count, #nav-fila-badge,
+.tab-badge, .rail-badge, .pront-meta, .hist-card-meta, .atend-tag.crm{
+  font-variant-numeric:tabular-nums;
+}
+
+/* —— NAV refinado ——————————————————————————— */
+.nav{
+  height:var(--nav-h);
+  padding:0 22px;
+  background:linear-gradient(180deg,rgba(10,22,18,.92),rgba(10,22,18,.78));
+  backdrop-filter:blur(24px) saturate(140%);
+  -webkit-backdrop-filter:blur(24px) saturate(140%);
+  border-bottom:1px solid var(--line-1);
+  gap:14px;
+}
+.nav-brand span{ font-family:'Outfit',sans-serif !important; font-style:normal !important; font-size:.95rem !important; letter-spacing:-.015em; }
+.nav-brand .c1{ color:var(--ink-1); font-weight:600; }
+.nav-brand .c2{ background:linear-gradient(135deg,var(--acc),var(--acc-2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; font-weight:600; }
+.nav-tag-24h{ color:var(--ink-3) !important; font-weight:500 !important; font-size:.7rem !important; padding:2px 7px; border:1px solid var(--line-2); border-radius:999px; margin-left:6px; }
+.live-dot{ box-shadow:0 0 0 0 rgba(110,229,166,.5); }
+
+.nav-medico{ font-size:.83rem; color:var(--ink-3); font-weight:400; }
+.nav-medico strong{ color:var(--ink-1); font-weight:600; }
+
+.plantao-btn{
+  height:36px; padding:0 14px;
+  font-size:.78rem; font-weight:600;
+  border-radius:999px;
+  transition:background .18s ease, color .18s ease, border-color .18s ease;
+}
+.plantao-btn.offline{ background:transparent; border:1px solid var(--line-2); color:var(--ink-2); }
+.plantao-btn.offline:hover{ background:var(--bg-3); border-color:var(--line-3); color:var(--ink-1); }
+.plantao-btn.online{ background:rgba(110,229,166,.10); border:1px solid var(--acc-line); color:var(--acc); }
+.plantao-btn.online:hover{ background:rgba(239,107,102,.10); border-color:var(--danger-line); color:#ff8a85; }
+
+.nav-logout{
+  height:34px; padding:0 14px;
+  font-size:.78rem;
+  background:transparent; border:1px solid var(--line-2); color:var(--ink-3);
+  border-radius:9px;
+  transition:all .15s ease;
+}
+.nav-logout:hover{ border-color:var(--danger-line); color:var(--danger); background:var(--danger-soft); }
+
+/* —— SIDEBAR refinada ——————————————————————— */
+:root{ --sb-w:288px; }
+.sidebar{
+  background:linear-gradient(180deg, var(--bg-1), var(--bg-0));
+  border-right:1px solid var(--line-1) !important;
+  padding:20px 14px 28px !important;
+}
+.sidebar-inner{ padding:4px 4px 24px; }
+
+/* Section header da sidebar (Fila, Agendamentos, Histórico…) */
+.sidebar-title{
+  font-family:'Outfit',sans-serif;
+  font-size:.7rem !important;
+  font-weight:600 !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase;
+  color:var(--ink-4) !important;
+  padding:14px 8px 10px !important;
+  margin-bottom:6px !important;
+  border-top:1px solid var(--line-1);
+}
+.sidebar-inner > .sidebar-title:first-child{ border-top:none; padding-top:2px; }
+.sidebar-title .fila-count{
+  background:var(--bg-3) !important;
+  color:var(--ink-2) !important;
+  font-size:.66rem !important;
+  font-weight:600 !important;
+  padding:2px 8px !important;
+  border-radius:999px;
+  border:1px solid var(--line-1);
+  letter-spacing:.04em;
+}
+.sidebar-title .fila-count[style*="rgba(94,224,160"],
+#hist-count{ background:rgba(110,229,166,.10) !important; color:var(--acc) !important; border-color:var(--acc-line); }
+#admin-pendente-count{ background:var(--warn-soft) !important; color:var(--warn) !important; border-color:var(--warn-line); }
+#admin-hist-count{ background:var(--info-soft) !important; color:var(--info) !important; border-color:rgba(126,197,255,.22); }
+#rail-badge{ background:var(--danger-soft); color:var(--danger); border:1px solid var(--danger-line); }
+
+/* Cards da fila — premium */
+.paciente-card, .fila-card{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:var(--r-lg) !important;
+  padding:14px !important;
+  margin-bottom:8px !important;
+  transition:transform .12s ease, border-color .15s ease, background .15s ease;
+}
+.paciente-card:hover, .fila-card:hover{
+  border-color:var(--acc-line) !important;
+  background:var(--bg-2) !important;
+  transform:translateY(-1px);
+}
+.paciente-card.active{
+  border-color:var(--acc) !important;
+  background:linear-gradient(180deg, var(--acc-soft), var(--bg-2)) !important;
+  box-shadow:inset 0 0 0 1px rgba(110,229,166,.18);
+}
+.paciente-card::before{
+  content:''; position:absolute; left:-1px; top:14px; bottom:14px;
+  width:3px; border-radius:0 3px 3px 0;
+  background:transparent; transition:background .15s ease;
+}
+.paciente-card.active::before{ background:linear-gradient(180deg,var(--acc),var(--acc-2)); }
+.pc-nome{ font-size:.93rem !important; font-weight:600 !important; color:var(--ink-1) !important; letter-spacing:-.01em; }
+.pc-tempo, .pc-queixa, .pc-meta{ font-size:.77rem; color:var(--ink-3); }
+
+.fila-vazia{
+  padding:36px 14px !important;
+  background:var(--bg-1);
+  border:1px dashed var(--line-2);
+  border-radius:var(--r-lg);
+  color:var(--ink-4) !important;
+  font-size:.82rem !important;
+}
+.fila-vazia svg{ opacity:.22 !important; }
+
+/* —— MAIN refinado ———————————————————————— */
+.main{ padding:32px 36px !important; background:var(--bg-0); }
+@media(min-width:1280px){ .main{ padding:36px 48px !important; } }
+
+/* —— ATEND HEADER refinado ——————————————— */
+.atend-header{
+  margin-bottom:22px !important;
+  padding-bottom:18px;
+  border-bottom:1px solid var(--line-1);
+  align-items:center !important;
+}
+.atend-paciente{ gap:8px !important; }
+.atend-nome{
+  font-family:'Outfit',sans-serif !important;
+  font-style:normal !important;
+  font-size:1.5rem !important;
+  font-weight:600 !important;
+  letter-spacing:-.02em !important;
+  color:var(--ink-1) !important;
+  line-height:1.15 !important;
+}
+.atend-meta{ gap:8px !important; align-items:center; }
+
+/* Tags como chips refinados — sem CAPS, sem letterspacing exagerado */
+.atend-tag{
+  font-size:.72rem !important;
+  font-weight:500 !important;
+  padding:4px 10px !important;
+  border-radius:7px !important;
+  text-transform:none !important;
+  letter-spacing:0 !important;
+  display:inline-flex; align-items:center; gap:5px;
+  line-height:1.4;
+}
+.atend-tag.video{ background:rgba(110,229,166,.10) !important; color:var(--acc) !important; border:1px solid var(--acc-line) !important; }
+.atend-tag.chat{ background:rgba(110,229,166,.10) !important; color:var(--acc) !important; border:1px solid var(--acc-line) !important; }
+.atend-tag.crm{
+  background:transparent !important;
+  color:var(--ink-3) !important;
+  border:1px solid var(--line-2) !important;
+  font-family:'JetBrains Mono',monospace !important;
+  font-size:.68rem !important;
+  letter-spacing:.02em !important;
+}
+.atend-tag.historico-badge{ background:var(--info-soft) !important; color:var(--info) !important; border:1px solid rgba(126,197,255,.22) !important; }
+
+.atend-timer{
+  background:var(--bg-2);
+  padding:4px 10px;
+  border-radius:7px;
+  border:1px solid var(--line-1);
+  font-size:.74rem !important;
+  color:var(--ink-2);
+  font-weight:500;
+}
+.atend-timer svg{ opacity:.6; }
+
+/* —— Botões de ação do atendimento ——————————— */
+.atend-actions{ gap:8px !important; }
+.btn-wpp, #btn-memed, .btn-encerrar{
+  height:38px !important;
+  padding:0 14px !important;
+  border-radius:9px !important;
+  font-size:.8rem !important;
+  font-weight:600 !important;
+  border:1px solid var(--line-2) !important;
+  background:var(--bg-2) !important;
+  color:var(--ink-2) !important;
+  transition:all .15s ease;
+  display:inline-flex; align-items:center; gap:7px;
+}
+.btn-wpp:hover{ background:rgba(37,211,102,.10) !important; border-color:rgba(37,211,102,.3) !important; color:#3dd576 !important; }
+#btn-memed:hover{ background:var(--acc-soft) !important; border-color:var(--acc-line) !important; color:var(--acc) !important; }
+.btn-encerrar:hover{ background:var(--danger-soft) !important; border-color:var(--danger-line) !important; color:var(--danger) !important; }
+
+/* —— Triagem box refinada ———————————————— */
+.triagem-box{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:var(--r-lg) !important;
+  padding:20px 22px !important;
+  margin-bottom:22px !important;
+}
+.triagem-box-title{
+  font-size:.7rem !important;
+  font-weight:600 !important;
+  letter-spacing:.14em !important;
+  color:var(--ink-3) !important;
+  margin-bottom:14px !important;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line-1);
+}
+.triagem-grid{ gap:18px 22px !important; }
+.triagem-item label, .triagem-queixa label{
+  font-size:.66rem !important;
+  font-weight:600 !important;
+  letter-spacing:.1em !important;
+  color:var(--ink-4) !important;
+  margin-bottom:5px !important;
+}
+.triagem-item span{ font-size:.86rem !important; font-weight:400 !important; color:var(--ink-1) !important; }
+.triagem-queixa{
+  margin-top:6px;
+  padding:14px 16px;
+  background:var(--bg-2);
+  border-left:2px solid var(--acc);
+  border-radius:0 10px 10px 0;
+  grid-column:1/-1;
+}
+.triagem-queixa span{ font-size:.92rem !important; line-height:1.65 !important; color:var(--ink-1) !important; }
+
+/* —— TABS refinadas (segmented control) ——————— */
+.tabs{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:11px !important;
+  padding:4px !important;
+  gap:2px !important;
+  margin-bottom:18px !important;
+}
+.tab{
+  height:42px;
+  padding:0 14px !important;
+  border-radius:8px !important;
+  font-size:.83rem !important;
+  font-weight:500 !important;
+  color:var(--ink-3) !important;
+  letter-spacing:-.005em;
+  transition:all .15s ease;
+  position:relative;
+}
+.tab:hover{ color:var(--ink-1) !important; background:var(--bg-2) !important; }
+.tab.active{
+  background:var(--bg-3) !important;
+  color:var(--ink-1) !important;
+  box-shadow:inset 0 0 0 1px var(--line-2), 0 1px 0 rgba(0,0,0,.3);
+  font-weight:600 !important;
+}
+.tab-badge{ background:var(--danger) !important; box-shadow:0 0 0 2px var(--bg-1); }
+
+/* —— CHAT refinado ———————————————————————— */
+.chat-medico-wrap{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:var(--r-lg) !important;
+  margin-bottom:18px !important;
+}
+.chat-medico-header{
+  background:var(--bg-2) !important;
+  border-bottom:1px solid var(--line-1) !important;
+  padding:14px 18px !important;
+}
+.chat-medico-header h3{ font-size:.84rem !important; font-weight:600 !important; color:var(--ink-1) !important; }
+.chat-medico-msgs{ background:var(--bg-0) !important; padding:24px 18px 20px !important; }
+
+.cmsg .bub{
+  font-size:.92rem !important;
+  line-height:1.55 !important;
+  padding:11px 15px !important;
+  border-radius:14px !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.25);
+}
+.cmsg.paciente .bub{
+  background:var(--bg-2) !important;
+  border:1px solid var(--line-1) !important;
+  border-bottom-left-radius:5px !important;
+  color:var(--ink-1) !important;
+}
+.cmsg.medico .bub{
+  background:linear-gradient(180deg,#0f3a2c,#0c3024) !important;
+  border:1px solid rgba(110,229,166,.22) !important;
+  border-bottom-right-radius:5px !important;
+  color:#dff8e9 !important;
+}
+
+.chat-medico-input{
+  background:var(--bg-2) !important;
+  border-top:1px solid var(--line-1) !important;
+  padding:12px 14px !important;
+}
+.chat-medico-input textarea{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:22px !important;
+  font-size:max(.93rem,15px) !important;
+  padding:11px 18px !important;
+}
+.chat-medico-input textarea:focus{
+  border-color:var(--acc-line) !important;
+  background:var(--bg-2) !important;
+  box-shadow:0 0 0 3px rgba(110,229,166,.08);
+}
+.chat-medico-send{
+  width:42px !important; height:42px !important;
+  background:linear-gradient(135deg,var(--acc),var(--acc-2)) !important;
+  box-shadow:0 6px 18px rgba(110,229,166,.22), inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+.chat-medico-send:hover{ filter:brightness(1.06) saturate(1.05); }
+
+/* —— AVALIAÇÃO CLÍNICA refinada ——————————————— */
+.clinic-section{ margin-bottom:22px; }
+.clinic-section-title{
+  font-size:.7rem !important;
+  font-weight:600 !important;
+  letter-spacing:.14em !important;
+  color:var(--ink-3) !important;
+  margin-bottom:12px !important;
+}
+.clinic-label{ font-size:.78rem !important; font-weight:500 !important; color:var(--ink-2) !important; }
+textarea.clinic-input{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:11px !important;
+  font-size:.92rem !important;
+  font-weight:400 !important;
+  line-height:1.65 !important;
+  padding:13px 15px !important;
+  color:var(--ink-1) !important;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+textarea.clinic-input:focus{
+  border-color:var(--acc-line) !important;
+  background:var(--bg-2) !important;
+  box-shadow:0 0 0 3px rgba(110,229,166,.08);
+}
+
+.doc-check{
+  height:34px;
+  padding:0 13px !important;
+  border-radius:8px !important;
+  font-size:.78rem !important;
+  font-weight:500 !important;
+  border:1px solid var(--line-2) !important;
+  background:var(--bg-1) !important;
+  color:var(--ink-3) !important;
+  transition:all .12s ease;
+}
+.doc-check:hover{ border-color:var(--line-3) !important; color:var(--ink-1) !important; }
+.doc-check.checked{
+  border-color:var(--acc-line) !important;
+  background:var(--acc-soft) !important;
+  color:var(--ink-1) !important;
+}
+
+/* —— PRONTUÁRIO refinado ——————————————————— */
+.pront-section{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:var(--r-lg) !important;
+  padding:24px !important;
+  margin-bottom:22px !important;
+}
+.pront-title{
+  font-size:.7rem !important;
+  font-weight:600 !important;
+  letter-spacing:.14em !important;
+  color:var(--ink-3) !important;
+}
+.pront-card{
+  background:var(--bg-2) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:11px !important;
+  padding:18px 20px !important;
+}
+.pront-card-title{
+  font-size:.66rem !important;
+  font-weight:600 !important;
+  letter-spacing:.14em !important;
+  color:var(--acc) !important;
+  opacity:.85 !important;
+}
+.pront-card-body{
+  font-size:.86rem !important;
+  font-weight:400 !important;
+  color:var(--ink-1) !important;
+  line-height:1.75 !important;
+}
+.pront-paciente{ font-size:.95rem !important; font-weight:600 !important; color:var(--ink-1) !important; }
+
+.btn-gerar{
+  height:38px;
+  padding:0 18px !important;
+  border-radius:9px !important;
+  background:linear-gradient(135deg,var(--acc),var(--acc-2)) !important;
+  font-size:.82rem !important;
+  font-weight:700 !important;
+  color:#031c10 !important;
+  box-shadow:0 4px 14px rgba(110,229,166,.18), inset 0 1px 0 rgba(255,255,255,.2);
+  transition:transform .1s ease, filter .15s ease;
+}
+.btn-gerar:hover{ filter:brightness(1.06); transform:translateY(-1px); }
+.btn-gerar:active{ transform:translateY(0); }
+.btn-copiar{
+  height:38px;
+  padding:0 16px !important;
+  border-radius:9px !important;
+  font-size:.8rem !important;
+  font-weight:600 !important;
+  border:1px solid var(--line-2) !important;
+  background:var(--bg-2) !important;
+  color:var(--ink-2) !important;
+  transition:all .15s ease;
+}
+.btn-copiar:hover{ border-color:var(--acc-line) !important; color:var(--acc) !important; }
+
+/* —— EMPTY / OFFLINE STATE refinado ——————————— */
+.empty-state, .offline-state{ gap:18px !important; }
+.empty-state h2, .offline-state h2{
+  font-family:'Outfit',sans-serif !important;
+  font-style:normal !important;
+  font-size:1.4rem !important;
+  font-weight:500 !important;
+  letter-spacing:-.02em !important;
+  color:var(--ink-2) !important;
+}
+.empty-state p, .offline-state p{
+  font-size:.92rem !important;
+  font-weight:400 !important;
+  color:var(--ink-3) !important;
+  max-width:340px !important;
+}
+.offline-badge{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  color:var(--ink-3) !important;
+  font-size:.78rem !important;
+  padding:7px 16px !important;
+}
+
+/* —— MODAIS refinados ———————————————————— */
+.modal{
+  background:linear-gradient(180deg,var(--bg-2),var(--bg-1)) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:18px !important;
+  padding:30px !important;
+  box-shadow:var(--shadow-lg);
+}
+.modal-title{
+  font-family:'Outfit',sans-serif !important;
+  font-style:normal !important;
+  font-size:1.15rem !important;
+  font-weight:600 !important;
+  letter-spacing:-.015em !important;
+  color:var(--ink-1) !important;
+}
+.modal-sub{ font-size:.86rem !important; color:var(--ink-3) !important; }
+.modal-field label{
+  font-size:.7rem !important;
+  font-weight:600 !important;
+  letter-spacing:.12em !important;
+  color:var(--ink-3) !important;
+}
+.radio-opt{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:10px !important;
+  padding:12px 14px !important;
+  transition:all .12s ease;
+}
+.radio-opt:hover{ border-color:var(--line-3) !important; background:var(--bg-2) !important; }
+.radio-opt.selected{
+  border-color:var(--acc-line) !important;
+  background:var(--acc-soft) !important;
+}
+.check-opt{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:8px !important;
+  padding:8px 13px !important;
+  font-size:.82rem !important;
+  font-weight:500 !important;
+  color:var(--ink-3) !important;
+}
+.check-opt.selected{
+  border-color:var(--acc-line) !important;
+  background:var(--acc-soft) !important;
+  color:var(--ink-1) !important;
+}
+.btn-cancel{
+  height:42px !important;
+  border-radius:10px !important;
+  font-size:.88rem !important;
+  font-weight:500 !important;
+  border:1px solid var(--line-2) !important;
+  color:var(--ink-3) !important;
+}
+.btn-cancel:hover{ border-color:var(--line-3) !important; color:var(--ink-1) !important; background:var(--bg-2) !important; }
+.btn-confirm{
+  height:42px !important;
+  border-radius:10px !important;
+  font-size:.88rem !important;
+  font-weight:700 !important;
+  background:linear-gradient(135deg,var(--acc),var(--acc-2)) !important;
+  color:#031c10 !important;
+  box-shadow:0 4px 14px rgba(110,229,166,.20), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-confirm:hover{ filter:brightness(1.06); }
+
+/* —— LOGIN refinado ————————————————————— */
+.login-card{
+  background:linear-gradient(180deg,var(--bg-2),var(--bg-1)) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:20px !important;
+  padding:44px 36px !important;
+  box-shadow:var(--shadow-lg);
+}
+.login-title{
+  font-family:'Outfit',sans-serif !important;
+  font-style:normal !important;
+  font-size:1.35rem !important;
+  font-weight:600 !important;
+  letter-spacing:-.02em !important;
+  color:var(--ink-1) !important;
+}
+.login-sub{ font-size:.88rem !important; color:var(--ink-3) !important; font-weight:400 !important; }
+.field label{
+  font-size:.68rem !important;
+  font-weight:600 !important;
+  letter-spacing:.14em !important;
+  color:var(--ink-3) !important;
+}
+.field input{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:10px !important;
+  padding:13px 16px !important;
+  font-size:.95rem !important;
+  color:var(--ink-1) !important;
+  transition:all .15s ease;
+}
+.field input:focus{
+  border-color:var(--acc-line) !important;
+  box-shadow:0 0 0 3px rgba(110,229,166,.08);
+  background:var(--bg-2) !important;
+}
+.btn-login{
+  height:46px !important;
+  padding:0 !important;
+  border-radius:10px !important;
+  background:linear-gradient(135deg,var(--acc),var(--acc-2)) !important;
+  color:#031c10 !important;
+  font-size:.93rem !important;
+  font-weight:700 !important;
+  letter-spacing:-.005em !important;
+  box-shadow:0 4px 16px rgba(110,229,166,.22), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  transition:transform .1s ease, filter .15s ease;
+}
+.btn-login:hover{ filter:brightness(1.06); transform:translateY(-1px); }
+.btn-login:active{ transform:translateY(0); }
+
+/* —— TOAST refinado ———————————————————— */
+.toast{
+  border-radius:11px !important;
+  padding:13px 20px !important;
+  font-size:.85rem !important;
+  font-weight:500 !important;
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  box-shadow:var(--shadow-md);
+}
+.toast.success{ background:rgba(110,229,166,.14) !important; border:1px solid var(--acc-line) !important; color:var(--acc) !important; }
+.toast.error{ background:var(--danger-soft) !important; border:1px solid var(--danger-line) !important; color:var(--danger) !important; }
+.toast.info{ background:var(--info-soft) !important; border:1px solid rgba(126,197,255,.22) !important; color:var(--info) !important; }
+
+/* —— HISTÓRICO refinado ———————————————— */
+.hist-card{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:11px !important;
+  padding:14px 16px !important;
+  transition:all .12s ease;
+}
+.hist-card:hover{ border-color:var(--acc-line) !important; background:var(--bg-2) !important; transform:translateY(-1px); }
+.hist-card-nome{ font-size:.92rem !important; font-weight:600 !important; color:var(--ink-1) !important; }
+.hist-card-meta{ font-size:.76rem !important; color:var(--ink-3) !important; }
+
+/* —— MEET section refinada ——————————————— */
+.meet-section{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:var(--r-lg) !important;
+  padding:18px 20px !important;
+}
+.meet-input{
+  background:var(--bg-2) !important;
+  border:1px solid var(--line-2) !important;
+  border-radius:10px !important;
+  padding:11px 14px !important;
+  color:var(--ink-1) !important;
+}
+.meet-input:focus{ border-color:var(--acc-line) !important; box-shadow:0 0 0 3px rgba(110,229,166,.08); }
+
+/* —— SLOT TABS refinadas ——————————————— */
+.slot-tabs{ margin-bottom:14px; }
+.slot-tab-btn{
+  background:var(--bg-1) !important;
+  border:1px solid var(--line-1) !important;
+  border-radius:9px !important;
+  font-size:.8rem !important;
+  font-weight:500 !important;
+  color:var(--ink-3) !important;
+  transition:all .12s ease;
+}
+.slot-tab-btn:hover{ border-color:var(--line-3) !important; color:var(--ink-1) !important; }
+.slot-tab-btn.active{
+  background:var(--acc-soft) !important;
+  border-color:var(--acc-line) !important;
+  color:var(--ink-1) !important;
+  font-weight:600 !important;
+}
+
+/* —— SCROLLBAR mais sutil ———————————————— */
+::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.08); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,.16); }
+
+/* —— FOCUS ring acessível em tudo que é interativo —— */
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, [role="button"]:focus-visible, .tab:focus-visible{
+  outline:2px solid var(--acc) !important;
+  outline-offset:2px;
+  border-radius:8px;
+}
+
+/* —— Selection color ———————————————————— */
+::selection{ background:rgba(110,229,166,.28); color:var(--ink-1); }
+
+/* ════════════════════════════════════════════════════════════════════
+   MOBILE — refinements premium
+   ════════════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .nav{ padding:0 12px !important; gap:8px !important; height:58px !important; }
+  :root{ --nav-h:58px; }
+  .nav-brand span{ font-size:.88rem !important; }
+  .nav-tag-24h{ display:none; }
+  .plantao-btn{ height:34px; padding:0 10px !important; }
+
+  .main{ padding:14px 12px 96px !important; }
+
+  /* Atend header mobile com hierarquia clara */
+  .atend-header{
+    padding:12px 14px !important;
+    background:var(--bg-1);
+    border:1px solid var(--line-1);
+    border-radius:var(--r-lg);
+    margin-bottom:12px !important;
+    gap:10px !important;
+  }
+  .atend-nome{ font-size:1.05rem !important; }
+  .atend-tag{ font-size:.68rem !important; padding:3px 8px !important; }
+  .atend-timer{ font-size:.72rem !important; padding:3px 8px; }
+
+  /* Triagem box mobile */
+  .triagem-box{ padding:14px 16px !important; border-radius:var(--r-lg) !important; }
+  .triagem-grid{ gap:12px 14px !important; grid-template-columns:1fr 1fr !important; }
+  .triagem-item label, .triagem-queixa label{ font-size:.62rem !important; }
+  .triagem-item span{ font-size:.83rem !important; }
+  .triagem-queixa{ padding:11px 13px; }
+  .triagem-queixa span{ font-size:.88rem !important; }
+
+  /* Tabs mobile — touch friendly */
+  .tabs{ padding:3px !important; }
+  .tab{ height:44px !important; font-size:.82rem !important; min-height:44px; }
+
+  /* Chat mobile */
+  .chat-medico-msgs{ padding:18px 14px !important; }
+  .cmsg .bub{ font-size:.91rem !important; padding:10px 14px !important; }
+
+  /* Cards de fila mobile */
+  .paciente-card, .fila-card{ padding:13px !important; }
+  .pc-nome{ font-size:.9rem !important; }
+
+  /* Sidebar drawer premium */
+  .sidebar{
+    background:linear-gradient(180deg,var(--bg-2),var(--bg-0)) !important;
+    box-shadow:8px 0 32px rgba(0,0,0,.6) !important;
+    border-right:1px solid var(--line-2) !important;
+  }
+  .sidebar-title{ font-size:.66rem !important; padding:12px 6px 8px !important; }
+
+  /* Botão fila no nav */
+  #nav-fila-btn{
+    width:38px !important; height:38px !important;
+    background:var(--bg-2) !important;
+    border:1px solid var(--line-2) !important;
+    color:var(--ink-2) !important;
+    border-radius:10px !important;
+  }
+  #nav-fila-btn:active{ background:var(--bg-3) !important; }
+  #nav-fila-badge{
+    background:var(--danger) !important;
+    border:2px solid var(--bg-0) !important;
+    font-size:.6rem !important;
+    min-width:18px !important; height:18px !important;
+  }
+
+  /* Modal mobile vira bottom sheet polished */
+  .modal{
+    border-radius:20px 20px 0 0 !important;
+    padding:24px 20px !important;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important;
+  }
+  .modal::before{
+    content:''; display:block;
+    width:38px; height:4px; border-radius:999px;
+    background:var(--line-3); margin:-8px auto 16px;
+  }
+
+  /* Toast mobile */
+  .toast{ font-size:.84rem !important; padding:11px 16px !important; top:62px !important; }
+
+  /* Chat fullscreen header refinado */
+  #chat-mobile-header{
+    padding:12px 14px !important;
+    background:linear-gradient(180deg,var(--bg-2),var(--bg-1)) !important;
+    border-bottom:1px solid var(--line-1) !important;
+    min-height:60px !important;
+  }
+  #chat-mobile-header .cmh-back{
+    width:36px; height:36px;
+    border-radius:9px;
+    background:var(--bg-3);
+    color:var(--ink-1) !important;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem !important;
+  }
+  #chat-mobile-header .cmh-nome{ font-size:.95rem !important; font-weight:600 !important; }
+  #chat-mobile-header .cmh-meta{ font-size:.7rem !important; color:var(--ink-3) !important; }
+  #chat-mobile-header .cmh-btn{
+    height:34px; padding:0 11px;
+    background:var(--bg-3) !important;
+    border:1px solid var(--line-2) !important;
+    border-radius:8px !important;
+    font-size:.74rem !important;
+    color:var(--ink-2) !important;
+  }
+  #chat-mobile-header .cmh-btn.green{ background:var(--acc-soft) !important; border-color:var(--acc-line) !important; color:var(--acc) !important; }
+  #chat-mobile-header .cmh-btn.red{ background:var(--danger-soft) !important; border-color:var(--danger-line) !important; color:var(--danger) !important; }
+
+  /* Action buttons mobile com altura uniforme */
+  .atend-actions .btn-wpp,
+  .atend-actions #btn-memed,
+  .atend-actions .btn-encerrar{
+    height:38px !important;
+    padding:0 13px !important;
+    font-size:.78rem !important;
+    border-radius:9px !important;
+  }
+
+  /* Login mobile */
+  .login-card{ padding:36px 24px !important; border-radius:18px !important; }
+  .login-title{ font-size:1.2rem !important; }
+}
+
+/* —— Reduce motion —— */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
 </style>
 
 </head>
-<body>
-<div class="bg-mesh" aria-hidden="true"></div>
-<div id="screen-login">
-  <div class="login-card">
-    <div class="login-logo"><div class="dot"></div><span><span class="c1">Consulta</span><span class="c2">Já</span><span class="tag">· Painel Médico</span></span></div>
-    <div class="login-title">Acesso restrito</div>
-    <div class="login-sub">Entre com suas credenciais para acessar o painel</div>
-    <div class="field"><label>E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
-    <div class="field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/></div>
-    <div class="field" id="field-admin-pwd" style="display:none"><label style="color:rgba(255,189,46,.7)">Senha admin (opcional)</label><input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off"/></div>
-    <button class="btn-login" id="btn-login">Entrar no painel</button>
-    <div style="text-align:center;margin-top:8px;display:flex;justify-content:space-between">
-      <button onclick="toggleAdminField()" style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.72rem;cursor:pointer;font-family:inherit">Sou administrador</button>
-      <button class="login-link" onclick="abrirRecuperacao()">Esqueci minha senha</button>
+<body data-src-loc="93400:93406:237844" data-om-id="7a51b7dc:8">
+<div class="bg-mesh" aria-hidden="true" data-src-loc="93407:93447:93453" data-om-id="7a51b7dc:9"></div>
+<div id="screen-login" data-src-loc="93454:93477:95916" data-om-id="7a51b7dc:10">
+  <div class="login-card" data-src-loc="93480:93504:95909" data-om-id="7a51b7dc:11">
+    <div class="login-logo" data-src-loc="93509:93533:93676" data-om-id="7a51b7dc:12"><div class="dot" data-src-loc="93533:93550:93556" data-om-id="7a51b7dc:13"></div><span data-src-loc="93556:93562:93670" data-om-id="7a51b7dc:14"><span class="c1" data-src-loc="93562:93579:93594" data-om-id="7a51b7dc:15">Consulta</span><span class="c2" data-src-loc="93594:93611:93621" data-om-id="7a51b7dc:16">Já</span><span class="tag" data-src-loc="93621:93639:93663" data-om-id="7a51b7dc:17">· Painel Médico</span></span></div>
+    <div class="login-title" data-src-loc="93681:93706:93727" data-om-id="7a51b7dc:18">Acesso restrito</div>
+    <div class="login-sub" data-src-loc="93732:93755:93809" data-om-id="7a51b7dc:19">Entre com suas credenciais para acessar o painel</div>
+    <div class="field" data-src-loc="93814:93833:93945" data-om-id="7a51b7dc:20"><label data-src-loc="93833:93840:93854" data-om-id="7a51b7dc:21">E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email" data-src-loc="93854:93939:93939" data-om-id="7a51b7dc:22"/></div>
+    <div class="field" data-src-loc="93950:93969:94105" data-om-id="7a51b7dc:23"><label data-src-loc="93969:93976:93989" data-om-id="7a51b7dc:24">Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password" data-src-loc="93989:94099:94099" data-om-id="7a51b7dc:25"/></div>
+    <div class="field" id="field-admin-pwd" style="display:none" data-src-loc="94110:94171:94349" data-om-id="7a51b7dc:26"><label style="color:rgba(255,189,46,.7)" data-src-loc="94171:94212:94242" data-om-id="7a51b7dc:27">Senha admin (opcional)</label><input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off" data-src-loc="94242:94343:94343" data-om-id="7a51b7dc:28"/></div>
+    <button class="btn-login" id="btn-login" data-src-loc="94354:94395:94420" data-om-id="7a51b7dc:29">Entrar no painel</button>
+    <div style="text-align:center;margin-top:8px;display:flex;justify-content:space-between" data-src-loc="94425:94514:94802" data-om-id="7a51b7dc:30">
+      <button onclick="toggleAdminField()" style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.72rem;cursor:pointer;font-family:inherit" data-src-loc="94521:94674:94700" data-om-id="7a51b7dc:31">Sou administrador</button>
+      <button class="login-link" onclick="abrirRecuperacao()" data-src-loc="94707:94763:94791" data-om-id="7a51b7dc:32">Esqueci minha senha</button>
     </div>
-    <div class="login-err" id="login-err">E-mail ou senha incorretos.</div>
+    <div class="login-err" id="login-err" data-src-loc="94807:94845:94878" data-om-id="7a51b7dc:33">E-mail ou senha incorretos.</div>
     <!-- Recuperação inline -->
-    <div id="recovery-section" style="display:none;margin-top:16px;border-top:1px solid rgba(255,255,255,.07);padding-top:16px">
-      <div style="font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:10px">Digite seu e-mail cadastrado:</div>
-      <div class="field" style="margin-bottom:10px"><input type="email" id="inp-recovery-email" placeholder="seu@email.com" autocomplete="email" style="width:100%;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:.88rem;outline:none;box-sizing:border-box"/></div>
-      <button onclick="enviarRecuperacao()" id="btn-recovery" style="width:100%;padding:11px;border-radius:10px;border:none;background:rgba(180,224,90,.15);border:1px solid rgba(180,224,90,.25);color:#b4e05a;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer">Enviar senha temporária</button>
-      <div class="recovery-msg" id="recovery-msg"></div>
+    <div id="recovery-section" style="display:none;margin-top:16px;border-top:1px solid rgba(255,255,255,.07);padding-top:16px" data-src-loc="94917:95041:95900" data-om-id="7a51b7dc:34">
+      <div style="font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:10px" data-src-loc="95048:95123:95158" data-om-id="7a51b7dc:35">Digite seu e-mail cadastrado:</div>
+      <div class="field" style="margin-bottom:10px" data-src-loc="95165:95211:95521" data-om-id="7a51b7dc:36"><input type="email" id="inp-recovery-email" placeholder="seu@email.com" autocomplete="email" style="width:100%;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:.88rem;outline:none;box-sizing:border-box" data-src-loc="95211:95515:95515" data-om-id="7a51b7dc:37"/></div>
+      <button onclick="enviarRecuperacao()" id="btn-recovery" style="width:100%;padding:11px;border-radius:10px;border:none;background:rgba(180,224,90,.15);border:1px solid rgba(180,224,90,.25);color:#b4e05a;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer" data-src-loc="95528:95799:95832" data-om-id="7a51b7dc:38">Enviar senha temporária</button>
+      <div class="recovery-msg" id="recovery-msg" data-src-loc="95839:95883:95889" data-om-id="7a51b7dc:39"></div>
     </div>
   </div>
 </div>
-<div id="screen-app">
-  <nav class="nav">
-    <a href="#" class="nav-brand"><div class="live-dot" id="nav-dot"></div><span><span class="c1">Consulta</span><span class="c2">Já</span><span class="nav-tag-24h">24h</span></span></a>
-    <div class="nav-spacer"></div>
-    <div class="nav-medico">Olá, <strong id="nav-nome"></strong></div>
-    <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
+<div id="screen-app" data-src-loc="95917:95938:121369" data-om-id="7a51b7dc:40">
+  <nav class="nav" data-src-loc="95941:95958:97083" data-om-id="7a51b7dc:41">
+    <a href="#" class="nav-brand" data-src-loc="95963:95993:96146" data-om-id="7a51b7dc:42"><div class="live-dot" id="nav-dot" data-src-loc="95993:96028:96034" data-om-id="7a51b7dc:43"></div><span data-src-loc="96034:96040:96142" data-om-id="7a51b7dc:44"><span class="c1" data-src-loc="96040:96057:96072" data-om-id="7a51b7dc:45">Consulta</span><span class="c2" data-src-loc="96072:96089:96099" data-om-id="7a51b7dc:46">Já</span><span class="nav-tag-24h" data-src-loc="96099:96125:96135" data-om-id="7a51b7dc:47">24h</span></span></a>
+    <div class="nav-spacer" data-src-loc="96151:96175:96181" data-om-id="7a51b7dc:48"></div>
+    <div class="nav-medico" data-src-loc="96186:96210:96253" data-om-id="7a51b7dc:49">Olá, <strong id="nav-nome" data-src-loc="96216:96238:96247" data-om-id="7a51b7dc:50"></strong></div>
+    <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()" data-src-loc="96258:96337:96431" data-om-id="7a51b7dc:51"><div class="plantao-indicator" data-src-loc="96337:96368:96374" data-om-id="7a51b7dc:52"></div><span id="plantao-txt" data-src-loc="96374:96397:96422" data-om-id="7a51b7dc:53">Entrar em plantão</span></button>
     <!-- Botão fila mobile - só aparece em mobile autenticado -->
-    <button id="nav-fila-btn" onclick="toggleSidebarMobile()" aria-label="Ver fila de pacientes" title="Ver fila">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    <button id="nav-fila-btn" onclick="toggleSidebarMobile()" aria-label="Ver fila de pacientes" title="Ver fila" data-src-loc="96504:96614:97010" data-om-id="7a51b7dc:54">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-src-loc="96621:96767:96955" data-om-id="7a51b7dc:55">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" data-src-loc="96776:96829" data-om-id="nc:96776"/><circle cx="9" cy="7" r="4" data-src-loc="96829:96858" data-om-id="nc:96829"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" data-src-loc="96867:96905" data-om-id="nc:96867"/><path d="M16 3.13a4 4 0 0 1 0 7.75" data-src-loc="96905:96942" data-om-id="nc:96905"/>
       </svg>
-      <span id="nav-fila-badge">0</span>
+      <span id="nav-fila-badge" data-src-loc="96962:96988:96996" data-om-id="7a51b7dc:56">0</span>
     </button>
-    <button class="nav-logout" onclick="logout()">Sair</button>
+    <button class="nav-logout" onclick="logout()" data-src-loc="97015:97061:97074" data-om-id="7a51b7dc:57">Sair</button>
   </nav>
-  <div class="app-body" id="app-body">
-    <aside class="sidebar" id="sidebar">
+  <div class="app-body" id="app-body" data-src-loc="97086:97122:121362" data-om-id="7a51b7dc:58">
+    <aside class="sidebar" id="sidebar" data-src-loc="97127:97163:102333" data-om-id="7a51b7dc:59">
 
   <!-- Toggle desktop: handle na borda direita - oculto até autenticação (BUG 3) -->
-  <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebarDesktop()" title="Minimizar/expandir fila" aria-label="Toggle fila" style="display:none">
+  <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebarDesktop()" title="Minimizar/expandir fila" aria-label="Toggle fila" style="display:none" data-src-loc="97255:97417:97650" data-om-id="7a51b7dc:60">
     <!-- chevron left -->
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-src-loc="97448:97596:97638" data-om-id="7a51b7dc:61"><polyline points="15 18 9 12 15 6" data-src-loc="97596:97632" data-om-id="nc:97596"/></svg>
   </button>
 
   <!-- Rail minimizado (só ícone + badge + label) -->
-  <div class="sidebar-rail" id="sidebar-rail">
-    <button onclick="toggleSidebarDesktop()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.45);padding:6px;display:flex;flex-direction:column;align-items:center;gap:5px;width:100%;position:relative" title="Expandir fila de pacientes" aria-label="Expandir fila">
+  <div class="sidebar-rail" id="sidebar-rail" data-src-loc="97710:97754:98620" data-om-id="7a51b7dc:62">
+    <button onclick="toggleSidebarDesktop()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.45);padding:6px;display:flex;flex-direction:column;align-items:center;gap:5px;width:100%;position:relative" title="Expandir fila de pacientes" aria-label="Expandir fila" data-src-loc="97759:98044:98611" data-om-id="7a51b7dc:63">
       <!-- ícone de fila -->
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-src-loc="98081:98180:98343" data-om-id="7a51b7dc:64"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" data-src-loc="98180:98233" data-om-id="nc:98180"/><circle cx="9" cy="7" r="4" data-src-loc="98233:98262" data-om-id="nc:98233"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" data-src-loc="98262:98300" data-om-id="nc:98262"/><path d="M16 3.13a4 4 0 0 1 0 7.75" data-src-loc="98300:98337" data-om-id="nc:98300"/></svg>
       <!-- badge: vermelho = aguardando, claramente diferente dos badges verdes normais -->
-      <span class="rail-badge" id="rail-badge">0</span>
+      <span class="rail-badge" id="rail-badge" data-src-loc="98442:98483:98491" data-om-id="7a51b7dc:65">0</span>
       <!-- label: contexto claro do que o badge representa -->
-      <span class="rail-label">fila</span>
+      <span class="rail-label" data-src-loc="98561:98586:98597" data-om-id="7a51b7dc:66">fila</span>
     </button>
   </div>
 
   <!-- Conteúdo normal da sidebar -->
-  <div class="sidebar-inner" id="sidebar-inner">
-    <div class="sidebar-title">Fila de pacientes <span style="display:flex;align-items:center;gap:8px"><span class="fila-count" id="fila-count">0</span><button id="btn-fechar-sidebar" onclick="fecharSidebarMobile()" style="display:none;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:0 2px;line-height:1" title="Fechar">✕</button></span></div>
-    <div id="fila-lista"><div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><p>Nenhum paciente<br>aguardando atendimento</p></div></div>
-    <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">📅 Agendamentos <span class="fila-count" id="agend-count">0</span></div>
-    <div id="agend-lista" style="display:none"></div>
-    <div class="sidebar-title" id="admin-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleAdmin()">👥 Médicos pendentes <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e">0</span></div>
-    <div id="admin-medicos-lista" style="display:none"></div>
-    <div class="sidebar-title" id="admin-hist-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleHistoricoGeral()">📊 Histórico geral <span class="fila-count" id="admin-hist-count" style="background:rgba(94,180,224,.1);color:#5eb4e0">-</span></div>
-    <div id="admin-hist-filtros" style="display:none;margin-bottom:8px;padding:8px;background:rgba(255,255,255,.04);border-radius:8px;gap:6px;flex-direction:column" class="admin-hist-filters">
-      <select id="admin-hist-medico" onchange="carregarHistoricoGeral()" style="background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:6px 8px;font-size:.78rem;width:100%"><option value="">Todos os médicos</option></select>
-      <div style="display:flex;gap:6px">
-        <input type="date" id="admin-hist-inicio" onchange="carregarHistoricoGeral()" style="flex:1;background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:5px 6px;font-size:.75rem">
-        <input type="date" id="admin-hist-fim" onchange="carregarHistoricoGeral()" style="flex:1;background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:5px 6px;font-size:.75rem">
+  <div class="sidebar-inner" id="sidebar-inner" data-src-loc="98663:98709:102301" data-om-id="7a51b7dc:67">
+    <div class="sidebar-title" data-src-loc="98714:98741:99094" data-om-id="7a51b7dc:68">Fila de pacientes <span style="display:flex;align-items:center;gap:8px" data-src-loc="98759:98813:99088" data-om-id="7a51b7dc:69"><span class="fila-count" id="fila-count" data-src-loc="98813:98854:98862" data-om-id="7a51b7dc:70">0</span><button id="btn-fechar-sidebar" onclick="fecharSidebarMobile()" style="display:none;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:0 2px;line-height:1" title="Fechar" data-src-loc="98862:99069:99081" data-om-id="7a51b7dc:71">✕</button></span></div>
+    <div id="fila-lista" data-src-loc="99099:99120:99468" data-om-id="7a51b7dc:72"><div class="fila-vazia" data-src-loc="99120:99144:99462" data-om-id="7a51b7dc:73"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-src-loc="99144:99245:99408" data-om-id="7a51b7dc:74"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" data-src-loc="99245:99298" data-om-id="nc:99245"/><circle cx="9" cy="7" r="4" data-src-loc="99298:99327" data-om-id="nc:99298"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" data-src-loc="99327:99365" data-om-id="nc:99327"/><path d="M16 3.13a4 4 0 0 1 0 7.75" data-src-loc="99365:99402" data-om-id="nc:99365"/></svg><p data-src-loc="99408:99411" data-om-id="7a51b7dc:75">Nenhum paciente<br data-src-loc="99426:99430:99430" data-om-id="7a51b7dc:76">aguardando atendimento</p></div></div>
+    <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()" data-src-loc="99473:99570:99644" data-om-id="7a51b7dc:77">📅 Agendamentos <span class="fila-count" id="agend-count" data-src-loc="99588:99630:99638" data-om-id="7a51b7dc:78">0</span></div>
+    <div id="agend-lista" style="display:none" data-src-loc="99649:99692:99698" data-om-id="7a51b7dc:79"></div>
+    <div class="sidebar-title" id="admin-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleAdmin()" data-src-loc="99703:99825:99968" data-om-id="7a51b7dc:80">👥 Médicos pendentes <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e" data-src-loc="99849:99954:99962" data-om-id="7a51b7dc:81">0</span></div>
+    <div id="admin-medicos-lista" style="display:none" data-src-loc="99973:100024:100030" data-om-id="7a51b7dc:82"></div>
+    <div class="sidebar-title" id="admin-hist-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleHistoricoGeral()" data-src-loc="100035:100171:100307" data-om-id="7a51b7dc:83">📊 Histórico geral <span class="fila-count" id="admin-hist-count" style="background:rgba(94,180,224,.1);color:#5eb4e0" data-src-loc="100193:100293:100301" data-om-id="7a51b7dc:84">-</span></div>
+    <div id="admin-hist-filtros" style="display:none;margin-bottom:8px;padding:8px;background:rgba(255,255,255,.04);border-radius:8px;gap:6px;flex-direction:column" class="admin-hist-filters" data-src-loc="100312:100500:101552" data-om-id="7a51b7dc:85">
+      <select id="admin-hist-medico" onchange="carregarHistoricoGeral()" style="background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:6px 8px;font-size:.78rem;width:100%" data-src-loc="100507:100712:100764" data-om-id="7a51b7dc:86"><option value="" data-src-loc="100712:100729" data-om-id="7a51b7dc:87">Todos os médicos</option></select>
+      <div style="display:flex;gap:6px" data-src-loc="100771:100805:101257" data-om-id="7a51b7dc:88">
+        <input type="date" id="admin-hist-inicio" onchange="carregarHistoricoGeral()" style="flex:1;background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:5px 6px;font-size:.75rem" data-src-loc="100814:101026:101026" data-om-id="7a51b7dc:89">
+        <input type="date" id="admin-hist-fim" onchange="carregarHistoricoGeral()" style="flex:1;background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:5px 6px;font-size:.75rem" data-src-loc="101035:101244:101244" data-om-id="7a51b7dc:90">
       </div>
-      <input type="text" id="admin-hist-busca" placeholder="Buscar paciente/CPF/tel..." oninput="carregarHistoricoGeral()" style="background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:6px 8px;font-size:.78rem;width:100%;box-sizing:border-box">
+      <input type="text" id="admin-hist-busca" placeholder="Buscar paciente/CPF/tel..." oninput="carregarHistoricoGeral()" style="background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:6px 8px;font-size:.78rem;width:100%;box-sizing:border-box" data-src-loc="101264:101541:101541" data-om-id="7a51b7dc:91">
     </div>
-    <div id="admin-hist-lista" style="display:none"></div>
-    <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">📋 Meu histórico <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span></div>
-    <div id="hist-busca-wrap" style="display:none;padding:6px 0 2px">
-      <input type="text" id="hist-busca" placeholder="Buscar paciente, CPF, tel..." oninput="renderHistorico()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:8px;padding:7px 10px;font-size:.78rem;width:100%;box-sizing:border-box;font-family:'Outfit',sans-serif">
+    <div id="admin-hist-lista" style="display:none" data-src-loc="101557:101605:101611" data-om-id="7a51b7dc:92"></div>
+    <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()" data-src-loc="101616:101710:101838" data-om-id="7a51b7dc:93">📋 Meu histórico <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0" data-src-loc="101730:101824:101832" data-om-id="7a51b7dc:94">0</span></div>
+    <div id="hist-busca-wrap" style="display:none;padding:6px 0 2px" data-src-loc="101843:101908:102239" data-om-id="7a51b7dc:95">
+      <input type="text" id="hist-busca" placeholder="Buscar paciente, CPF, tel..." oninput="renderHistorico()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:8px;padding:7px 10px;font-size:.78rem;width:100%;box-sizing:border-box;font-family:'Outfit',sans-serif" data-src-loc="101915:102228:102228" data-om-id="7a51b7dc:96">
     </div>
-    <div id="hist-lista" style="display:none"></div>
+    <div id="hist-lista" style="display:none" data-src-loc="102244:102286:102292" data-om-id="7a51b7dc:97"></div>
   </div><!-- /sidebar-inner -->
 </aside>
 
 <!-- Overlay mobile -->
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="fecharSidebarMobile()"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="fecharSidebarMobile()" data-src-loc="102359:102441:102447" data-om-id="7a51b7dc:98"></div>
 
-<main class="main" id="main-content">
-  <div class="offline-state" id="state-offline">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    <h2>Você está offline</h2><p>Entre em plantão para receber e visualizar pacientes na fila.</p>
-    <div class="offline-badge"><div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></div>Plantão inativo</div>
-    <button class="plantao-btn offline" style="margin-top:16px" onclick="togglePlantao()"><div class="plantao-indicator"></div><span>Entrar em plantão</span></button>
+<main class="main" id="main-content" data-src-loc="102449:102486:121352" data-om-id="7a51b7dc:99">
+  <div class="offline-state" id="state-offline" data-src-loc="102489:102535:103140" data-om-id="7a51b7dc:100">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" data-src-loc="102540:102641:102717" data-om-id="7a51b7dc:101"><circle cx="12" cy="12" r="10" data-src-loc="102641:102673" data-om-id="nc:102641"/><line x1="8" y1="12" x2="16" y2="12" data-src-loc="102673:102711" data-om-id="nc:102673"/></svg>
+    <h2 data-src-loc="102722:102726:102750" data-om-id="7a51b7dc:102">Você está offline</h2><p data-src-loc="102750:102753" data-om-id="7a51b7dc:103">Entre em plantão para receber e visualizar pacientes na fila.</p>
+    <div class="offline-badge" data-src-loc="102824:102851:102963" data-om-id="7a51b7dc:104"><div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)" data-src-loc="102851:102935:102941" data-om-id="7a51b7dc:105"></div>Plantão inativo</div>
+    <button class="plantao-btn offline" style="margin-top:16px" onclick="togglePlantao()" data-src-loc="102968:103054:103131" data-om-id="7a51b7dc:106"><div class="plantao-indicator" data-src-loc="103054:103085:103091" data-om-id="7a51b7dc:107"></div><span data-src-loc="103091:103097:103122" data-om-id="7a51b7dc:108">Entrar em plantão</span></button>
   </div>
-  <div class="empty-state" id="state-empty" style="display:none">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-    <h2>Fila vazia</h2><p>Nenhum paciente aguardando no momento.</p>
+  <div class="empty-state" id="state-empty" style="display:none" data-src-loc="103143:103206:103478" data-om-id="7a51b7dc:109">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" data-src-loc="103211:103312:103400" data-om-id="7a51b7dc:110"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" data-src-loc="103312:103365" data-om-id="nc:103312"/><circle cx="9" cy="7" r="4" data-src-loc="103365:103394" data-om-id="nc:103365"/></svg>
+    <h2 data-src-loc="103405:103409:103424" data-om-id="7a51b7dc:111">Fila vazia</h2><p data-src-loc="103424:103427" data-om-id="7a51b7dc:112">Nenhum paciente aguardando no momento.</p>
   </div>
-  <div id="state-atend" style="display:none">
+  <div id="state-atend" style="display:none" data-src-loc="103481:103524:121344" data-om-id="7a51b7dc:113">
     <!-- DUAL CONSULT: seletor de atendimentos -->
-    <div class="slot-tabs" id="slot-tabs"></div>
-    <div class="atend-header">
-      <div class="atend-paciente">
-        <div class="atend-nome" id="atend-nome">-</div>
-        <div class="atend-meta">
-          <span class="atend-tag" id="atend-tipo-tag">-</span>
-          <span class="atend-tag crm" id="atend-crm-tag">-</span>
-          <span class="atend-tag historico-badge" id="atend-hist-badge" style="display:none">📋 Histórico</span>
-          <div class="atend-timer" id="atend-timer-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span id="atend-timer">00:00</span></div>
+    <div class="slot-tabs" id="slot-tabs" data-src-loc="103580:103618:103624" data-om-id="7a51b7dc:114"></div>
+    <div class="atend-header" data-src-loc="103629:103655:106832" data-om-id="7a51b7dc:115">
+      <div class="atend-paciente" data-src-loc="103662:103690:104325" data-om-id="7a51b7dc:116">
+        <div class="atend-nome" id="atend-nome" data-src-loc="103699:103739:103746" data-om-id="7a51b7dc:117">-</div>
+        <div class="atend-meta" data-src-loc="103755:103779:104312" data-om-id="7a51b7dc:118">
+          <span class="atend-tag" id="atend-tipo-tag" data-src-loc="103790:103834:103842" data-om-id="7a51b7dc:119">-</span>
+          <span class="atend-tag crm" id="atend-crm-tag" data-src-loc="103853:103900:103908" data-om-id="7a51b7dc:120">-</span>
+          <span class="atend-tag historico-badge" id="atend-hist-badge" style="display:none" data-src-loc="103919:104002:104024" data-om-id="7a51b7dc:121">📋 Histórico</span>
+          <div class="atend-timer" id="atend-timer-wrap" data-src-loc="104035:104082:104297" data-om-id="7a51b7dc:122"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-src-loc="104082:104181:104256" data-om-id="7a51b7dc:123"><circle cx="12" cy="12" r="10" data-src-loc="104181:104213" data-om-id="nc:104181"/><polyline points="12 6 12 12 16 14" data-src-loc="104213:104250" data-om-id="nc:104213"/></svg><span id="atend-timer" data-src-loc="104256:104279:104291" data-om-id="7a51b7dc:124">00:00</span></div>
         </div>
       </div>
-      <div class="atend-actions" id="atend-actions-live">
-        <a href="#" class="btn-wpp" id="btn-wpp" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>WhatsApp</a>
-        <button onclick="abrirMemed()" style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(180,224,90,.25);background:rgba(180,224,90,.08);color:#b4e05a;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s" id="btn-memed">💊 Prescrever</button>
+      <div class="atend-actions" id="atend-actions-live" data-src-loc="104332:104383:106249" data-om-id="7a51b7dc:125">
+        <a href="#" class="btn-wpp" id="btn-wpp" target="_blank" data-src-loc="104392:104449:105660" data-om-id="7a51b7dc:126"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" data-src-loc="104449:104517:105648" data-om-id="7a51b7dc:127"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" data-src-loc="104517:105642" data-om-id="nc:104517"/></svg>WhatsApp</a>
+        <button onclick="abrirMemed()" style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(180,224,90,.25);background:rgba(180,224,90,.08);color:#b4e05a;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s" id="btn-memed" data-src-loc="105669:105983:106007" data-om-id="7a51b7dc:128">💊 Prescrever</button>
 
-        <button class="btn-encerrar" onclick="abrirModalEncerrar()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Encerrar</button>
+        <button class="btn-encerrar" onclick="abrirModalEncerrar()" data-src-loc="106017:106077:106236" data-om-id="7a51b7dc:129"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" data-src-loc="106077:106178:106219" data-om-id="7a51b7dc:130"><polyline points="20 6 9 17 4 12" data-src-loc="106178:106213" data-om-id="nc:106178"/></svg>Encerrar</button>
       </div>
-      <div class="atend-actions" id="atend-actions-hist" style="display:none">
-        <button class="btn-voltar-hist" onclick="fecharHistoricoAtendimento()">← Voltar ao histórico</button>
-        <button id="btn-reabrir-atend" onclick="reabrirAtendimento()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,189,46,.3);background:rgba(255,189,46,.08);color:#ffbd2e;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s">↩ Reabrir consulta</button>
+      <div class="atend-actions" id="atend-actions-hist" style="display:none" data-src-loc="106256:106328:106821" data-om-id="7a51b7dc:131">
+        <button class="btn-voltar-hist" onclick="fecharHistoricoAtendimento()" data-src-loc="106337:106408:106441" data-om-id="7a51b7dc:132">← Voltar ao histórico</button>
+        <button id="btn-reabrir-atend" onclick="reabrirAtendimento()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,189,46,.3);background:rgba(255,189,46,.08);color:#ffbd2e;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s" data-src-loc="106450:106779:106808" data-om-id="7a51b7dc:133">↩ Reabrir consulta</button>
       </div>
     </div>
-    <div class="triagem-box">
-      <div class="triagem-box-title" onclick="toggleTriagem()">Dados do paciente<button class="triagem-toggle-btn" id="triagem-toggle-btn" tabindex="-1">▾</button></div>
-      <div class="triagem-body" id="triagem-body">
-      <div class="triagem-grid" style="margin-bottom:12px">
-        <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">-</span></div>
-        <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">-</span></div>
-        <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">-</span></div>
-        <div class="triagem-item"><label>Tel. documentos (SMS)</label><span id="tr-teldoc-pac">-</span></div>
-        <div class="triagem-item"><label>Data de nascimento</label><span id="tr-nascimento-pac">-</span></div>
-        <div class="triagem-item" style="grid-column:1/-1"><label>E-mail</label><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span id="tr-email-pac" style="font-size:.88rem;font-weight:400;color:rgba(255,255,255,.8)">-</span><button id="btn-copiar-email" onclick="copiarEmailPaciente()" style="display:none;padding:3px 10px;border-radius:6px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.07);color:#5ee0a0;font-family:Outfit,sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap" title="Copiar e-mail - útil para o Memed">Copiar</button></div></div>
-        <div class="triagem-item" style="grid-column:1/-1" id="tr-link-paciente-wrap"><label>Link do paciente</label><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><a id="tr-link-paciente" href="#" target="_blank" style="font-size:.82rem;color:#5ee0a0;word-break:break-all">-</a><button onclick="copiarLinkPaciente()" style="padding:3px 10px;border-radius:6px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.07);color:#5ee0a0;font-family:Outfit,sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap">Copiar</button></div><div style="font-size:.7rem;color:rgba(255,255,255,.25);margin-top:3px">Use apenas se o paciente perder acesso à sala</div></div>
+    <div class="triagem-box" data-src-loc="106837:106862:109853" data-om-id="7a51b7dc:134">
+      <div class="triagem-box-title" onclick="toggleTriagem()" data-src-loc="106869:106926:107034" data-om-id="7a51b7dc:135">Dados do paciente<button class="triagem-toggle-btn" id="triagem-toggle-btn" tabindex="-1" data-src-loc="106943:107016:107028" data-om-id="7a51b7dc:136">▾</button></div>
+      <div class="triagem-body" id="triagem-body" data-src-loc="107041:107085:109820" data-om-id="7a51b7dc:137">
+      <div class="triagem-grid" style="margin-bottom:12px" data-src-loc="107092:107145:109004" data-om-id="7a51b7dc:138">
+        <div class="triagem-item" data-src-loc="107154:107180:107236" data-om-id="7a51b7dc:139"><label data-src-loc="107180:107187:107199" data-om-id="7a51b7dc:140">Nome</label><span id="tr-nome-pac" data-src-loc="107199:107222:107230" data-om-id="7a51b7dc:141">-</span></div>
+        <div class="triagem-item" data-src-loc="107245:107271:107325" data-om-id="7a51b7dc:142"><label data-src-loc="107271:107278:107289" data-om-id="7a51b7dc:143">CPF</label><span id="tr-cpf-pac" data-src-loc="107289:107311:107319" data-om-id="7a51b7dc:144">-</span></div>
+        <div class="triagem-item" data-src-loc="107334:107360:107419" data-om-id="7a51b7dc:145"><label data-src-loc="107360:107367:107383" data-om-id="7a51b7dc:146">WhatsApp</label><span id="tr-tel-pac" data-src-loc="107383:107405:107413" data-om-id="7a51b7dc:147">-</span></div>
+        <div class="triagem-item" data-src-loc="107428:107454:107529" data-om-id="7a51b7dc:148"><label data-src-loc="107454:107461:107490" data-om-id="7a51b7dc:149">Tel. documentos (SMS)</label><span id="tr-teldoc-pac" data-src-loc="107490:107515:107523" data-om-id="7a51b7dc:150">-</span></div>
+        <div class="triagem-item" data-src-loc="107538:107564:107640" data-om-id="7a51b7dc:151"><label data-src-loc="107564:107571:107597" data-om-id="7a51b7dc:152">Data de nascimento</label><span id="tr-nascimento-pac" data-src-loc="107597:107626:107634" data-om-id="7a51b7dc:153">-</span></div>
+        <div class="triagem-item" style="grid-column:1/-1" data-src-loc="107649:107700:108277" data-om-id="7a51b7dc:154"><label data-src-loc="107700:107707:107721" data-om-id="7a51b7dc:155">E-mail</label><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap" data-src-loc="107721:107789:108271" data-om-id="7a51b7dc:156"><span id="tr-email-pac" style="font-size:.88rem;font-weight:400;color:rgba(255,255,255,.8)" data-src-loc="107789:107881:107889" data-om-id="7a51b7dc:157">-</span><button id="btn-copiar-email" onclick="copiarEmailPaciente()" style="display:none;padding:3px 10px;border-radius:6px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.07);color:#5ee0a0;font-family:Outfit,sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap" title="Copiar e-mail - útil para o Memed" data-src-loc="107889:108250:108265" data-om-id="7a51b7dc:158">Copiar</button></div></div>
+        <div class="triagem-item" style="grid-column:1/-1" id="tr-link-paciente-wrap" data-src-loc="108286:108364:108991" data-om-id="7a51b7dc:159"><label data-src-loc="108364:108371:108395" data-om-id="7a51b7dc:160">Link do paciente</label><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap" data-src-loc="108395:108463:108861" data-om-id="7a51b7dc:161"><a id="tr-link-paciente" href="#" target="_blank" style="font-size:.82rem;color:#5ee0a0;word-break:break-all" data-src-loc="108463:108573:108578" data-om-id="7a51b7dc:162">-</a><button onclick="copiarLinkPaciente()" style="padding:3px 10px;border-radius:6px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.07);color:#5ee0a0;font-family:Outfit,sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap" data-src-loc="108578:108840:108855" data-om-id="7a51b7dc:163">Copiar</button></div><div style="font-size:.7rem;color:rgba(255,255,255,.25);margin-top:3px" data-src-loc="108861:108933:108985" data-om-id="7a51b7dc:164">Use apenas se o paciente perder acesso à sala</div></div>
       </div>
-      <div class="triagem-box-title" style="margin-top:8px">Dados da triagem</div>
-      <div class="triagem-grid">
-        <div class="triagem-item"><label>Idade</label><span id="tr-idade">-</span></div>
-        <div class="triagem-item"><label>Sexo</label><span id="tr-sexo">-</span></div>
-        <div class="triagem-item"><label>Alergias</label><span id="tr-alergias">-</span></div>
-        <div class="triagem-item"><label>Comorbidades</label><span id="tr-cronicas">-</span></div>
-        <div class="triagem-item"><label>Medicações em uso</label><span id="tr-medicacoes">-</span></div>
-        <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
-        <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">-</span></div>
+      <div class="triagem-box-title" style="margin-top:8px" data-src-loc="109011:109065:109087" data-om-id="7a51b7dc:165">Dados da triagem</div>
+      <div class="triagem-grid" data-src-loc="109094:109120:109809" data-om-id="7a51b7dc:166">
+        <div class="triagem-item" data-src-loc="109129:109155:109209" data-om-id="7a51b7dc:167"><label data-src-loc="109155:109162:109175" data-om-id="7a51b7dc:168">Idade</label><span id="tr-idade" data-src-loc="109175:109195:109203" data-om-id="7a51b7dc:169">-</span></div>
+        <div class="triagem-item" data-src-loc="109218:109244:109296" data-om-id="7a51b7dc:170"><label data-src-loc="109244:109251:109263" data-om-id="7a51b7dc:171">Sexo</label><span id="tr-sexo" data-src-loc="109263:109282:109290" data-om-id="7a51b7dc:172">-</span></div>
+        <div class="triagem-item" data-src-loc="109305:109331:109391" data-om-id="7a51b7dc:173"><label data-src-loc="109331:109338:109354" data-om-id="7a51b7dc:174">Alergias</label><span id="tr-alergias" data-src-loc="109354:109377:109385" data-om-id="7a51b7dc:175">-</span></div>
+        <div class="triagem-item" data-src-loc="109400:109426:109490" data-om-id="7a51b7dc:176"><label data-src-loc="109426:109433:109453" data-om-id="7a51b7dc:177">Comorbidades</label><span id="tr-cronicas" data-src-loc="109453:109476:109484" data-om-id="7a51b7dc:178">-</span></div>
+        <div class="triagem-item" data-src-loc="109499:109525:109598" data-om-id="7a51b7dc:179"><label data-src-loc="109525:109532:109559" data-om-id="7a51b7dc:180">Medicações em uso</label><span id="tr-medicacoes" data-src-loc="109559:109584:109592" data-om-id="7a51b7dc:181">-</span></div>
+        <div class="triagem-item" data-src-loc="109607:109633:109693" data-om-id="7a51b7dc:182"><label data-src-loc="109633:109640:109656" data-om-id="7a51b7dc:183">Solicita</label><span id="tr-solicita" data-src-loc="109656:109679:109687" data-om-id="7a51b7dc:184">-</span></div>
+        <div class="triagem-queixa" data-src-loc="109702:109730:109796" data-om-id="7a51b7dc:185"><label data-src-loc="109730:109737:109761" data-om-id="7a51b7dc:186">Queixa principal</label><span id="tr-queixa" data-src-loc="109761:109782:109790" data-om-id="7a51b7dc:187">-</span></div>
       </div>
     </div><!-- /triagem-body -->
     </div>
     <!-- [MOBILE-UX] Header compacto do chat fullscreen -->
-    <div id="chat-mobile-header">
-      <button class="cmh-back" onclick="sairChatFullscreen()" title="Voltar">‹</button>
-      <div class="cmh-info">
-        <div class="cmh-nome" id="cmh-nome">-</div>
-        <div class="cmh-meta">
-          <div class="chat-online-dot" style="width:6px;height:6px;border-radius:50%;background:#5ee0a0;animation:pulse 2s ease-in-out infinite"></div>
-          <span>Chat ativo</span>
-          <span>·</span>
-          <span class="cmh-timer" id="cmh-timer">00:00</span>
+    <div id="chat-mobile-header" data-src-loc="109918:109947:110755" data-om-id="7a51b7dc:188">
+      <button class="cmh-back" onclick="sairChatFullscreen()" title="Voltar" data-src-loc="109954:110025:110037" data-om-id="7a51b7dc:189">‹</button>
+      <div class="cmh-info" data-src-loc="110044:110066:110451" data-om-id="7a51b7dc:190">
+        <div class="cmh-nome" id="cmh-nome" data-src-loc="110075:110111:110118" data-om-id="7a51b7dc:191">-</div>
+        <div class="cmh-meta" data-src-loc="110127:110149:110438" data-om-id="7a51b7dc:192">
+          <div class="chat-online-dot" style="width:6px;height:6px;border-radius:50%;background:#5ee0a0;animation:pulse 2s ease-in-out infinite" data-src-loc="110160:110295:110301" data-om-id="7a51b7dc:193"></div>
+          <span data-src-loc="110312:110318:110335" data-om-id="7a51b7dc:194">Chat ativo</span>
+          <span data-src-loc="110346:110352:110361" data-om-id="7a51b7dc:195">·</span>
+          <span class="cmh-timer" id="cmh-timer" data-src-loc="110372:110411:110423" data-om-id="7a51b7dc:196">00:00</span>
         </div>
       </div>
-      <div class="cmh-actions">
-        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()">👤 Dados</button>
-        <button class="cmh-btn green" onclick="abrirMemed()">💊</button>
-        <button class="cmh-btn red" onclick="abrirModalEncerrar()">✓ Enc.</button>
+      <div class="cmh-actions" data-src-loc="110458:110483:110744" data-om-id="7a51b7dc:197">
+        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()" data-src-loc="110492:110552:110571" data-om-id="7a51b7dc:198">👤 Dados</button>
+        <button class="cmh-btn green" onclick="abrirMemed()" data-src-loc="110580:110633:110646" data-om-id="7a51b7dc:199">💊</button>
+        <button class="cmh-btn red" onclick="abrirModalEncerrar()" data-src-loc="110655:110714:110731" data-om-id="7a51b7dc:200">✓ Enc.</button>
       </div>
     </div>
 
     <!-- [MOBILE-UX] Bottom sheet com dados do paciente -->
-    <div id="chat-dados-sheet">
-      <div id="chat-dados-overlay" onclick="fecharDadosPacienteSheet()"></div>
-      <div id="chat-dados-panel">
-        <div id="chat-dados-panel-header">
-          <h4>Dados do paciente</h4>
-          <button id="chat-dados-close" onclick="fecharDadosPacienteSheet()">✕</button>
+    <div id="chat-dados-sheet" data-src-loc="110821:110848:111300" data-om-id="7a51b7dc:201">
+      <div id="chat-dados-overlay" onclick="fecharDadosPacienteSheet()" data-src-loc="110855:110921:110927" data-om-id="7a51b7dc:202"></div>
+      <div id="chat-dados-panel" data-src-loc="110934:110961:111289" data-om-id="7a51b7dc:203">
+        <div id="chat-dados-panel-header" data-src-loc="110970:111004:111146" data-om-id="7a51b7dc:204">
+          <h4 data-src-loc="111015:111019:111041" data-om-id="7a51b7dc:205">Dados do paciente</h4>
+          <button id="chat-dados-close" onclick="fecharDadosPacienteSheet()" data-src-loc="111052:111119:111131" data-om-id="7a51b7dc:206">✕</button>
         </div>
-        <div id="chat-dados-panel-body">
+        <div id="chat-dados-panel-body" data-src-loc="111155:111187:111276" data-om-id="7a51b7dc:207">
           <!-- Conteúdo copiado dinamicamente do triagem-body via JS -->
         </div>
       </div>
     </div>
 
-    <div class="tabs" id="atend-tabs">
-      <button class="tab active" onclick="switchTab('consulta')">💬   Consulta<span class="tab-badge" id="tab-consulta-badge"></span></button>
-      <button class="tab" onclick="switchTab('clinico')">🩺   Avaliação clínica</button>
-      <button class="tab" onclick="switchTab('prontuario')">📄   Prontuário</button>
+    <div class="tabs" id="atend-tabs" data-src-loc="111306:111340:111678" data-om-id="7a51b7dc:208">
+      <button class="tab active" onclick="switchTab('consulta')" data-src-loc="111347:111406:111485" data-om-id="7a51b7dc:209">💬   Consulta<span class="tab-badge" id="tab-consulta-badge" data-src-loc="111421:111469:111476" data-om-id="7a51b7dc:210"></span></button>
+      <button class="tab" onclick="switchTab('clinico')" data-src-loc="111492:111543:111579" data-om-id="7a51b7dc:211">🩺   Avaliação clínica</button>
+      <button class="tab" onclick="switchTab('prontuario')" data-src-loc="111586:111640:111667" data-om-id="7a51b7dc:212">📄   Prontuário</button>
     </div>
-    <div class="tab-panel active" id="tab-consulta">
-      <div class="meet-section" id="meet-section" style="display:none">
-        <div class="meet-title">🎥 Link do Google Meet</div>
-        <div class="meet-input-row"><input class="meet-input" id="meetLinkInput" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx"/><button class="btn-meet-save" onclick="salvarMeetLink()">Salvar e compartilhar</button></div>
-        <div class="meet-link-atual" id="meetLinkAtual" style="display:none">Link ativo: <a id="meetLinkAtualUrl" href="#" target="_blank">-</a></div>
-        <div id="meet-badge-wrap" style="margin-top:8px"></div>
+    <div class="tab-panel active" id="tab-consulta" data-src-loc="111683:111731:116915" data-om-id="7a51b7dc:213">
+      <div class="meet-section" id="meet-section" style="display:none" data-src-loc="111738:111803:112332" data-om-id="7a51b7dc:214">
+        <div class="meet-title" data-src-loc="111812:111836:111866" data-om-id="7a51b7dc:215">🎥 Link do Google Meet</div>
+        <div class="meet-input-row" data-src-loc="111875:111903:112104" data-om-id="7a51b7dc:216"><input class="meet-input" id="meetLinkInput" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx" data-src-loc="111903:112011:112011" data-om-id="7a51b7dc:217"/><button class="btn-meet-save" onclick="salvarMeetLink()" data-src-loc="112011:112068:112098" data-om-id="7a51b7dc:218">Salvar e compartilhar</button></div>
+        <div class="meet-link-atual" id="meetLinkAtual" style="display:none" data-src-loc="112113:112182:112255" data-om-id="7a51b7dc:219">Link ativo: <a id="meetLinkAtualUrl" href="#" target="_blank" data-src-loc="112194:112244:112249" data-om-id="7a51b7dc:220">-</a></div>
+        <div id="meet-badge-wrap" style="margin-top:8px" data-src-loc="112264:112313:112319" data-om-id="7a51b7dc:221"></div>
       </div>
-      <div class="chat-medico-wrap" id="chat-section" style="display:none">
-        <div class="chat-medico-header"><h3><div class="chat-online-dot"></div> Chat com o paciente</h3><span style="font-size:.72rem;color:var(--muted)">Atualiza a cada 3s</span></div>
+      <div class="chat-medico-wrap" id="chat-section" style="display:none" data-src-loc="112339:112408:115119" data-om-id="7a51b7dc:222">
+        <div class="chat-medico-header" data-src-loc="112417:112449:112594" data-om-id="7a51b7dc:223"><h3 data-src-loc="112449:112453:112513" data-om-id="7a51b7dc:224"><div class="chat-online-dot" data-src-loc="112453:112482:112488" data-om-id="7a51b7dc:225"></div> Chat com o paciente</h3><span style="font-size:.72rem;color:var(--muted)" data-src-loc="112513:112563:112588" data-om-id="7a51b7dc:226">Atualiza a cada 3s</span></div>
         <!-- [FIX-SLOTS] Um container real de chat por slot. Slot inativo fica com [hidden].
              Elimina toda a classe de bugs de troca de conversa causados pelo DOM compartilhado
              + snapshot via innerHTML. Fonte única de verdade agora é slots[i].mensagens (array). -->
-        <div class="chat-medico-msgs" id="chat-medico-msgs-0" data-slot="0"><div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div></div>
-        <div class="chat-medico-msgs" id="chat-medico-msgs-1" data-slot="1" hidden></div>
-        <div class="chat-preview-wrap" id="chat-preview-wrap">
-          <img class="chat-preview-img" id="chat-preview-img" src="" style="display:none"/>
-          <span class="chat-preview-nome" id="chat-preview-nome"></span>
-          <button class="chat-preview-cancel" onclick="cancelarArquivo()" title="Remover">✕</button>
+        <div class="chat-medico-msgs" id="chat-medico-msgs-0" data-slot="0" data-src-loc="112896:112964:113228" data-om-id="7a51b7dc:227"><div class="chat-vazio" data-src-loc="112964:112988:113222" data-om-id="7a51b7dc:228"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-src-loc="112988:113089:113168" data-om-id="7a51b7dc:229"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" data-src-loc="113089:113162" data-om-id="nc:113089"/></svg><span data-src-loc="113168:113174:113216" data-om-id="7a51b7dc:230">Aguardando mensagens do paciente...</span></div></div>
+        <div class="chat-medico-msgs" id="chat-medico-msgs-1" data-slot="1" hidden data-src-loc="113237:113312:113318" data-om-id="7a51b7dc:231"></div>
+        <div class="chat-preview-wrap" id="chat-preview-wrap" data-src-loc="113327:113381:113664" data-om-id="7a51b7dc:232">
+          <img class="chat-preview-img" id="chat-preview-img" alt="" style="display:none" data-src-loc="113392:113473:113473" data-om-id="7a51b7dc:233"/>
+          <span class="chat-preview-nome" id="chat-preview-nome" data-src-loc="113484:113539:113546" data-om-id="7a51b7dc:234"></span>
+          <button class="chat-preview-cancel" onclick="cancelarArquivo()" title="Remover" data-src-loc="113557:113637:113649" data-om-id="7a51b7dc:235">✕</button>
         </div>
-        <div class="chat-medico-input">
-          <input type="file" id="chat-file-input" accept="image/*,.pdf" style="display:none" onchange="onArquivoSelecionado(this)"/>
-          <button class="chat-clip-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar imagem ou PDF">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        <div class="chat-medico-input" data-src-loc="113673:113704:114732" data-om-id="7a51b7dc:236">
+          <input type="file" id="chat-file-input" accept="image/*,.pdf" style="display:none" onchange="onArquivoSelecionado(this)" data-src-loc="113715:113837:113837" data-om-id="7a51b7dc:237"/>
+          <button class="chat-clip-btn" onclick="document.getElementById('chat-file-input').click()" title="Anexar imagem ou PDF" data-src-loc="113848:113968:114278" data-om-id="7a51b7dc:238">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-src-loc="113981:114127:114258" data-om-id="7a51b7dc:239"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" data-src-loc="114127:114252" data-om-id="nc:114127"/></svg>
           </button>
           <textarea id="chat-medico-textarea" placeholder="Digite sua mensagem ao paciente..." rows="1"></textarea>
-          <button class="chat-medico-send" onclick="enviarMensagemMedico()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          <button class="chat-medico-send" onclick="enviarMensagemMedico()" data-src-loc="114405:114471:114717" data-om-id="7a51b7dc:240"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-src-loc="114471:114619:114708" data-om-id="7a51b7dc:241"><line x1="22" y1="2" x2="11" y2="13" data-src-loc="114619:114657" data-om-id="nc:114619"/><polygon points="22 2 15 22 11 13 2 9 22 2" data-src-loc="114657:114702" data-om-id="nc:114657"/></svg></button>
         </div>
         <!-- [UX v2] Rodapé de segurança -->
-        <div class="chat-sec-foot" title="Conversa segura e criptografada"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="chat-sec-foot" title="Conversa segura e criptografada" data-src-loc="114788:114855:115106" data-om-id="7a51b7dc:242"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-src-loc="114855:115001:115100" data-om-id="7a51b7dc:243"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" data-src-loc="115001:115058" data-om-id="nc:115001"/><path d="M7 11V7a5 5 0 0 1 10 0v4" data-src-loc="115058:115094" data-om-id="nc:115058"/></svg></div>
       </div>
-      <div id="wpp-consulta-section" style="display:none;text-align:center;padding:32px 20px">
-        <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Consulta via WhatsApp - entre em contato diretamente com o paciente.</p>
-        <a href="#" id="btn-wpp-consulta" class="btn-wpp" target="_blank" style="display:inline-flex"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>Chamar no WhatsApp</a>
+      <div id="wpp-consulta-section" style="display:none;text-align:center;padding:32px 20px" data-src-loc="115126:115214:116698" data-om-id="7a51b7dc:244">
+        <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px" data-src-loc="115223:115289" data-om-id="7a51b7dc:245">Consulta via WhatsApp - entre em contato diretamente com o paciente.</p>
+        <a href="#" id="btn-wpp-consulta" class="btn-wpp" target="_blank" style="display:inline-flex" data-src-loc="115370:115464:116685" data-om-id="7a51b7dc:246"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" data-src-loc="115464:115532:116663" data-om-id="7a51b7dc:247"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" data-src-loc="115532:116657" data-om-id="nc:115532"/></svg>Chamar no WhatsApp</a>
       </div>
-      <div id="hist-consulta-notice" style="display:none" class="hist-readonly-notice">📋 Atendimento encerrado. Consulte o prontuário ou edite a avaliação clínica para complementar o registro.</div>
+      <div id="hist-consulta-notice" style="display:none" class="hist-readonly-notice" data-src-loc="116705:116786:116904" data-om-id="7a51b7dc:248">📋 Atendimento encerrado. Consulte o prontuário ou edite a avaliação clínica para complementar o registro.</div>
     </div>
-    <div class="tab-panel" id="tab-clinico">
-      <div id="hist-clinico-notice" class="hist-readonly-notice" style="display:none">✏ Modo histórico - campos editáveis. Use "Gerar prontuário" para salvar as alterações.</div>
-      <div class="clinic-section">
-        <div class="clinic-section-title">Avaliação clínica</div>
-        <div class="clinic-grid">
-          <div class="clinic-field full"><div class="clinic-label">Queixa principal / HDA</div><textarea class="clinic-input tall" id="cl-hda" placeholder="Descreva a queixa do paciente e a história da doença atual..."></textarea></div>
-          <div class="clinic-field"><div class="clinic-label">Comorbidades</div><textarea class="clinic-input" id="cl-comorbidades" placeholder="Ex: HAS, DM2, hipotireoidismo..."></textarea></div>
-          <div class="clinic-field"><div class="clinic-label">Medicações em uso</div><textarea class="clinic-input" id="cl-medicacoes" placeholder="Ex: Losartana 50mg, Metformina 850mg..."></textarea></div>
-          <div class="clinic-field"><div class="clinic-label">Alergias</div><textarea class="clinic-input" id="cl-alergias" placeholder="Ex: Dipirona, Penicilina..."></textarea></div>
-          <div class="clinic-field"><div class="clinic-label">Observações / Exame em telemedicina</div><textarea class="clinic-input" id="cl-obs" placeholder="Achados observados durante a teleconsulta..."></textarea></div>
-          <div class="clinic-field full">
-            <div class="clinic-label" style="display:flex;align-items:center;justify-content:space-between">
+    <div class="tab-panel" id="tab-clinico" data-src-loc="116920:116960:120692" data-om-id="7a51b7dc:249">
+      <div id="hist-clinico-notice" class="hist-readonly-notice" style="display:none" data-src-loc="116967:117047:117146" data-om-id="7a51b7dc:250">✏ Modo histórico - campos editáveis. Use "Gerar prontuário" para salvar as alterações.</div>
+      <div class="clinic-section" data-src-loc="117153:117181:119924" data-om-id="7a51b7dc:251">
+        <div class="clinic-section-title" data-src-loc="117190:117224:117250" data-om-id="7a51b7dc:252">Avaliação clínica</div>
+        <div class="clinic-grid" data-src-loc="117259:117284:119911" data-om-id="7a51b7dc:253">
+          <div class="clinic-field full" data-src-loc="117295:117326:117523" data-om-id="7a51b7dc:254"><div class="clinic-label" data-src-loc="117326:117352:117380" data-om-id="7a51b7dc:255">Queixa principal / HDA</div><textarea class="clinic-input tall" id="cl-hda" placeholder="Descreva a queixa do paciente e a história da doença atual..."></textarea></div>
+          <div class="clinic-field" data-src-loc="117534:117560:117720" data-om-id="7a51b7dc:256"><div class="clinic-label" data-src-loc="117560:117586:117604" data-om-id="7a51b7dc:257">Comorbidades</div><textarea class="clinic-input" id="cl-comorbidades" placeholder="Ex: HAS, DM2, hipotireoidismo..."></textarea></div>
+          <div class="clinic-field" data-src-loc="117731:117757:117929" data-om-id="7a51b7dc:258"><div class="clinic-label" data-src-loc="117757:117783:117808" data-om-id="7a51b7dc:259">Medicações em uso</div><textarea class="clinic-input" id="cl-medicacoes" placeholder="Ex: Losartana 50mg, Metformina 850mg..."></textarea></div>
+          <div class="clinic-field" data-src-loc="117940:117966:118113" data-om-id="7a51b7dc:260"><div class="clinic-label" data-src-loc="117966:117992:118006" data-om-id="7a51b7dc:261">Alergias</div><textarea class="clinic-input" id="cl-alergias" placeholder="Ex: Dipirona, Penicilina..."></textarea></div>
+          <div class="clinic-field" data-src-loc="118124:118150:118338" data-om-id="7a51b7dc:262"><div class="clinic-label" data-src-loc="118150:118176:118219" data-om-id="7a51b7dc:263">Observações / Exame em telemedicina</div><textarea class="clinic-input" id="cl-obs" placeholder="Achados observados durante a teleconsulta..."></textarea></div>
+          <div class="clinic-field full" data-src-loc="118349:118380:119896" data-om-id="7a51b7dc:264">
+            <div class="clinic-label" style="display:flex;align-items:center;justify-content:space-between" data-src-loc="118393:118489:118683" data-om-id="7a51b7dc:265">
               Conduta
-              <span style="font-size:.65rem;color:rgba(255,255,255,.25);font-weight:400;letter-spacing:0;text-transform:none">clique para inserir</span>
+              <span style="font-size:.65rem;color:rgba(255,255,255,.25);font-weight:400;letter-spacing:0;text-transform:none" data-src-loc="118526:118638:118664" data-om-id="7a51b7dc:266">clique para inserir</span>
             </div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
-<button class="conduta-btn" onclick="inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.')">Sinais de alarme</button>
-<button class="conduta-btn" onclick="inserirConduta('Quadro compatível com síndrome viral leve. Tratamento sintomático orientado.')">Síndrome viral leve</button>
-<button class="conduta-btn" onclick="inserirConduta('Sem sinais de urgência ou emergência identificados no momento.')">Sem urgência</button>
-<button class="conduta-btn" onclick="inserirConduta('Atestado médico emitido conforme solicitação e avaliação clínica.')">Atestado emitido</button>
-<button class="conduta-btn" onclick="inserirConduta('Receita médica emitida. Orientado sobre posologia e duração do tratamento.')">Receita emitida</button>
-<button class="conduta-btn" onclick="inserirConduta('Encaminhado para avaliação presencial. Orientado a procurar serviço de saúde local.')">Encaminhar presencial</button>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px" data-src-loc="118696:118763:119732" data-om-id="7a51b7dc:267">
+<button class="conduta-btn" onclick="inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.')" data-src-loc="118764:118890:118915" data-om-id="7a51b7dc:268">Sinais de alarme</button>
+<button class="conduta-btn" onclick="inserirConduta('Quadro compatível com síndrome viral leve. Tratamento sintomático orientado.')" data-src-loc="118916:119052:119081" data-om-id="7a51b7dc:269">Síndrome viral leve</button>
+<button class="conduta-btn" onclick="inserirConduta('Sem sinais de urgência ou emergência identificados no momento.')" data-src-loc="119082:119203:119225" data-om-id="7a51b7dc:270">Sem urgência</button>
+<button class="conduta-btn" onclick="inserirConduta('Atestado médico emitido conforme solicitação e avaliação clínica.')" data-src-loc="119226:119354:119379" data-om-id="7a51b7dc:271">Atestado emitido</button>
+<button class="conduta-btn" onclick="inserirConduta('Receita médica emitida. Orientado sobre posologia e duração do tratamento.')" data-src-loc="119380:119514:119538" data-om-id="7a51b7dc:272">Receita emitida</button>
+<button class="conduta-btn" onclick="inserirConduta('Encaminhado para avaliação presencial. Orientado a procurar serviço de saúde local.')" data-src-loc="119539:119683:119713" data-om-id="7a51b7dc:273">Encaminhar presencial</button>
             </div>
             <textarea class="clinic-input tall" id="cl-conduta" placeholder="Prescrição, orientações, encaminhamentos, retorno..."></textarea>
           </div>
         </div>
       </div>
-      <div class="docs-section">
-        <div class="docs-title">Documentos a emitir</div>
-        <div class="docs-grid">
-          <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="receita"><span class="dc-text">💊 Receita</span></label>
-          <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="atestado"><span class="dc-text">📋 Atestado</span></label>
-          <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="exames"><span class="dc-text">🔬 Exames</span></label>
-          <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="renovacao"><span class="dc-text">🔄 Renovação</span></label>
+      <div class="docs-section" data-src-loc="119931:119957:120681" data-om-id="7a51b7dc:274">
+        <div class="docs-title" data-src-loc="119966:119990:120015" data-om-id="7a51b7dc:275">Documentos a emitir</div>
+        <div class="docs-grid" data-src-loc="120024:120047:120668" data-om-id="7a51b7dc:276">
+          <label class="doc-check" onclick="toggleDoc(this)" data-src-loc="120058:120109:120197" data-om-id="7a51b7dc:277"><input type="checkbox" value="receita" data-src-loc="120109:120148:120148" data-om-id="7a51b7dc:278"><span class="dc-text" data-src-loc="120148:120170:120189" data-om-id="7a51b7dc:279">💊 Receita</span></label>
+          <label class="doc-check" onclick="toggleDoc(this)" data-src-loc="120208:120259:120349" data-om-id="7a51b7dc:280"><input type="checkbox" value="atestado" data-src-loc="120259:120299:120299" data-om-id="7a51b7dc:281"><span class="dc-text" data-src-loc="120299:120321:120341" data-om-id="7a51b7dc:282">📋 Atestado</span></label>
+          <label class="doc-check" onclick="toggleDoc(this)" data-src-loc="120360:120411:120497" data-om-id="7a51b7dc:283"><input type="checkbox" value="exames" data-src-loc="120411:120449:120449" data-om-id="7a51b7dc:284"><span class="dc-text" data-src-loc="120449:120471:120489" data-om-id="7a51b7dc:285">🔬 Exames</span></label>
+          <label class="doc-check" onclick="toggleDoc(this)" data-src-loc="120508:120559:120653" data-om-id="7a51b7dc:286"><input type="checkbox" value="renovacao" data-src-loc="120559:120600:120600" data-om-id="7a51b7dc:287"><span class="dc-text" data-src-loc="120600:120622:120645" data-om-id="7a51b7dc:288">🔄 Renovação</span></label>
         </div>
       </div>
     </div>
-    <div class="tab-panel" id="tab-prontuario">
-      <div class="pront-section">
-        <div class="pront-header">
-          <div class="pront-title">Prontuário de telemedicina</div>
-          <div class="pront-actions"><button class="btn-ver-chat" id="btn-ver-chat" onclick="abrirChatHistorico()" title="Ver conversa completa do chat">💬 Ver chat</button><span class="autosave-status" id="autosave-status"></span><button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()" style="display:none">📋 Copiar texto</button></div>
+    <div class="tab-panel" id="tab-prontuario" data-src-loc="120697:120740:121335" data-om-id="7a51b7dc:289">
+      <div class="pront-section" data-src-loc="120747:120774:121324" data-om-id="7a51b7dc:290">
+        <div class="pront-header" data-src-loc="120783:120809:121252" data-om-id="7a51b7dc:291">
+          <div class="pront-title" data-src-loc="120820:120845:120878" data-om-id="7a51b7dc:292">Prontuário de telemedicina</div>
+          <div class="pront-actions" data-src-loc="120889:120916:121237" data-om-id="7a51b7dc:293"><button class="btn-ver-chat" id="btn-ver-chat" onclick="abrirChatHistorico()" title="Ver conversa completa do chat" data-src-loc="120916:121032:121054" data-om-id="7a51b7dc:294">💬 Ver chat</button><span class="autosave-status" id="autosave-status" data-src-loc="121054:121105:121112" data-om-id="7a51b7dc:295"></span><button class="btn-copiar" id="btn-copiar" onclick="copiarProntuario()" style="display:none" data-src-loc="121112:121205:121231" data-om-id="7a51b7dc:296">📋 Copiar texto</button></div>
         </div>
-        <div class="pront-output" id="pront-output"></div>
+        <div class="pront-output" id="pront-output" data-src-loc="121261:121305:121311" data-om-id="7a51b7dc:297"></div>
       </div>
     </div>
   </div>
@@ -1295,39 +2115,39 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
 
   </div>
 </div>
-<div class="modal-overlay" id="modal-encerrar">
-  <div class="modal">
-    <div class="modal-title">Encerrar atendimento</div>
-    <div class="modal-sub">Registre o resultado antes de finalizar.</div>
-    <div class="modal-field"><label>Status</label>
-      <div class="radio-group" id="rg-status">
-        <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-dot"></div><span class="radio-text">✅ Atendido</span></div>
-        <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-dot"></div><span class="radio-text">❌ Cancelado</span></div>
-        <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-dot"></div><span class="radio-text">🔇 Sem resposta do paciente</span></div>
+<div class="modal-overlay" id="modal-encerrar" data-src-loc="121370:121417:122867" data-om-id="7a51b7dc:298">
+  <div class="modal" data-src-loc="121420:121439:122860" data-om-id="7a51b7dc:299">
+    <div class="modal-title" data-src-loc="121444:121469:121495" data-om-id="7a51b7dc:300">Encerrar atendimento</div>
+    <div class="modal-sub" data-src-loc="121500:121523:121569" data-om-id="7a51b7dc:301">Registre o resultado antes de finalizar.</div>
+    <div class="modal-field" data-src-loc="121574:121599:122126" data-om-id="7a51b7dc:302"><label data-src-loc="121599:121606:121620" data-om-id="7a51b7dc:303">Status</label>
+      <div class="radio-group" id="rg-status" data-src-loc="121627:121667:122115" data-om-id="7a51b7dc:304">
+        <div class="radio-opt" onclick="selectRadio(this)" data-src-loc="121676:121727:121806" data-om-id="7a51b7dc:305"><div class="radio-dot" data-src-loc="121727:121750:121756" data-om-id="7a51b7dc:306"></div><span class="radio-text" data-src-loc="121756:121781:121800" data-om-id="7a51b7dc:307">✅ Atendido</span></div>
+        <div class="radio-opt" onclick="selectRadio(this)" data-src-loc="121815:121866:121946" data-om-id="7a51b7dc:308"><div class="radio-dot" data-src-loc="121866:121889:121895" data-om-id="7a51b7dc:309"></div><span class="radio-text" data-src-loc="121895:121920:121940" data-om-id="7a51b7dc:310">❌ Cancelado</span></div>
+        <div class="radio-opt" onclick="selectRadio(this)" data-src-loc="121955:122006:122102" data-om-id="7a51b7dc:311"><div class="radio-dot" data-src-loc="122006:122029:122035" data-om-id="7a51b7dc:312"></div><span class="radio-text" data-src-loc="122035:122060:122096" data-om-id="7a51b7dc:313">🔇 Sem resposta do paciente</span></div>
       </div>
     </div>
-    <div class="modal-field"><label>Documentos emitidos</label>
-      <div class="check-group" id="cg-docs">
-        <div class="check-opt" onclick="toggleCheck(this)">💊 Receita</div>
-        <div class="check-opt" onclick="toggleCheck(this)">📋 Atestado</div>
-        <div class="check-opt" onclick="toggleCheck(this)">🔬 Exames</div>
-        <div class="check-opt" onclick="toggleCheck(this)">🔄 Renovação</div>
-        <div class="check-opt" onclick="toggleCheck(this)">🚫 Nenhum</div>
+    <div class="modal-field" data-src-loc="122131:122156:122652" data-om-id="7a51b7dc:314"><label data-src-loc="122156:122163:122190" data-om-id="7a51b7dc:315">Documentos emitidos</label>
+      <div class="check-group" id="cg-docs" data-src-loc="122197:122235:122641" data-om-id="7a51b7dc:316">
+        <div class="check-opt" onclick="toggleCheck(this)" data-src-loc="122244:122295:122313" data-om-id="7a51b7dc:317">💊 Receita</div>
+        <div class="check-opt" onclick="toggleCheck(this)" data-src-loc="122322:122373:122392" data-om-id="7a51b7dc:318">📋 Atestado</div>
+        <div class="check-opt" onclick="toggleCheck(this)" data-src-loc="122401:122452:122469" data-om-id="7a51b7dc:319">🔬 Exames</div>
+        <div class="check-opt" onclick="toggleCheck(this)" data-src-loc="122478:122529:122551" data-om-id="7a51b7dc:320">🔄 Renovação</div>
+        <div class="check-opt" onclick="toggleCheck(this)" data-src-loc="122560:122611:122628" data-om-id="7a51b7dc:321">🚫 Nenhum</div>
       </div>
     </div>
-    <div class="modal-actions"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-confirm" onclick="confirmarEncerramento()">Confirmar encerramento</button></div>
+    <div class="modal-actions" data-src-loc="122657:122684:122851" data-om-id="7a51b7dc:322"><button class="btn-cancel" onclick="fecharModal()" data-src-loc="122684:122735:122752" data-om-id="7a51b7dc:323">Cancelar</button><button class="btn-confirm" onclick="confirmarEncerramento()" data-src-loc="122752:122814:122845" data-om-id="7a51b7dc:324">Confirmar encerramento</button></div>
   </div>
 </div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" data-src-loc="122868:122898:122904" data-om-id="7a51b7dc:325"></div>
 <!-- Preview triagem da fila -->
-<div class="fila-preview" id="fila-preview" onclick="fecharPreviewFila(event)">
-  <div class="fila-preview-backdrop"></div>
-  <div class="fila-preview-card">
-    <div class="fila-preview-title">Triagem do paciente</div>
-    <div class="fila-preview-nome" id="fp-nome"></div>
-    <div class="fila-preview-meta" id="fp-meta"></div>
-    <div class="fila-preview-queixa" id="fp-queixa"></div>
-    <button class="fila-preview-assumir" id="fp-assumir-btn">▶ Assumir atendimento</button>
+<div class="fila-preview" id="fila-preview" onclick="fecharPreviewFila(event)" data-src-loc="122938:123017:123436" data-om-id="7a51b7dc:326">
+  <div class="fila-preview-backdrop" data-src-loc="123020:123055:123061" data-om-id="7a51b7dc:327"></div>
+  <div class="fila-preview-card" data-src-loc="123064:123095:123429" data-om-id="7a51b7dc:328">
+    <div class="fila-preview-title" data-src-loc="123100:123132:123157" data-om-id="7a51b7dc:329">Triagem do paciente</div>
+    <div class="fila-preview-nome" id="fp-nome" data-src-loc="123162:123206:123212" data-om-id="7a51b7dc:330"></div>
+    <div class="fila-preview-meta" id="fp-meta" data-src-loc="123217:123261:123267" data-om-id="7a51b7dc:331"></div>
+    <div class="fila-preview-queixa" id="fp-queixa" data-src-loc="123272:123320:123326" data-om-id="7a51b7dc:332"></div>
+    <button class="fila-preview-assumir" id="fp-assumir-btn" data-src-loc="123331:123388:123420" data-om-id="7a51b7dc:333">▶ Assumir atendimento</button>
   </div>
 </div>
 <script>
@@ -3740,59 +4560,60 @@ function fecharDadosPacienteSheet() {
 
 <!-- FAB removido - fila acessível pelo botão #nav-fila-btn no nav -->
 
-<span id="fab-badge" style="display:none"></span>
+<span id="fab-badge" style="display:none" data-src-loc="234989:235031:235038" data-om-id="7a51b7dc:334"></span>
 
 <!-- -- DRAWER MEMED --------------------------------------- -->
 
 <!-- Chat PiP -->
 
-<div id="chat-pip">
-  <div id="chat-pip-header" onclick="toggleChatPip()">
-    <div class="pip-dot"></div>
-    <span class="pip-title">💬 Chat com o paciente</span>
-    <span class="pip-badge" id="pip-badge">0</span>
-    <div class="pip-actions" onclick="event.stopPropagation()">
-      <button class="pip-btn" onclick="toggleChatPip()" id="pip-min-btn" title="Minimizar">-</button>
-      <button class="pip-btn" onclick="fecharChatPip()" title="Fechar e ir para chat">↗</button>
+<div id="chat-pip" data-src-loc="235125:235144:236097" data-om-id="7a51b7dc:335">
+  <div id="chat-pip-header" onclick="toggleChatPip()" data-src-loc="235147:235199:235628" data-om-id="7a51b7dc:336">
+    <div class="pip-dot" data-src-loc="235204:235225:235231" data-om-id="7a51b7dc:337"></div>
+    <span class="pip-title" data-src-loc="235236:235260:235291" data-om-id="7a51b7dc:338">💬 Chat com o paciente</span>
+    <span class="pip-badge" id="pip-badge" data-src-loc="235296:235335:235343" data-om-id="7a51b7dc:339">0</span>
+    <div class="pip-actions" onclick="event.stopPropagation()" data-src-loc="235348:235407:235619" data-om-id="7a51b7dc:340">
+      <button class="pip-btn" onclick="toggleChatPip()" id="pip-min-btn" title="Minimizar" data-src-loc="235414:235499:235509" data-om-id="7a51b7dc:341">-</button>
+      <button class="pip-btn" onclick="fecharChatPip()" title="Fechar e ir para chat" data-src-loc="235516:235596:235608" data-om-id="7a51b7dc:342">↗</button>
     </div>
   </div>
-  <div id="chat-pip-msgs"></div>
-  <div id="chat-pip-input">
+  <div id="chat-pip-msgs" data-src-loc="235631:235655:235661" data-om-id="7a51b7dc:343"></div>
+  <div id="chat-pip-input" data-src-loc="235664:235689:236090" data-om-id="7a51b7dc:344">
     <textarea id="chat-pip-textarea" placeholder="Mensagem..." rows="1"></textarea>
-    <button id="chat-pip-send" onclick="enviarMensagemPip()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    <button id="chat-pip-send" onclick="enviarMensagemPip()" data-src-loc="235778:235835:236081" data-om-id="7a51b7dc:345"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-src-loc="235835:235983:236072" data-om-id="7a51b7dc:346"><line x1="22" y1="2" x2="11" y2="13" data-src-loc="235983:236021" data-om-id="nc:235983"/><polygon points="22 2 15 22 11 13 2 9 22 2" data-src-loc="236021:236066" data-om-id="nc:236021"/></svg></button>
   </div>
 </div>
-<div id="memed-overlay" onclick="fecharMemedDrawer()"></div>
+<div id="memed-overlay" onclick="fecharMemedDrawer()" data-src-loc="236098:236152:236158" data-om-id="7a51b7dc:347"></div>
 
 <!-- Modal ver chat da consulta -->
 
-<div class="chat-hist-overlay" id="chat-hist-overlay" onclick="fecharChatHistorico(event)">
-  <div class="chat-hist-modal" onclick="event.stopPropagation()">
-    <div class="chat-hist-header">
-      <div>
-        <div class="chat-hist-title">💬 Chat da consulta</div>
-        <div class="chat-hist-sub" id="chat-hist-sub">-</div>
+<div class="chat-hist-overlay" id="chat-hist-overlay" onclick="fecharChatHistorico(event)" data-src-loc="236197:236288:236781" data-om-id="7a51b7dc:348">
+  <div class="chat-hist-modal" onclick="event.stopPropagation()" data-src-loc="236291:236354:236774" data-om-id="7a51b7dc:349">
+    <div class="chat-hist-header" data-src-loc="236359:236389:236635" data-om-id="7a51b7dc:350">
+      <div data-src-loc="236396:236401:236541" data-om-id="7a51b7dc:351">
+        <div class="chat-hist-title" data-src-loc="236410:236439:236466" data-om-id="7a51b7dc:352">💬 Chat da consulta</div>
+        <div class="chat-hist-sub" id="chat-hist-sub" data-src-loc="236475:236521:236528" data-om-id="7a51b7dc:353">-</div>
       </div>
-      <button class="chat-hist-close" onclick="fecharChatHistorico()">✕</button>
+      <button class="chat-hist-close" onclick="fecharChatHistorico()" data-src-loc="236548:236612:236624" data-om-id="7a51b7dc:354">✕</button>
     </div>
-    <div class="chat-hist-msgs" id="chat-hist-msgs">
-      <div class="chat-hist-loading">Carregando conversa...</div>
+    <div class="chat-hist-msgs" id="chat-hist-msgs" data-src-loc="236640:236688:236765" data-om-id="7a51b7dc:355">
+      <div class="chat-hist-loading" data-src-loc="236695:236726:236754" data-om-id="7a51b7dc:356">Carregando conversa...</div>
     </div>
   </div>
 </div>
 
 <!-- Modal trocar senha obrigatório -->
 
-<div class="trocar-overlay" id="trocar-overlay">
-  <div class="trocar-card">
-    <div class="trocar-title">🔐 Defina sua nova senha</div>
-    <div class="trocar-sub">Você está usando uma senha temporária. Por segurança, defina uma senha permanente agora para continuar.</div>
-    <div class="field"><label>Senha temporária (atual)</label><input type="password" id="inp-senha-atual" placeholder="••••••••" autocomplete="current-password"/></div>
-    <div class="field"><label>Nova senha</label><input type="password" id="inp-nova-senha" placeholder="mínimo 6 caracteres" autocomplete="new-password"/></div>
-    <div class="field"><label>Confirmar nova senha</label><input type="password" id="inp-confirmar-senha" placeholder="repita a nova senha" autocomplete="new-password"/></div>
-    <button class="btn-confirm" id="btn-trocar-senha" onclick="trocarSenha()" style="width:100%;margin-top:8px">Salvar nova senha</button>
-    <div class="trocar-err" id="trocar-err"></div>
+<div class="trocar-overlay" id="trocar-overlay" data-src-loc="236825:236873:237836" data-om-id="7a51b7dc:357">
+  <div class="trocar-card" data-src-loc="236876:236901:237829" data-om-id="7a51b7dc:358">
+    <div class="trocar-title" data-src-loc="236906:236932:236964" data-om-id="7a51b7dc:359">🔐 Defina sua nova senha</div>
+    <div class="trocar-sub" data-src-loc="236969:236993:237106" data-om-id="7a51b7dc:360">Você está usando uma senha temporária. Por segurança, defina uma senha permanente agora para continuar.</div>
+    <div class="field" data-src-loc="237111:237130:237292" data-om-id="7a51b7dc:361"><label data-src-loc="237130:237137:237170" data-om-id="7a51b7dc:362">Senha temporária (atual)</label><input type="password" id="inp-senha-atual" placeholder="••••••••" autocomplete="current-password" data-src-loc="237170:237286:237286" data-om-id="7a51b7dc:363"/></div>
+    <div class="field" data-src-loc="237297:237316:237454" data-om-id="7a51b7dc:364"><label data-src-loc="237316:237323:237341" data-om-id="7a51b7dc:365">Nova senha</label><input type="password" id="inp-nova-senha" placeholder="mínimo 6 caracteres" autocomplete="new-password" data-src-loc="237341:237448:237448" data-om-id="7a51b7dc:366"/></div>
+    <div class="field" data-src-loc="237459:237478:237630" data-om-id="7a51b7dc:367"><label data-src-loc="237478:237485:237513" data-om-id="7a51b7dc:368">Confirmar nova senha</label><input type="password" id="inp-confirmar-senha" placeholder="repita a nova senha" autocomplete="new-password" data-src-loc="237513:237624:237624" data-om-id="7a51b7dc:369"/></div>
+    <button class="btn-confirm" id="btn-trocar-senha" onclick="trocarSenha()" style="width:100%;margin-top:8px" data-src-loc="237635:237743:237769" data-om-id="7a51b7dc:370">Salvar nova senha</button>
+    <div class="trocar-err" id="trocar-err" data-src-loc="237774:237814:237820" data-om-id="7a51b7dc:371"></div>
   </div>
 </div>
 </body>
 </html>
+<script type="application/json" id="__om_srcmap">{"gen":"7a51b7dc","entries":[{"id":"7a51b7dc:0","tag":"html","openStart":17,"attrEnd":35,"openEnd":36,"closeEnd":237852,"textRuns":[[36,37],[93399,93400],[237844,237845]],"parentId":null,"childIds":["7a51b7dc:1","7a51b7dc:8"]},{"id":"7a51b7dc:1","tag":"head","openStart":37,"attrEnd":42,"openEnd":43,"closeEnd":93399,"textRuns":[[43,46],[103,104],[127,128],[196,197],[244,245],[304,305],[373,374],[571,572],[93390,93392]],"parentId":"7a51b7dc:0","childIds":["7a51b7dc:2","7a51b7dc:3","7a51b7dc:4","7a51b7dc:5","7a51b7dc:6","7a51b7dc:7"]},{"id":"7a51b7dc:2","tag":"link","openStart":46,"attrEnd":102,"openEnd":103,"closeEnd":103,"textRuns":[],"parentId":"7a51b7dc:1","childIds":[]},{"id":"7a51b7dc:3","tag":"meta","openStart":104,"attrEnd":125,"openEnd":127,"closeEnd":127,"textRuns":[],"parentId":"7a51b7dc:1","childIds":[]},{"id":"7a51b7dc:4","tag":"meta","openStart":128,"attrEnd":194,"openEnd":196,"closeEnd":196,"textRuns":[],"parentId":"7a51b7dc:1","childIds":[]},{"id":"7a51b7dc:5","tag":"link","openStart":245,"attrEnd":303,"openEnd":304,"closeEnd":304,"textRuns":[],"parentId":"7a51b7dc:1","childIds":[]},{"id":"7a51b7dc:6","tag":"link","openStart":305,"attrEnd":372,"openEnd":373,"closeEnd":373,"textRuns":[],"parentId":"7a51b7dc:1","childIds":[]},{"id":"7a51b7dc:7","tag":"link","openStart":374,"attrEnd":570,"openEnd":571,"closeEnd":571,"textRuns":[],"parentId":"7a51b7dc:1","childIds":[]},{"id":"7a51b7dc:8","tag":"body","openStart":93400,"attrEnd":93405,"openEnd":93406,"closeEnd":237844,"textRuns":[[93406,93407],[93453,93454],[95916,95917],[121369,121370],[122867,122868],[122904,122905],[122937,122938],[123436,123437],[234913,234915],[234987,234989],[235038,235040],[235104,235106],[235123,235125],[236097,236098],[236158,236160],[236195,236197],[236781,236783],[236823,236825],[237836,237837]],"parentId":"7a51b7dc:0","childIds":["7a51b7dc:9","7a51b7dc:10","7a51b7dc:40","7a51b7dc:298","7a51b7dc:325","7a51b7dc:326","7a51b7dc:334","7a51b7dc:335","7a51b7dc:347","7a51b7dc:348","7a51b7dc:357"]},{"id":"7a51b7dc:9","tag":"div","openStart":93407,"attrEnd":93446,"openEnd":93447,"closeEnd":93453,"textRuns":[],"parentId":"7a51b7dc:8","childIds":[]},{"id":"7a51b7dc:10","tag":"div","openStart":93454,"attrEnd":93476,"openEnd":93477,"closeEnd":95916,"textRuns":[[93477,93480],[95909,95910]],"parentId":"7a51b7dc:8","childIds":["7a51b7dc:11"]},{"id":"7a51b7dc:11","tag":"div","openStart":93480,"attrEnd":93503,"openEnd":93504,"closeEnd":95909,"textRuns":[[93504,93509],[93676,93681],[93727,93732],[93809,93814],[93945,93950],[94105,94110],[94349,94354],[94420,94425],[94802,94807],[94878,94883],[94912,94917],[95900,95903]],"parentId":"7a51b7dc:10","childIds":["7a51b7dc:12","7a51b7dc:18","7a51b7dc:19","7a51b7dc:20","7a51b7dc:23","7a51b7dc:26","7a51b7dc:29","7a51b7dc:30","7a51b7dc:33","7a51b7dc:34"]},{"id":"7a51b7dc:12","tag":"div","openStart":93509,"attrEnd":93532,"openEnd":93533,"closeEnd":93676,"textRuns":[],"parentId":"7a51b7dc:11","childIds":["7a51b7dc:13","7a51b7dc:14"]},{"id":"7a51b7dc:13","tag":"div","openStart":93533,"attrEnd":93549,"openEnd":93550,"closeEnd":93556,"textRuns":[],"parentId":"7a51b7dc:12","childIds":[]},{"id":"7a51b7dc:14","tag":"span","openStart":93556,"attrEnd":93561,"openEnd":93562,"closeEnd":93670,"textRuns":[],"parentId":"7a51b7dc:12","childIds":["7a51b7dc:15","7a51b7dc:16","7a51b7dc:17"]},{"id":"7a51b7dc:15","tag":"span","openStart":93562,"attrEnd":93578,"openEnd":93579,"closeEnd":93594,"textRuns":[[93579,93587]],"parentId":"7a51b7dc:14","childIds":[]},{"id":"7a51b7dc:16","tag":"span","openStart":93594,"attrEnd":93610,"openEnd":93611,"closeEnd":93621,"textRuns":[[93611,93614]],"parentId":"7a51b7dc:14","childIds":[]},{"id":"7a51b7dc:17","tag":"span","openStart":93621,"attrEnd":93638,"openEnd":93639,"closeEnd":93663,"textRuns":[[93639,93656]],"parentId":"7a51b7dc:14","childIds":[]},{"id":"7a51b7dc:18","tag":"div","openStart":93681,"attrEnd":93705,"openEnd":93706,"closeEnd":93727,"textRuns":[[93706,93721]],"parentId":"7a51b7dc:11","childIds":[]},{"id":"7a51b7dc:19","tag":"div","openStart":93732,"attrEnd":93754,"openEnd":93755,"closeEnd":93809,"textRuns":[[93755,93803]],"parentId":"7a51b7dc:11","childIds":[]},{"id":"7a51b7dc:20","tag":"div","openStart":93814,"attrEnd":93832,"openEnd":93833,"closeEnd":93945,"textRuns":[],"parentId":"7a51b7dc:11","childIds":["7a51b7dc:21","7a51b7dc:22"]},{"id":"7a51b7dc:21","tag":"label","openStart":93833,"attrEnd":93839,"openEnd":93840,"closeEnd":93854,"textRuns":[[93840,93846]],"parentId":"7a51b7dc:20","childIds":[]},{"id":"7a51b7dc:22","tag":"input","openStart":93854,"attrEnd":93937,"openEnd":93939,"closeEnd":93939,"textRuns":[],"parentId":"7a51b7dc:20","childIds":[]},{"id":"7a51b7dc:23","tag":"div","openStart":93950,"attrEnd":93968,"openEnd":93969,"closeEnd":94105,"textRuns":[],"parentId":"7a51b7dc:11","childIds":["7a51b7dc:24","7a51b7dc:25"]},{"id":"7a51b7dc:24","tag":"label","openStart":93969,"attrEnd":93975,"openEnd":93976,"closeEnd":93989,"textRuns":[[93976,93981]],"parentId":"7a51b7dc:23","childIds":[]},{"id":"7a51b7dc:25","tag":"input","openStart":93989,"attrEnd":94097,"openEnd":94099,"closeEnd":94099,"textRuns":[],"parentId":"7a51b7dc:23","childIds":[]},{"id":"7a51b7dc:26","tag":"div","openStart":94110,"attrEnd":94170,"openEnd":94171,"closeEnd":94349,"styleAttr":[94157,94169],"textRuns":[],"parentId":"7a51b7dc:11","childIds":["7a51b7dc:27","7a51b7dc:28"]},{"id":"7a51b7dc:27","tag":"label","openStart":94171,"attrEnd":94211,"openEnd":94212,"closeEnd":94242,"styleAttr":[94185,94210],"textRuns":[[94212,94234]],"parentId":"7a51b7dc:26","childIds":[]},{"id":"7a51b7dc:28","tag":"input","openStart":94242,"attrEnd":94341,"openEnd":94343,"closeEnd":94343,"textRuns":[],"parentId":"7a51b7dc:26","childIds":[]},{"id":"7a51b7dc:29","tag":"button","openStart":94354,"attrEnd":94394,"openEnd":94395,"closeEnd":94420,"textRuns":[[94395,94411]],"parentId":"7a51b7dc:11","childIds":[]},{"id":"7a51b7dc:30","tag":"div","openStart":94425,"attrEnd":94513,"openEnd":94514,"closeEnd":94802,"styleAttr":[94437,94512],"textRuns":[[94514,94521],[94700,94707],[94791,94796]],"parentId":"7a51b7dc:11","childIds":["7a51b7dc:31","7a51b7dc:32"]},{"id":"7a51b7dc:31","tag":"button","openStart":94521,"attrEnd":94673,"openEnd":94674,"closeEnd":94700,"styleAttr":[94565,94672],"textRuns":[[94674,94691]],"parentId":"7a51b7dc:30","childIds":[]},{"id":"7a51b7dc:32","tag":"button","openStart":94707,"attrEnd":94762,"openEnd":94763,"closeEnd":94791,"textRuns":[[94763,94782]],"parentId":"7a51b7dc:30","childIds":[]},{"id":"7a51b7dc:33","tag":"div","openStart":94807,"attrEnd":94844,"openEnd":94845,"closeEnd":94878,"textRuns":[[94845,94872]],"parentId":"7a51b7dc:11","childIds":[]},{"id":"7a51b7dc:34","tag":"div","openStart":94917,"attrEnd":95040,"openEnd":95041,"closeEnd":95900,"styleAttr":[94951,95039],"textRuns":[[95041,95048],[95158,95165],[95521,95528],[95832,95839],[95889,95894]],"parentId":"7a51b7dc:11","childIds":["7a51b7dc:35","7a51b7dc:36","7a51b7dc:38","7a51b7dc:39"]},{"id":"7a51b7dc:35","tag":"div","openStart":95048,"attrEnd":95122,"openEnd":95123,"closeEnd":95158,"styleAttr":[95060,95121],"textRuns":[[95123,95152]],"parentId":"7a51b7dc:34","childIds":[]},{"id":"7a51b7dc:36","tag":"div","openStart":95165,"attrEnd":95210,"openEnd":95211,"closeEnd":95521,"styleAttr":[95191,95209],"textRuns":[],"parentId":"7a51b7dc:34","childIds":["7a51b7dc:37"]},{"id":"7a51b7dc:37","tag":"input","openStart":95211,"attrEnd":95513,"openEnd":95515,"closeEnd":95515,"styleAttr":[95311,95512],"textRuns":[],"parentId":"7a51b7dc:36","childIds":[]},{"id":"7a51b7dc:38","tag":"button","openStart":95528,"attrEnd":95798,"openEnd":95799,"closeEnd":95832,"styleAttr":[95591,95797],"textRuns":[[95799,95823]],"parentId":"7a51b7dc:34","childIds":[]},{"id":"7a51b7dc:39","tag":"div","openStart":95839,"attrEnd":95882,"openEnd":95883,"closeEnd":95889,"textRuns":[],"parentId":"7a51b7dc:34","childIds":[]},{"id":"7a51b7dc:40","tag":"div","openStart":95917,"attrEnd":95937,"openEnd":95938,"closeEnd":121369,"textRuns":[[95938,95941],[97083,97086],[121362,121363]],"parentId":"7a51b7dc:8","childIds":["7a51b7dc:41","7a51b7dc:58"]},{"id":"7a51b7dc:41","tag":"nav","openStart":95941,"attrEnd":95957,"openEnd":95958,"closeEnd":97083,"textRuns":[[95958,95963],[96146,96151],[96181,96186],[96253,96258],[96431,96436],[96499,96504],[97010,97015],[97074,97077]],"parentId":"7a51b7dc:40","childIds":["7a51b7dc:42","7a51b7dc:48","7a51b7dc:49","7a51b7dc:51","7a51b7dc:54","7a51b7dc:57"]},{"id":"7a51b7dc:42","tag":"a","openStart":95963,"attrEnd":95992,"openEnd":95993,"closeEnd":96146,"textRuns":[],"parentId":"7a51b7dc:41","childIds":["7a51b7dc:43","7a51b7dc:44"]},{"id":"7a51b7dc:43","tag":"div","openStart":95993,"attrEnd":96027,"openEnd":96028,"closeEnd":96034,"textRuns":[],"parentId":"7a51b7dc:42","childIds":[]},{"id":"7a51b7dc:44","tag":"span","openStart":96034,"attrEnd":96039,"openEnd":96040,"closeEnd":96142,"textRuns":[],"parentId":"7a51b7dc:42","childIds":["7a51b7dc:45","7a51b7dc:46","7a51b7dc:47"]},{"id":"7a51b7dc:45","tag":"span","openStart":96040,"attrEnd":96056,"openEnd":96057,"closeEnd":96072,"textRuns":[[96057,96065]],"parentId":"7a51b7dc:44","childIds":[]},{"id":"7a51b7dc:46","tag":"span","openStart":96072,"attrEnd":96088,"openEnd":96089,"closeEnd":96099,"textRuns":[[96089,96092]],"parentId":"7a51b7dc:44","childIds":[]},{"id":"7a51b7dc:47","tag":"span","openStart":96099,"attrEnd":96124,"openEnd":96125,"closeEnd":96135,"textRuns":[[96125,96128]],"parentId":"7a51b7dc:44","childIds":[]},{"id":"7a51b7dc:48","tag":"div","openStart":96151,"attrEnd":96174,"openEnd":96175,"closeEnd":96181,"textRuns":[],"parentId":"7a51b7dc:41","childIds":[]},{"id":"7a51b7dc:49","tag":"div","openStart":96186,"attrEnd":96209,"openEnd":96210,"closeEnd":96253,"textRuns":[[96210,96216]],"parentId":"7a51b7dc:41","childIds":["7a51b7dc:50"]},{"id":"7a51b7dc:50","tag":"strong","openStart":96216,"attrEnd":96237,"openEnd":96238,"closeEnd":96247,"textRuns":[],"parentId":"7a51b7dc:49","childIds":[]},{"id":"7a51b7dc:51","tag":"button","openStart":96258,"attrEnd":96336,"openEnd":96337,"closeEnd":96431,"textRuns":[],"parentId":"7a51b7dc:41","childIds":["7a51b7dc:52","7a51b7dc:53"]},{"id":"7a51b7dc:52","tag":"div","openStart":96337,"attrEnd":96367,"openEnd":96368,"closeEnd":96374,"textRuns":[],"parentId":"7a51b7dc:51","childIds":[]},{"id":"7a51b7dc:53","tag":"span","openStart":96374,"attrEnd":96396,"openEnd":96397,"closeEnd":96422,"textRuns":[[96397,96415]],"parentId":"7a51b7dc:51","childIds":[]},{"id":"7a51b7dc:54","tag":"button","openStart":96504,"attrEnd":96613,"openEnd":96614,"closeEnd":97010,"textRuns":[[96614,96621],[96955,96962],[96996,97001]],"parentId":"7a51b7dc:41","childIds":["7a51b7dc:55","7a51b7dc:56"]},{"id":"7a51b7dc:55","tag":"svg","openStart":96621,"attrEnd":96766,"openEnd":96767,"closeEnd":96955,"textRuns":[[96767,96776],[96858,96867],[96942,96949]],"parentId":"7a51b7dc:54","childIds":[]},{"id":"7a51b7dc:56","tag":"span","openStart":96962,"attrEnd":96987,"openEnd":96988,"closeEnd":96996,"textRuns":[[96988,96989]],"parentId":"7a51b7dc:54","childIds":[]},{"id":"7a51b7dc:57","tag":"button","openStart":97015,"attrEnd":97060,"openEnd":97061,"closeEnd":97074,"textRuns":[[97061,97065]],"parentId":"7a51b7dc:41","childIds":[]},{"id":"7a51b7dc:58","tag":"div","openStart":97086,"attrEnd":97121,"openEnd":97122,"closeEnd":121362,"textRuns":[[97122,97127],[102333,102335],[102358,102359],[102447,102449],[121352,121356]],"parentId":"7a51b7dc:40","childIds":["7a51b7dc:59","7a51b7dc:98","7a51b7dc:99"]},{"id":"7a51b7dc:59","tag":"aside","openStart":97127,"attrEnd":97162,"openEnd":97163,"closeEnd":102333,"textRuns":[[97163,97167],[97252,97255],[97650,97654],[97707,97710],[98620,98624],[98660,98663],[102324,102325]],"parentId":"7a51b7dc:58","childIds":["7a51b7dc:60","7a51b7dc:62","7a51b7dc:67"]},{"id":"7a51b7dc:60","tag":"button","openStart":97255,"attrEnd":97416,"openEnd":97417,"closeEnd":97650,"styleAttr":[97403,97415],"textRuns":[[97417,97422],[97443,97448],[97638,97641]],"parentId":"7a51b7dc:59","childIds":["7a51b7dc:61"]},{"id":"7a51b7dc:61","tag":"svg","openStart":97448,"attrEnd":97595,"openEnd":97596,"closeEnd":97638,"textRuns":[],"parentId":"7a51b7dc:60","childIds":[]},{"id":"7a51b7dc:62","tag":"div","openStart":97710,"attrEnd":97753,"openEnd":97754,"closeEnd":98620,"textRuns":[[97754,97759],[98611,98614]],"parentId":"7a51b7dc:59","childIds":["7a51b7dc:63"]},{"id":"7a51b7dc:63","tag":"button","openStart":97759,"attrEnd":98043,"openEnd":98044,"closeEnd":98611,"styleAttr":[97807,97980],"textRuns":[[98044,98051],[98074,98081],[98343,98350],[98435,98442],[98491,98498],[98554,98561],[98597,98602]],"parentId":"7a51b7dc:62","childIds":["7a51b7dc:64","7a51b7dc:65","7a51b7dc:66"]},{"id":"7a51b7dc:64","tag":"svg","openStart":98081,"attrEnd":98179,"openEnd":98180,"closeEnd":98343,"textRuns":[],"parentId":"7a51b7dc:63","childIds":[]},{"id":"7a51b7dc:65","tag":"span","openStart":98442,"attrEnd":98482,"openEnd":98483,"closeEnd":98491,"textRuns":[[98483,98484]],"parentId":"7a51b7dc:63","childIds":[]},{"id":"7a51b7dc:66","tag":"span","openStart":98561,"attrEnd":98585,"openEnd":98586,"closeEnd":98597,"textRuns":[[98586,98590]],"parentId":"7a51b7dc:63","childIds":[]},{"id":"7a51b7dc:67","tag":"div","openStart":98663,"attrEnd":98708,"openEnd":98709,"closeEnd":102301,"textRuns":[[98709,98714],[99094,99099],[99468,99473],[99644,99649],[99698,99703],[99968,99973],[100030,100035],[100307,100312],[101552,101557],[101611,101616],[101838,101843],[102239,102244],[102292,102295]],"parentId":"7a51b7dc:59","childIds":["7a51b7dc:68","7a51b7dc:72","7a51b7dc:77","7a51b7dc:79","7a51b7dc:80","7a51b7dc:82","7a51b7dc:83","7a51b7dc:85","7a51b7dc:92","7a51b7dc:93","7a51b7dc:95","7a51b7dc:97"]},{"id":"7a51b7dc:68","tag":"div","openStart":98714,"attrEnd":98740,"openEnd":98741,"closeEnd":99094,"textRuns":[[98741,98759]],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:69"]},{"id":"7a51b7dc:69","tag":"span","openStart":98759,"attrEnd":98812,"openEnd":98813,"closeEnd":99088,"styleAttr":[98772,98811],"textRuns":[],"parentId":"7a51b7dc:68","childIds":["7a51b7dc:70","7a51b7dc:71"]},{"id":"7a51b7dc:70","tag":"span","openStart":98813,"attrEnd":98853,"openEnd":98854,"closeEnd":98862,"textRuns":[[98854,98855]],"parentId":"7a51b7dc:69","childIds":[]},{"id":"7a51b7dc:71","tag":"button","openStart":98862,"attrEnd":99068,"openEnd":99069,"closeEnd":99081,"styleAttr":[98933,99052],"textRuns":[[99069,99072]],"parentId":"7a51b7dc:69","childIds":[]},{"id":"7a51b7dc:72","tag":"div","openStart":99099,"attrEnd":99119,"openEnd":99120,"closeEnd":99468,"textRuns":[],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:73"]},{"id":"7a51b7dc:73","tag":"div","openStart":99120,"attrEnd":99143,"openEnd":99144,"closeEnd":99462,"textRuns":[],"parentId":"7a51b7dc:72","childIds":["7a51b7dc:74","7a51b7dc:75"]},{"id":"7a51b7dc:74","tag":"svg","openStart":99144,"attrEnd":99244,"openEnd":99245,"closeEnd":99408,"textRuns":[],"parentId":"7a51b7dc:73","childIds":[]},{"id":"7a51b7dc:75","tag":"p","openStart":99408,"attrEnd":99410,"openEnd":99411,"textRuns":[[99411,99426],[99430,99452]],"parentId":"7a51b7dc:73","childIds":["7a51b7dc:76"]},{"id":"7a51b7dc:76","tag":"br","openStart":99426,"attrEnd":99429,"openEnd":99430,"closeEnd":99430,"textRuns":[],"parentId":"7a51b7dc:75","childIds":[]},{"id":"7a51b7dc:77","tag":"div","openStart":99473,"attrEnd":99569,"openEnd":99570,"closeEnd":99644,"styleAttr":[99507,99537],"textRuns":[[99570,99588]],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:78"]},{"id":"7a51b7dc:78","tag":"span","openStart":99588,"attrEnd":99629,"openEnd":99630,"closeEnd":99638,"textRuns":[[99630,99631]],"parentId":"7a51b7dc:77","childIds":[]},{"id":"7a51b7dc:79","tag":"div","openStart":99649,"attrEnd":99691,"openEnd":99692,"closeEnd":99698,"styleAttr":[99678,99690],"textRuns":[],"parentId":"7a51b7dc:67","childIds":[]},{"id":"7a51b7dc:80","tag":"div","openStart":99703,"attrEnd":99824,"openEnd":99825,"closeEnd":99968,"styleAttr":[99756,99799],"textRuns":[[99825,99849]],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:81"]},{"id":"7a51b7dc:81","tag":"span","openStart":99849,"attrEnd":99953,"openEnd":99954,"closeEnd":99962,"styleAttr":[99907,99952],"textRuns":[[99954,99955]],"parentId":"7a51b7dc:80","childIds":[]},{"id":"7a51b7dc:82","tag":"div","openStart":99973,"attrEnd":100023,"openEnd":100024,"closeEnd":100030,"styleAttr":[100010,100022],"textRuns":[],"parentId":"7a51b7dc:67","childIds":[]},{"id":"7a51b7dc:83","tag":"div","openStart":100035,"attrEnd":100170,"openEnd":100171,"closeEnd":100307,"styleAttr":[100093,100136],"textRuns":[[100171,100193]],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:84"]},{"id":"7a51b7dc:84","tag":"span","openStart":100193,"attrEnd":100292,"openEnd":100293,"closeEnd":100301,"styleAttr":[100247,100291],"textRuns":[[100293,100294]],"parentId":"7a51b7dc:83","childIds":[]},{"id":"7a51b7dc:85","tag":"div","openStart":100312,"attrEnd":100499,"openEnd":100500,"closeEnd":101552,"styleAttr":[100348,100471],"textRuns":[[100500,100507],[100764,100771],[101257,101264],[101541,101546]],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:86","7a51b7dc:88","7a51b7dc:91"]},{"id":"7a51b7dc:86","tag":"select","openStart":100507,"attrEnd":100711,"openEnd":100712,"closeEnd":100764,"styleAttr":[100581,100710],"textRuns":[],"parentId":"7a51b7dc:85","childIds":["7a51b7dc:87"]},{"id":"7a51b7dc:87","tag":"option","openStart":100712,"attrEnd":100728,"openEnd":100729,"textRuns":[[100729,100746]],"parentId":"7a51b7dc:86","childIds":[]},{"id":"7a51b7dc:88","tag":"div","openStart":100771,"attrEnd":100804,"openEnd":100805,"closeEnd":101257,"styleAttr":[100783,100803],"textRuns":[[100805,100814],[101026,101035],[101244,101251]],"parentId":"7a51b7dc:85","childIds":["7a51b7dc:89","7a51b7dc:90"]},{"id":"7a51b7dc:89","tag":"input","openStart":100814,"attrEnd":101025,"openEnd":101026,"closeEnd":101026,"styleAttr":[100899,101024],"textRuns":[],"parentId":"7a51b7dc:88","childIds":[]},{"id":"7a51b7dc:90","tag":"input","openStart":101035,"attrEnd":101243,"openEnd":101244,"closeEnd":101244,"styleAttr":[101117,101242],"textRuns":[],"parentId":"7a51b7dc:88","childIds":[]},{"id":"7a51b7dc:91","tag":"input","openStart":101264,"attrEnd":101540,"openEnd":101541,"closeEnd":101541,"styleAttr":[101388,101539],"textRuns":[],"parentId":"7a51b7dc:85","childIds":[]},{"id":"7a51b7dc:92","tag":"div","openStart":101557,"attrEnd":101604,"openEnd":101605,"closeEnd":101611,"styleAttr":[101591,101603],"textRuns":[],"parentId":"7a51b7dc:67","childIds":[]},{"id":"7a51b7dc:93","tag":"div","openStart":101616,"attrEnd":101709,"openEnd":101710,"closeEnd":101838,"styleAttr":[101650,101680],"textRuns":[[101710,101730]],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:94"]},{"id":"7a51b7dc:94","tag":"span","openStart":101730,"attrEnd":101823,"openEnd":101824,"closeEnd":101832,"styleAttr":[101778,101822],"textRuns":[[101824,101825]],"parentId":"7a51b7dc:93","childIds":[]},{"id":"7a51b7dc:95","tag":"div","openStart":101843,"attrEnd":101907,"openEnd":101908,"closeEnd":102239,"styleAttr":[101876,101906],"textRuns":[[101908,101915],[102228,102233]],"parentId":"7a51b7dc:67","childIds":["7a51b7dc:96"]},{"id":"7a51b7dc:96","tag":"input","openStart":101915,"attrEnd":102227,"openEnd":102228,"closeEnd":102228,"styleAttr":[102028,102226],"textRuns":[],"parentId":"7a51b7dc:95","childIds":[]},{"id":"7a51b7dc:97","tag":"div","openStart":102244,"attrEnd":102285,"openEnd":102286,"closeEnd":102292,"styleAttr":[102272,102284],"textRuns":[],"parentId":"7a51b7dc:67","childIds":[]},{"id":"7a51b7dc:98","tag":"div","openStart":102359,"attrEnd":102440,"openEnd":102441,"closeEnd":102447,"textRuns":[],"parentId":"7a51b7dc:58","childIds":[]},{"id":"7a51b7dc:99","tag":"main","openStart":102449,"attrEnd":102485,"openEnd":102486,"closeEnd":121352,"textRuns":[[102486,102489],[103140,103143],[103478,103481],[121344,121345]],"parentId":"7a51b7dc:58","childIds":["7a51b7dc:100","7a51b7dc:109","7a51b7dc:113"]},{"id":"7a51b7dc:100","tag":"div","openStart":102489,"attrEnd":102534,"openEnd":102535,"closeEnd":103140,"textRuns":[[102535,102540],[102717,102722],[102819,102824],[102963,102968],[103131,103134]],"parentId":"7a51b7dc:99","childIds":["7a51b7dc:101","7a51b7dc:102","7a51b7dc:103","7a51b7dc:104","7a51b7dc:106"]},{"id":"7a51b7dc:101","tag":"svg","openStart":102540,"attrEnd":102640,"openEnd":102641,"closeEnd":102717,"textRuns":[],"parentId":"7a51b7dc:100","childIds":[]},{"id":"7a51b7dc:102","tag":"h2","openStart":102722,"attrEnd":102725,"openEnd":102726,"closeEnd":102750,"textRuns":[[102726,102745]],"parentId":"7a51b7dc:100","childIds":[]},{"id":"7a51b7dc:103","tag":"p","openStart":102750,"attrEnd":102752,"openEnd":102753,"textRuns":[[102753,102815]],"parentId":"7a51b7dc:100","childIds":[]},{"id":"7a51b7dc:104","tag":"div","openStart":102824,"attrEnd":102850,"openEnd":102851,"closeEnd":102963,"textRuns":[[102941,102957]],"parentId":"7a51b7dc:100","childIds":["7a51b7dc:105"]},{"id":"7a51b7dc:105","tag":"div","openStart":102851,"attrEnd":102934,"openEnd":102935,"closeEnd":102941,"styleAttr":[102863,102933],"textRuns":[],"parentId":"7a51b7dc:104","childIds":[]},{"id":"7a51b7dc:106","tag":"button","openStart":102968,"attrEnd":103053,"openEnd":103054,"closeEnd":103131,"styleAttr":[103011,103026],"textRuns":[],"parentId":"7a51b7dc:100","childIds":["7a51b7dc:107","7a51b7dc:108"]},{"id":"7a51b7dc:107","tag":"div","openStart":103054,"attrEnd":103084,"openEnd":103085,"closeEnd":103091,"textRuns":[],"parentId":"7a51b7dc:106","childIds":[]},{"id":"7a51b7dc:108","tag":"span","openStart":103091,"attrEnd":103096,"openEnd":103097,"closeEnd":103122,"textRuns":[[103097,103115]],"parentId":"7a51b7dc:106","childIds":[]},{"id":"7a51b7dc:109","tag":"div","openStart":103143,"attrEnd":103205,"openEnd":103206,"closeEnd":103478,"styleAttr":[103192,103204],"textRuns":[[103206,103211],[103400,103405],[103469,103472]],"parentId":"7a51b7dc:99","childIds":["7a51b7dc:110","7a51b7dc:111","7a51b7dc:112"]},{"id":"7a51b7dc:110","tag":"svg","openStart":103211,"attrEnd":103311,"openEnd":103312,"closeEnd":103400,"textRuns":[],"parentId":"7a51b7dc:109","childIds":[]},{"id":"7a51b7dc:111","tag":"h2","openStart":103405,"attrEnd":103408,"openEnd":103409,"closeEnd":103424,"textRuns":[[103409,103419]],"parentId":"7a51b7dc:109","childIds":[]},{"id":"7a51b7dc:112","tag":"p","openStart":103424,"attrEnd":103426,"openEnd":103427,"textRuns":[[103427,103465]],"parentId":"7a51b7dc:109","childIds":[]},{"id":"7a51b7dc:113","tag":"div","openStart":103481,"attrEnd":103523,"openEnd":103524,"closeEnd":121344,"styleAttr":[103510,103522],"textRuns":[[103524,103529],[103575,103580],[103624,103629],[106832,106837],[109853,109858],[109913,109918],[110755,110761],[110816,110821],[111300,111306],[111678,111683],[116915,116920],[120692,120697],[121335,121338]],"parentId":"7a51b7dc:99","childIds":["7a51b7dc:114","7a51b7dc:115","7a51b7dc:134","7a51b7dc:188","7a51b7dc:201","7a51b7dc:208","7a51b7dc:213","7a51b7dc:249","7a51b7dc:289"]},{"id":"7a51b7dc:114","tag":"div","openStart":103580,"attrEnd":103617,"openEnd":103618,"closeEnd":103624,"textRuns":[],"parentId":"7a51b7dc:113","childIds":[]},{"id":"7a51b7dc:115","tag":"div","openStart":103629,"attrEnd":103654,"openEnd":103655,"closeEnd":106832,"textRuns":[[103655,103662],[104325,104332],[106249,106256],[106821,106826]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:116","7a51b7dc:125","7a51b7dc:131"]},{"id":"7a51b7dc:116","tag":"div","openStart":103662,"attrEnd":103689,"openEnd":103690,"closeEnd":104325,"textRuns":[[103690,103699],[103746,103755],[104312,104319]],"parentId":"7a51b7dc:115","childIds":["7a51b7dc:117","7a51b7dc:118"]},{"id":"7a51b7dc:117","tag":"div","openStart":103699,"attrEnd":103738,"openEnd":103739,"closeEnd":103746,"textRuns":[[103739,103740]],"parentId":"7a51b7dc:116","childIds":[]},{"id":"7a51b7dc:118","tag":"div","openStart":103755,"attrEnd":103778,"openEnd":103779,"closeEnd":104312,"textRuns":[[103779,103790],[103842,103853],[103908,103919],[104024,104035],[104297,104306]],"parentId":"7a51b7dc:116","childIds":["7a51b7dc:119","7a51b7dc:120","7a51b7dc:121","7a51b7dc:122"]},{"id":"7a51b7dc:119","tag":"span","openStart":103790,"attrEnd":103833,"openEnd":103834,"closeEnd":103842,"textRuns":[[103834,103835]],"parentId":"7a51b7dc:118","childIds":[]},{"id":"7a51b7dc:120","tag":"span","openStart":103853,"attrEnd":103899,"openEnd":103900,"closeEnd":103908,"textRuns":[[103900,103901]],"parentId":"7a51b7dc:118","childIds":[]},{"id":"7a51b7dc:121","tag":"span","openStart":103919,"attrEnd":104001,"openEnd":104002,"closeEnd":104024,"styleAttr":[103988,104000],"textRuns":[[104002,104017]],"parentId":"7a51b7dc:118","childIds":[]},{"id":"7a51b7dc:122","tag":"div","openStart":104035,"attrEnd":104081,"openEnd":104082,"closeEnd":104297,"textRuns":[],"parentId":"7a51b7dc:118","childIds":["7a51b7dc:123","7a51b7dc:124"]},{"id":"7a51b7dc:123","tag":"svg","openStart":104082,"attrEnd":104180,"openEnd":104181,"closeEnd":104256,"textRuns":[],"parentId":"7a51b7dc:122","childIds":[]},{"id":"7a51b7dc:124","tag":"span","openStart":104256,"attrEnd":104278,"openEnd":104279,"closeEnd":104291,"textRuns":[[104279,104284]],"parentId":"7a51b7dc:122","childIds":[]},{"id":"7a51b7dc:125","tag":"div","openStart":104332,"attrEnd":104382,"openEnd":104383,"closeEnd":106249,"textRuns":[[104383,104392],[105660,105669],[106007,106017],[106236,106243]],"parentId":"7a51b7dc:115","childIds":["7a51b7dc:126","7a51b7dc:128","7a51b7dc:129"]},{"id":"7a51b7dc:126","tag":"a","openStart":104392,"attrEnd":104448,"openEnd":104449,"closeEnd":105660,"textRuns":[[105648,105656]],"parentId":"7a51b7dc:125","childIds":["7a51b7dc:127"]},{"id":"7a51b7dc:127","tag":"svg","openStart":104449,"attrEnd":104516,"openEnd":104517,"closeEnd":105648,"textRuns":[],"parentId":"7a51b7dc:126","childIds":[]},{"id":"7a51b7dc:128","tag":"button","openStart":105669,"attrEnd":105982,"openEnd":105983,"closeEnd":106007,"styleAttr":[105707,105966],"textRuns":[[105983,105998]],"parentId":"7a51b7dc:125","childIds":[]},{"id":"7a51b7dc:129","tag":"button","openStart":106017,"attrEnd":106076,"openEnd":106077,"closeEnd":106236,"textRuns":[[106219,106227]],"parentId":"7a51b7dc:125","childIds":["7a51b7dc:130"]},{"id":"7a51b7dc:130","tag":"svg","openStart":106077,"attrEnd":106177,"openEnd":106178,"closeEnd":106219,"textRuns":[],"parentId":"7a51b7dc:129","childIds":[]},{"id":"7a51b7dc:131","tag":"div","openStart":106256,"attrEnd":106327,"openEnd":106328,"closeEnd":106821,"styleAttr":[106314,106326],"textRuns":[[106328,106337],[106441,106450],[106808,106815]],"parentId":"7a51b7dc:115","childIds":["7a51b7dc:132","7a51b7dc:133"]},{"id":"7a51b7dc:132","tag":"button","openStart":106337,"attrEnd":106407,"openEnd":106408,"closeEnd":106441,"textRuns":[[106408,106432]],"parentId":"7a51b7dc:131","childIds":[]},{"id":"7a51b7dc:133","tag":"button","openStart":106450,"attrEnd":106778,"openEnd":106779,"closeEnd":106808,"styleAttr":[106519,106777],"textRuns":[[106779,106799]],"parentId":"7a51b7dc:131","childIds":[]},{"id":"7a51b7dc:134","tag":"div","openStart":106837,"attrEnd":106861,"openEnd":106862,"closeEnd":109853,"textRuns":[[106862,106869],[107034,107041],[109842,109847]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:135","7a51b7dc:137"]},{"id":"7a51b7dc:135","tag":"div","openStart":106869,"attrEnd":106925,"openEnd":106926,"closeEnd":107034,"textRuns":[[106926,106943]],"parentId":"7a51b7dc:134","childIds":["7a51b7dc:136"]},{"id":"7a51b7dc:136","tag":"button","openStart":106943,"attrEnd":107015,"openEnd":107016,"closeEnd":107028,"textRuns":[[107016,107019]],"parentId":"7a51b7dc:135","childIds":[]},{"id":"7a51b7dc:137","tag":"div","openStart":107041,"attrEnd":107084,"openEnd":107085,"closeEnd":109820,"textRuns":[[107085,107092],[109004,109011],[109087,109094],[109809,109814]],"parentId":"7a51b7dc:134","childIds":["7a51b7dc:138","7a51b7dc:165","7a51b7dc:166"]},{"id":"7a51b7dc:138","tag":"div","openStart":107092,"attrEnd":107144,"openEnd":107145,"closeEnd":109004,"styleAttr":[107125,107143],"textRuns":[[107145,107154],[107236,107245],[107325,107334],[107419,107428],[107529,107538],[107640,107649],[108277,108286],[108991,108998]],"parentId":"7a51b7dc:137","childIds":["7a51b7dc:139","7a51b7dc:142","7a51b7dc:145","7a51b7dc:148","7a51b7dc:151","7a51b7dc:154","7a51b7dc:159"]},{"id":"7a51b7dc:139","tag":"div","openStart":107154,"attrEnd":107179,"openEnd":107180,"closeEnd":107236,"textRuns":[],"parentId":"7a51b7dc:138","childIds":["7a51b7dc:140","7a51b7dc:141"]},{"id":"7a51b7dc:140","tag":"label","openStart":107180,"attrEnd":107186,"openEnd":107187,"closeEnd":107199,"textRuns":[[107187,107191]],"parentId":"7a51b7dc:139","childIds":[]},{"id":"7a51b7dc:141","tag":"span","openStart":107199,"attrEnd":107221,"openEnd":107222,"closeEnd":107230,"textRuns":[[107222,107223]],"parentId":"7a51b7dc:139","childIds":[]},{"id":"7a51b7dc:142","tag":"div","openStart":107245,"attrEnd":107270,"openEnd":107271,"closeEnd":107325,"textRuns":[],"parentId":"7a51b7dc:138","childIds":["7a51b7dc:143","7a51b7dc:144"]},{"id":"7a51b7dc:143","tag":"label","openStart":107271,"attrEnd":107277,"openEnd":107278,"closeEnd":107289,"textRuns":[[107278,107281]],"parentId":"7a51b7dc:142","childIds":[]},{"id":"7a51b7dc:144","tag":"span","openStart":107289,"attrEnd":107310,"openEnd":107311,"closeEnd":107319,"textRuns":[[107311,107312]],"parentId":"7a51b7dc:142","childIds":[]},{"id":"7a51b7dc:145","tag":"div","openStart":107334,"attrEnd":107359,"openEnd":107360,"closeEnd":107419,"textRuns":[],"parentId":"7a51b7dc:138","childIds":["7a51b7dc:146","7a51b7dc:147"]},{"id":"7a51b7dc:146","tag":"label","openStart":107360,"attrEnd":107366,"openEnd":107367,"closeEnd":107383,"textRuns":[[107367,107375]],"parentId":"7a51b7dc:145","childIds":[]},{"id":"7a51b7dc:147","tag":"span","openStart":107383,"attrEnd":107404,"openEnd":107405,"closeEnd":107413,"textRuns":[[107405,107406]],"parentId":"7a51b7dc:145","childIds":[]},{"id":"7a51b7dc:148","tag":"div","openStart":107428,"attrEnd":107453,"openEnd":107454,"closeEnd":107529,"textRuns":[],"parentId":"7a51b7dc:138","childIds":["7a51b7dc:149","7a51b7dc:150"]},{"id":"7a51b7dc:149","tag":"label","openStart":107454,"attrEnd":107460,"openEnd":107461,"closeEnd":107490,"textRuns":[[107461,107482]],"parentId":"7a51b7dc:148","childIds":[]},{"id":"7a51b7dc:150","tag":"span","openStart":107490,"attrEnd":107514,"openEnd":107515,"closeEnd":107523,"textRuns":[[107515,107516]],"parentId":"7a51b7dc:148","childIds":[]},{"id":"7a51b7dc:151","tag":"div","openStart":107538,"attrEnd":107563,"openEnd":107564,"closeEnd":107640,"textRuns":[],"parentId":"7a51b7dc:138","childIds":["7a51b7dc:152","7a51b7dc:153"]},{"id":"7a51b7dc:152","tag":"label","openStart":107564,"attrEnd":107570,"openEnd":107571,"closeEnd":107597,"textRuns":[[107571,107589]],"parentId":"7a51b7dc:151","childIds":[]},{"id":"7a51b7dc:153","tag":"span","openStart":107597,"attrEnd":107625,"openEnd":107626,"closeEnd":107634,"textRuns":[[107626,107627]],"parentId":"7a51b7dc:151","childIds":[]},{"id":"7a51b7dc:154","tag":"div","openStart":107649,"attrEnd":107699,"openEnd":107700,"closeEnd":108277,"styleAttr":[107682,107698],"textRuns":[],"parentId":"7a51b7dc:138","childIds":["7a51b7dc:155","7a51b7dc:156"]},{"id":"7a51b7dc:155","tag":"label","openStart":107700,"attrEnd":107706,"openEnd":107707,"closeEnd":107721,"textRuns":[[107707,107713]],"parentId":"7a51b7dc:154","childIds":[]},{"id":"7a51b7dc:156","tag":"div","openStart":107721,"attrEnd":107788,"openEnd":107789,"closeEnd":108271,"styleAttr":[107733,107787],"textRuns":[],"parentId":"7a51b7dc:154","childIds":["7a51b7dc:157","7a51b7dc:158"]},{"id":"7a51b7dc:157","tag":"span","openStart":107789,"attrEnd":107880,"openEnd":107881,"closeEnd":107889,"styleAttr":[107820,107879],"textRuns":[[107881,107882]],"parentId":"7a51b7dc:156","childIds":[]},{"id":"7a51b7dc:158","tag":"button","openStart":107889,"attrEnd":108249,"openEnd":108250,"closeEnd":108265,"styleAttr":[107958,108205],"textRuns":[[108250,108256]],"parentId":"7a51b7dc:156","childIds":[]},{"id":"7a51b7dc:159","tag":"div","openStart":108286,"attrEnd":108363,"openEnd":108364,"closeEnd":108991,"styleAttr":[108319,108335],"textRuns":[],"parentId":"7a51b7dc:138","childIds":["7a51b7dc:160","7a51b7dc:161","7a51b7dc:164"]},{"id":"7a51b7dc:160","tag":"label","openStart":108364,"attrEnd":108370,"openEnd":108371,"closeEnd":108395,"textRuns":[[108371,108387]],"parentId":"7a51b7dc:159","childIds":[]},{"id":"7a51b7dc:161","tag":"div","openStart":108395,"attrEnd":108462,"openEnd":108463,"closeEnd":108861,"styleAttr":[108407,108461],"textRuns":[],"parentId":"7a51b7dc:159","childIds":["7a51b7dc:162","7a51b7dc:163"]},{"id":"7a51b7dc:162","tag":"a","openStart":108463,"attrEnd":108572,"openEnd":108573,"closeEnd":108578,"styleAttr":[108520,108571],"textRuns":[[108573,108574]],"parentId":"7a51b7dc:161","childIds":[]},{"id":"7a51b7dc:163","tag":"button","openStart":108578,"attrEnd":108839,"openEnd":108840,"closeEnd":108855,"styleAttr":[108624,108838],"textRuns":[[108840,108846]],"parentId":"7a51b7dc:161","childIds":[]},{"id":"7a51b7dc:164","tag":"div","openStart":108861,"attrEnd":108932,"openEnd":108933,"closeEnd":108985,"styleAttr":[108873,108931],"textRuns":[[108933,108979]],"parentId":"7a51b7dc:159","childIds":[]},{"id":"7a51b7dc:165","tag":"div","openStart":109011,"attrEnd":109064,"openEnd":109065,"closeEnd":109087,"styleAttr":[109049,109063],"textRuns":[[109065,109081]],"parentId":"7a51b7dc:137","childIds":[]},{"id":"7a51b7dc:166","tag":"div","openStart":109094,"attrEnd":109119,"openEnd":109120,"closeEnd":109809,"textRuns":[[109120,109129],[109209,109218],[109296,109305],[109391,109400],[109490,109499],[109598,109607],[109693,109702],[109796,109803]],"parentId":"7a51b7dc:137","childIds":["7a51b7dc:167","7a51b7dc:170","7a51b7dc:173","7a51b7dc:176","7a51b7dc:179","7a51b7dc:182","7a51b7dc:185"]},{"id":"7a51b7dc:167","tag":"div","openStart":109129,"attrEnd":109154,"openEnd":109155,"closeEnd":109209,"textRuns":[],"parentId":"7a51b7dc:166","childIds":["7a51b7dc:168","7a51b7dc:169"]},{"id":"7a51b7dc:168","tag":"label","openStart":109155,"attrEnd":109161,"openEnd":109162,"closeEnd":109175,"textRuns":[[109162,109167]],"parentId":"7a51b7dc:167","childIds":[]},{"id":"7a51b7dc:169","tag":"span","openStart":109175,"attrEnd":109194,"openEnd":109195,"closeEnd":109203,"textRuns":[[109195,109196]],"parentId":"7a51b7dc:167","childIds":[]},{"id":"7a51b7dc:170","tag":"div","openStart":109218,"attrEnd":109243,"openEnd":109244,"closeEnd":109296,"textRuns":[],"parentId":"7a51b7dc:166","childIds":["7a51b7dc:171","7a51b7dc:172"]},{"id":"7a51b7dc:171","tag":"label","openStart":109244,"attrEnd":109250,"openEnd":109251,"closeEnd":109263,"textRuns":[[109251,109255]],"parentId":"7a51b7dc:170","childIds":[]},{"id":"7a51b7dc:172","tag":"span","openStart":109263,"attrEnd":109281,"openEnd":109282,"closeEnd":109290,"textRuns":[[109282,109283]],"parentId":"7a51b7dc:170","childIds":[]},{"id":"7a51b7dc:173","tag":"div","openStart":109305,"attrEnd":109330,"openEnd":109331,"closeEnd":109391,"textRuns":[],"parentId":"7a51b7dc:166","childIds":["7a51b7dc:174","7a51b7dc:175"]},{"id":"7a51b7dc:174","tag":"label","openStart":109331,"attrEnd":109337,"openEnd":109338,"closeEnd":109354,"textRuns":[[109338,109346]],"parentId":"7a51b7dc:173","childIds":[]},{"id":"7a51b7dc:175","tag":"span","openStart":109354,"attrEnd":109376,"openEnd":109377,"closeEnd":109385,"textRuns":[[109377,109378]],"parentId":"7a51b7dc:173","childIds":[]},{"id":"7a51b7dc:176","tag":"div","openStart":109400,"attrEnd":109425,"openEnd":109426,"closeEnd":109490,"textRuns":[],"parentId":"7a51b7dc:166","childIds":["7a51b7dc:177","7a51b7dc:178"]},{"id":"7a51b7dc:177","tag":"label","openStart":109426,"attrEnd":109432,"openEnd":109433,"closeEnd":109453,"textRuns":[[109433,109445]],"parentId":"7a51b7dc:176","childIds":[]},{"id":"7a51b7dc:178","tag":"span","openStart":109453,"attrEnd":109475,"openEnd":109476,"closeEnd":109484,"textRuns":[[109476,109477]],"parentId":"7a51b7dc:176","childIds":[]},{"id":"7a51b7dc:179","tag":"div","openStart":109499,"attrEnd":109524,"openEnd":109525,"closeEnd":109598,"textRuns":[],"parentId":"7a51b7dc:166","childIds":["7a51b7dc:180","7a51b7dc:181"]},{"id":"7a51b7dc:180","tag":"label","openStart":109525,"attrEnd":109531,"openEnd":109532,"closeEnd":109559,"textRuns":[[109532,109551]],"parentId":"7a51b7dc:179","childIds":[]},{"id":"7a51b7dc:181","tag":"span","openStart":109559,"attrEnd":109583,"openEnd":109584,"closeEnd":109592,"textRuns":[[109584,109585]],"parentId":"7a51b7dc:179","childIds":[]},{"id":"7a51b7dc:182","tag":"div","openStart":109607,"attrEnd":109632,"openEnd":109633,"closeEnd":109693,"textRuns":[],"parentId":"7a51b7dc:166","childIds":["7a51b7dc:183","7a51b7dc:184"]},{"id":"7a51b7dc:183","tag":"label","openStart":109633,"attrEnd":109639,"openEnd":109640,"closeEnd":109656,"textRuns":[[109640,109648]],"parentId":"7a51b7dc:182","childIds":[]},{"id":"7a51b7dc:184","tag":"span","openStart":109656,"attrEnd":109678,"openEnd":109679,"closeEnd":109687,"textRuns":[[109679,109680]],"parentId":"7a51b7dc:182","childIds":[]},{"id":"7a51b7dc:185","tag":"div","openStart":109702,"attrEnd":109729,"openEnd":109730,"closeEnd":109796,"textRuns":[],"parentId":"7a51b7dc:166","childIds":["7a51b7dc:186","7a51b7dc:187"]},{"id":"7a51b7dc:186","tag":"label","openStart":109730,"attrEnd":109736,"openEnd":109737,"closeEnd":109761,"textRuns":[[109737,109753]],"parentId":"7a51b7dc:185","childIds":[]},{"id":"7a51b7dc:187","tag":"span","openStart":109761,"attrEnd":109781,"openEnd":109782,"closeEnd":109790,"textRuns":[[109782,109783]],"parentId":"7a51b7dc:185","childIds":[]},{"id":"7a51b7dc:188","tag":"div","openStart":109918,"attrEnd":109946,"openEnd":109947,"closeEnd":110755,"textRuns":[[109947,109954],[110037,110044],[110451,110458],[110744,110749]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:189","7a51b7dc:190","7a51b7dc:197"]},{"id":"7a51b7dc:189","tag":"button","openStart":109954,"attrEnd":110024,"openEnd":110025,"closeEnd":110037,"textRuns":[[110025,110028]],"parentId":"7a51b7dc:188","childIds":[]},{"id":"7a51b7dc:190","tag":"div","openStart":110044,"attrEnd":110065,"openEnd":110066,"closeEnd":110451,"textRuns":[[110066,110075],[110118,110127],[110438,110445]],"parentId":"7a51b7dc:188","childIds":["7a51b7dc:191","7a51b7dc:192"]},{"id":"7a51b7dc:191","tag":"div","openStart":110075,"attrEnd":110110,"openEnd":110111,"closeEnd":110118,"textRuns":[[110111,110112]],"parentId":"7a51b7dc:190","childIds":[]},{"id":"7a51b7dc:192","tag":"div","openStart":110127,"attrEnd":110148,"openEnd":110149,"closeEnd":110438,"textRuns":[[110149,110160],[110301,110312],[110335,110346],[110361,110372],[110423,110432]],"parentId":"7a51b7dc:190","childIds":["7a51b7dc:193","7a51b7dc:194","7a51b7dc:195","7a51b7dc:196"]},{"id":"7a51b7dc:193","tag":"div","openStart":110160,"attrEnd":110294,"openEnd":110295,"closeEnd":110301,"styleAttr":[110196,110293],"textRuns":[],"parentId":"7a51b7dc:192","childIds":[]},{"id":"7a51b7dc:194","tag":"span","openStart":110312,"attrEnd":110317,"openEnd":110318,"closeEnd":110335,"textRuns":[[110318,110328]],"parentId":"7a51b7dc:192","childIds":[]},{"id":"7a51b7dc:195","tag":"span","openStart":110346,"attrEnd":110351,"openEnd":110352,"closeEnd":110361,"textRuns":[[110352,110354]],"parentId":"7a51b7dc:192","childIds":[]},{"id":"7a51b7dc:196","tag":"span","openStart":110372,"attrEnd":110410,"openEnd":110411,"closeEnd":110423,"textRuns":[[110411,110416]],"parentId":"7a51b7dc:192","childIds":[]},{"id":"7a51b7dc:197","tag":"div","openStart":110458,"attrEnd":110482,"openEnd":110483,"closeEnd":110744,"textRuns":[[110483,110492],[110571,110580],[110646,110655],[110731,110738]],"parentId":"7a51b7dc:188","childIds":["7a51b7dc:198","7a51b7dc:199","7a51b7dc:200"]},{"id":"7a51b7dc:198","tag":"button","openStart":110492,"attrEnd":110551,"openEnd":110552,"closeEnd":110571,"textRuns":[[110552,110562]],"parentId":"7a51b7dc:197","childIds":[]},{"id":"7a51b7dc:199","tag":"button","openStart":110580,"attrEnd":110632,"openEnd":110633,"closeEnd":110646,"textRuns":[[110633,110637]],"parentId":"7a51b7dc:197","childIds":[]},{"id":"7a51b7dc:200","tag":"button","openStart":110655,"attrEnd":110713,"openEnd":110714,"closeEnd":110731,"textRuns":[[110714,110722]],"parentId":"7a51b7dc:197","childIds":[]},{"id":"7a51b7dc:201","tag":"div","openStart":110821,"attrEnd":110847,"openEnd":110848,"closeEnd":111300,"textRuns":[[110848,110855],[110927,110934],[111289,111294]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:202","7a51b7dc:203"]},{"id":"7a51b7dc:202","tag":"div","openStart":110855,"attrEnd":110920,"openEnd":110921,"closeEnd":110927,"textRuns":[],"parentId":"7a51b7dc:201","childIds":[]},{"id":"7a51b7dc:203","tag":"div","openStart":110934,"attrEnd":110960,"openEnd":110961,"closeEnd":111289,"textRuns":[[110961,110970],[111146,111155],[111276,111283]],"parentId":"7a51b7dc:201","childIds":["7a51b7dc:204","7a51b7dc:207"]},{"id":"7a51b7dc:204","tag":"div","openStart":110970,"attrEnd":111003,"openEnd":111004,"closeEnd":111146,"textRuns":[[111004,111015],[111041,111052],[111131,111140]],"parentId":"7a51b7dc:203","childIds":["7a51b7dc:205","7a51b7dc:206"]},{"id":"7a51b7dc:205","tag":"h4","openStart":111015,"attrEnd":111018,"openEnd":111019,"closeEnd":111041,"textRuns":[[111019,111036]],"parentId":"7a51b7dc:204","childIds":[]},{"id":"7a51b7dc:206","tag":"button","openStart":111052,"attrEnd":111118,"openEnd":111119,"closeEnd":111131,"textRuns":[[111119,111122]],"parentId":"7a51b7dc:204","childIds":[]},{"id":"7a51b7dc:207","tag":"div","openStart":111155,"attrEnd":111186,"openEnd":111187,"closeEnd":111276,"textRuns":[[111187,111198],[111261,111270]],"parentId":"7a51b7dc:203","childIds":[]},{"id":"7a51b7dc:208","tag":"div","openStart":111306,"attrEnd":111339,"openEnd":111340,"closeEnd":111678,"textRuns":[[111340,111347],[111485,111492],[111579,111586],[111667,111672]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:209","7a51b7dc:211","7a51b7dc:212"]},{"id":"7a51b7dc:209","tag":"button","openStart":111347,"attrEnd":111405,"openEnd":111406,"closeEnd":111485,"textRuns":[[111406,111421]],"parentId":"7a51b7dc:208","childIds":["7a51b7dc:210"]},{"id":"7a51b7dc:210","tag":"span","openStart":111421,"attrEnd":111468,"openEnd":111469,"closeEnd":111476,"textRuns":[],"parentId":"7a51b7dc:209","childIds":[]},{"id":"7a51b7dc:211","tag":"button","openStart":111492,"attrEnd":111542,"openEnd":111543,"closeEnd":111579,"textRuns":[[111543,111570]],"parentId":"7a51b7dc:208","childIds":[]},{"id":"7a51b7dc:212","tag":"button","openStart":111586,"attrEnd":111639,"openEnd":111640,"closeEnd":111667,"textRuns":[[111640,111658]],"parentId":"7a51b7dc:208","childIds":[]},{"id":"7a51b7dc:213","tag":"div","openStart":111683,"attrEnd":111730,"openEnd":111731,"closeEnd":116915,"textRuns":[[111731,111738],[112332,112339],[115119,115126],[116698,116705],[116904,116909]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:214","7a51b7dc:222","7a51b7dc:244","7a51b7dc:248"]},{"id":"7a51b7dc:214","tag":"div","openStart":111738,"attrEnd":111802,"openEnd":111803,"closeEnd":112332,"styleAttr":[111789,111801],"textRuns":[[111803,111812],[111866,111875],[112104,112113],[112255,112264],[112319,112326]],"parentId":"7a51b7dc:213","childIds":["7a51b7dc:215","7a51b7dc:216","7a51b7dc:219","7a51b7dc:221"]},{"id":"7a51b7dc:215","tag":"div","openStart":111812,"attrEnd":111835,"openEnd":111836,"closeEnd":111866,"textRuns":[[111836,111860]],"parentId":"7a51b7dc:214","childIds":[]},{"id":"7a51b7dc:216","tag":"div","openStart":111875,"attrEnd":111902,"openEnd":111903,"closeEnd":112104,"textRuns":[],"parentId":"7a51b7dc:214","childIds":["7a51b7dc:217","7a51b7dc:218"]},{"id":"7a51b7dc:217","tag":"input","openStart":111903,"attrEnd":112009,"openEnd":112011,"closeEnd":112011,"textRuns":[],"parentId":"7a51b7dc:216","childIds":[]},{"id":"7a51b7dc:218","tag":"button","openStart":112011,"attrEnd":112067,"openEnd":112068,"closeEnd":112098,"textRuns":[[112068,112089]],"parentId":"7a51b7dc:216","childIds":[]},{"id":"7a51b7dc:219","tag":"div","openStart":112113,"attrEnd":112181,"openEnd":112182,"closeEnd":112255,"styleAttr":[112168,112180],"textRuns":[[112182,112194]],"parentId":"7a51b7dc:214","childIds":["7a51b7dc:220"]},{"id":"7a51b7dc:220","tag":"a","openStart":112194,"attrEnd":112243,"openEnd":112244,"closeEnd":112249,"textRuns":[[112244,112245]],"parentId":"7a51b7dc:219","childIds":[]},{"id":"7a51b7dc:221","tag":"div","openStart":112264,"attrEnd":112312,"openEnd":112313,"closeEnd":112319,"styleAttr":[112297,112311],"textRuns":[],"parentId":"7a51b7dc:214","childIds":[]},{"id":"7a51b7dc:222","tag":"div","openStart":112339,"attrEnd":112407,"openEnd":112408,"closeEnd":115119,"styleAttr":[112394,112406],"textRuns":[[112408,112417],[112594,112603],[112887,112896],[113228,113237],[113318,113327],[113664,113673],[114732,114741],[114779,114788],[115106,115113]],"parentId":"7a51b7dc:213","childIds":["7a51b7dc:223","7a51b7dc:227","7a51b7dc:231","7a51b7dc:232","7a51b7dc:236","7a51b7dc:242"]},{"id":"7a51b7dc:223","tag":"div","openStart":112417,"attrEnd":112448,"openEnd":112449,"closeEnd":112594,"textRuns":[],"parentId":"7a51b7dc:222","childIds":["7a51b7dc:224","7a51b7dc:226"]},{"id":"7a51b7dc:224","tag":"h3","openStart":112449,"attrEnd":112452,"openEnd":112453,"closeEnd":112513,"textRuns":[[112488,112508]],"parentId":"7a51b7dc:223","childIds":["7a51b7dc:225"]},{"id":"7a51b7dc:225","tag":"div","openStart":112453,"attrEnd":112481,"openEnd":112482,"closeEnd":112488,"textRuns":[],"parentId":"7a51b7dc:224","childIds":[]},{"id":"7a51b7dc:226","tag":"span","openStart":112513,"attrEnd":112562,"openEnd":112563,"closeEnd":112588,"styleAttr":[112526,112561],"textRuns":[[112563,112581]],"parentId":"7a51b7dc:223","childIds":[]},{"id":"7a51b7dc:227","tag":"div","openStart":112896,"attrEnd":112963,"openEnd":112964,"closeEnd":113228,"textRuns":[],"parentId":"7a51b7dc:222","childIds":["7a51b7dc:228"]},{"id":"7a51b7dc:228","tag":"div","openStart":112964,"attrEnd":112987,"openEnd":112988,"closeEnd":113222,"textRuns":[],"parentId":"7a51b7dc:227","childIds":["7a51b7dc:229","7a51b7dc:230"]},{"id":"7a51b7dc:229","tag":"svg","openStart":112988,"attrEnd":113088,"openEnd":113089,"closeEnd":113168,"textRuns":[],"parentId":"7a51b7dc:228","childIds":[]},{"id":"7a51b7dc:230","tag":"span","openStart":113168,"attrEnd":113173,"openEnd":113174,"closeEnd":113216,"textRuns":[[113174,113209]],"parentId":"7a51b7dc:228","childIds":[]},{"id":"7a51b7dc:231","tag":"div","openStart":113237,"attrEnd":113311,"openEnd":113312,"closeEnd":113318,"textRuns":[],"parentId":"7a51b7dc:222","childIds":[]},{"id":"7a51b7dc:232","tag":"div","openStart":113327,"attrEnd":113380,"openEnd":113381,"closeEnd":113664,"textRuns":[[113381,113392],[113473,113484],[113546,113557],[113649,113658]],"parentId":"7a51b7dc:222","childIds":["7a51b7dc:233","7a51b7dc:234","7a51b7dc:235"]},{"id":"7a51b7dc:233","tag":"img","openStart":113392,"attrEnd":113471,"openEnd":113473,"closeEnd":113473,"styleAttr":[113458,113470],"textRuns":[],"parentId":"7a51b7dc:232","childIds":[]},{"id":"7a51b7dc:234","tag":"span","openStart":113484,"attrEnd":113538,"openEnd":113539,"closeEnd":113546,"textRuns":[],"parentId":"7a51b7dc:232","childIds":[]},{"id":"7a51b7dc:235","tag":"button","openStart":113557,"attrEnd":113636,"openEnd":113637,"closeEnd":113649,"textRuns":[[113637,113640]],"parentId":"7a51b7dc:232","childIds":[]},{"id":"7a51b7dc:236","tag":"div","openStart":113673,"attrEnd":113703,"openEnd":113704,"closeEnd":114732,"textRuns":[[113704,113715],[113837,113848],[114278,114289],[114394,114405],[114717,114726]],"parentId":"7a51b7dc:222","childIds":["7a51b7dc:237","7a51b7dc:238","7a51b7dc:240"]},{"id":"7a51b7dc:237","tag":"input","openStart":113715,"attrEnd":113835,"openEnd":113837,"closeEnd":113837,"styleAttr":[113784,113796],"textRuns":[],"parentId":"7a51b7dc:236","childIds":[]},{"id":"7a51b7dc:238","tag":"button","openStart":113848,"attrEnd":113967,"openEnd":113968,"closeEnd":114278,"textRuns":[[113968,113981],[114258,114269]],"parentId":"7a51b7dc:236","childIds":["7a51b7dc:239"]},{"id":"7a51b7dc:239","tag":"svg","openStart":113981,"attrEnd":114126,"openEnd":114127,"closeEnd":114258,"textRuns":[],"parentId":"7a51b7dc:238","childIds":[]},{"id":"7a51b7dc:240","tag":"button","openStart":114405,"attrEnd":114470,"openEnd":114471,"closeEnd":114717,"textRuns":[],"parentId":"7a51b7dc:236","childIds":["7a51b7dc:241"]},{"id":"7a51b7dc:241","tag":"svg","openStart":114471,"attrEnd":114618,"openEnd":114619,"closeEnd":114708,"textRuns":[],"parentId":"7a51b7dc:240","childIds":[]},{"id":"7a51b7dc:242","tag":"div","openStart":114788,"attrEnd":114854,"openEnd":114855,"closeEnd":115106,"textRuns":[],"parentId":"7a51b7dc:222","childIds":["7a51b7dc:243"]},{"id":"7a51b7dc:243","tag":"svg","openStart":114855,"attrEnd":115000,"openEnd":115001,"closeEnd":115100,"textRuns":[],"parentId":"7a51b7dc:242","childIds":[]},{"id":"7a51b7dc:244","tag":"div","openStart":115126,"attrEnd":115213,"openEnd":115214,"closeEnd":116698,"styleAttr":[115164,115212],"textRuns":[[115214,115223],[115361,115370],[116685,116692]],"parentId":"7a51b7dc:213","childIds":["7a51b7dc:245","7a51b7dc:246"]},{"id":"7a51b7dc:245","tag":"p","openStart":115223,"attrEnd":115288,"openEnd":115289,"styleAttr":[115233,115287],"textRuns":[[115289,115357]],"parentId":"7a51b7dc:244","childIds":[]},{"id":"7a51b7dc:246","tag":"a","openStart":115370,"attrEnd":115463,"openEnd":115464,"closeEnd":116685,"styleAttr":[115443,115462],"textRuns":[[116663,116681]],"parentId":"7a51b7dc:244","childIds":["7a51b7dc:247"]},{"id":"7a51b7dc:247","tag":"svg","openStart":115464,"attrEnd":115531,"openEnd":115532,"closeEnd":116663,"textRuns":[],"parentId":"7a51b7dc:246","childIds":[]},{"id":"7a51b7dc:248","tag":"div","openStart":116705,"attrEnd":116785,"openEnd":116786,"closeEnd":116904,"styleAttr":[116743,116755],"textRuns":[[116786,116898]],"parentId":"7a51b7dc:213","childIds":[]},{"id":"7a51b7dc:249","tag":"div","openStart":116920,"attrEnd":116959,"openEnd":116960,"closeEnd":120692,"textRuns":[[116960,116967],[117146,117153],[119924,119931],[120681,120686]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:250","7a51b7dc:251","7a51b7dc:274"]},{"id":"7a51b7dc:250","tag":"div","openStart":116967,"attrEnd":117046,"openEnd":117047,"closeEnd":117146,"styleAttr":[117033,117045],"textRuns":[[117047,117140]],"parentId":"7a51b7dc:249","childIds":[]},{"id":"7a51b7dc:251","tag":"div","openStart":117153,"attrEnd":117180,"openEnd":117181,"closeEnd":119924,"textRuns":[[117181,117190],[117250,117259],[119911,119918]],"parentId":"7a51b7dc:249","childIds":["7a51b7dc:252","7a51b7dc:253"]},{"id":"7a51b7dc:252","tag":"div","openStart":117190,"attrEnd":117223,"openEnd":117224,"closeEnd":117250,"textRuns":[[117224,117244]],"parentId":"7a51b7dc:251","childIds":[]},{"id":"7a51b7dc:253","tag":"div","openStart":117259,"attrEnd":117283,"openEnd":117284,"closeEnd":119911,"textRuns":[[117284,117295],[117523,117534],[117720,117731],[117929,117940],[118113,118124],[118338,118349],[119896,119905]],"parentId":"7a51b7dc:251","childIds":["7a51b7dc:254","7a51b7dc:256","7a51b7dc:258","7a51b7dc:260","7a51b7dc:262","7a51b7dc:264"]},{"id":"7a51b7dc:254","tag":"div","openStart":117295,"attrEnd":117325,"openEnd":117326,"closeEnd":117523,"textRuns":[],"parentId":"7a51b7dc:253","childIds":["7a51b7dc:255"]},{"id":"7a51b7dc:255","tag":"div","openStart":117326,"attrEnd":117351,"openEnd":117352,"closeEnd":117380,"textRuns":[[117352,117374]],"parentId":"7a51b7dc:254","childIds":[]},{"id":"7a51b7dc:256","tag":"div","openStart":117534,"attrEnd":117559,"openEnd":117560,"closeEnd":117720,"textRuns":[],"parentId":"7a51b7dc:253","childIds":["7a51b7dc:257"]},{"id":"7a51b7dc:257","tag":"div","openStart":117560,"attrEnd":117585,"openEnd":117586,"closeEnd":117604,"textRuns":[[117586,117598]],"parentId":"7a51b7dc:256","childIds":[]},{"id":"7a51b7dc:258","tag":"div","openStart":117731,"attrEnd":117756,"openEnd":117757,"closeEnd":117929,"textRuns":[],"parentId":"7a51b7dc:253","childIds":["7a51b7dc:259"]},{"id":"7a51b7dc:259","tag":"div","openStart":117757,"attrEnd":117782,"openEnd":117783,"closeEnd":117808,"textRuns":[[117783,117802]],"parentId":"7a51b7dc:258","childIds":[]},{"id":"7a51b7dc:260","tag":"div","openStart":117940,"attrEnd":117965,"openEnd":117966,"closeEnd":118113,"textRuns":[],"parentId":"7a51b7dc:253","childIds":["7a51b7dc:261"]},{"id":"7a51b7dc:261","tag":"div","openStart":117966,"attrEnd":117991,"openEnd":117992,"closeEnd":118006,"textRuns":[[117992,118000]],"parentId":"7a51b7dc:260","childIds":[]},{"id":"7a51b7dc:262","tag":"div","openStart":118124,"attrEnd":118149,"openEnd":118150,"closeEnd":118338,"textRuns":[],"parentId":"7a51b7dc:253","childIds":["7a51b7dc:263"]},{"id":"7a51b7dc:263","tag":"div","openStart":118150,"attrEnd":118175,"openEnd":118176,"closeEnd":118219,"textRuns":[[118176,118213]],"parentId":"7a51b7dc:262","childIds":[]},{"id":"7a51b7dc:264","tag":"div","openStart":118349,"attrEnd":118379,"openEnd":118380,"closeEnd":119896,"textRuns":[[118380,118393],[118683,118696],[119732,119745],[119879,119890]],"parentId":"7a51b7dc:253","childIds":["7a51b7dc:265","7a51b7dc:267"]},{"id":"7a51b7dc:265","tag":"div","openStart":118393,"attrEnd":118488,"openEnd":118489,"closeEnd":118683,"styleAttr":[118426,118487],"textRuns":[[118489,118526],[118664,118677]],"parentId":"7a51b7dc:264","childIds":["7a51b7dc:266"]},{"id":"7a51b7dc:266","tag":"span","openStart":118526,"attrEnd":118637,"openEnd":118638,"closeEnd":118664,"styleAttr":[118539,118636],"textRuns":[[118638,118657]],"parentId":"7a51b7dc:265","childIds":[]},{"id":"7a51b7dc:267","tag":"div","openStart":118696,"attrEnd":118762,"openEnd":118763,"closeEnd":119732,"styleAttr":[118708,118761],"textRuns":[[118763,118764],[118915,118916],[119081,119082],[119225,119226],[119379,119380],[119538,119539],[119713,119726]],"parentId":"7a51b7dc:264","childIds":["7a51b7dc:268","7a51b7dc:269","7a51b7dc:270","7a51b7dc:271","7a51b7dc:272","7a51b7dc:273"]},{"id":"7a51b7dc:268","tag":"button","openStart":118764,"attrEnd":118889,"openEnd":118890,"closeEnd":118915,"textRuns":[[118890,118906]],"parentId":"7a51b7dc:267","childIds":[]},{"id":"7a51b7dc:269","tag":"button","openStart":118916,"attrEnd":119051,"openEnd":119052,"closeEnd":119081,"textRuns":[[119052,119072]],"parentId":"7a51b7dc:267","childIds":[]},{"id":"7a51b7dc:270","tag":"button","openStart":119082,"attrEnd":119202,"openEnd":119203,"closeEnd":119225,"textRuns":[[119203,119216]],"parentId":"7a51b7dc:267","childIds":[]},{"id":"7a51b7dc:271","tag":"button","openStart":119226,"attrEnd":119353,"openEnd":119354,"closeEnd":119379,"textRuns":[[119354,119370]],"parentId":"7a51b7dc:267","childIds":[]},{"id":"7a51b7dc:272","tag":"button","openStart":119380,"attrEnd":119513,"openEnd":119514,"closeEnd":119538,"textRuns":[[119514,119529]],"parentId":"7a51b7dc:267","childIds":[]},{"id":"7a51b7dc:273","tag":"button","openStart":119539,"attrEnd":119682,"openEnd":119683,"closeEnd":119713,"textRuns":[[119683,119704]],"parentId":"7a51b7dc:267","childIds":[]},{"id":"7a51b7dc:274","tag":"div","openStart":119931,"attrEnd":119956,"openEnd":119957,"closeEnd":120681,"textRuns":[[119957,119966],[120015,120024],[120668,120675]],"parentId":"7a51b7dc:249","childIds":["7a51b7dc:275","7a51b7dc:276"]},{"id":"7a51b7dc:275","tag":"div","openStart":119966,"attrEnd":119989,"openEnd":119990,"closeEnd":120015,"textRuns":[[119990,120009]],"parentId":"7a51b7dc:274","childIds":[]},{"id":"7a51b7dc:276","tag":"div","openStart":120024,"attrEnd":120046,"openEnd":120047,"closeEnd":120668,"textRuns":[[120047,120058],[120197,120208],[120349,120360],[120497,120508],[120653,120662]],"parentId":"7a51b7dc:274","childIds":["7a51b7dc:277","7a51b7dc:280","7a51b7dc:283","7a51b7dc:286"]},{"id":"7a51b7dc:277","tag":"label","openStart":120058,"attrEnd":120108,"openEnd":120109,"closeEnd":120197,"textRuns":[],"parentId":"7a51b7dc:276","childIds":["7a51b7dc:278","7a51b7dc:279"]},{"id":"7a51b7dc:278","tag":"input","openStart":120109,"attrEnd":120147,"openEnd":120148,"closeEnd":120148,"textRuns":[],"parentId":"7a51b7dc:277","childIds":[]},{"id":"7a51b7dc:279","tag":"span","openStart":120148,"attrEnd":120169,"openEnd":120170,"closeEnd":120189,"textRuns":[[120170,120182]],"parentId":"7a51b7dc:277","childIds":[]},{"id":"7a51b7dc:280","tag":"label","openStart":120208,"attrEnd":120258,"openEnd":120259,"closeEnd":120349,"textRuns":[],"parentId":"7a51b7dc:276","childIds":["7a51b7dc:281","7a51b7dc:282"]},{"id":"7a51b7dc:281","tag":"input","openStart":120259,"attrEnd":120298,"openEnd":120299,"closeEnd":120299,"textRuns":[],"parentId":"7a51b7dc:280","childIds":[]},{"id":"7a51b7dc:282","tag":"span","openStart":120299,"attrEnd":120320,"openEnd":120321,"closeEnd":120341,"textRuns":[[120321,120334]],"parentId":"7a51b7dc:280","childIds":[]},{"id":"7a51b7dc:283","tag":"label","openStart":120360,"attrEnd":120410,"openEnd":120411,"closeEnd":120497,"textRuns":[],"parentId":"7a51b7dc:276","childIds":["7a51b7dc:284","7a51b7dc:285"]},{"id":"7a51b7dc:284","tag":"input","openStart":120411,"attrEnd":120448,"openEnd":120449,"closeEnd":120449,"textRuns":[],"parentId":"7a51b7dc:283","childIds":[]},{"id":"7a51b7dc:285","tag":"span","openStart":120449,"attrEnd":120470,"openEnd":120471,"closeEnd":120489,"textRuns":[[120471,120482]],"parentId":"7a51b7dc:283","childIds":[]},{"id":"7a51b7dc:286","tag":"label","openStart":120508,"attrEnd":120558,"openEnd":120559,"closeEnd":120653,"textRuns":[],"parentId":"7a51b7dc:276","childIds":["7a51b7dc:287","7a51b7dc:288"]},{"id":"7a51b7dc:287","tag":"input","openStart":120559,"attrEnd":120599,"openEnd":120600,"closeEnd":120600,"textRuns":[],"parentId":"7a51b7dc:286","childIds":[]},{"id":"7a51b7dc:288","tag":"span","openStart":120600,"attrEnd":120621,"openEnd":120622,"closeEnd":120645,"textRuns":[[120622,120638]],"parentId":"7a51b7dc:286","childIds":[]},{"id":"7a51b7dc:289","tag":"div","openStart":120697,"attrEnd":120739,"openEnd":120740,"closeEnd":121335,"textRuns":[[120740,120747],[121324,121329]],"parentId":"7a51b7dc:113","childIds":["7a51b7dc:290"]},{"id":"7a51b7dc:290","tag":"div","openStart":120747,"attrEnd":120773,"openEnd":120774,"closeEnd":121324,"textRuns":[[120774,120783],[121252,121261],[121311,121318]],"parentId":"7a51b7dc:289","childIds":["7a51b7dc:291","7a51b7dc:297"]},{"id":"7a51b7dc:291","tag":"div","openStart":120783,"attrEnd":120808,"openEnd":120809,"closeEnd":121252,"textRuns":[[120809,120820],[120878,120889],[121237,121246]],"parentId":"7a51b7dc:290","childIds":["7a51b7dc:292","7a51b7dc:293"]},{"id":"7a51b7dc:292","tag":"div","openStart":120820,"attrEnd":120844,"openEnd":120845,"closeEnd":120878,"textRuns":[[120845,120872]],"parentId":"7a51b7dc:291","childIds":[]},{"id":"7a51b7dc:293","tag":"div","openStart":120889,"attrEnd":120915,"openEnd":120916,"closeEnd":121237,"textRuns":[],"parentId":"7a51b7dc:291","childIds":["7a51b7dc:294","7a51b7dc:295","7a51b7dc:296"]},{"id":"7a51b7dc:294","tag":"button","openStart":120916,"attrEnd":121031,"openEnd":121032,"closeEnd":121054,"textRuns":[[121032,121045]],"parentId":"7a51b7dc:293","childIds":[]},{"id":"7a51b7dc:295","tag":"span","openStart":121054,"attrEnd":121104,"openEnd":121105,"closeEnd":121112,"textRuns":[],"parentId":"7a51b7dc:293","childIds":[]},{"id":"7a51b7dc:296","tag":"button","openStart":121112,"attrEnd":121204,"openEnd":121205,"closeEnd":121231,"styleAttr":[121191,121203],"textRuns":[[121205,121222]],"parentId":"7a51b7dc:293","childIds":[]},{"id":"7a51b7dc:297","tag":"div","openStart":121261,"attrEnd":121304,"openEnd":121305,"closeEnd":121311,"textRuns":[],"parentId":"7a51b7dc:290","childIds":[]},{"id":"7a51b7dc:298","tag":"div","openStart":121370,"attrEnd":121416,"openEnd":121417,"closeEnd":122867,"textRuns":[[121417,121420],[122860,122861]],"parentId":"7a51b7dc:8","childIds":["7a51b7dc:299"]},{"id":"7a51b7dc:299","tag":"div","openStart":121420,"attrEnd":121438,"openEnd":121439,"closeEnd":122860,"textRuns":[[121439,121444],[121495,121500],[121569,121574],[122126,122131],[122652,122657],[122851,122854]],"parentId":"7a51b7dc:298","childIds":["7a51b7dc:300","7a51b7dc:301","7a51b7dc:302","7a51b7dc:314","7a51b7dc:322"]},{"id":"7a51b7dc:300","tag":"div","openStart":121444,"attrEnd":121468,"openEnd":121469,"closeEnd":121495,"textRuns":[[121469,121489]],"parentId":"7a51b7dc:299","childIds":[]},{"id":"7a51b7dc:301","tag":"div","openStart":121500,"attrEnd":121522,"openEnd":121523,"closeEnd":121569,"textRuns":[[121523,121563]],"parentId":"7a51b7dc:299","childIds":[]},{"id":"7a51b7dc:302","tag":"div","openStart":121574,"attrEnd":121598,"openEnd":121599,"closeEnd":122126,"textRuns":[[121620,121627],[122115,122120]],"parentId":"7a51b7dc:299","childIds":["7a51b7dc:303","7a51b7dc:304"]},{"id":"7a51b7dc:303","tag":"label","openStart":121599,"attrEnd":121605,"openEnd":121606,"closeEnd":121620,"textRuns":[[121606,121612]],"parentId":"7a51b7dc:302","childIds":[]},{"id":"7a51b7dc:304","tag":"div","openStart":121627,"attrEnd":121666,"openEnd":121667,"closeEnd":122115,"textRuns":[[121667,121676],[121806,121815],[121946,121955],[122102,122109]],"parentId":"7a51b7dc:302","childIds":["7a51b7dc:305","7a51b7dc:308","7a51b7dc:311"]},{"id":"7a51b7dc:305","tag":"div","openStart":121676,"attrEnd":121726,"openEnd":121727,"closeEnd":121806,"textRuns":[],"parentId":"7a51b7dc:304","childIds":["7a51b7dc:306","7a51b7dc:307"]},{"id":"7a51b7dc:306","tag":"div","openStart":121727,"attrEnd":121749,"openEnd":121750,"closeEnd":121756,"textRuns":[],"parentId":"7a51b7dc:305","childIds":[]},{"id":"7a51b7dc:307","tag":"span","openStart":121756,"attrEnd":121780,"openEnd":121781,"closeEnd":121800,"textRuns":[[121781,121793]],"parentId":"7a51b7dc:305","childIds":[]},{"id":"7a51b7dc:308","tag":"div","openStart":121815,"attrEnd":121865,"openEnd":121866,"closeEnd":121946,"textRuns":[],"parentId":"7a51b7dc:304","childIds":["7a51b7dc:309","7a51b7dc:310"]},{"id":"7a51b7dc:309","tag":"div","openStart":121866,"attrEnd":121888,"openEnd":121889,"closeEnd":121895,"textRuns":[],"parentId":"7a51b7dc:308","childIds":[]},{"id":"7a51b7dc:310","tag":"span","openStart":121895,"attrEnd":121919,"openEnd":121920,"closeEnd":121940,"textRuns":[[121920,121933]],"parentId":"7a51b7dc:308","childIds":[]},{"id":"7a51b7dc:311","tag":"div","openStart":121955,"attrEnd":122005,"openEnd":122006,"closeEnd":122102,"textRuns":[],"parentId":"7a51b7dc:304","childIds":["7a51b7dc:312","7a51b7dc:313"]},{"id":"7a51b7dc:312","tag":"div","openStart":122006,"attrEnd":122028,"openEnd":122029,"closeEnd":122035,"textRuns":[],"parentId":"7a51b7dc:311","childIds":[]},{"id":"7a51b7dc:313","tag":"span","openStart":122035,"attrEnd":122059,"openEnd":122060,"closeEnd":122096,"textRuns":[[122060,122089]],"parentId":"7a51b7dc:311","childIds":[]},{"id":"7a51b7dc:314","tag":"div","openStart":122131,"attrEnd":122155,"openEnd":122156,"closeEnd":122652,"textRuns":[[122190,122197],[122641,122646]],"parentId":"7a51b7dc:299","childIds":["7a51b7dc:315","7a51b7dc:316"]},{"id":"7a51b7dc:315","tag":"label","openStart":122156,"attrEnd":122162,"openEnd":122163,"closeEnd":122190,"textRuns":[[122163,122182]],"parentId":"7a51b7dc:314","childIds":[]},{"id":"7a51b7dc:316","tag":"div","openStart":122197,"attrEnd":122234,"openEnd":122235,"closeEnd":122641,"textRuns":[[122235,122244],[122313,122322],[122392,122401],[122469,122478],[122551,122560],[122628,122635]],"parentId":"7a51b7dc:314","childIds":["7a51b7dc:317","7a51b7dc:318","7a51b7dc:319","7a51b7dc:320","7a51b7dc:321"]},{"id":"7a51b7dc:317","tag":"div","openStart":122244,"attrEnd":122294,"openEnd":122295,"closeEnd":122313,"textRuns":[[122295,122307]],"parentId":"7a51b7dc:316","childIds":[]},{"id":"7a51b7dc:318","tag":"div","openStart":122322,"attrEnd":122372,"openEnd":122373,"closeEnd":122392,"textRuns":[[122373,122386]],"parentId":"7a51b7dc:316","childIds":[]},{"id":"7a51b7dc:319","tag":"div","openStart":122401,"attrEnd":122451,"openEnd":122452,"closeEnd":122469,"textRuns":[[122452,122463]],"parentId":"7a51b7dc:316","childIds":[]},{"id":"7a51b7dc:320","tag":"div","openStart":122478,"attrEnd":122528,"openEnd":122529,"closeEnd":122551,"textRuns":[[122529,122545]],"parentId":"7a51b7dc:316","childIds":[]},{"id":"7a51b7dc:321","tag":"div","openStart":122560,"attrEnd":122610,"openEnd":122611,"closeEnd":122628,"textRuns":[[122611,122622]],"parentId":"7a51b7dc:316","childIds":[]},{"id":"7a51b7dc:322","tag":"div","openStart":122657,"attrEnd":122683,"openEnd":122684,"closeEnd":122851,"textRuns":[],"parentId":"7a51b7dc:299","childIds":["7a51b7dc:323","7a51b7dc:324"]},{"id":"7a51b7dc:323","tag":"button","openStart":122684,"attrEnd":122734,"openEnd":122735,"closeEnd":122752,"textRuns":[[122735,122743]],"parentId":"7a51b7dc:322","childIds":[]},{"id":"7a51b7dc:324","tag":"button","openStart":122752,"attrEnd":122813,"openEnd":122814,"closeEnd":122845,"textRuns":[[122814,122836]],"parentId":"7a51b7dc:322","childIds":[]},{"id":"7a51b7dc:325","tag":"div","openStart":122868,"attrEnd":122897,"openEnd":122898,"closeEnd":122904,"textRuns":[],"parentId":"7a51b7dc:8","childIds":[]},{"id":"7a51b7dc:326","tag":"div","openStart":122938,"attrEnd":123016,"openEnd":123017,"closeEnd":123436,"textRuns":[[123017,123020],[123061,123064],[123429,123430]],"parentId":"7a51b7dc:8","childIds":["7a51b7dc:327","7a51b7dc:328"]},{"id":"7a51b7dc:327","tag":"div","openStart":123020,"attrEnd":123054,"openEnd":123055,"closeEnd":123061,"textRuns":[],"parentId":"7a51b7dc:326","childIds":[]},{"id":"7a51b7dc:328","tag":"div","openStart":123064,"attrEnd":123094,"openEnd":123095,"closeEnd":123429,"textRuns":[[123095,123100],[123157,123162],[123212,123217],[123267,123272],[123326,123331],[123420,123423]],"parentId":"7a51b7dc:326","childIds":["7a51b7dc:329","7a51b7dc:330","7a51b7dc:331","7a51b7dc:332","7a51b7dc:333"]},{"id":"7a51b7dc:329","tag":"div","openStart":123100,"attrEnd":123131,"openEnd":123132,"closeEnd":123157,"textRuns":[[123132,123151]],"parentId":"7a51b7dc:328","childIds":[]},{"id":"7a51b7dc:330","tag":"div","openStart":123162,"attrEnd":123205,"openEnd":123206,"closeEnd":123212,"textRuns":[],"parentId":"7a51b7dc:328","childIds":[]},{"id":"7a51b7dc:331","tag":"div","openStart":123217,"attrEnd":123260,"openEnd":123261,"closeEnd":123267,"textRuns":[],"parentId":"7a51b7dc:328","childIds":[]},{"id":"7a51b7dc:332","tag":"div","openStart":123272,"attrEnd":123319,"openEnd":123320,"closeEnd":123326,"textRuns":[],"parentId":"7a51b7dc:328","childIds":[]},{"id":"7a51b7dc:333","tag":"button","openStart":123331,"attrEnd":123387,"openEnd":123388,"closeEnd":123420,"textRuns":[[123388,123411]],"parentId":"7a51b7dc:328","childIds":[]},{"id":"7a51b7dc:334","tag":"span","openStart":234989,"attrEnd":235030,"openEnd":235031,"closeEnd":235038,"styleAttr":[235017,235029],"textRuns":[],"parentId":"7a51b7dc:8","childIds":[]},{"id":"7a51b7dc:335","tag":"div","openStart":235125,"attrEnd":235143,"openEnd":235144,"closeEnd":236097,"textRuns":[[235144,235147],[235628,235631],[235661,235664],[236090,236091]],"parentId":"7a51b7dc:8","childIds":["7a51b7dc:336","7a51b7dc:343","7a51b7dc:344"]},{"id":"7a51b7dc:336","tag":"div","openStart":235147,"attrEnd":235198,"openEnd":235199,"closeEnd":235628,"textRuns":[[235199,235204],[235231,235236],[235291,235296],[235343,235348],[235619,235622]],"parentId":"7a51b7dc:335","childIds":["7a51b7dc:337","7a51b7dc:338","7a51b7dc:339","7a51b7dc:340"]},{"id":"7a51b7dc:337","tag":"div","openStart":235204,"attrEnd":235224,"openEnd":235225,"closeEnd":235231,"textRuns":[],"parentId":"7a51b7dc:336","childIds":[]},{"id":"7a51b7dc:338","tag":"span","openStart":235236,"attrEnd":235259,"openEnd":235260,"closeEnd":235291,"textRuns":[[235260,235284]],"parentId":"7a51b7dc:336","childIds":[]},{"id":"7a51b7dc:339","tag":"span","openStart":235296,"attrEnd":235334,"openEnd":235335,"closeEnd":235343,"textRuns":[[235335,235336]],"parentId":"7a51b7dc:336","childIds":[]},{"id":"7a51b7dc:340","tag":"div","openStart":235348,"attrEnd":235406,"openEnd":235407,"closeEnd":235619,"textRuns":[[235407,235414],[235509,235516],[235608,235613]],"parentId":"7a51b7dc:336","childIds":["7a51b7dc:341","7a51b7dc:342"]},{"id":"7a51b7dc:341","tag":"button","openStart":235414,"attrEnd":235498,"openEnd":235499,"closeEnd":235509,"textRuns":[[235499,235500]],"parentId":"7a51b7dc:340","childIds":[]},{"id":"7a51b7dc:342","tag":"button","openStart":235516,"attrEnd":235595,"openEnd":235596,"closeEnd":235608,"textRuns":[[235596,235599]],"parentId":"7a51b7dc:340","childIds":[]},{"id":"7a51b7dc:343","tag":"div","openStart":235631,"attrEnd":235654,"openEnd":235655,"closeEnd":235661,"textRuns":[],"parentId":"7a51b7dc:335","childIds":[]},{"id":"7a51b7dc:344","tag":"div","openStart":235664,"attrEnd":235688,"openEnd":235689,"closeEnd":236090,"textRuns":[[235689,235694],[235773,235778],[236081,236084]],"parentId":"7a51b7dc:335","childIds":["7a51b7dc:345"]},{"id":"7a51b7dc:345","tag":"button","openStart":235778,"attrEnd":235834,"openEnd":235835,"closeEnd":236081,"textRuns":[],"parentId":"7a51b7dc:344","childIds":["7a51b7dc:346"]},{"id":"7a51b7dc:346","tag":"svg","openStart":235835,"attrEnd":235982,"openEnd":235983,"closeEnd":236072,"textRuns":[],"parentId":"7a51b7dc:345","childIds":[]},{"id":"7a51b7dc:347","tag":"div","openStart":236098,"attrEnd":236151,"openEnd":236152,"closeEnd":236158,"textRuns":[],"parentId":"7a51b7dc:8","childIds":[]},{"id":"7a51b7dc:348","tag":"div","openStart":236197,"attrEnd":236287,"openEnd":236288,"closeEnd":236781,"textRuns":[[236288,236291],[236774,236775]],"parentId":"7a51b7dc:8","childIds":["7a51b7dc:349"]},{"id":"7a51b7dc:349","tag":"div","openStart":236291,"attrEnd":236353,"openEnd":236354,"closeEnd":236774,"textRuns":[[236354,236359],[236635,236640],[236765,236768]],"parentId":"7a51b7dc:348","childIds":["7a51b7dc:350","7a51b7dc:355"]},{"id":"7a51b7dc:350","tag":"div","openStart":236359,"attrEnd":236388,"openEnd":236389,"closeEnd":236635,"textRuns":[[236389,236396],[236541,236548],[236624,236629]],"parentId":"7a51b7dc:349","childIds":["7a51b7dc:351","7a51b7dc:354"]},{"id":"7a51b7dc:351","tag":"div","openStart":236396,"attrEnd":236400,"openEnd":236401,"closeEnd":236541,"textRuns":[[236401,236410],[236466,236475],[236528,236535]],"parentId":"7a51b7dc:350","childIds":["7a51b7dc:352","7a51b7dc:353"]},{"id":"7a51b7dc:352","tag":"div","openStart":236410,"attrEnd":236438,"openEnd":236439,"closeEnd":236466,"textRuns":[[236439,236460]],"parentId":"7a51b7dc:351","childIds":[]},{"id":"7a51b7dc:353","tag":"div","openStart":236475,"attrEnd":236520,"openEnd":236521,"closeEnd":236528,"textRuns":[[236521,236522]],"parentId":"7a51b7dc:351","childIds":[]},{"id":"7a51b7dc:354","tag":"button","openStart":236548,"attrEnd":236611,"openEnd":236612,"closeEnd":236624,"textRuns":[[236612,236615]],"parentId":"7a51b7dc:350","childIds":[]},{"id":"7a51b7dc:355","tag":"div","openStart":236640,"attrEnd":236687,"openEnd":236688,"closeEnd":236765,"textRuns":[[236688,236695],[236754,236759]],"parentId":"7a51b7dc:349","childIds":["7a51b7dc:356"]},{"id":"7a51b7dc:356","tag":"div","openStart":236695,"attrEnd":236725,"openEnd":236726,"closeEnd":236754,"textRuns":[[236726,236748]],"parentId":"7a51b7dc:355","childIds":[]},{"id":"7a51b7dc:357","tag":"div","openStart":236825,"attrEnd":236872,"openEnd":236873,"closeEnd":237836,"textRuns":[[236873,236876],[237829,237830]],"parentId":"7a51b7dc:8","childIds":["7a51b7dc:358"]},{"id":"7a51b7dc:358","tag":"div","openStart":236876,"attrEnd":236900,"openEnd":236901,"closeEnd":237829,"textRuns":[[236901,236906],[236964,236969],[237106,237111],[237292,237297],[237454,237459],[237630,237635],[237769,237774],[237820,237823]],"parentId":"7a51b7dc:357","childIds":["7a51b7dc:359","7a51b7dc:360","7a51b7dc:361","7a51b7dc:364","7a51b7dc:367","7a51b7dc:370","7a51b7dc:371"]},{"id":"7a51b7dc:359","tag":"div","openStart":236906,"attrEnd":236931,"openEnd":236932,"closeEnd":236964,"textRuns":[[236932,236958]],"parentId":"7a51b7dc:358","childIds":[]},{"id":"7a51b7dc:360","tag":"div","openStart":236969,"attrEnd":236992,"openEnd":236993,"closeEnd":237106,"textRuns":[[236993,237100]],"parentId":"7a51b7dc:358","childIds":[]},{"id":"7a51b7dc:361","tag":"div","openStart":237111,"attrEnd":237129,"openEnd":237130,"closeEnd":237292,"textRuns":[],"parentId":"7a51b7dc:358","childIds":["7a51b7dc:362","7a51b7dc:363"]},{"id":"7a51b7dc:362","tag":"label","openStart":237130,"attrEnd":237136,"openEnd":237137,"closeEnd":237170,"textRuns":[[237137,237162]],"parentId":"7a51b7dc:361","childIds":[]},{"id":"7a51b7dc:363","tag":"input","openStart":237170,"attrEnd":237284,"openEnd":237286,"closeEnd":237286,"textRuns":[],"parentId":"7a51b7dc:361","childIds":[]},{"id":"7a51b7dc:364","tag":"div","openStart":237297,"attrEnd":237315,"openEnd":237316,"closeEnd":237454,"textRuns":[],"parentId":"7a51b7dc:358","childIds":["7a51b7dc:365","7a51b7dc:366"]},{"id":"7a51b7dc:365","tag":"label","openStart":237316,"attrEnd":237322,"openEnd":237323,"closeEnd":237341,"textRuns":[[237323,237333]],"parentId":"7a51b7dc:364","childIds":[]},{"id":"7a51b7dc:366","tag":"input","openStart":237341,"attrEnd":237446,"openEnd":237448,"closeEnd":237448,"textRuns":[],"parentId":"7a51b7dc:364","childIds":[]},{"id":"7a51b7dc:367","tag":"div","openStart":237459,"attrEnd":237477,"openEnd":237478,"closeEnd":237630,"textRuns":[],"parentId":"7a51b7dc:358","childIds":["7a51b7dc:368","7a51b7dc:369"]},{"id":"7a51b7dc:368","tag":"label","openStart":237478,"attrEnd":237484,"openEnd":237485,"closeEnd":237513,"textRuns":[[237485,237505]],"parentId":"7a51b7dc:367","childIds":[]},{"id":"7a51b7dc:369","tag":"input","openStart":237513,"attrEnd":237622,"openEnd":237624,"closeEnd":237624,"textRuns":[],"parentId":"7a51b7dc:367","childIds":[]},{"id":"7a51b7dc:370","tag":"button","openStart":237635,"attrEnd":237742,"openEnd":237743,"closeEnd":237769,"styleAttr":[237716,237741],"textRuns":[[237743,237760]],"parentId":"7a51b7dc:358","childIds":[]},{"id":"7a51b7dc:371","tag":"div","openStart":237774,"attrEnd":237813,"openEnd":237814,"closeEnd":237820,"textRuns":[],"parentId":"7a51b7dc:358","childIds":[]}]}</script>
