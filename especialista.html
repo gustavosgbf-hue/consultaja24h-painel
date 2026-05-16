@@ -592,6 +592,10 @@ body.memed-aberto{overflow:hidden}
             <div class="perfil-label">Valor da consulta (R$)</div>
             <input class="perfil-input" id="perfil-inp-valor" type="number" step="0.01" min="0" placeholder="Ex: 150.00"/>
           </div>
+          <div class="perfil-field">
+            <div class="perfil-label">RQE</div>
+            <input class="perfil-input" id="perfil-inp-rqe" inputmode="numeric" placeholder="Ex: 136829"/>
+          </div>
           <div class="perfil-field full">
             <div class="perfil-label">Bio / Resumo profissional</div>
             <textarea class="perfil-input perfil-textarea" id="perfil-inp-bio" placeholder="Conte um pouco sobre sua formação, experiência e especialidades. Este texto aparece na sua página pública."></textarea>
@@ -655,6 +659,7 @@ body.memed-aberto{overflow:hidden}
             <input class="admin-input" id="admin-new-email" placeholder="E-mail (recuperação de senha)"/>
             <input class="admin-input" id="admin-new-especialidade" placeholder="Especialidade (ex: endocrinologia)"/>
             <input class="admin-input" id="admin-new-crm" placeholder="CRM"/>
+            <input class="admin-input" id="admin-new-rqe" placeholder="RQE (opcional)"/>
             <input class="admin-input" id="admin-new-uf" placeholder="UF" maxlength="2"/>
             <input class="admin-input" id="admin-new-telefone" placeholder="Telefone (opcional)"/>
             <input class="admin-input" id="admin-new-valor" type="number" step="0.01" min="0" placeholder="Valor consulta (R$)"/>
@@ -925,7 +930,7 @@ function renderAdminEspecialistas(){
           <div class="admin-esp-nome">${escHtml(m.nome||m.email||('ID '+m.id))}</div>
           <div class="admin-esp-meta">
             <span>${escHtml(m.especialidade||'-')}</span>
-            <span>·</span><span>CRM ${escHtml(m.crm||'-')}/${escHtml(m.uf||'-')}</span>
+            <span>·</span><span>CRM ${escHtml(m.crm||'-')}/${escHtml(m.uf||'-')}${m.rqe?` · RQE ${escHtml(m.rqe)}`:''}</span>
             <span>·</span><span>ID ${m.id}</span>
             <span class="admin-esp-badge ${m.ativo?'ativo':'inativo'}">${m.ativo?'Ativo':'Inativo'}</span>
           </div>
@@ -934,6 +939,9 @@ function renderAdminEspecialistas(){
       <div class="admin-esp-body">
         <div><div class="perfil-label" style="margin-bottom:5px">Nome de exibição</div><input class="admin-input" value="${escHtml(m.nome_exibicao||'')}" onchange="adminAtualizarCampo(${i},'nome_exibicao',this.value)" placeholder="Nome de exibição"/></div>
         <div><div class="perfil-label" style="margin-bottom:5px">Valor consulta (R$)</div><input class="admin-input" type="number" step="0.01" value="${escHtml(String(m.valor_consulta??''))}" onchange="adminAtualizarCampo(${i},'valor_consulta',this.value)" placeholder="Valor"/></div>
+        <div><div class="perfil-label" style="margin-bottom:5px">CRM</div><input class="admin-input" value="${escHtml(m.crm||'')}" onchange="adminAtualizarCampo(${i},'crm',this.value)" placeholder="CRM"/></div>
+        <div><div class="perfil-label" style="margin-bottom:5px">RQE</div><input class="admin-input" inputmode="numeric" value="${escHtml(m.rqe||'')}" onchange="adminAtualizarCampo(${i},'rqe',this.value)" placeholder="RQE"/></div>
+        <div><div class="perfil-label" style="margin-bottom:5px">UF</div><input class="admin-input" maxlength="2" value="${escHtml(m.uf||'')}" onchange="adminAtualizarCampo(${i},'uf',this.value.toUpperCase())" placeholder="UF"/></div>
         <div style="grid-column:1/-1"><div class="perfil-label" style="margin-bottom:5px">Resumo profissional (bio)</div><textarea class="admin-input" rows="3" style="resize:vertical;line-height:1.45" onchange="adminAtualizarCampo(${i},'bio',this.value)" placeholder="Apresentação exibida no site...">${escHtml(m.bio||'')}</textarea></div>
         <div style="grid-column:1/-1"><div class="perfil-label" style="margin-bottom:5px">Foto de perfil</div><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">${m.foto_url?`<img src="${escHtml(m.foto_url)}" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(255,255,255,.1)" onerror="this.style.display='none'"/>`:'<div style="width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.04);border:1.5px dashed rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.1rem">👤</div>'}<label style="cursor:pointer"><span class="btn-admin" style="pointer-events:none;padding:6px 14px;font-size:.75rem">📷 Alterar foto</span><input type="file" accept="image/*" style="display:none" onchange="adminUploadFoto(${i},${m.id},this)"/></label>${m.foto_url?`<button class="btn-admin-danger" style="padding:6px 12px;font-size:.74rem" onclick="adminRemoverFoto(${i},${m.id})">✕ Remover</button>`:''}</div></div>
       </div>
@@ -991,16 +999,17 @@ async function adminCriarEspecialista(){
   const email=(document.getElementById('admin-new-email')?.value||'').trim();
   const especialidade=(document.getElementById('admin-new-especialidade')?.value||'').trim();
   const crm=(document.getElementById('admin-new-crm')?.value||'').trim();
+  const rqe=(document.getElementById('admin-new-rqe')?.value||'').trim();
   const uf=(document.getElementById('admin-new-uf')?.value||'').trim().toUpperCase();
   const telefone=(document.getElementById('admin-new-telefone')?.value||'').trim();
   const valor_consulta=(document.getElementById('admin-new-valor')?.value||'').trim();
   const nome_exibicao=nome_exibicao_raw||nome;
   if(!nome||!crm||!uf||!especialidade){mostrarToast('Preencha nome, especialidade, CRM e UF.','error');return;}
-  try{const data=await adminFetch('/api/admin/especialista/criar',{method:'POST',json:{nome,nome_exibicao,email,especialidade,crm,uf,telefone,valor_consulta:valor_consulta||null}});if(data.ok===false)throw new Error(data.error||'Erro ao criar.');mostrarToast('Especialista criado! Envie o e-mail de recuperação de senha para ele acessar.','success');['admin-new-nome','admin-new-nome-exibicao','admin-new-email','admin-new-especialidade','admin-new-crm','admin-new-uf','admin-new-telefone','admin-new-valor'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
+  try{const data=await adminFetch('/api/admin/especialista/criar',{method:'POST',json:{nome,nome_exibicao,email,especialidade,crm,rqe:rqe||null,uf,telefone,valor_consulta:valor_consulta||null}});if(data.ok===false)throw new Error(data.error||'Erro ao criar.');mostrarToast('Especialista criado! Envie o e-mail de recuperação de senha para ele acessar.','success');['admin-new-nome','admin-new-nome-exibicao','admin-new-email','admin-new-especialidade','admin-new-crm','admin-new-rqe','admin-new-uf','admin-new-telefone','admin-new-valor'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await carregarEspecialistasAdmin(false);}catch(e){mostrarToast(e.message||'Erro ao criar especialista.','error');}
 }
 async function adminSalvarEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
-  try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{nome_exibicao:m.nome_exibicao||'',valor_consulta:m.valor_consulta===''?null:Number(m.valor_consulta),ativo:!!m.ativo,visivel:!!m.visivel,bio:m.bio||''}});if(data.ok===false)throw new Error(data.error||'Erro ao salvar.');mostrarToast('Especialista atualizado.','success');}catch(e){mostrarToast(e.message||'Erro ao salvar especialista.','error');}
+  try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{nome_exibicao:m.nome_exibicao||'',valor_consulta:m.valor_consulta===''?null:Number(m.valor_consulta),crm:m.crm||'',rqe:m.rqe||null,uf:m.uf||'',ativo:!!m.ativo,visivel:!!m.visivel,bio:m.bio||''}});if(data.ok===false)throw new Error(data.error||'Erro ao salvar.');mostrarToast('Especialista atualizado.','success');}catch(e){mostrarToast(e.message||'Erro ao salvar especialista.','error');}
 }
 function adminAdicionarDisp(i){
   const m=adminEspecialistas[i];if(!m)return;
@@ -1125,7 +1134,7 @@ async function carregarPerfil(){
     const especEl=document.getElementById('perfil-espec-display');
     if(especEl)especEl.textContent=esp.especialidade||'-';
     const crmEl=document.getElementById('perfil-crm-display');
-    if(crmEl)crmEl.textContent=(esp.crm&&esp.uf)?`CRM ${esp.crm}/${esp.uf}`:'';
+    if(crmEl)crmEl.textContent=(esp.crm&&esp.uf)?`CRM ${esp.crm}/${esp.uf}${esp.rqe?' · RQE '+esp.rqe:''}`:'';
     // Foto
     if(esp.foto_url){
       const img=document.getElementById('perfil-avatar-img');
@@ -1140,6 +1149,8 @@ async function carregarPerfil(){
     if(inpBio)inpBio.value=esp.bio||'';
     const inpValor=document.getElementById('perfil-inp-valor');
     if(inpValor)inpValor.value=esp.valor_consulta||'';
+    const inpRqe=document.getElementById('perfil-inp-rqe');
+    if(inpRqe)inpRqe.value=esp.rqe||'';
     // Disponibilidade
     disponibilidadeSlots=normalizarDisponibilidade(esp.disponibilidade);
     renderCalendario();
@@ -1151,14 +1162,15 @@ async function salvarPerfil(){
   const nome_exibicao=(document.getElementById('perfil-inp-nome')?.value||'').trim();
   const bio=(document.getElementById('perfil-inp-bio')?.value||'').trim();
   const valor_consulta=(document.getElementById('perfil-inp-valor')?.value||'').trim();
+  const rqe=(document.getElementById('perfil-inp-rqe')?.value||'').trim();
   btn.disabled=true;btn.textContent='Salvando…';
   try{
-    const data=await apiFetch('/api/especialista/perfil',{method:'PATCH',json:{nome_exibicao,bio,valor_consulta:valor_consulta?parseFloat(valor_consulta):null}});
+    const data=await apiFetch('/api/especialista/perfil',{method:'PATCH',json:{nome_exibicao,bio,valor_consulta:valor_consulta?parseFloat(valor_consulta):null,rqe:rqe||null}});
     if(data.ok===false)throw new Error(data.error||'Erro ao salvar.');
     // Atualiza exibição
     const nomeEl=document.getElementById('perfil-nome-display');if(nomeEl)nomeEl.textContent=nome_exibicao||'-';
     const navNome=document.getElementById('nav-nome');if(navNome&&nome_exibicao)navNome.textContent=nome_exibicao;
-    if(especialista){especialista.nome_exibicao=nome_exibicao;especialista.bio=bio;localStorage.setItem('especialista',JSON.stringify(especialista));}
+    if(especialista){especialista.nome_exibicao=nome_exibicao;especialista.bio=bio;especialista.rqe=rqe;localStorage.setItem('especialista',JSON.stringify(especialista));}
     mostrarToast('Perfil salvo com sucesso!','success');
   }catch(e){mostrarToast(e.message||'Erro ao salvar perfil.','error');}
   finally{btn.disabled=false;btn.textContent='Salvar perfil';}
