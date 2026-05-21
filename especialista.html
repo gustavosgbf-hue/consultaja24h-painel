@@ -1545,7 +1545,7 @@ function gerarCardHTML(c){
   </div>`;
 }
 
-function mapStatus(s){const map={'agendada':{cls:'proxima',label:'Agendada'},'confirmada':{cls:'hoje',label:'Confirmada'},'em_andamento':{cls:'emandamento',label:'● Em andamento'},'encerrada':{cls:'finalizada',label:'Encerrada'},'finalizada':{cls:'finalizada',label:'Finalizada'},'cancelada':{cls:'cancelada',label:'Cancelada'}};return map[s]||{cls:'proxima',label:s||'Agendada'};}
+function mapStatus(s){const map={'agendada':{cls:'proxima',label:'Agendada'},'confirmada':{cls:'hoje',label:'Confirmada'},'confirmado':{cls:'hoje',label:'Confirmada'},'em_andamento':{cls:'emandamento',label:'● Em andamento'},'encerrada':{cls:'finalizada',label:'Encerrada'},'finalizada':{cls:'finalizada',label:'Finalizada'},'cancelada':{cls:'cancelada',label:'Cancelada'}};return map[s]||{cls:'proxima',label:s||'Agendada'};}
 
 async function abrirConsulta(id){
   try{
