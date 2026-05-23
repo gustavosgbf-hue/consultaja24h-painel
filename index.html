@@ -262,7 +262,7 @@ sem isso o conteúdo pode forçar a coluna a crescer ou colapsar */
 .main{min-width:0;width:100%;padding:28px 32px;overflow-y:auto;display:block;max-height:calc(100vh - var(--nav-h))}
 
 /* -- SLOT TABS: seletor de atendimentos simultâneos -- */
-.slot-tabs{display:none;gap:8px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);width:100%;box-sizing:border-box}
+.slot-tabs{display:none;gap:8px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);width:100%;box-sizing:border-box;flex-wrap:wrap}
 .slot-tabs.visivel{display:flex}
 .slot-tab-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;flex-shrink:0}
 .slot-tab-btn.active{border-color:rgba(94,224,160,.4);background:rgba(94,224,160,.07);color:rgba(255,255,255,.9)}
@@ -1123,7 +1123,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
     <h2>Fila vazia</h2><p>Nenhum paciente aguardando no momento.</p>
   </div>
   <div id="state-atend" style="display:none">
-    <!-- DUAL CONSULT: seletor de atendimentos -->
+    <!-- MULTI CONSULT: seletor de atendimentos -->
     <div class="slot-tabs" id="slot-tabs"></div>
     <div class="atend-header">
       <div class="atend-paciente">
@@ -1336,8 +1336,8 @@ let medico = null, plantaoAtivo = false, modoHistorico = false;
 let autosaveBound = false, autosaveTimer = null, timerInterval = null, timerSegundos = 0;
 let filaInterval = null, filaData = [], filaRetryMs = 15000, agendRetryMs = 20000;
 
-// -- DUAL CONSULT: até 2 atendimentos simultâneos --------------------------
-const MAX_SLOTS = 2;
+// -- MULTI CONSULT: atendimentos simultâneos dinâmicos ----------------------
+// Começa com 2 slots para preservar o fluxo antigo e cria novos conforme necessário.
 const slots = [null, null];
 let slotAtivo = 0;
 let arquivoSelecionado = null;
@@ -1391,7 +1391,34 @@ temMsgNova: false
 
 // [FIX-SLOTS] Helper: retorna o container DOM do slot dado.
 function msgsContainer(idx) {
+garantirSlotDom(idx);
 return document.getElementById('chat-medico-msgs-' + idx);
+}
+
+function garantirSlotDom(idx) {
+if (idx < 0) return null;
+let el = document.getElementById('chat-medico-msgs-' + idx);
+if (el) return el;
+const wrap = document.getElementById('chat-section');
+const anchor = document.getElementById('chat-preview-wrap');
+if (!wrap || !anchor) return null;
+el = document.createElement('div');
+el.className = 'chat-medico-msgs';
+el.id = 'chat-medico-msgs-' + idx;
+el.dataset.slot = String(idx);
+el.hidden = idx !== slotAtivo;
+el.style.display = idx === slotAtivo ? '' : 'none';
+wrap.insertBefore(el, anchor);
+return el;
+}
+
+function encontrarSlotLivre(criarSePreciso = true) {
+const livre = slots.findIndex(s => !s);
+if (livre >= 0) return livre;
+if (!criarSePreciso) return -1;
+slots.push(null);
+garantirSlotDom(slots.length - 1);
+return slots.length - 1;
 }
 
 // [FIX-SLOTS] Fonte única de render do chat de um slot. Reconstrói o DOM a partir de slot.mensagens.
@@ -1491,7 +1518,7 @@ slots[idx].chatAtivo = false;
 // [FIX-SLOTS] Alterna a visibilidade dos containers conforme slotAtivo. Deve ser chamado SEMPRE que
 // slotAtivo muda (ativarSlot, assumirAtendimento, retomarAtendimento, reabrirAtendimento, carga inicial).
 function sincronizarVisibilidadeSlots() {
-for (let i = 0; i < MAX_SLOTS; i++) {
+for (let i = 0; i < slots.length; i++) {
 const c = msgsContainer(i);
 if (!c) continue;
 if (i === slotAtivo) {
@@ -1912,7 +1939,7 @@ setTimeout(async function() {
 try {
 const d = await apiFetch('/api/atendimento/status/'+assumiuId);
 if (d.ok && d.atendimento && d.atendimento.status === 'assumido') {
-const slotLivre = slots[0] === null ? 0 : 1;
+const slotLivre = encontrarSlotLivre(true);
 slots[slotLivre] = criarSlot(d.atendimento);
 slotAtivo = slotLivre;
 sincronizarVisibilidadeSlots();
@@ -1932,7 +1959,7 @@ function logout() {
 if (plantaoAtivo) sairPlantao();
 // Para polling de todos os slots antes de sair
 slots.forEach((_, i) => pararPollingSlot(i));
-slots[0] = null; slots[1] = null; slotAtivo = 0;
+slots.length = 0; slots.push(null, null); slotAtivo = 0;
 sincronizarVisibilidadeSlots();
 clearInterval(agendInterval); agendInterval=null;
 localStorage.removeItem('token'); localStorage.removeItem('medico'); medico=null; autosaveBound=false;
@@ -2098,9 +2125,8 @@ if (!atendimentoRetomado || String(atendimentoRetomado.medico_id || '') !== Stri
   await buscarFila();
   return;
 }
-// Encontrar slot livre ou usar slotAtivo se estiver vazio
-const slotLivre = slots[0] === null ? 0 : (slots[1] === null ? 1 : slotAtivo);
-if (slots[slotLivre]) pararPollingSlot(slotLivre);
+// Encontrar slot livre; se todos estiverem ocupados, cria um novo sem tocar nos atuais.
+const slotLivre = encontrarSlotLivre(true);
 slots[slotLivre] = criarSlot(atendimentoRetomado);
 slotAtivo = slotLivre;
 sincronizarVisibilidadeSlots();
@@ -2139,13 +2165,6 @@ if (slots.some(s => s && String(s.atendimento.id) === String(id))) {
 mostrarToast('Este paciente já está em atendimento.','info'); return;
 }
 
-// Verificar limite de 2 atendimentos simultâneos
-const slotsOcupados = slots.filter(Boolean).length;
-if (slotsOcupados >= MAX_SLOTS) {
-mostrarToast('Limite de 2 atendimentos simultâneos atingido. Encerre um antes de assumir outro.','error');
-return;
-}
-
 // Desabilitar botão para prevenir duplo clique / race condition
 const btnClicado = evt.target && evt.target.classList.contains('btn-assumir') ? evt.target : null;
 const btnPreview = document.getElementById('fp-assumir-btn');
@@ -2156,9 +2175,9 @@ try {
 const data=await apiFetch('/api/atendimento/assumir',{method:'POST',json:{filaId:Number(id),medicoId:Number(medico.id),medicoNome:medico.nome}});
 if (!data.ok) { mostrarToast(data.error||'Este paciente já foi assumido.','error'); await buscarFila(); return; }
 
-// Encontrar slot livre (índice 0 ou 1)
+// Encontrar slot livre; se todos estiverem ocupados, cria um novo sem substituir os atuais.
 const atendimentoNovo = data.atendimento || filaData.find(p=>String(p.id)===String(id));
-const slotLivre = slots[0] === null ? 0 : 1;
+const slotLivre = encontrarSlotLivre(true);
 
 // Parar polling do slot ativo atual antes de trocar (se vamos para outro slot)
 if (slotAtivo !== slotLivre) {
@@ -3128,7 +3147,7 @@ slotAtivo = 0;
 sincronizarVisibilidadeSlots();
 }
 // [FIX-SLOTS] Limpa DOM dos slots vazios — container pode ter ficado com mensagens do paciente anterior
-for (let i = 0; i < MAX_SLOTS; i++) {
+for (let i = 0; i < slots.length; i++) {
 if (!slots[i]) { const c = msgsContainer(i); if (c) c.innerHTML = ''; }
 }
 fecharModal(); buscarHistorico(); renderSlotTabs(); renderFila(); renderEstado();
@@ -3253,12 +3272,6 @@ iniciarAgendamento(parseInt(id), nome, tel, tipo);
 
 async function iniciarAgendamento(agendId, nome, tel, tipo = 'chat') {
 if (!confirm(`Iniciar consulta de ${nome} agora (antes do horário)?`)) return;
-// Verificar limite de slots
-const slotsOcupados = slots.filter(Boolean).length;
-if (slotsOcupados >= MAX_SLOTS) {
-mostrarToast('Limite de 2 atendimentos simultâneos atingido. Encerre um antes de iniciar outro.','error');
-return;
-}
 try {
 const d = await apiFetch(`/api/agendamento/${agendId}/iniciar`,{method:'POST'});
 if (!d.ok) {
@@ -3271,7 +3284,7 @@ document.getElementById('agend-count').textContent = agendData.length;
 return;
 }
 const atendNovo = d.atendimento || { id: d.atendimentoId, nome, tel, tipo, triagem: '(Agendamento antecipado)', status: 'assumido' };
-const slotLivre = slots[0] === null ? 0 : 1;
+const slotLivre = encontrarSlotLivre(true);
 slots[slotLivre] = criarSlot(atendNovo);
 slotAtivo = slotLivre;
 sincronizarVisibilidadeSlots();
@@ -3596,21 +3609,11 @@ if (!atendimentoAtual) return;
 const id = atendimentoAtual.id;
 const nome = atendimentoAtual.nome || 'este paciente';
 if (!confirm('Reabrir a consulta de ' + nome + '? O atendimento voltará para "Em atendimento".')) return;
-// Verificar limite de slots — slot de histórico não conta pois será substituído
-const slotsVivos = slots.filter((s, i) => {
-  if (!s) return false;
-  if (modoHistorico && i === slotAtivo) return false;
-  return true;
-}).length;
-if (slotsVivos >= MAX_SLOTS) {
-  mostrarToast('Encerre um atendimento ativo antes de reabrir outro.', 'error');
-  return;
-}
 try {
   const d = await apiFetch('/api/atendimento/reabrir', { method: 'POST', json: { filaId: id } });
   if (!d.ok) { mostrarToast(d.error || 'Erro ao reabrir', 'error'); return; }
   // Sai do modo histórico e abre o atendimento no slot
-  const slotLivre = slots[0] === null ? 0 : 1;
+  const slotLivre = (modoHistorico && slots[slotAtivo]) ? slotAtivo : encontrarSlotLivre(true);
   slots[slotLivre] = criarSlot(d.atendimento);
   slotAtivo = slotLivre;
   sincronizarVisibilidadeSlots();
@@ -3654,7 +3657,7 @@ if(plantaoAtivo) buscarFila();
 buscarAgendamentos();
 // [FIX-SLOTS] Ao voltar para a aba, atualiza AMBOS os slots (cada um com seu capturedSlot).
 // Antes, só o slot ativo era atualizado — paciente do outro slot ficava com mensagens em atraso.
-for (let i = 0; i < MAX_SLOTS; i++) {
+for (let i = 0; i < slots.length; i++) {
 if (slots[i] && slots[i].chatAtivo && !(modoHistorico && i === slotAtivo)) {
 setTimeout(((idx)=>()=>buscarMensagensNovasMedico(idx))(i), 100 + i*50);
 }
