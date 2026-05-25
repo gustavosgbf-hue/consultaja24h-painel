@@ -3496,7 +3496,7 @@ async function configurarPacienteMemed() {
     if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
   } catch(e) {}
   const nomeCompleto = (pac.nome_completo || pac.paciente_nome || pac.nome || '').trim() || 'Paciente';
-  await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+  MdHub.command.send('plataforma.prescricao', 'setPaciente', {
     idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
     nome: nomeCompleto,
     cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
@@ -3508,11 +3508,13 @@ async function configurarPacienteMemed() {
 }
 
 async function mostrarModuloMemed() {
-  await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
-    historyPrescription: true,
-    buttonClose: true,
-    allowShareModal: true
-  }).catch(()=>{});
+  try {
+    MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+      historyPrescription: true,
+      buttonClose: true,
+      allowShareModal: true
+    });
+  } catch(e) {}
   await configurarPacienteMemed();
   MdHub.module.show('plataforma.prescricao');
   abrirMemedDrawer();
