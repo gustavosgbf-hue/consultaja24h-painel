@@ -3455,7 +3455,7 @@ function fecharMemedDrawer() {
 
 function abrirMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
-  if (overlay) overlay.classList.add('ativo');
+  if (overlay) overlay.classList.remove('ativo');
   document.body.classList.add('memed-aberto');
 }
 
