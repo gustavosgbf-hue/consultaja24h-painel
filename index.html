@@ -3218,11 +3218,64 @@ const mins=Math.floor((Date.now()-new Date(r.criado_em||Date.now()))/60000);
 const tipoLabel=r.tipo==='renovacao_fisica'?'Física':'Digital';
 const triagemSafe=escHtml(r.triagem||r.medicacoes||'-');
 const nomeSafe=escHtml(r.nome||'Paciente');
+const anexos=normalizarObj(r.anexos_urls);
+const receitaLink=anexos.receita_anterior?`<a href="${escAttr(safeUrl(anexos.receita_anterior))}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:.7rem;color:#5ee0a0">Receita anterior</a>`:'';
 const status=r.status==='assumido'
   ? '<span class="pc-status-badge">Em atendimento</span>'
-  : `<span style="display:flex;gap:6px;align-items:center"><button class="btn-assumir" onclick="assumirAtendimento('${r.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${r.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`;
-return `<div class="paciente-card" style="border-color:rgba(94,224,160,.18)"> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo chat">🔄 ${tipoLabel}</span></div><div class="pc-queixa">${triagemSafe}</div><div class="pc-footer"><div class="pc-tempo">${mins}min</div>${status}</div></div>`;
+  : `<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button onclick="abrirMemedRenovacao('${r.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(180,224,90,.28);background:rgba(180,224,90,.08);color:#b4e05a;font-size:.7rem;font-weight:700;cursor:pointer;">Prescrever</button><button class="btn-assumir" onclick="assumirAtendimento('${r.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${r.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`;
+return `<div class="paciente-card" style="border-color:rgba(94,224,160,.18)"> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo chat">🔄 ${tipoLabel}</span></div><div class="pc-queixa">${triagemSafe}${receitaLink?`<div style="margin-top:8px">${receitaLink}</div>`:''}</div><div class="pc-footer"><div class="pc-tempo">${mins}min</div>${status}</div></div>`;
 }).join('');
+}
+
+function normalizarObj(v) {
+if (!v) return {};
+if (typeof v === 'object') return v;
+try { const p=JSON.parse(v); return p && typeof p==='object' ? p : {}; } catch(e) { return {}; }
+}
+
+function montarResumoRenovacao(r) {
+const q=normalizarObj(r.questionario);
+const labels={
+condicao_diagnostico:'Condição/diagnóstico',
+tempo_uso:'Tempo de uso',
+mudanca_dose:'Mudança de dose',
+efeitos_colaterais:'Efeitos colaterais',
+informacoes_importantes:'Informações importantes',
+medico_original:'Médico/especialidade original',
+acompanhamento:'Acompanhamento regular',
+laudo_diagnostico:'Laudo/diagnóstico documentado'
+};
+const linhas=[
+`RENOVAÇÃO ${r.tipo==='renovacao_fisica'?'FÍSICA':'DIGITAL'}`,
+`Paciente: ${r.nome||'-'}`,
+`CPF: ${r.cpf||'-'}`,
+`Tel: ${r.tel||'-'}`,
+'',
+'Medicamentos solicitados:',
+r.medicacoes||r.queixa||'-'
+];
+const qs=Object.keys(labels).filter(k=>q[k]).map(k=>`${labels[k]}: ${q[k]}`);
+if(qs.length) linhas.push('', 'Questionário clínico:', ...qs);
+return linhas.join('\n');
+}
+
+async function abrirMemedRenovacao(id, e) {
+if(e) e.stopPropagation();
+const r=renovData.find(x=>String(x.id)===String(id));
+if(!r) return mostrarToast('Renovação não encontrada.','error');
+const resumo=montarResumoRenovacao(r);
+atendimentoAtual={
+  ...r,
+  id:r.id,
+  tipo:'chat',
+  queixa:r.queixa||r.medicacoes||'Renovação de receita',
+  solicita:'Renovação de receita',
+  prontuario:resumo
+};
+sessionStorage.setItem('atendimentoAtual', JSON.stringify(atendimentoAtual));
+try { await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:r.id,prontuario:resumo}}); } catch(e) {}
+mostrarToast('Abrindo Memed com dados da renovação.','info');
+abrirMemed();
 }
 
 async function buscarAgendamentos() {
