@@ -2091,6 +2091,7 @@ const meuAssumido =
   String(p.medico_id || '') === meuMedId;
 const assumido = p.status === 'assumido' && !isAtual && !meuAssumido;
 const isAdmin=!!sessionStorage.getItem('adminPwd');
+const isRenovacao=String(p.tipo||'').indexOf('renovacao')===0;
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
 const nomeMediacoSafe=escHtml(nomeMediaco);
 const clicavel = !assumido && !meuAssumido && !isAtual;
@@ -2104,7 +2105,10 @@ const cardOnClick = isAtual
     : clicavel
       ? `onclick="abrirPreviewFila('${p.id}')"`
       : '';
-return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?`<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`:isAtual?'<span class="pc-status-badge" style="pointer-events:none">▶ Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">↩ Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
+const acoesAguardando = isAdmin && isRenovacao
+  ? `<span style="display:flex;gap:6px;align-items:center"><button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${p.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`
+  : `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`;
+return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isAtual?'<span class="pc-status-badge" style="pointer-events:none">▶ Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">↩ Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
 }).join('');
 } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
@@ -3086,6 +3090,22 @@ const d = await apiFetch('/api/atendimento/encerrar',{method:'POST',json:{filaId
 if(d.ok){ mostrarToast('Atendimento encerrado.','success'); await buscarFila(); }
 else mostrarToast(d.error||'Erro ao encerrar','error');
 } catch(e){ mostrarToast('Erro ao encerrar','error'); }
+}
+
+async function encerrarRenovacaoResolvida(id, e) {
+if(e) e.stopPropagation();
+const item = filaData.find(function(p){ return String(p.id)===String(id); });
+const nome = item && item.nome ? item.nome : 'este paciente';
+if(!confirm('Marcar renovação de '+nome+' como resolvida e tirar da fila?')) return;
+try {
+const d = await apiFetch('/api/atendimento/encerrar',{method:'POST',json:{filaId:id,status:'Renovação resolvida',documentos_emitidos:'Renovação'}});
+if(d.ok){
+  filaData=filaData.filter(function(p){ return String(p.id)!==String(id); });
+  mostrarToast('Renovação removida da fila.','success');
+  renderFila();
+  await carregarHistorico();
+} else mostrarToast(d.error||'Erro ao encerrar renovação','error');
+} catch(e){ mostrarToast('Erro ao encerrar renovação','error'); }
 }
 
 function abrirModalEncerrar() {
