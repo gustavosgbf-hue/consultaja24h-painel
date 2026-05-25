@@ -2092,9 +2092,10 @@ const meuAssumido =
 const assumido = p.status === 'assumido' && !isAtual && !meuAssumido;
 const isAdmin=!!sessionStorage.getItem('adminPwd');
 const isRenovacao=String(p.tipo||'').indexOf('renovacao')===0;
+const isTriagemPendente=isAdmin && p.pagamento_status==='confirmado' && (p.status==='triagem'||p.status==='pagamento_pendente');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
 const nomeMediacoSafe=escHtml(nomeMediaco);
-const clicavel = !assumido && !meuAssumido && !isAtual;
+const clicavel = !assumido && !meuAssumido && !isAtual && !isTriagemPendente;
 // Para pacientes já em slot (isAtual), encontrar o índice do slot para ativar ao clicar
 const slotIdx = isAtual ? slots.findIndex(s => s && String(s.atendimento.id) === String(p.id)) : -1;
 // Para pacientes meuAssumido (assumidos mas não ativos no painel), o card chama retomarAtendimento
@@ -2108,7 +2109,8 @@ const cardOnClick = isAtual
 const acoesAguardando = isAdmin && isRenovacao
   ? `<span style="display:flex;gap:6px;align-items:center"><button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${p.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`
   : `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`;
-return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isAtual?'<span class="pc-status-badge" style="pointer-events:none">▶ Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">↩ Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
+const acoesTriagemPendente = `<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pc-status-badge" style="pointer-events:none;color:#ffbd2e;border-color:rgba(255,189,46,.25)">Pago · sem triagem</span><button onclick="copiarLinkTriagemFila('${p.id}',event)" style="padding:4px 9px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.68rem;font-weight:700;cursor:pointer;">Copiar link</button></span>`;
+return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido||isTriagemPendente)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isTriagemPendente?acoesTriagemPendente:isAtual?'<span class="pc-status-badge" style="pointer-events:none">▶ Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">↩ Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
 }).join('');
 } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
@@ -3106,6 +3108,16 @@ if(d.ok){
   await carregarHistorico();
 } else mostrarToast(d.error||'Erro ao encerrar renovação','error');
 } catch(e){ mostrarToast('Erro ao encerrar renovação','error'); }
+}
+
+function copiarLinkTriagemFila(id, e) {
+if(e) e.stopPropagation();
+const link = 'https://consultaja24h.com.br/triagem.html?consulta=' + encodeURIComponent(String(id));
+navigator.clipboard.writeText(link).then(function(){
+  mostrarToast('Link da triagem copiado. Envie ao paciente no WhatsApp.','success');
+}).catch(function(){
+  prompt('Copie o link da triagem:', link);
+});
 }
 
 function abrirModalEncerrar() {
