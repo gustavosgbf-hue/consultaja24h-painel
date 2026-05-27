@@ -938,6 +938,7 @@ function renderAdminEspecialistas(){
       </div>
       <div class="admin-esp-body">
         <div><div class="perfil-label" style="margin-bottom:5px">Nome de exibição</div><input class="admin-input" value="${escHtml(m.nome_exibicao||'')}" onchange="adminAtualizarCampo(${i},'nome_exibicao',this.value)" placeholder="Nome de exibição"/></div>
+        <div><div class="perfil-label" style="margin-bottom:5px">E-mail de acesso</div><input class="admin-input" type="email" value="${escHtml(m.email||'')}" onchange="adminAtualizarCampo(${i},'email',this.value)" placeholder="email@exemplo.com"/></div>
         <div><div class="perfil-label" style="margin-bottom:5px">Valor consulta (R$)</div><input class="admin-input" type="number" step="0.01" value="${escHtml(String(m.valor_consulta??''))}" onchange="adminAtualizarCampo(${i},'valor_consulta',this.value)" placeholder="Valor"/></div>
         <div><div class="perfil-label" style="margin-bottom:5px">CRM</div><input class="admin-input" value="${escHtml(m.crm||'')}" onchange="adminAtualizarCampo(${i},'crm',this.value)" placeholder="CRM"/></div>
         <div><div class="perfil-label" style="margin-bottom:5px">RQE</div><input class="admin-input" inputmode="numeric" value="${escHtml(m.rqe||'')}" onchange="adminAtualizarCampo(${i},'rqe',this.value)" placeholder="RQE"/></div>
@@ -951,6 +952,7 @@ function renderAdminEspecialistas(){
       </div>
       <div class="admin-esp-actions">
         <button class="btn-admin" onclick="adminSalvarEspecialista(${i})">✓ Salvar</button>
+        <button class="btn-admin" onclick="adminEnviarRecuperacao(${i},this)">Enviar senha</button>
         <button class="btn-admin" onclick="adminForcarVisibilidade(${i})">Forçar visível</button>
         <button class="btn-admin-danger" onclick="adminDesativarEspecialista(${i})">Desativar</button>
         <button class="btn-admin-danger" style="border-color:rgba(248,113,113,.45);background:rgba(248,113,113,.14)" onclick="adminExcluirEspecialista(${i})">🗑 Excluir</button>
@@ -1009,7 +1011,21 @@ async function adminCriarEspecialista(){
 }
 async function adminSalvarEspecialista(i){
   const m=adminEspecialistas[i];if(!m||!m.id)return;
-  try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{nome_exibicao:m.nome_exibicao||'',valor_consulta:m.valor_consulta===''?null:Number(m.valor_consulta),crm:m.crm||'',rqe:m.rqe||null,uf:m.uf||'',ativo:!!m.ativo,visivel:!!m.visivel,bio:m.bio||''}});if(data.ok===false)throw new Error(data.error||'Erro ao salvar.');mostrarToast('Especialista atualizado.','success');}catch(e){mostrarToast(e.message||'Erro ao salvar especialista.','error');}
+  try{const data=await adminFetch(`/api/admin/especialista/${m.id}`,{method:'PUT',json:{email:m.email||'',nome_exibicao:m.nome_exibicao||'',valor_consulta:m.valor_consulta===''?null:Number(m.valor_consulta),crm:m.crm||'',rqe:m.rqe||null,uf:m.uf||'',ativo:!!m.ativo,visivel:!!m.visivel,bio:m.bio||''}});if(data.ok===false)throw new Error(data.error||'Erro ao salvar.');mostrarToast('Especialista atualizado.','success');}catch(e){mostrarToast(e.message||'Erro ao salvar especialista.','error');}
+}
+async function adminEnviarRecuperacao(i,btn){
+  const m=adminEspecialistas[i];if(!m)return;
+  const email=(m.email||'').trim();
+  if(!email){mostrarToast('Informe e salve o e-mail antes de enviar senha.','error');return;}
+  if(btn){btn.disabled=true;btn.textContent='Enviando…';}
+  try{
+    await fetch(`${API}/api/especialista/esqueci-senha`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    mostrarToast('Senha temporária enviada. Uma cópia também vai para o admin.','success');
+  }catch(e){
+    mostrarToast('Erro ao enviar senha temporária.','error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Enviar senha';}
+  }
 }
 function adminAdicionarDisp(i){
   const m=adminEspecialistas[i];if(!m)return;
