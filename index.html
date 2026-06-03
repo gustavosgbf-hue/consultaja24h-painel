@@ -3362,7 +3362,7 @@ const container=document.getElementById('admin-medicos-lista');
 if (!adminData.length) { container.innerHTML='<div class="fila-vazia" style="padding:12px"><p>Nenhum médico pendente</p></div>'; return; }
 container.innerHTML=adminData.map(m=>{
 const dt=m.created_at?new Date(m.created_at).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',year:'numeric'}):'-';
-return `<div class="medico-card"><div class="medico-card-nome">${escHtml(m.nome||'-')}${m.nome_exibicao&&m.nome_exibicao!==m.nome?` <span style="color:var(--muted);font-weight:400;font-size:.85em">(${escHtml(m.nome_exibicao)})</span>`:''}</div><div class="medico-card-meta">CRM ${escHtml(m.crm||'-')}/${escHtml(m.uf||'-')}${m.especialidade?' · '+escHtml(m.especialidade):''}<br>${escHtml(m.email||'-')} · 📱 ${escHtml(m.telefone||'-')}${m.cnpj?`<br>🏢 CNPJ: ${escHtml(m.cnpj)}`:''}${m.tem_assinatura_digital?`<br>✍ Assinatura digital${m.provedor_assinatura?' · '+escHtml(m.provedor_assinatura):''}`:''  }${m.tem_memed?`<br>💊 Memed${m.memed_email?' · '+escHtml(m.memed_email):''}`:''}<br>Cadastro: ${escHtml(dt)}</div><div class="medico-card-btns"><button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button><button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button></div></div>`;
+return `<div class="medico-card"><div class="medico-card-nome">${escHtml(m.nome||'-')}${m.nome_exibicao&&m.nome_exibicao!==m.nome?` <span style="color:var(--muted);font-weight:400;font-size:.85em">(${escHtml(m.nome_exibicao)})</span>`:''}</div><div class="medico-card-meta">CRM ${escHtml(m.crm||'-')}/${escHtml(m.uf||'-')}${m.especialidade?' · '+escHtml(m.especialidade):''}<br>${escHtml(m.email||'-')} · 📱 ${escHtml(m.telefone||'-')}${m.cnpj?`<br>🏢 CNPJ: ${escHtml(m.cnpj)}`:''}${m.tem_assinatura_digital?`<br>✍ Assinatura digital${m.provedor_assinatura?' · '+escHtml(m.provedor_assinatura):''}`:''  }${m.tem_memed?`<br>💊 Memed${m.memed_email?' · '+escHtml(m.memed_email):''}`:''}<br>Cadastro: ${escHtml(dt)}</div><div class="medico-card-btns"><button class="btn-aprovar" onclick="aprovarMedico(${m.id}, this)">✓ Aprovar</button><button class="btn-aprovar" style="background:linear-gradient(135deg,#8bd7ff,#b4e05a)" onclick="moverMedicoParaEspecialista(${m.id}, this)">↗ Especialista</button><button class="btn-rejeitar" onclick="rejeitarMedico(${m.id}, this)">✕ Rejeitar</button></div></div>`;
 }).join('');
 }
 async function aprovarMedico(id, btn) {
@@ -3381,6 +3381,28 @@ const d=await apiFetch(`/api/admin/medico/${id}/rejeitar`,{method:'PATCH',_admin
 if (d.ok) { adminData=adminData.filter(m=>m.id!==id); renderMedicosPendentes(); document.getElementById('admin-pendente-count').textContent=adminData.length; if(!adminData.length) document.getElementById('admin-tab-btn').style.display='none'; mostrarToast('Médico rejeitado','info'); }
 else { mostrarToast(d.error||'Erro ao rejeitar','error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✕ Rejeitar'; }
+}
+
+async function moverMedicoParaEspecialista(id, btn) {
+const med=adminData.find(m=>Number(m.id)===Number(id));
+const sugestao=(med?.especialidade||'').trim().toLowerCase()||'psiquiatria';
+const especialidade=prompt('Mover para qual especialidade? Use: psiquiatria, endocrinologia ou dermatologia', sugestao);
+if(!especialidade)return;
+const valorPadrao=especialidade.toLowerCase().includes('psiqu')?'350':especialidade.toLowerCase().includes('dermat')?'220':'250';
+const valor=prompt('Valor da consulta em R$', valorPadrao);
+if(valor===null)return;
+if(!confirm('Mover este cadastro para especialistas e bloquear no plantão R$49,90?'))return;
+btn.disabled=true;btn.textContent='Movendo...';
+try{
+const d=await apiFetch(`/api/admin/medico/${id}/mover-especialista`,{method:'PATCH',_admin:true,json:{especialidade:especialidade.trim().toLowerCase(),valor_consulta:Number(String(valor).replace(',','.'))||null}});
+if(d.ok){
+adminData=adminData.filter(m=>Number(m.id)!==Number(id));
+renderMedicosPendentes();
+document.getElementById('admin-pendente-count').textContent=adminData.length;
+if(!adminData.length)document.getElementById('admin-tab-btn').style.display='none';
+mostrarToast('Movido para especialistas. Ele fica ativo, mas invisível na landing até você revisar.','success');
+}else{mostrarToast(d.error||'Erro ao mover','error');btn.disabled=false;btn.textContent='↗ Especialista';}
+}catch(e){mostrarToast('Erro de conexão','error');btn.disabled=false;btn.textContent='↗ Especialista';}
 }
 
 // - PATCH APLICADO: usa d.atendimento direto, sem buscarFila() + find() --
