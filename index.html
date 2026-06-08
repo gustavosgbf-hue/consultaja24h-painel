@@ -2805,7 +2805,11 @@ async function enviarArquivoUnico(file, atendId) {
   fd.append('autor', 'medico');
   fd.append('autorId', medico?.id || '');
   try {
-    const res = await fetch(`${API}/api/chat/upload`, { method: 'POST', body: fd });
+    const res = await fetch(`${API}/api/chat/upload`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getToken() },
+      body: fd
+    });
     const data = await safeJson(res);
     if (data.ok && data.mensagem) {
       const m = data.mensagem;
