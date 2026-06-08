@@ -1543,11 +1543,11 @@ sincronizarVisibilidadeSlots();
 // [UX] Slot recém-ativado perde o badge de "mensagem nova"
 if (slots[slotAtivo]) slots[slotAtivo].temMsgNova = false;
 renderSlotTabs();
-modoHistorico = false;
+modoHistorico = !!(slots[slotAtivo] && slots[slotAtivo].atendimento && slots[slotAtivo].atendimento._origemHistorico);
 timerSegundos = 0;
 if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
 if (slots[slotAtivo]) {
-iniciarTimer();
+if (!modoHistorico) iniciarTimer();
 // 4. Repopula o painel com dados do novo slot
 renderPainelAtendimento();
 // 5. Restaura rascunho clínico deste slot (sobrescreve o que renderPainelAtendimento preencheu)
@@ -3714,16 +3714,15 @@ function abrirAtendimentoHistorico(id) {
 // Usa objeto já carregado no cache - sem refetch para /api/atendimento/status
 const atendimento = histGeralCache[String(id)];
 if (!atendimento) { mostrarToast('Atendimento não encontrado no cache. Recarregue o histórico.','error'); return; }
-// Bloqueia se houver slot VIVO
-const algumSlotVivo = slots.some(s => s !== null && !modoHistorico);
-if (algumSlotVivo) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.','error'); return; }
-pararPollingSlot(0);
+const slotHist = encontrarSlotLivre(true);
+if (slots[slotHist]) pararPollingSlot(slotHist);
 atendimento._origemHistorico = 'geral';
-slots[0] = criarSlot(atendimento);
-slotAtivo = 0;
+slots[slotHist] = criarSlot(atendimento);
+slotAtivo = slotHist;
 sincronizarVisibilidadeSlots();
-clearInterval(timerInterval); esconderChatPip();
+esconderChatPip();
 modoHistorico=true;
+renderSlotTabs();
 const sidebar=document.querySelector('.sidebar'); if(sidebar){sidebar.classList.remove('open');sidebar.classList.remove('idle');}
 const fab=document.getElementById('fab-fila'); if(fab&&!isMobile()) fab.style.display='none';
 renderPainelAtendimento(); renderEstado();
@@ -3735,18 +3734,16 @@ window.scrollTo(0,0);
 }
 
 function abrirHistoricoAtendimento(id) {
-// Bloqueia se qualquer slot tiver atendimento VIVO
-const algumSlotVivo = slots.some(s => s !== null && !modoHistorico);
-if (algumSlotVivo) { mostrarToast('Encerre o atendimento atual antes de ver o histórico.','error'); return; }
 const a=histData.find(item=>String(item.id)===String(id)); if (!a) return;
-// Slot 0 para histórico - garante que não há slots vivos nesse ponto
+const slotHist = encontrarSlotLivre(true);
 a._origemHistorico = 'meu';
-pararPollingSlot(0);
-slots[0] = criarSlot(a);
-slotAtivo = 0;
+if (slots[slotHist]) pararPollingSlot(slotHist);
+slots[slotHist] = criarSlot(a);
+slotAtivo = slotHist;
 sincronizarVisibilidadeSlots();
-clearInterval(timerInterval); esconderChatPip();
+esconderChatPip();
 modoHistorico=true;
+renderSlotTabs();
 const sidebar = document.querySelector('.sidebar');
 if (sidebar) sidebar.classList.remove('open');
 const fab = document.getElementById('fab-fila');
@@ -3805,10 +3802,16 @@ try {
 }
 
 function fecharHistoricoAtendimento() {
-// Limpa slot usado pelo histórico
 slots[slotAtivo] = null;
-modoHistorico=false;
+const proximoSlot = slots.findIndex(Boolean);
+slotAtivo = proximoSlot >= 0 ? proximoSlot : 0;
+modoHistorico = !!(slots[slotAtivo] && slots[slotAtivo].atendimento && slots[slotAtivo].atendimento._origemHistorico);
+sincronizarVisibilidadeSlots();
 renderSlotTabs(); renderEstado(); buscarHistorico();
+if (slots[slotAtivo]) {
+if (!modoHistorico) iniciarTimer();
+renderPainelAtendimento(); renderEstado();
+}
 const fab = document.getElementById('fab-fila');
 if (fab) fab.style.display='';
 window.scrollTo(0,0);
