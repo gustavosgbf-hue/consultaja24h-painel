@@ -1173,6 +1173,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
         <div class="triagem-item"><label>Medicações em uso</label><span id="tr-medicacoes">-</span></div>
         <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
         <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">-</span></div>
+        <div class="triagem-queixa"><label>Relato completo do paciente</label><span id="tr-relato-completo" style="white-space:pre-wrap">-</span></div>
       </div>
     </div><!-- /triagem-body -->
     </div>
@@ -2301,6 +2302,7 @@ else headerNome.parentNode.insertBefore(badge, headerNome.nextSibling);
 }
 }
 document.getElementById('tr-queixa').textContent=p.queixa||p.triagem||'-';
+document.getElementById('tr-relato-completo').textContent=p.triagem||p.queixa||'-';
 document.getElementById('cl-alergias').value=p.alergias||'';
 document.getElementById('cl-comorbidades').value=p.cronicas||'';
 document.getElementById('cl-medicacoes').value=p.medicacoes||'';
