@@ -314,19 +314,34 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .btn-wpp:hover{background:rgba(37,211,102,.15)}
 .btn-encerrar{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,95,87,.2);background:rgba(255,95,87,.06);color:#ff8080;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-encerrar:hover{background:rgba(255,95,87,.12);border-color:rgba(255,95,87,.35)}
-.triagem-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:24px}
-.triagem-box-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g1);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.triagem-box{background:linear-gradient(180deg,rgba(15,29,23,.96),rgba(11,24,18,.96));border:1px solid rgba(255,255,255,.075);border-radius:12px;padding:0;margin-bottom:24px;overflow:hidden}
+.triagem-box-title{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.82);margin:0;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;border-bottom:1px solid rgba(255,255,255,.065)}
 .triagem-toggle-btn{background:none;border:none;color:var(--g1);font-size:.85rem;cursor:pointer;padding:0;line-height:1;transition:transform .25s}
 .triagem-toggle-btn.collapsed{transform:rotate(-90deg)}
-.triagem-body{overflow:hidden;max-height:1000px;transition:max-height .35s ease,opacity .25s ease;opacity:1}
-.triagem-body.collapsed{max-height:0;opacity:0}
-.triagem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.triagem-item{display:flex;flex-direction:column;gap:4px}
-.triagem-item label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.triagem-item span{font-size:.88rem;font-weight:400;color:rgba(255,255,255,.8)}
-.triagem-queixa{grid-column:1/-1;margin-top:4px;padding-top:14px;border-top:1px solid var(--line2)}
-.triagem-queixa label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);display:block;margin-bottom:8px}
-.triagem-queixa span{font-size:.95rem;font-weight:400;color:rgba(255,255,255,.88);line-height:1.6}
+.triagem-body{overflow:hidden;max-height:1600px;transition:max-height .35s ease,opacity .25s ease;opacity:1;padding:16px}
+.triagem-body.collapsed{max-height:0;opacity:0;padding-top:0;padding-bottom:0}
+.triagem-section+.triagem-section{margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.065)}
+.triagem-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.triagem-section-title{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(180,224,90,.82)}
+.triagem-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.triagem-item{display:flex;flex-direction:column;gap:4px;min-width:0;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}
+.triagem-item.is-empty{display:none}
+.triagem-item label{font-size:.62rem;font-weight:650;letter-spacing:.065em;text-transform:uppercase;color:rgba(255,255,255,.34)}
+.triagem-item span{font-size:.83rem;font-weight:450;color:rgba(255,255,255,.84);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.triagem-item--wide{grid-column:span 2}
+.triagem-contact-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.triagem-mini-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 9px;border-radius:7px;border:1px solid rgba(94,224,160,.2);background:rgba(94,224,160,.055);color:#70e7ad;font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:650;text-decoration:none;cursor:pointer}
+.triagem-mini-btn:hover{background:rgba(94,224,160,.1)}
+.triagem-queixa{margin-top:10px;padding:14px 16px;border-radius:9px;background:rgba(94,224,160,.045);border:1px solid rgba(94,224,160,.1)}
+.triagem-queixa label{font-size:.63rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#72dca9;display:block;margin-bottom:7px}
+.triagem-queixa span{font-size:.94rem;font-weight:400;color:rgba(255,255,255,.9);line-height:1.55}
+.triagem-relato{display:none;margin-top:8px;padding:12px 14px;border-radius:8px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.05)}
+.triagem-relato.visible{display:block}
+.triagem-relato summary{cursor:pointer;list-style:none;font-size:.68rem;font-weight:650;color:rgba(255,255,255,.55);user-select:none}
+.triagem-relato summary::-webkit-details-marker{display:none}
+.triagem-relato summary:after{content:'+';float:right;color:var(--g1);font-size:.85rem}
+.triagem-relato[open] summary:after{content:'−'}
+.triagem-relato-content{display:block;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.05);white-space:pre-wrap;font-size:.82rem;line-height:1.6;color:rgba(255,255,255,.72)}
 .tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
 .tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;position:relative}
 .tab-badge{position:absolute;top:4px;right:6px;min-width:16px;height:16px;border-radius:8px;background:#ff5f57;color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 3px}
@@ -497,7 +512,7 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .modal-field label{display:block;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
 .modal-input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s,box-shadow .2s}
 .modal-input:focus{border-color:rgba(94,224,160,.5);box-shadow:0 0 0 3px rgba(94,224,160,.08)}
-.triagem-edit-btn{padding:4px 10px;border-radius:7px;border:1px solid rgba(94,224,160,.28);background:rgba(94,224,160,.07);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:0;text-transform:none;cursor:pointer}
+.triagem-edit-btn{padding:6px 10px;border-radius:7px;border:1px solid rgba(94,224,160,.22);background:rgba(94,224,160,.055);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:0;text-transform:none;cursor:pointer}
 .triagem-title-actions{display:flex;align-items:center;gap:8px}
 .radio-group{display:flex;flex-direction:column;gap:8px}
 .radio-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s}
@@ -621,10 +636,15 @@ overflow-x:hidden!important;
 #memed-aviso{font-size:.72rem;padding:8px 10px;margin-top:6px}
 
 /* Triagem */
-.triagem-box{padding:10px;margin-bottom:12px}
+.triagem-box{padding:0;margin-bottom:12px}
+.triagem-body{padding:10px}
 .triagem-grid{grid-template-columns:1fr 1fr;gap:6px}
+.triagem-item--wide{grid-column:1/-1}
 .triagem-item span{font-size:.78rem}
-.triagem-box-title{font-size:.66rem;margin-bottom:8px}
+.triagem-box-title{font-size:.66rem;padding:10px 11px}
+.triagem-section+.triagem-section{margin-top:12px;padding-top:12px}
+.triagem-queixa{padding:11px 12px}
+.triagem-queixa span{font-size:.84rem;line-height:1.5}
 
 /* Tabs */
 .tabs{gap:4px;margin-bottom:12px;padding:3px}
@@ -1153,28 +1173,32 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
       </div>
     </div>
     <div class="triagem-box">
-      <div class="triagem-box-title" onclick="toggleTriagem()"><span>Dados do paciente</span><span class="triagem-title-actions"><button class="triagem-edit-btn" id="btn-editar-paciente" onclick="event.stopPropagation();abrirModalEditarPaciente()">Editar nome/CPF</button><button class="triagem-toggle-btn" id="triagem-toggle-btn" tabindex="-1">▾</button></span></div>
+      <div class="triagem-box-title" onclick="toggleTriagem()"><span>Paciente e triagem</span><span class="triagem-title-actions"><button class="triagem-edit-btn" id="btn-editar-paciente" onclick="event.stopPropagation();abrirModalEditarPaciente()">Editar cadastro</button><button class="triagem-toggle-btn" id="triagem-toggle-btn" tabindex="-1">▾</button></span></div>
       <div class="triagem-body" id="triagem-body">
-      <div class="triagem-grid" style="margin-bottom:12px">
-        <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">-</span></div>
-        <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">-</span></div>
-        <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">-</span></div>
-        <div class="triagem-item"><label>Tel. documentos (SMS)</label><span id="tr-teldoc-pac">-</span></div>
-        <div class="triagem-item"><label>Data de nascimento</label><span id="tr-nascimento-pac">-</span></div>
-        <div class="triagem-item" style="grid-column:1/-1"><label>E-mail</label><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span id="tr-email-pac" style="font-size:.88rem;font-weight:400;color:rgba(255,255,255,.8)">-</span><button id="btn-copiar-email" onclick="copiarEmailPaciente()" style="display:none;padding:3px 10px;border-radius:6px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.07);color:#5ee0a0;font-family:Outfit,sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap" title="Copiar e-mail - útil para o Memed">Copiar</button></div></div>
-        <div class="triagem-item" style="grid-column:1/-1" id="tr-link-paciente-wrap"><label>Link do paciente</label><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><a id="tr-link-paciente" href="#" target="_blank" style="font-size:.82rem;color:#5ee0a0;word-break:break-all">-</a><button onclick="copiarLinkPaciente()" style="padding:3px 10px;border-radius:6px;border:1px solid rgba(94,224,160,.3);background:rgba(94,224,160,.07);color:#5ee0a0;font-family:Outfit,sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap">Copiar</button></div><div style="font-size:.7rem;color:rgba(255,255,255,.25);margin-top:3px">Use apenas se o paciente perder acesso à sala</div></div>
-      </div>
-      <div class="triagem-box-title" style="margin-top:8px">Dados da triagem</div>
-      <div class="triagem-grid">
-        <div class="triagem-item"><label>Idade</label><span id="tr-idade">-</span></div>
-        <div class="triagem-item"><label>Sexo</label><span id="tr-sexo">-</span></div>
-        <div class="triagem-item"><label>Alergias</label><span id="tr-alergias">-</span></div>
-        <div class="triagem-item"><label>Comorbidades</label><span id="tr-cronicas">-</span></div>
-        <div class="triagem-item"><label>Medicações em uso</label><span id="tr-medicacoes">-</span></div>
-        <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
+      <section class="triagem-section">
+        <div class="triagem-section-head"><span class="triagem-section-title">Identificação e contato</span></div>
+        <div class="triagem-grid">
+          <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">-</span></div>
+          <div class="triagem-item"><label>Nascimento</label><span id="tr-nascimento-pac">-</span></div>
+          <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">-</span></div>
+          <div class="triagem-item" id="tr-teldoc-wrap"><label>SMS de documentos</label><span id="tr-teldoc-pac">-</span></div>
+          <div class="triagem-item triagem-item--wide" id="tr-email-wrap"><label>E-mail</label><div class="triagem-contact-actions"><span id="tr-email-pac">-</span><button class="triagem-mini-btn" id="btn-copiar-email" onclick="copiarEmailPaciente()" style="display:none" title="Copiar e-mail para uso no Memed">Copiar e-mail</button></div></div>
+          <div class="triagem-item triagem-item--wide" id="tr-link-paciente-wrap"><label>Acesso do paciente</label><div class="triagem-contact-actions"><a id="tr-link-paciente" class="triagem-mini-btn" href="#" target="_blank">Abrir sala</a><button class="triagem-mini-btn" onclick="copiarLinkPaciente()">Copiar link</button><span style="font-size:.68rem;color:rgba(255,255,255,.3)">Use se o paciente perder o acesso</span></div></div>
+        </div>
+      </section>
+      <section class="triagem-section">
+        <div class="triagem-section-head"><span class="triagem-section-title">Resumo clínico</span></div>
+        <div class="triagem-grid">
+          <div class="triagem-item" id="tr-idade-wrap"><label>Idade</label><span id="tr-idade">-</span></div>
+          <div class="triagem-item" id="tr-sexo-wrap"><label>Sexo</label><span id="tr-sexo">-</span></div>
+          <div class="triagem-item"><label>Alergias</label><span id="tr-alergias">-</span></div>
+          <div class="triagem-item"><label>Comorbidades</label><span id="tr-cronicas">-</span></div>
+          <div class="triagem-item triagem-item--wide"><label>Medicações em uso</label><span id="tr-medicacoes">-</span></div>
+          <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
+        </div>
         <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">-</span></div>
-        <div class="triagem-queixa"><label>Relato completo do paciente</label><span id="tr-relato-completo" style="white-space:pre-wrap">-</span></div>
-      </div>
+        <details class="triagem-relato" id="tr-relato-wrap"><summary>Ver respostas originais do paciente</summary><span class="triagem-relato-content" id="tr-relato-completo">-</span></details>
+      </section>
     </div><!-- /triagem-body -->
     </div>
     <!-- [MOBILE-UX] Header compacto do chat fullscreen -->
@@ -2260,27 +2284,40 @@ if (!modoHistorico) {
 document.getElementById('btn-wpp').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
 document.getElementById('btn-wpp-consulta').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
 }
-document.getElementById('tr-nome-pac').textContent=nome;
 document.getElementById('tr-cpf-pac').textContent=p.cpf||'-';
 document.getElementById('tr-tel-pac').textContent=p.tel||'-';
 document.getElementById('tr-teldoc-pac').textContent=p.tel_documentos||p.tel||'-';
 document.getElementById('tr-nascimento-pac').textContent=p.data_nascimento?formatarNascimento(p.data_nascimento):'-';
+const valorPreenchido = valor => {
+  const normalizado = String(valor || '').trim().toLowerCase();
+  return normalizado && normalizado !== '-' && normalizado !== 'não informado' && normalizado !== 'nao informado';
+};
+const alternarCampoVazio = (wrapId, valor) => {
+  const wrap = document.getElementById(wrapId);
+  if (wrap) wrap.classList.toggle('is-empty', !valorPreenchido(valor));
+};
 // E-mail do paciente
 const emailPacEl = document.getElementById('tr-email-pac');
 if (emailPacEl) emailPacEl.textContent = p.email || '-';
+alternarCampoVazio('tr-email-wrap', p.email);
 const btnCopiarEmail = document.getElementById('btn-copiar-email');
-if (btnCopiarEmail) btnCopiarEmail.style.display = p.email ? 'inline-block' : 'none';
+if (btnCopiarEmail) btnCopiarEmail.style.display = p.email ? 'inline-flex' : 'none';
+const telPrincipal = String(p.tel || '').replace(/\D/g, '');
+const telDocumentos = String(p.tel_documentos || '').replace(/\D/g, '');
+alternarCampoVazio('tr-teldoc-wrap', telDocumentos && telDocumentos !== telPrincipal ? telDocumentos : '');
 // Link do paciente — visível só no painel do médico que assumiu
 const linkPacEl = document.getElementById('tr-link-paciente');
 const linkPacWrap = document.getElementById('tr-link-paciente-wrap');
 if (linkPacEl && linkPacWrap && p.id) {
   const linkPac = 'https://consultaja24h.com.br/triagem.html?consulta=' + p.id;
   linkPacEl.href = linkPac;
-  linkPacEl.textContent = linkPac;
+  linkPacEl.textContent = 'Abrir sala';
   linkPacWrap.style.display = modoHistorico ? 'none' : '';
 }
 document.getElementById('tr-idade').textContent=p.idade||'-';
 document.getElementById('tr-sexo').textContent=p.sexo||'-';
+alternarCampoVazio('tr-idade-wrap', p.idade);
+alternarCampoVazio('tr-sexo-wrap', p.sexo);
 document.getElementById('tr-alergias').textContent=p.alergias||'-';
 document.getElementById('tr-cronicas').textContent=p.cronicas||'-';
 document.getElementById('tr-medicacoes').textContent=p.medicacoes||'-';
@@ -2288,21 +2325,28 @@ document.getElementById('tr-medicacoes').textContent=p.medicacoes||'-';
 const solicitaEl = document.getElementById('tr-solicita');
 if (solicitaEl) {
 solicitaEl.textContent = p.solicita || '-';
-const headerNome = document.getElementById('atend-nome');
 const badgeExist = document.getElementById('solicita-badge-header');
 if (badgeExist) badgeExist.remove();
-if (p.solicita && p.solicita !== 'Não informado' && p.solicita !== '-' && headerNome) {
-const badge = document.createElement('span');
-badge.id = 'solicita-badge-header';
-badge.className = 'solicita-badge';
-badge.textContent = 'solicita: ' + p.solicita;
-const metaEl = document.querySelector('.atend-meta');
-if (metaEl) metaEl.appendChild(badge);
-else headerNome.parentNode.insertBefore(badge, headerNome.nextSibling);
 }
+const queixaPrincipal = String(p.queixa || p.triagem || '-').trim();
+document.getElementById('tr-queixa').textContent=queixaPrincipal;
+const triagemCompleta = String(p.triagem || '').trim();
+const marcadorLiteral = 'RELATO COMPLETO DO PACIENTE (PALAVRAS ORIGINAIS)';
+const marcadorOrganizado = 'DADOS ORGANIZADOS PELA TRIAGEM';
+let relatoLiteral = '';
+if (triagemCompleta.includes(marcadorLiteral)) {
+  relatoLiteral = triagemCompleta
+    .split(marcadorOrganizado)[0]
+    .replace(marcadorLiteral, '')
+    .trim();
 }
-document.getElementById('tr-queixa').textContent=p.queixa||p.triagem||'-';
-document.getElementById('tr-relato-completo').textContent=p.triagem||p.queixa||'-';
+const relatoWrap = document.getElementById('tr-relato-wrap');
+const relatoEl = document.getElementById('tr-relato-completo');
+if (relatoEl) relatoEl.textContent = relatoLiteral;
+if (relatoWrap) {
+  relatoWrap.classList.toggle('visible', Boolean(relatoLiteral));
+  relatoWrap.open = false;
+}
 document.getElementById('cl-alergias').value=p.alergias||'';
 document.getElementById('cl-comorbidades').value=p.cronicas||'';
 document.getElementById('cl-medicacoes').value=p.medicacoes||'';
