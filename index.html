@@ -1183,7 +1183,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
           <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">-</span></div>
           <div class="triagem-item" id="tr-teldoc-wrap"><label>SMS de documentos</label><span id="tr-teldoc-pac">-</span></div>
           <div class="triagem-item triagem-item--wide" id="tr-email-wrap"><label>E-mail</label><div class="triagem-contact-actions"><span id="tr-email-pac">-</span><button class="triagem-mini-btn" id="btn-copiar-email" onclick="copiarEmailPaciente()" style="display:none" title="Copiar e-mail para uso no Memed">Copiar e-mail</button></div></div>
-          <div class="triagem-item triagem-item--wide" id="tr-link-paciente-wrap"><label>Acesso do paciente</label><div class="triagem-contact-actions"><a id="tr-link-paciente" class="triagem-mini-btn" href="#" target="_blank">Abrir sala</a><button class="triagem-mini-btn" onclick="copiarLinkPaciente()">Copiar link</button><span style="font-size:.68rem;color:rgba(255,255,255,.3)">Use se o paciente perder o acesso</span></div></div>
+          <div class="triagem-item triagem-item--wide" id="tr-link-paciente-wrap"><label>Recuperar acesso do paciente</label><div class="triagem-contact-actions"><a id="tr-link-paciente" href="#" style="display:none" aria-hidden="true" tabindex="-1"></a><button class="triagem-mini-btn" onclick="copiarLinkPaciente()">Copiar link do paciente</button><span style="font-size:.68rem;color:rgba(255,255,255,.3)">Envie apenas se o paciente perder o acesso à consulta</span></div></div>
         </div>
       </section>
       <section class="triagem-section">
@@ -2311,7 +2311,7 @@ const linkPacWrap = document.getElementById('tr-link-paciente-wrap');
 if (linkPacEl && linkPacWrap && p.id) {
   const linkPac = 'https://consultaja24h.com.br/triagem.html?consulta=' + p.id;
   linkPacEl.href = linkPac;
-  linkPacEl.textContent = 'Abrir sala';
+  linkPacEl.textContent = linkPac;
   linkPacWrap.style.display = modoHistorico ? 'none' : '';
 }
 document.getElementById('tr-idade').textContent=p.idade||'-';
