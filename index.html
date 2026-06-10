@@ -495,6 +495,10 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .modal-sub{font-size:.83rem;font-weight:300;color:var(--muted);margin-bottom:24px}
 .modal-field{margin-bottom:18px}
 .modal-field label{display:block;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.modal-input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s,box-shadow .2s}
+.modal-input:focus{border-color:rgba(94,224,160,.5);box-shadow:0 0 0 3px rgba(94,224,160,.08)}
+.triagem-edit-btn{padding:4px 10px;border-radius:7px;border:1px solid rgba(94,224,160,.28);background:rgba(94,224,160,.07);color:var(--g2);font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:0;text-transform:none;cursor:pointer}
+.triagem-title-actions{display:flex;align-items:center;gap:8px}
 .radio-group{display:flex;flex-direction:column;gap:8px}
 .radio-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:all .2s}
 .radio-opt.selected{border-color:rgba(94,224,160,.35);background:rgba(94,224,160,.06)}
@@ -1149,7 +1153,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
       </div>
     </div>
     <div class="triagem-box">
-      <div class="triagem-box-title" onclick="toggleTriagem()">Dados do paciente<button class="triagem-toggle-btn" id="triagem-toggle-btn" tabindex="-1">▾</button></div>
+      <div class="triagem-box-title" onclick="toggleTriagem()"><span>Dados do paciente</span><span class="triagem-title-actions"><button class="triagem-edit-btn" id="btn-editar-paciente" onclick="event.stopPropagation();abrirModalEditarPaciente()">Editar nome/CPF</button><button class="triagem-toggle-btn" id="triagem-toggle-btn" tabindex="-1">▾</button></span></div>
       <div class="triagem-body" id="triagem-body">
       <div class="triagem-grid" style="margin-bottom:12px">
         <div class="triagem-item"><label>Nome</label><span id="tr-nome-pac">-</span></div>
@@ -1318,6 +1322,24 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
       </div>
     </div>
     <div class="modal-actions"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-confirm" onclick="confirmarEncerramento()">Confirmar encerramento</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-editar-paciente" onclick="if(event.target===this)fecharModalEditarPaciente()">
+  <div class="modal">
+    <div class="modal-title">Editar dados do paciente</div>
+    <div class="modal-sub">A alteração vale somente para este atendimento e será usada ao abrir a Memed.</div>
+    <div class="modal-field">
+      <label for="editar-paciente-nome">Nome completo</label>
+      <input class="modal-input" id="editar-paciente-nome" type="text" maxlength="160" autocomplete="off">
+    </div>
+    <div class="modal-field">
+      <label for="editar-paciente-cpf">CPF</label>
+      <input class="modal-input" id="editar-paciente-cpf" type="text" maxlength="14" inputmode="numeric" autocomplete="off" oninput="mascararCpfEdicao(this)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModalEditarPaciente()">Cancelar</button>
+      <button class="btn-confirm" id="btn-salvar-paciente" onclick="salvarEdicaoPaciente()">Salvar dados</button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -3130,6 +3152,73 @@ navigator.clipboard.writeText(link).then(function(){
 });
 }
 
+function formatarCpfEdicao(valor) {
+const cpf=String(valor||'').replace(/\D/g,'').slice(0,11);
+return cpf.replace(/^(\d{3})(\d)/,'$1.$2')
+  .replace(/^(\d{3})\.(\d{3})(\d)/,'$1.$2.$3')
+  .replace(/\.(\d{3})(\d)/,'.$1-$2');
+}
+
+function mascararCpfEdicao(input) {
+if(input) input.value=formatarCpfEdicao(input.value);
+}
+
+function abrirModalEditarPaciente() {
+const p=atendimentoAtual;
+if(!p){ mostrarToast('Nenhum atendimento selecionado.','error'); return; }
+const nomeInput=document.getElementById('editar-paciente-nome');
+const cpfInput=document.getElementById('editar-paciente-cpf');
+nomeInput.value=p.nome||'';
+cpfInput.value=formatarCpfEdicao(p.cpf||'');
+document.getElementById('modal-editar-paciente').classList.add('open');
+setTimeout(()=>nomeInput.focus(),50);
+}
+
+function fecharModalEditarPaciente() {
+document.getElementById('modal-editar-paciente')?.classList.remove('open');
+}
+
+async function salvarEdicaoPaciente() {
+const p=atendimentoAtual;
+if(!p) return;
+const nome=document.getElementById('editar-paciente-nome').value.trim().replace(/\s+/g,' ');
+const cpf=document.getElementById('editar-paciente-cpf').value.replace(/\D/g,'');
+if(nome.length<3){ mostrarToast('Informe o nome completo do paciente.','error'); return; }
+if(cpf.length!==11){ mostrarToast('Informe um CPF válido com 11 dígitos.','error'); return; }
+
+const btn=document.getElementById('btn-salvar-paciente');
+btn.disabled=true; btn.textContent='Salvando...';
+try {
+  const d=await apiFetch('/api/atendimento/atualizar-paciente',{
+    method:'POST',
+    json:{filaId:p.id,nome,cpf}
+  });
+  if(!d.ok){ mostrarToast(d.error||'Não foi possível atualizar o paciente.','error'); return; }
+
+  Object.assign(p,d.atendimento||{nome,cpf});
+  const filaItem=filaData.find(item=>String(item.id)===String(p.id));
+  if(filaItem&&filaItem!==p) Object.assign(filaItem,d.atendimento||{nome,cpf});
+  const histItem=histData.find(item=>String(item.id)===String(p.id));
+  if(histItem&&histItem!==p) Object.assign(histItem,d.atendimento||{nome,cpf});
+  const histGeralItem=histGeralCache&&histGeralCache[String(p.id)];
+  if(histGeralItem&&histGeralItem!==p) Object.assign(histGeralItem,d.atendimento||{nome,cpf});
+
+  if(slotAtivo===0) sessionStorage.setItem('atendimentoAtual',JSON.stringify(p));
+  renderPainelAtendimento();
+  renderSlotTabs();
+  if(histVisible) renderHistorico();
+  if(memedCarregado) {
+    try { await configurarPacienteMemed(); } catch(e) { console.warn('[MEMED] Não foi possível atualizar paciente já carregado:',e); }
+  }
+  fecharModalEditarPaciente();
+  mostrarToast('Nome e CPF atualizados. A Memed usará os novos dados.','success');
+} catch(e) {
+  mostrarToast('Erro ao atualizar dados do paciente.','error');
+} finally {
+  btn.disabled=false; btn.textContent='Salvar dados';
+}
+}
+
 function abrirModalEncerrar() {
 if (!atendimentoAtual) { mostrarToast('Nenhum atendimento ativo para encerrar.','error'); return; }
 document.getElementById('modal-encerrar').classList.add('open');
@@ -3519,7 +3608,10 @@ async function configurarPacienteMemed() {
   if (!pac) throw new Error('Nenhum atendimento ativo');
   try {
     const dPac = await apiFetch(`/api/atendimento/status/${pac.id}`);
-    if (dPac.ok && dPac.atendimento) pac = dPac.atendimento;
+    if (dPac.ok && dPac.atendimento) {
+      Object.assign(pac, dPac.atendimento);
+      pac = atendimentoAtual || pac;
+    }
   } catch(e) {}
   const nomeCompleto = (pac.nome_completo || pac.paciente_nome || pac.nome || '').trim() || 'Paciente';
   MdHub.command.send('plataforma.prescricao', 'setPaciente', {
