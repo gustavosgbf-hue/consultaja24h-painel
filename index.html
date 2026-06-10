@@ -335,13 +335,6 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .triagem-queixa{margin-top:10px;padding:14px 16px;border-radius:9px;background:rgba(94,224,160,.045);border:1px solid rgba(94,224,160,.1)}
 .triagem-queixa label{font-size:.63rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#72dca9;display:block;margin-bottom:7px}
 .triagem-queixa span{font-size:.94rem;font-weight:400;color:rgba(255,255,255,.9);line-height:1.55}
-.triagem-relato{display:none;margin-top:8px;padding:12px 14px;border-radius:8px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.05)}
-.triagem-relato.visible{display:block}
-.triagem-relato summary{cursor:pointer;list-style:none;font-size:.68rem;font-weight:650;color:rgba(255,255,255,.55);user-select:none}
-.triagem-relato summary::-webkit-details-marker{display:none}
-.triagem-relato summary:after{content:'+';float:right;color:var(--g1);font-size:.85rem}
-.triagem-relato[open] summary:after{content:'−'}
-.triagem-relato-content{display:block;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.05);white-space:pre-wrap;font-size:.82rem;line-height:1.6;color:rgba(255,255,255,.72)}
 .tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
 .tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;position:relative}
 .tab-badge{position:absolute;top:4px;right:6px;min-width:16px;height:16px;border-radius:8px;background:#ff5f57;color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 3px}
@@ -1196,8 +1189,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
           <div class="triagem-item triagem-item--wide"><label>Medicações em uso</label><span id="tr-medicacoes">-</span></div>
           <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
         </div>
-        <div class="triagem-queixa"><label>Queixa principal</label><span id="tr-queixa">-</span></div>
-        <details class="triagem-relato" id="tr-relato-wrap"><summary>Ver respostas originais do paciente</summary><span class="triagem-relato-content" id="tr-relato-completo">-</span></details>
+        <div class="triagem-queixa"><label id="tr-relato-label">Relato do paciente</label><span id="tr-relato-completo" style="white-space:pre-wrap">-</span></div>
       </section>
     </div><!-- /triagem-body -->
     </div>
@@ -2328,8 +2320,6 @@ solicitaEl.textContent = p.solicita || '-';
 const badgeExist = document.getElementById('solicita-badge-header');
 if (badgeExist) badgeExist.remove();
 }
-const queixaPrincipal = String(p.queixa || p.triagem || '-').trim();
-document.getElementById('tr-queixa').textContent=queixaPrincipal;
 const triagemCompleta = String(p.triagem || '').trim();
 const marcadorLiteral = 'RELATO COMPLETO DO PACIENTE (PALAVRAS ORIGINAIS)';
 const marcadorOrganizado = 'DADOS ORGANIZADOS PELA TRIAGEM';
@@ -2340,12 +2330,14 @@ if (triagemCompleta.includes(marcadorLiteral)) {
     .replace(marcadorLiteral, '')
     .trim();
 }
-const relatoWrap = document.getElementById('tr-relato-wrap');
 const relatoEl = document.getElementById('tr-relato-completo');
-if (relatoEl) relatoEl.textContent = relatoLiteral;
-if (relatoWrap) {
-  relatoWrap.classList.toggle('visible', Boolean(relatoLiteral));
-  relatoWrap.open = false;
+const relatoLabel = document.getElementById('tr-relato-label');
+if (relatoLiteral) {
+  if (relatoEl) relatoEl.textContent = relatoLiteral;
+  if (relatoLabel) relatoLabel.textContent = 'Relato do paciente · palavras originais';
+} else {
+  if (relatoEl) relatoEl.textContent = String(p.queixa || p.triagem || '-').trim();
+  if (relatoLabel) relatoLabel.textContent = 'Resumo da triagem · registro anterior';
 }
 document.getElementById('cl-alergias').value=p.alergias||'';
 document.getElementById('cl-comorbidades').value=p.cronicas||'';
