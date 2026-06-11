@@ -2329,6 +2329,14 @@ if (triagemCompleta.includes(marcadorLiteral)) {
     .split(marcadorOrganizado)[0]
     .replace(marcadorLiteral, '')
     .trim();
+  const respostasLiterais = Array.from(relatoLiteral.matchAll(/(?:^|\n)Resposta:\s*([\s\S]*?)(?=\n\d+\.\s*Pergunta:|\nPergunta:|$)/gi))
+    .map(function(match){ return String(match[1] || '').replace(/\s+/g, ' ').trim(); })
+    .filter(Boolean);
+  if (respostasLiterais.length) {
+    relatoLiteral = respostasLiterais.join(' ');
+  } else {
+    relatoLiteral = relatoLiteral.replace(/\s+/g, ' ').trim();
+  }
 }
 const relatoEl = document.getElementById('tr-relato-completo');
 const relatoLabel = document.getElementById('tr-relato-label');
