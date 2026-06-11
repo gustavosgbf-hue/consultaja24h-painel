@@ -107,6 +107,11 @@ Usa min-width:769px para não conflitar com o bloco mobile que usa display:block
 #tab-consulta.active{flex:1 1 0;min-height:0;overflow:hidden;display:flex!important;flex-direction:column!important;}
 #tab-consulta.active .chat-medico-wrap{flex:1 1 0;min-height:0;overflow:hidden;display:flex!important;flex-direction:column!important;}
 #tab-consulta.active .chat-medico-msgs{flex:1 1 0;min-height:0;overflow-y:auto;}
+.atend-header{margin-bottom:14px}
+.triagem-box{margin-bottom:12px;flex-shrink:0}
+.triagem-box-title{padding:11px 14px}
+.tabs{margin-bottom:12px;flex-shrink:0}
+#tab-consulta.active .chat-medico-wrap{min-height:360px;margin-bottom:0}
 .app-body, .app-body.sidebar-collapsed {
 display:grid !important;
 }
@@ -2257,6 +2262,17 @@ if (btnPreview) { btnPreview.disabled = false; btnPreview.textContent = '▶ Ass
 function renderPainelAtendimento() {
 const p=atendimentoAtual; if (!p) return;
 const nome=p.nome||'-', tel=p.tel||'', tipo=p.tipo||'chat';
+if (!modoHistorico && !isMobile()) {
+  const chaveCompactada = String(p.id || p.consulta_id || nome);
+  if (sessionStorage.getItem('triagem-compactada-atendimento') !== chaveCompactada) {
+    const triagemBody = document.getElementById('triagem-body');
+    const triagemBtn = document.getElementById('triagem-toggle-btn');
+    if (triagemBody) triagemBody.classList.add('collapsed');
+    if (triagemBtn) triagemBtn.classList.add('collapsed');
+    sessionStorage.setItem('triagem-collapsed', '1');
+    sessionStorage.setItem('triagem-compactada-atendimento', chaveCompactada);
+  }
+}
 document.getElementById('atend-nome').textContent=nome;
 const cmhNomeEl = document.getElementById('cmh-nome'); if(cmhNomeEl) cmhNomeEl.textContent=nome;
 const tipoTag=document.getElementById('atend-tipo-tag');
