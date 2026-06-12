@@ -1217,7 +1217,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
           <div class="triagem-item"><label>Comorbidades</label><span id="tr-cronicas">-</span></div>
           <div class="triagem-item triagem-item--wide"><label>Medicações em uso</label><span id="tr-medicacoes">-</span></div>
           <div class="triagem-item"><label>Solicita</label><span id="tr-solicita">-</span></div>
-          <div class="triagem-item triagem-item--queixa"><label>Queixa</label><span id="tr-queixa">-</span></div>
+          <div class="triagem-item triagem-item--queixa"><label>Relato informado na triagem</label><span id="tr-queixa">-</span></div>
         </div>
       </section>
     </div><!-- /triagem-body -->
@@ -2135,6 +2135,17 @@ function obterQueixaPaciente(p) {
   return triagem.split(/\n+/).map(l => l.trim()).find(Boolean) || 'Queixa não informada';
 }
 
+function obterRelatoPaciente(p) {
+  const triagem = String((p && p.triagem) || '').trim();
+  const marcador = 'RELATO DO PACIENTE (RESPOSTAS ORIGINAIS)';
+  const indice = triagem.indexOf(marcador);
+  if (indice >= 0) {
+    const relato = triagem.slice(indice + marcador.length).replace(/\s+/g, ' ').trim();
+    if (relato) return relato;
+  }
+  return obterQueixaPaciente(p);
+}
+
 function renderFila() {
 const lista=document.getElementById('fila-lista');
 const count=document.getElementById('fila-count');
@@ -2376,7 +2387,7 @@ if (badgeExist) badgeExist.remove();
 }
 const queixaPaciente = obterQueixaPaciente(p);
 const queixaEl = document.getElementById('tr-queixa');
-if (queixaEl) queixaEl.textContent = queixaPaciente;
+if (queixaEl) queixaEl.textContent = obterRelatoPaciente(p);
 document.getElementById('cl-alergias').value=p.alergias||'';
 document.getElementById('cl-comorbidades').value=p.cronicas||'';
 document.getElementById('cl-medicacoes').value=p.medicacoes||'';
