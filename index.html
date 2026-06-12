@@ -530,6 +530,23 @@ textarea.clinic-input:disabled{opacity:.4;cursor:not-allowed;resize:none}
 .toast.success{background:rgba(94,224,160,.15);border:1px solid rgba(94,224,160,.3);color:var(--g2)}
 .toast.error{background:rgba(255,95,87,.12);border:1px solid rgba(255,95,87,.25);color:#ff8080}
 .toast.info{background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
+.memed-loading{
+position:fixed;left:50%;bottom:24px;z-index:10001;
+display:flex;align-items:center;gap:10px;
+padding:11px 16px;border-radius:12px;
+background:#13261c;border:1px solid rgba(180,224,90,.3);
+box-shadow:0 12px 36px rgba(0,0,0,.45);
+color:#eef8df;font-size:.82rem;font-weight:600;
+opacity:0;pointer-events:none;transform:translate(-50%,18px);
+transition:opacity .2s,transform .2s;white-space:nowrap;
+}
+.memed-loading.show{opacity:1;transform:translate(-50%,0)}
+.memed-loading-spinner{
+width:16px;height:16px;border-radius:50%;
+border:2px solid rgba(180,224,90,.25);
+border-top-color:#b4e05a;animation:memedSpin .75s linear infinite;
+}
+@keyframes memedSpin{to{transform:rotate(360deg)}}
 
 /* ==========================================================
 MOBILE - drawer sidebar, chat-first
@@ -543,6 +560,7 @@ MOBILE - drawer sidebar, chat-first
 .plantao-btn span{display:none}
 .plantao-btn .plantao-indicator{width:9px;height:9px}
 .nav-logout{padding:6px 10px;font-size:.72rem}
+.memed-loading{bottom:calc(18px + env(safe-area-inset-bottom,0px));font-size:.8rem}
 
 /* Esconde toggle handle no mobile */
 .sidebar-toggle{display:none!important}
@@ -1218,7 +1236,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
       </div>
       <div class="cmh-actions">
         <button class="cmh-btn" onclick="abrirDadosPacienteSheet()">👤 Dados</button>
-        <button class="cmh-btn green" onclick="abrirMemed()">💊</button>
+        <button class="cmh-btn green" id="btn-memed-mobile" onclick="abrirMemed()" aria-label="Abrir prescrição">💊</button>
         <button class="cmh-btn red" onclick="abrirModalEncerrar()">✓ Enc.</button>
       </div>
     </div>
@@ -1374,6 +1392,10 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="memed-loading" id="memed-loading" role="status" aria-live="polite">
+  <span class="memed-loading-spinner" aria-hidden="true"></span>
+  <span>Abrindo prescrição…</span>
+</div>
 <!-- Preview triagem da fila -->
 <div class="fila-preview" id="fila-preview" onclick="fecharPreviewFila(event)">
   <div class="fila-preview-backdrop"></div>
@@ -3613,13 +3635,27 @@ let memedCarregado = false;
 let memedToken = null;
 let memedEventosRegistrados = false;
 
+function setMemedCarregando(carregando) {
+  const aviso = document.getElementById('memed-loading');
+  if (aviso) aviso.classList.toggle('show', carregando);
+  const btn = document.getElementById('btn-memed');
+  const btnMobile = document.getElementById('btn-memed-mobile');
+  if (btn) {
+    btn.disabled = carregando;
+    btn.textContent = carregando ? '⏳ Abrindo...' : '💊 Prescrever';
+  }
+  if (btnMobile) {
+    btnMobile.disabled = carregando;
+    btnMobile.textContent = carregando ? '⏳' : '💊';
+  }
+}
+
 function fecharMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
   try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
-  const btn = document.getElementById('btn-memed');
-  if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+  setMemedCarregando(false);
 }
 
 function abrirMemedDrawer() {
@@ -3690,6 +3726,7 @@ async function mostrarModuloMemed() {
   await configurarPacienteMemed();
   MdHub.module.show('plataforma.prescricao');
   abrirMemedDrawer();
+  setMemedCarregando(false);
 }
 
 function registrarEventosMemed() {
@@ -3739,14 +3776,12 @@ function registrarEventosMemed() {
 
 async function abrirMemed() {
   if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
-  const btn = document.getElementById('btn-memed');
-  if (btn) { btn.disabled=true; btn.textContent='⏳ Carregando...'; }
+  setMemedCarregando(true);
 
   // SDK já carregado — reabre sem recarregar script
   if (memedCarregado) {
     try {
       await mostrarModuloMemed();
-      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
       return;
     } catch(e) {
       // SDK corrompido — recarrega
@@ -3760,7 +3795,7 @@ async function abrirMemed() {
     // 1. Token
     const data = await apiFetch('/api/memed/token');
     if (!data.ok || !data.token) {
-      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+      setMemedCarregando(false);
       mostrarToast(data.error || 'Não foi possível carregar a prescrição','error');
       return;
     }
@@ -3785,11 +3820,10 @@ async function abrirMemed() {
         try {
           registrarEventosMemed();
           await mostrarModuloMemed();
-          if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
         } catch(e) {
           console.error('[MEMED] Falha ao abrir modulo:', e);
           mostrarToast('Memed carregou, mas não abriu. Tente novamente.','error');
-          if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+          setMemedCarregando(false);
         }
       });
 
@@ -3804,7 +3838,7 @@ async function abrirMemed() {
           console.error('[MEMED] Fallback show falhou:', e);
           mostrarToast('Não foi possível abrir a Memed. Recarregue e tente novamente.','error');
         } finally {
-          if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
+          setMemedCarregando(false);
         }
       }, 900);
     };
@@ -3812,7 +3846,6 @@ async function abrirMemed() {
     script.onerror = () => {
       mostrarToast('Erro ao carregar Memed','error');
       fecharMemedDrawer();
-      if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
     };
 
     document.head.appendChild(script);
@@ -3820,7 +3853,6 @@ async function abrirMemed() {
   } catch(e) {
     mostrarToast('Não foi possível abrir a prescrição. Tente novamente.','error');
     fecharMemedDrawer();
-    if (btn) { btn.disabled=false; btn.textContent='💊 Prescrever'; }
   }
 }
 
