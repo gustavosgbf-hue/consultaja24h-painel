@@ -1028,6 +1028,14 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
   font-size:.9rem;font-weight:600;
   color:rgba(255,255,255,.9);margin:0;
 }
+#chat-dados-panel-actions{display:flex;align-items:center;gap:8px}
+#chat-dados-editar{
+  padding:7px 10px;border-radius:8px;
+  border:1px solid rgba(94,224,160,.25);
+  background:rgba(94,224,160,.07);
+  color:var(--g2);font-family:'Outfit',sans-serif;
+  font-size:.72rem;font-weight:700;cursor:pointer;
+}
 #chat-dados-close{
   background:none;border:none;
   color:var(--muted);font-size:1.1rem;
@@ -1221,7 +1229,10 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
       <div id="chat-dados-panel">
         <div id="chat-dados-panel-header">
           <h4>Dados do paciente</h4>
-          <button id="chat-dados-close" onclick="fecharDadosPacienteSheet()">✕</button>
+          <div id="chat-dados-panel-actions">
+            <button id="chat-dados-editar" onclick="abrirEdicaoPacienteMobile()">Editar nome/CPF</button>
+            <button id="chat-dados-close" onclick="fecharDadosPacienteSheet()">✕</button>
+          </div>
         </div>
         <div id="chat-dados-panel-body">
           <!-- Conteúdo copiado dinamicamente do triagem-body via JS -->
@@ -4049,6 +4060,11 @@ function fecharDadosPacienteSheet() {
   const sheet = document.getElementById('chat-dados-sheet');
   if (!sheet) return;
   sheet.classList.remove('open');
+}
+
+function abrirEdicaoPacienteMobile() {
+  fecharDadosPacienteSheet();
+  requestAnimationFrame(() => abrirModalEditarPaciente());
 }
 
 // switchTab mobile fullscreen: integrado diretamente na função original abaixo
