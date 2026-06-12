@@ -335,6 +335,13 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .triagem-item span{font-size:.83rem;font-weight:450;color:rgba(255,255,255,.84);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .triagem-item--wide{grid-column:span 3}
 .triagem-item--queixa{grid-column:1/-1}
+.triagem-item--queixa span{
+  white-space:normal;
+  overflow:visible;
+  text-overflow:clip;
+  overflow-wrap:anywhere;
+  line-height:1.45
+}
 .triagem-contact-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .triagem-mini-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 9px;border-radius:7px;border:1px solid rgba(94,224,160,.2);background:rgba(94,224,160,.055);color:#70e7ad;font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:650;text-decoration:none;cursor:pointer}
 .triagem-mini-btn:hover{background:rgba(94,224,160,.1)}
