@@ -1198,6 +1198,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
       </div>
       <div class="atend-actions" id="atend-actions-hist" style="display:none">
         <button class="btn-voltar-hist" onclick="fecharHistoricoAtendimento()">← Voltar ao histórico</button>
+        <button id="btn-memed-hist" onclick="abrirMemed()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(180,224,90,.25);background:rgba(180,224,90,.08);color:#b4e05a;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s">💊 Prescrever novamente</button>
         <button id="btn-reabrir-atend" onclick="reabrirAtendimento()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,189,46,.3);background:rgba(255,189,46,.08);color:#ffbd2e;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s">↩ Reabrir consulta</button>
       </div>
     </div>
@@ -2344,6 +2345,10 @@ const btnReabrir = document.getElementById('btn-reabrir-atend');
 if (btnReabrir) {
   btnReabrir.style.display = _podeMostrarReabrir(p) ? 'flex' : 'none';
 }
+const btnMemedHist = document.getElementById('btn-memed-hist');
+if (btnMemedHist) {
+  btnMemedHist.style.display = modoHistorico && String(p.tipo||'').startsWith('renovacao_') ? 'flex' : 'none';
+}
 if (!modoHistorico) {
 document.getElementById('btn-wpp').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
 document.getElementById('btn-wpp-consulta').href='https://wa.me/55'+String(tel).replace(/\D/g,'');
@@ -3408,7 +3413,7 @@ const nomeSafe=escHtml(r.nome||'Paciente');
 const anexos=normalizarObj(r.anexos_urls);
 const receitaLink=anexos.receita_anterior?`<a href="${escAttr(safeUrl(anexos.receita_anterior))}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:.7rem;color:#5ee0a0">Receita anterior</a>`:'';
 const status=r.status==='assumido'
-  ? `<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button onclick="abrirMemedRenovacao('${r.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(180,224,90,.28);background:rgba(180,224,90,.08);color:#b4e05a;font-size:.7rem;font-weight:700;cursor:pointer;">↩ Abrir prescrição</button><button onclick="encerrarRenovacaoResolvida('${r.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`
+  ? '<span class="pc-status-badge">Em atendimento</span>'
   : `<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button onclick="abrirMemedRenovacao('${r.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(180,224,90,.28);background:rgba(180,224,90,.08);color:#b4e05a;font-size:.7rem;font-weight:700;cursor:pointer;">Prescrever</button><button class="btn-assumir" onclick="assumirAtendimento('${r.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${r.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`;
 return `<div class="paciente-card" style="border-color:rgba(94,224,160,.18)"> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo chat">🔄 ${tipoLabel}</span></div><div class="pc-queixa">${triagemSafe}${receitaLink?`<div style="margin-top:8px">${receitaLink}</div>`:''}</div><div class="pc-footer"><div class="pc-tempo">${mins}min</div>${status}</div></div>`;
 }).join('');
