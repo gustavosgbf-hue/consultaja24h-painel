@@ -8,12 +8,12 @@
 <title>Painel Médico · ConsultaJá24h</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;height:100%}
-body{font-family:'Outfit',sans-serif;background:#07100d;color:rgba(255,255,255,.9);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
-:root{--g1:#b4e05a;--g2:#5ee0a0;--red:#ff5f57;--amber:#ffbd2e;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.05);--muted:rgba(255,255,255,.45);--card:rgba(255,255,255,.03);--card2:rgba(255,255,255,.055);--nav-h:60px}
+body{font-family:'Inter',sans-serif;background:#0a0f0e;color:#e7ebe9;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+:root{--g1:#8fcf9d;--g2:#62c58a;--red:#e27676;--amber:#d6aa62;--line:rgba(231,235,233,.09);--line2:rgba(231,235,233,.055);--muted:rgba(231,235,233,.48);--card:rgba(255,255,255,.025);--card2:rgba(255,255,255,.04);--nav-h:60px}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
 .bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70vw 60vh at 0% 0%,rgba(94,224,160,.06) 0%,transparent 55%),radial-gradient(ellipse 50vw 40vh at 100% 80%,rgba(180,224,90,.04) 0%,transparent 50%)}
 #screen-login{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:#07100d}
@@ -1070,6 +1070,137 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
   padding:16px 18px 0;
 }
 } /* fim @media mobile */
+
+/* ==========================================================
+   VISUAL CLINICO: menos ornamento, mais hierarquia
+========================================================== */
+#screen-app,
+#screen-app button,
+#screen-app input,
+#screen-app textarea,
+#screen-app select{font-family:'Inter',sans-serif}
+#screen-app{background:#0a0f0e}
+body.app-autenticado .bg-mesh{display:none}
+.nav{background:rgba(10,15,14,.96);backdrop-filter:blur(12px);border-bottom-color:rgba(231,235,233,.08)}
+.nav-brand span{font-family:'Playfair Display',serif}
+.atend-nome{
+  font-family:'Inter',sans-serif;
+  font-size:1.45rem;
+  font-weight:600;
+  letter-spacing:-.025em;
+  color:#f0f3f1;
+}
+.atend-tag{
+  padding:4px 9px;border-radius:7px;
+  font-size:.66rem;font-weight:600;letter-spacing:.035em;
+}
+.atend-tag.chat,.atend-tag.video{
+  background:rgba(255,255,255,.045);
+  border-color:rgba(255,255,255,.09);
+  color:rgba(231,235,233,.72);
+}
+.atend-tag.crm{border-radius:7px;background:transparent;color:rgba(231,235,233,.42)}
+.atend-actions{gap:8px}
+.btn-wpp,.btn-encerrar,.btn-prescrever{
+  min-height:38px;padding:9px 13px;border-radius:8px;
+  font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;
+  box-shadow:none;transition:background .15s,border-color .15s,color .15s;
+}
+.btn-wpp{
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.1);
+  color:rgba(231,235,233,.72);
+}
+.btn-wpp:hover{background:rgba(255,255,255,.065);border-color:rgba(255,255,255,.16);color:#f0f3f1}
+.btn-prescrever{
+  display:flex;align-items:center;gap:7px;cursor:pointer;
+  background:rgba(98,197,138,.1);
+  border:1px solid rgba(98,197,138,.24);
+  color:#86d5a5;
+}
+.btn-prescrever:hover{background:rgba(98,197,138,.16);border-color:rgba(98,197,138,.34)}
+.btn-prescrever:disabled{opacity:.55;cursor:wait}
+.btn-encerrar{
+  background:transparent;
+  border:1px solid rgba(226,118,118,.2);
+  color:#d98a8a;
+}
+.btn-encerrar:hover{background:rgba(226,118,118,.07);border-color:rgba(226,118,118,.3)}
+.triagem-box{
+  background:#0e1513;
+  border-color:rgba(231,235,233,.075);
+  border-radius:10px;
+}
+.triagem-box-title{
+  font-size:.75rem;font-weight:600;letter-spacing:0;text-transform:none;
+  color:rgba(231,235,233,.78);
+  border-bottom-color:rgba(231,235,233,.065);
+}
+.triagem-section-title{
+  font-size:.69rem;font-weight:600;letter-spacing:.015em;text-transform:none;
+  color:rgba(231,235,233,.48);
+}
+.triagem-item{
+  padding:8px 10px;border-radius:6px;
+  background:rgba(255,255,255,.018);
+  border-color:rgba(231,235,233,.055);
+}
+.triagem-item label{
+  font-size:.59rem;font-weight:600;letter-spacing:.045em;
+  color:rgba(231,235,233,.35);
+}
+.triagem-item span{font-size:.82rem;font-weight:400;color:rgba(240,243,241,.82)}
+.triagem-mini-btn,.triagem-edit-btn{
+  background:transparent;border-color:rgba(231,235,233,.12);
+  color:rgba(231,235,233,.64);border-radius:6px;font-weight:500;
+}
+.triagem-mini-btn:hover,.triagem-edit-btn:hover{background:rgba(255,255,255,.045);color:#f0f3f1}
+.triagem-toggle-btn{color:rgba(231,235,233,.4)}
+.tabs{background:transparent;border-color:rgba(231,235,233,.08);border-radius:9px}
+.tab{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  border-radius:6px;font-weight:500;color:rgba(231,235,233,.42);
+}
+.tab svg{width:15px;height:15px;flex-shrink:0}
+.tab.active{background:rgba(231,235,233,.085);color:#eef1ef}
+.chat-medico-wrap{background:#0b1110;border-color:rgba(231,235,233,.08);border-radius:10px}
+.chat-medico-header{background:#0d1312;backdrop-filter:none}
+.chat-medico-header h3{font-size:.84rem;font-weight:600}
+.chat-medico-msgs{background:#090e0d}
+.cmsg.medico .bub{
+  background:#153429;border-color:rgba(98,197,138,.18);
+  color:#e3eee8;
+}
+.chat-medico-send,#chat-pip-send{
+  background:#78cf94;box-shadow:none;color:#08110c;
+}
+#chat-pip{
+  border-radius:12px;border-color:rgba(231,235,233,.11);
+  background:#0d1412;box-shadow:0 18px 48px rgba(0,0,0,.55);
+}
+#chat-pip-header{
+  background:#111916;border-bottom-color:rgba(231,235,233,.08);
+}
+#chat-pip-header .pip-dot{background:#62c58a;animation:none}
+#chat-pip-header .pip-title{font-weight:600;color:rgba(240,243,241,.82)}
+#chat-pip-msgs .msg-medico{
+  background:#153429;border-color:rgba(98,197,138,.18);
+}
+#chat-pip-input{background:#0a0f0e}
+
+@media(max-width:768px){
+  .main{padding:8px 8px 80px!important}
+  .atend-header{padding:7px 0 9px}
+  .atend-nome{font-size:1.05rem}
+  .atend-actions .btn-wpp,
+  .atend-actions .btn-encerrar,
+  .atend-actions #btn-memed{padding:8px 11px!important;min-height:36px;font-size:.73rem!important}
+  .triagem-box-title{font-size:.72rem}
+  .triagem-section-title{font-size:.65rem}
+  .triagem-item{padding:7px 8px}
+  .tabs{padding:3px}
+  .tab{min-height:40px;padding:10px 6px;font-size:.74rem}
+}
 </style>
 
 </head>
@@ -1155,7 +1286,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
       <input type="text" id="admin-hist-busca" placeholder="Buscar paciente/CPF/tel..." oninput="carregarHistoricoGeral()" style="background:#1a2a1a;border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:6px;padding:6px 8px;font-size:.78rem;width:100%;box-sizing:border-box">
     </div>
     <div id="admin-hist-lista" style="display:none"></div>
-    <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">📋 Meu histórico <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span></div>
+    <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleHistorico()">Meu histórico <span class="fila-count" id="hist-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span></div>
     <div id="hist-busca-wrap" style="display:none;padding:6px 0 2px">
       <input type="text" id="hist-busca" placeholder="Buscar paciente, CPF, tel..." oninput="renderHistorico()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:8px;padding:7px 10px;font-size:.78rem;width:100%;box-sizing:border-box;font-family:'Outfit',sans-serif">
     </div>
@@ -1186,19 +1317,19 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
         <div class="atend-meta">
           <span class="atend-tag" id="atend-tipo-tag">-</span>
           <span class="atend-tag crm" id="atend-crm-tag">-</span>
-          <span class="atend-tag historico-badge" id="atend-hist-badge" style="display:none">📋 Histórico</span>
+          <span class="atend-tag historico-badge" id="atend-hist-badge" style="display:none">Histórico</span>
           <div class="atend-timer" id="atend-timer-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span id="atend-timer">00:00</span></div>
         </div>
       </div>
       <div class="atend-actions" id="atend-actions-live">
-        <a href="#" class="btn-wpp" id="btn-wpp" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>WhatsApp</a>
-        <button onclick="abrirMemed()" style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(180,224,90,.25);background:rgba(180,224,90,.08);color:#b4e05a;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s" id="btn-memed">💊 Prescrever</button>
+        <a href="#" class="btn-wpp" id="btn-wpp" target="_blank" title="Abrir contato externo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 9h8M8 13h5"/></svg><span class="wpp-txt">Contato</span></a>
+        <button onclick="abrirMemed()" class="btn-prescrever" id="btn-memed"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg><span>Prescrever</span></button>
 
         <button class="btn-encerrar" onclick="abrirModalEncerrar()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Encerrar</button>
       </div>
       <div class="atend-actions" id="atend-actions-hist" style="display:none">
         <button class="btn-voltar-hist" onclick="fecharHistoricoAtendimento()">← Voltar ao histórico</button>
-        <button id="btn-memed-hist" onclick="abrirMemed()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(180,224,90,.25);background:rgba(180,224,90,.08);color:#b4e05a;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s">💊 Prescrever novamente</button>
+        <button id="btn-memed-hist" onclick="abrirMemed()" class="btn-prescrever" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg><span>Prescrever novamente</span></button>
         <button id="btn-reabrir-atend" onclick="reabrirAtendimento()" style="display:none;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,189,46,.3);background:rgba(255,189,46,.08);color:#ffbd2e;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s">↩ Reabrir consulta</button>
       </div>
     </div>
@@ -1210,7 +1341,7 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
         <div class="triagem-grid">
           <div class="triagem-item"><label>CPF</label><span id="tr-cpf-pac">-</span></div>
           <div class="triagem-item"><label>Nascimento</label><span id="tr-nascimento-pac">-</span></div>
-          <div class="triagem-item"><label>WhatsApp</label><span id="tr-tel-pac">-</span></div>
+          <div class="triagem-item"><label>Telefone</label><span id="tr-tel-pac">-</span></div>
           <div class="triagem-item" id="tr-teldoc-wrap"><label>SMS de documentos</label><span id="tr-teldoc-pac">-</span></div>
           <div class="triagem-item triagem-item--wide" id="tr-email-wrap"><label>E-mail</label><div class="triagem-contact-actions"><span id="tr-email-pac">-</span><button class="triagem-mini-btn" id="btn-copiar-email" onclick="copiarEmailPaciente()" style="display:none" title="Copiar e-mail para uso no Memed">Copiar e-mail</button></div></div>
           <div class="triagem-item triagem-item--wide" id="tr-link-paciente-wrap"><label>Recuperar acesso do paciente</label><div class="triagem-contact-actions"><a id="tr-link-paciente" href="#" style="display:none" aria-hidden="true" tabindex="-1"></a><button class="triagem-mini-btn" onclick="copiarLinkPaciente()">Copiar link do paciente</button><span style="font-size:.68rem;color:rgba(255,255,255,.3)">Envie apenas se o paciente perder o acesso à consulta</span></div></div>
@@ -1243,9 +1374,9 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
         </div>
       </div>
       <div class="cmh-actions">
-        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()">👤 Dados</button>
-        <button class="cmh-btn green" id="btn-memed-mobile" onclick="abrirMemed()" aria-label="Abrir prescrição">💊</button>
-        <button class="cmh-btn red" onclick="abrirModalEncerrar()">✓ Enc.</button>
+        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></svg>Dados</button>
+        <button class="cmh-btn green" id="btn-memed-mobile" onclick="abrirMemed()" aria-label="Abrir prescrição"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg></button>
+        <button class="cmh-btn red" onclick="abrirModalEncerrar()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4 4L19 6"/></svg>Enc.</button>
       </div>
     </div>
 
@@ -1267,13 +1398,13 @@ body.chat-fullscreen #tab-consulta.active .chat-medico-input{
     </div>
 
     <div class="tabs" id="atend-tabs">
-      <button class="tab active" onclick="switchTab('consulta')">💬   Consulta<span class="tab-badge" id="tab-consulta-badge"></span></button>
-      <button class="tab" onclick="switchTab('clinico')">🩺   Avaliação clínica</button>
-      <button class="tab" onclick="switchTab('prontuario')">📄   Prontuário</button>
+      <button class="tab active" onclick="switchTab('consulta')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>Consulta<span class="tab-badge" id="tab-consulta-badge"></span></button>
+      <button class="tab" onclick="switchTab('clinico')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 3v5a4 4 0 0 0 8 0V3"/><path d="M8 15v2a4 4 0 0 0 8 0v-3"/><circle cx="18" cy="10" r="2"/></svg>Avaliação clínica</button>
+      <button class="tab" onclick="switchTab('prontuario')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8"/></svg>Prontuário</button>
     </div>
     <div class="tab-panel active" id="tab-consulta">
       <div class="meet-section" id="meet-section" style="display:none">
-        <div class="meet-title">🎥 Link do Google Meet</div>
+        <div class="meet-title">Link da videochamada</div>
         <div class="meet-input-row"><input class="meet-input" id="meetLinkInput" type="url" placeholder="https://meet.google.com/xxx-xxxx-xxx"/><button class="btn-meet-save" onclick="salvarMeetLink()">Salvar e compartilhar</button></div>
         <div class="meet-link-atual" id="meetLinkAtual" style="display:none">Link ativo: <a id="meetLinkAtualUrl" href="#" target="_blank">-</a></div>
         <div id="meet-badge-wrap" style="margin-top:8px"></div>
@@ -2225,7 +2356,7 @@ const acoesAguardando = isAdmin && isRenovacao
   ? `<span style="display:flex;gap:6px;align-items:center"><button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${p.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`
   : `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`;
 const acoesTriagemPendente = `<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pc-status-badge" style="pointer-events:none;color:#ffbd2e;border-color:rgba(255,189,46,.25)">Pago · sem triagem</span><button onclick="copiarLinkTriagemFila('${p.id}',event)" style="padding:4px 9px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.68rem;font-weight:700;cursor:pointer;">Copiar link</button></span>`;
-return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido||isTriagemPendente)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'📹 Vídeo':'💬 Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isTriagemPendente?acoesTriagemPendente:isAtual?'<span class="pc-status-badge" style="pointer-events:none">▶ Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">↩ Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
+return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido||isTriagemPendente)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'Vídeo':'Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isTriagemPendente?acoesTriagemPendente:isAtual?'<span class="pc-status-badge" style="pointer-events:none">Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
 }).join('');
 } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
@@ -2266,7 +2397,7 @@ if (!p) return;
 const tipo = p.tipo||'chat';
 const mins = Math.floor((Date.now()-new Date(p.criado_em).getTime())/60000);
 document.getElementById('fp-nome').textContent = p.nome||'-';
-document.getElementById('fp-meta').textContent = (tipo==='video'?'📹 Vídeo':'💬 Chat') + ' · ' + mins + ' min na fila' + (p.cpf?' · CPF: '+p.cpf:'');
+document.getElementById('fp-meta').textContent = (tipo==='video'?'Vídeo':'Chat') + ' · ' + mins + ' min na fila' + (p.cpf?' · CPF: '+p.cpf:'');
 document.getElementById('fp-queixa').textContent = obterQueixaPaciente(p);
 const btn = document.getElementById('fp-assumir-btn');
 btn.onclick = function(e) { fecharPreviewFila(); assumirAtendimento(id, e); };
@@ -2333,7 +2464,7 @@ const nome=p.nome||'-', tel=p.tel||'', tipo=p.tipo||'chat';
 document.getElementById('atend-nome').textContent=nome;
 const cmhNomeEl = document.getElementById('cmh-nome'); if(cmhNomeEl) cmhNomeEl.textContent=nome;
 const tipoTag=document.getElementById('atend-tipo-tag');
-tipoTag.textContent=tipo==='video'?'📹 Consulta por vídeo':'💬 Consulta por chat';
+tipoTag.textContent=tipo==='video'?'Consulta por vídeo':'Consulta por chat';
 tipoTag.className='atend-tag '+tipo;
 document.getElementById('atend-crm-tag').textContent='CRM '+(medico.crm||'-');
 document.getElementById('atend-hist-badge').style.display=modoHistorico?'inline-flex':'none';
@@ -3665,11 +3796,12 @@ function setMemedCarregando(carregando) {
   const btnMobile = document.getElementById('btn-memed-mobile');
   if (btn) {
     btn.disabled = carregando;
-    btn.textContent = carregando ? '⏳ Abrindo...' : '💊 Prescrever';
+    const label = btn.querySelector('span');
+    if (label) label.textContent = carregando ? 'Abrindo...' : 'Prescrever';
   }
   if (btnMobile) {
     btnMobile.disabled = carregando;
-    btnMobile.textContent = carregando ? '⏳' : '💊';
+    btnMobile.style.opacity = carregando ? '.55' : '';
   }
 }
 
@@ -4138,7 +4270,7 @@ function abrirEdicaoPacienteMobile() {
 <div id="chat-pip">
   <div id="chat-pip-header" onclick="toggleChatPip()">
     <div class="pip-dot"></div>
-    <span class="pip-title">💬 Chat com o paciente</span>
+    <span class="pip-title">Chat com o paciente</span>
     <span class="pip-badge" id="pip-badge">0</span>
     <div class="pip-actions" onclick="event.stopPropagation()">
       <button class="pip-btn" onclick="toggleChatPip()" id="pip-min-btn" title="Minimizar">-</button>
