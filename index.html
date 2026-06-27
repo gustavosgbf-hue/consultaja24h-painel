@@ -2514,9 +2514,10 @@ if (linkPacEl && linkPacWrap && p.id) {
   linkPacEl.textContent = linkPac;
   linkPacWrap.style.display = modoHistorico ? 'none' : '';
 }
-document.getElementById('tr-idade').textContent=p.idade||'-';
+const idadeNascimento = calcularIdadeNascimento(p.data_nascimento);
+document.getElementById('tr-idade').textContent=idadeNascimento||p.idade||'-';
 document.getElementById('tr-sexo').textContent=p.sexo||'-';
-alternarCampoVazio('tr-idade-wrap', p.idade);
+alternarCampoVazio('tr-idade-wrap', idadeNascimento||p.idade);
 alternarCampoVazio('tr-sexo-wrap', p.sexo);
 document.getElementById('tr-alergias').textContent=p.alergias||'-';
 document.getElementById('tr-cronicas').textContent=p.cronicas||'-';
@@ -4162,6 +4163,24 @@ if (!val) return '-';
 const parts=val.split('-');
 if (parts.length===3) return parts[2]+'/'+parts[1]+'/'+parts[0];
 return val;
+}
+function calcularIdadeNascimento(val) {
+if (!val) return '';
+const texto=String(val).trim();
+let ano,mes,dia;
+let m=texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
+if(m){ano=Number(m[1]);mes=Number(m[2]);dia=Number(m[3]);}
+else{
+m=texto.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+if(!m)return '';
+dia=Number(m[1]);mes=Number(m[2]);ano=Number(m[3]);
+}
+const nasc=new Date(ano,mes-1,dia);
+if(nasc.getFullYear()!==ano||nasc.getMonth()!==mes-1||nasc.getDate()!==dia)return '';
+const hoje=new Date();
+let idade=hoje.getFullYear()-ano;
+if(hoje.getMonth()<mes-1||(hoje.getMonth()===mes-1&&hoje.getDate()<dia))idade--;
+return idade>=0&&idade<=130?idade+' anos':'';
 }
 document.addEventListener('visibilitychange', function(){
 if(document.hidden) return;
