@@ -1272,6 +1272,7 @@ body.app-autenticado .bg-mesh{display:none}
     <div id="fila-lista"><div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><p>Nenhum paciente<br>aguardando atendimento</p></div></div>
     <div class="sidebar-title" id="renov-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleRenovacoes()">🔄 Renovações <span class="fila-count" id="renov-count" style="background:rgba(94,224,160,.1);color:#5ee0a0">0</span></div>
     <div id="renov-lista" style="display:none"></div>
+    <button id="admin-manual-btn" onclick="abrirAtendimentoManual()" style="display:none;width:100%;margin-top:14px;padding:10px 12px;border-radius:9px;border:1px solid rgba(94,224,160,.24);background:rgba(94,224,160,.07);color:#78d99f;font-family:inherit;font-size:.76rem;font-weight:600;cursor:pointer;text-align:left">＋ Novo atendimento manual</button>
     <div class="sidebar-title" style="margin-top:16px;cursor:pointer" onclick="toggleAgendamentos()">📅 Agendamentos <span class="fila-count" id="agend-count">0</span></div>
     <div id="agend-lista" style="display:none"></div>
     <div class="sidebar-title" id="admin-tab-btn" style="margin-top:16px;cursor:pointer;display:none" onclick="toggleAdmin()">👥 Médicos pendentes <span class="fila-count" id="admin-pendente-count" style="background:rgba(255,189,46,.15);color:#ffbd2e">0</span></div>
@@ -1527,6 +1528,23 @@ body.app-autenticado .bg-mesh{display:none}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="fecharModalEditarPaciente()">Cancelar</button>
       <button class="btn-confirm" id="btn-salvar-paciente" onclick="salvarEdicaoPaciente()">Salvar dados</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-atendimento-manual" onclick="if(event.target===this)fecharAtendimentoManual()">
+  <div class="modal">
+    <div class="modal-title">Novo atendimento manual</div>
+    <div class="modal-sub">Uso exclusivo do administrador. Não gera cobrança nem aparece para outros médicos.</div>
+    <div class="modal-field"><label for="manual-nome">Nome completo</label><input class="modal-input" id="manual-nome" type="text" maxlength="160" autocomplete="off"></div>
+    <div class="modal-field"><label for="manual-tel">Telefone</label><input class="modal-input" id="manual-tel" type="tel" maxlength="15" inputmode="numeric" autocomplete="off"></div>
+    <div class="modal-field"><label for="manual-cpf">CPF (opcional)</label><input class="modal-input" id="manual-cpf" type="text" maxlength="14" inputmode="numeric" autocomplete="off" oninput="mascararCpfEdicao(this)"></div>
+    <div class="modal-field"><label for="manual-nascimento">Data de nascimento (opcional)</label><input class="modal-input" id="manual-nascimento" type="date"></div>
+    <div class="modal-field"><label for="manual-email">E-mail (opcional)</label><input class="modal-input" id="manual-email" type="email" maxlength="180" autocomplete="off"></div>
+    <div class="modal-field"><label for="manual-tipo">Modalidade</label><select class="modal-input" id="manual-tipo"><option value="chat">Chat</option><option value="video">Vídeo</option></select></div>
+    <div class="modal-field"><label for="manual-motivo">Motivo / relato inicial</label><textarea class="modal-input" id="manual-motivo" rows="3" maxlength="500" placeholder="Ex.: Suporte iniciou o atendimento após falha no fluxo."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharAtendimentoManual()">Cancelar</button>
+      <button class="btn-confirm" id="btn-criar-manual" onclick="criarAtendimentoManual()">Criar e abrir</button>
     </div>
   </div>
 </div>
@@ -1819,7 +1837,7 @@ const token = getToken();
 const adminPwd = sessionStorage.getItem('adminPwd') || '';
 const headers = { ...(opts.headers || {}) };
 if (opts._admin) { headers['x-admin-password'] = adminPwd; delete opts._admin; }
-if (token && !headers['Authorization'] && !headers['x-admin-password']) {
+if (token && !headers['Authorization']) {
 headers['Authorization'] = 'Bearer ' + token;
 }
 if (opts.json) {
@@ -1936,6 +1954,9 @@ document.getElementById('inp-senha').addEventListener('keydown', e => { if(e.key
 function getToken() { return localStorage.getItem('token')||''; }
 let agendInterval = null;
 function toggleAdminField() { const f=document.getElementById('field-admin-pwd'); f.style.display=f.style.display==='none'?'block':'none'; }
+function isAdminAtual() {
+return String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com'||!!sessionStorage.getItem('adminPwd');
+}
 
 // -- SIDEBAR: COLAPSO DESKTOP + DRAWER MOBILE --------------------------------
 function isMobile() { return window.innerWidth <= 768; }
@@ -2134,7 +2155,10 @@ sessionStorage.removeItem('atendimentoAtual');
 renderEstado(); buscarFila(); buscarRenovacoes(); buscarAgendamentos(); buscarHistorico();
 clearInterval(agendInterval);
 iniciarPollingAgendamentos();
-if (sessionStorage.getItem('adminPwd')) { carregarMedicosPendentes(); buscarRenovacoes(); }
+const adminAtual=isAdminAtual();
+const btnManual=document.getElementById('admin-manual-btn');
+if(btnManual)btnManual.style.display=adminAtual?'block':'none';
+if (adminAtual) { carregarMedicosPendentes(); buscarRenovacoes(); }
 mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
 if (medico.status_online) {
   plantaoAtivo=true;
@@ -2179,6 +2203,7 @@ slots.length = 0; slots.push(null, null); slotAtivo = 0;
 sincronizarVisibilidadeSlots();
 clearInterval(agendInterval); agendInterval=null;
 localStorage.removeItem('token'); localStorage.removeItem('medico'); medico=null; autosaveBound=false;
+sessionStorage.removeItem('adminPwd');
 document.getElementById('screen-app').style.display='none';
 document.getElementById('screen-login').style.display='flex';
 // Remove estado de autenticação - toggle some, CSS volta ao estado de login
@@ -2249,7 +2274,7 @@ const data = await apiFetch('/api/fila');
 if (data.ok) { filaData=data.fila||[]; filaRetryMs=15000; renderFila(); renderEstado(); }
 else { filaRetryMs=Math.min(filaRetryMs*2,60000); }
 } catch(e) { filaRetryMs=Math.min(filaRetryMs*2,60000); }
-if (sessionStorage.getItem('adminPwd')) buscarRenovacoes();
+if (isAdminAtual()) buscarRenovacoes();
 }
 
 function obterQueixaPaciente(p) {
@@ -2336,7 +2361,7 @@ const meuAssumido =
   !!meuMedId &&
   String(p.medico_id || '') === meuMedId;
 const assumido = p.status === 'assumido' && !isAtual && !meuAssumido;
-const isAdmin=!!sessionStorage.getItem('adminPwd');
+const isAdmin=isAdminAtual();
 const isRenovacao=String(p.tipo||'').indexOf('renovacao')===0;
 const isTriagemPendente=isAdmin && p.pagamento_status==='confirmado' && (p.status==='triagem'||p.status==='pagamento_pendente');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
@@ -3523,7 +3548,7 @@ async function buscarRenovacoes() {
 try {
 const tab=document.getElementById('renov-tab-btn');
 const count=document.getElementById('renov-count');
-if (!sessionStorage.getItem('adminPwd')) { if(tab) tab.style.display='none'; return; }
+if (!isAdminAtual()) { if(tab) tab.style.display='none'; return; }
 const data=await apiFetch('/api/renovacoes/fila');
 if (!data.ok) return;
 renovData=data.renovacoes||[];
@@ -3773,6 +3798,50 @@ const d = await apiFetch(`/api/agendamento/${agendId}/cancelar`,{method:'POST'})
 if (d.ok) { agendData=agendData.filter(a=>a.id!==agendId); renderAgendamentos(); document.getElementById('agend-count').textContent=agendData.length; mostrarToast('Agendamento cancelado','info'); }
 else { mostrarToast(d.error||'Erro ao cancelar','error'); btn.disabled=false; btn.textContent='✕'; }
 } catch(e) { mostrarToast('Erro de conexão','error'); btn.disabled=false; btn.textContent='✕'; }
+}
+
+function abrirAtendimentoManual() {
+if(!isAdminAtual()){mostrarToast('Acesso exclusivo do administrador.','error');return;}
+document.getElementById('modal-atendimento-manual').classList.add('open');
+setTimeout(()=>document.getElementById('manual-nome').focus(),50);
+}
+
+function fecharAtendimentoManual() {
+document.getElementById('modal-atendimento-manual').classList.remove('open');
+}
+
+async function criarAtendimentoManual() {
+if(!isAdminAtual()){mostrarToast('Acesso exclusivo do administrador.','error');return;}
+const btn=document.getElementById('btn-criar-manual');
+const payload={
+nome:document.getElementById('manual-nome').value.trim(),
+tel:document.getElementById('manual-tel').value.trim(),
+cpf:document.getElementById('manual-cpf').value.trim(),
+data_nascimento:document.getElementById('manual-nascimento').value,
+email:document.getElementById('manual-email').value.trim(),
+tipo:document.getElementById('manual-tipo').value,
+motivo:document.getElementById('manual-motivo').value.trim()
+};
+if(!payload.nome||!payload.tel){mostrarToast('Informe nome e telefone.','error');return;}
+btn.disabled=true;btn.textContent='Criando...';
+try{
+const d=await apiFetch('/api/admin/atendimentos/manual',{method:'POST',_admin:true,json:payload});
+if(!d.ok){mostrarToast(d.error||'Erro ao criar atendimento.','error');return;}
+const slotLivre=encontrarSlotLivre(true);
+slots[slotLivre]=criarSlot(d.atendimento);
+slotAtivo=slotLivre;
+sincronizarVisibilidadeSlots();
+modoHistorico=false;
+sessionStorage.setItem('atendimentoAtual',JSON.stringify(d.atendimento));
+timerSegundos=0;iniciarTimer();
+renderSlotTabs();renderPainelAtendimento();renderEstado();
+fecharAtendimentoManual();
+['manual-nome','manual-tel','manual-cpf','manual-nascimento','manual-email','manual-motivo'].forEach(id=>document.getElementById(id).value='');
+document.getElementById('manual-tipo').value='chat';
+fecharSidebarMobile();
+mostrarToast('Atendimento manual criado.','success');
+}catch(e){mostrarToast('Erro de conexão.','error');}
+finally{btn.disabled=false;btn.textContent='Criar e abrir';}
 }
 
 let histData=[], histVisible=false;
