@@ -1651,14 +1651,64 @@ function switchTab(nome){
 }
 
 /* ═══ MEMED ═════════════════════════════════════════════════ */
-function fecharMemedDrawer(){const overlay=document.getElementById('memed-overlay');if(overlay)overlay.classList.remove('ativo');document.body.classList.remove('memed-aberto');try{MdHub.module.hide('plataforma.prescricao');}catch(e){}const btn=document.getElementById('btn-memed');if(btn){btn.disabled=false;btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg> Abrir Memed';}}
+function resetBtnMemed(){
+  const btn=document.getElementById('btn-memed');
+  if(btn){
+    btn.disabled=false;
+    btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg> Abrir Memed';
+  }
+}
+function fecharMemedDrawer(){const overlay=document.getElementById('memed-overlay');if(overlay)overlay.classList.remove('ativo');document.body.classList.remove('memed-aberto');try{MdHub.module.hide('plataforma.prescricao');}catch(e){}resetBtnMemed();}
 function abrirMemedDrawer(){const overlay=document.getElementById('memed-overlay');if(overlay)overlay.classList.add('ativo');document.body.classList.add('memed-aberto');}
 async function salvarPrescricaoNoProntuario(dados){if(!consultaAtual)return;try{const ts=new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});const linhas=[`--- Prescrição Memed (${ts}) ---`];if(dados.medicamentos&&dados.medicamentos.length){linhas.push('💊 Medicamentos:');dados.medicamentos.forEach(m=>linhas.push(`  • ${m.nome}${m.posologia?' — '+m.posologia:''}` ));}if(dados.exames&&dados.exames.length){linhas.push('🔬 Exames:');dados.exames.forEach(e=>linhas.push(`  • ${e.nome||e}`));}if(dados.atestado)linhas.push(`📄 Atestado: ${dados.atestado}`);if(dados.link)linhas.push(`🔗 Link: ${dados.link}`);await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/prontuario`,{method:'PUT',json:{prontuario:linhas.join('\n'),append:true}});mostrarToast('Prescrição salva no prontuário','success');}catch(e){console.error('Erro ao salvar prescrição:',e);}}
+function navegadorSafariMemed(){const ua=navigator.userAgent||'';return /Safari/i.test(ua)&&!/Chrome|CriOS|Chromium|Edg|OPR|Android/i.test(ua);}
+function erroMemed(){return navegadorSafariMemed()?'A Memed não abriu no Safari. Desative bloqueadores para este site ou tente pelo Chrome.':'Não foi possível abrir a prescrição. Recarregue e tente novamente.';}
+function aguardarSdkMemed(timeoutMs=12000){return new Promise((resolve,reject)=>{const inicio=Date.now();const verificar=()=>{if(window.MdHub?.module?.show&&window.MdHub?.command?.send&&window.MdSinapsePrescricao?.event?.add)return resolve();if(Date.now()-inicio>=timeoutMs)return reject(new Error('SDK Memed não inicializou'));setTimeout(verificar,100);};verificar();});}
+function configurarPacienteEspecialistaMemed(){
+  const pac=consultaAtual;
+  if(!pac)throw new Error('Nenhuma consulta ativa');
+  MdHub.command.send('plataforma.prescricao','setPaciente',{
+    idExterno:`paciente-${pac.id||Date.now()}`,
+    nome:(pac.paciente_nome||'').trim(),
+    cpf:(pac.cpf||'').replace(/\D/g,'')||undefined,
+    email:pac.paciente_email||undefined,
+    telefone:(pac.paciente_tel||'').replace(/\D/g,'')||undefined,
+    data_nascimento:pac.data_nascimento||undefined,
+    sexo:pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
+  });
+}
+async function mostrarMemedEspecialista(){
+  try{MdHub.command.send('plataforma.prescricao','setFeatureToggle',{historyPrescription:true,buttonClose:true,allowShareModal:true});}catch(e){}
+  configurarPacienteEspecialistaMemed();
+  MdHub.module.show('plataforma.prescricao');
+  abrirMemedDrawer();
+  resetBtnMemed();
+}
 async function abrirMemed(){
   if(!consultaAtual)return mostrarToast('Nenhuma consulta ativa','error');
   const btn=document.getElementById('btn-memed');if(btn){btn.disabled=true;btn.textContent='⏳ Carregando…';}
-  if(memedCarregado){try{const pac=consultaAtual;await MdHub.command.send('plataforma.prescricao','setPaciente',{idExterno:`paciente-${pac.id||Date.now()}`,nome:(pac.paciente_nome||'').trim(),cpf:(pac.cpf||'').replace(/\D/g,'')||undefined,email:pac.paciente_email||undefined,telefone:(pac.paciente_tel||'').replace(/\D/g,'')||undefined,data_nascimento:pac.data_nascimento||undefined,sexo:pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined});MdHub.module.show('plataforma.prescricao');abrirMemedDrawer();if(btn){btn.disabled=false;btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg> Abrir Memed';}return;}catch(e){memedCarregado=false;const s=document.getElementById('memed-script');if(s)s.remove();}}
-  try{const data=await apiFetch('/api/memed/token');if(!data.ok||!data.token){if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}mostrarToast('Não foi possível carregar a prescrição','error');return;}memedToken=data.token;if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}const script=document.createElement('script');script.id='memed-script';script.type='text/javascript';script.setAttribute('data-color','#22c55e');script.setAttribute('data-token',memedToken);script.src='https://partners.memed.com.br/integration.js';script.onload=()=>{memedCarregado=true;MdSinapsePrescricao.event.add('core:moduleInit',async(module)=>{if(module.name!=='plataforma.prescricao')return;await MdHub.command.send('plataforma.prescricao','setFeatureToggle',{historyPrescription:true,buttonClose:true,allowShareModal:true});const pac=consultaAtual;await MdHub.command.send('plataforma.prescricao','setPaciente',{idExterno:`paciente-${pac.id||Date.now()}`,nome:(pac.paciente_nome||'').trim(),cpf:(pac.cpf||'').replace(/\D/g,'')||undefined,email:pac.paciente_email||undefined,telefone:(pac.paciente_tel||'').replace(/\D/g,'')||undefined,data_nascimento:pac.data_nascimento||undefined,sexo:pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined});MdHub.module.show('plataforma.prescricao');abrirMemedDrawer();MdHub.event.add('prescricaoImpressa',async(ev)=>{const p=ev?.prescricao||ev||{};await salvarPrescricaoNoProntuario({link:p.link||'',medicamentos:p.medicamentos||p.itens||[],exames:p.exames||[],atestado:p.atestado||''});});MdHub.event.add('prescricaoExcluida',()=>{});MdSinapsePrescricao.event.add('core:moduleHide',(mod)=>{if(mod.moduleName==='plataforma.prescricao')fecharMemedDrawer();});});};script.onerror=()=>{mostrarToast('Erro ao carregar Memed','error');fecharMemedDrawer();if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}};document.head.appendChild(script);}catch(e){mostrarToast('Não foi possível abrir a prescrição.','error');fecharMemedDrawer();if(btn){btn.disabled=false;btn.textContent='💊 Prescrever';}}
+  if(memedCarregado){try{await mostrarMemedEspecialista();return;}catch(e){memedCarregado=false;const s=document.getElementById('memed-script');if(s)s.remove();}}
+  try{
+    const data=await apiFetch('/api/memed/token');
+    if(!data.ok||!data.token){resetBtnMemed();mostrarToast(data.error||'Não foi possível carregar a prescrição','error');return;}
+    memedToken=data.token;
+    const scriptAntigo=document.getElementById('memed-script');if(scriptAntigo)scriptAntigo.remove();
+    const script=document.createElement('script');
+    script.id='memed-script';script.type='text/javascript';script.setAttribute('data-color','#22c55e');script.setAttribute('data-token',memedToken);script.src='https://partners.memed.com.br/integration.js';
+    script.onload=async()=>{
+      try{
+        await aguardarSdkMemed();
+        memedCarregado=true;
+        MdSinapsePrescricao.event.add('core:moduleInit',async(module)=>{if(module.name!=='plataforma.prescricao')return;try{await mostrarMemedEspecialista();}catch(e){console.error('[MEMED] Falha ao abrir módulo:',e);mostrarToast(erroMemed(),'error');resetBtnMemed();}});
+        MdHub.event.add('prescricaoImpressa',async(ev)=>{const p=ev?.prescricao||ev||{};await salvarPrescricaoNoProntuario({link:p.link||'',medicamentos:p.medicamentos||p.itens||[],exames:p.exames||[],atestado:p.atestado||''});});
+        MdHub.event.add('prescricaoExcluida',()=>{});
+        MdSinapsePrescricao.event.add('core:moduleHide',(mod)=>{if(mod.moduleName==='plataforma.prescricao'||mod.name==='plataforma.prescricao')fecharMemedDrawer();});
+        setTimeout(async()=>{if(!document.body.classList.contains('memed-aberto')){try{await mostrarMemedEspecialista();}catch(e){console.error('[MEMED] Fallback falhou:',e);mostrarToast(erroMemed(),'error');resetBtnMemed();}}},900);
+      }catch(e){console.error('[MEMED] SDK indisponível:',e);memedCarregado=false;mostrarToast(erroMemed(),'error');resetBtnMemed();}
+    };
+    script.onerror=()=>{mostrarToast(erroMemed(),'error');fecharMemedDrawer();};
+    document.head.appendChild(script);
+  }catch(e){mostrarToast(erroMemed(),'error');fecharMemedDrawer();}
 }
 
 /* ═══ AUTH ══════════════════════════════════════════════════ */
