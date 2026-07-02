@@ -727,6 +727,12 @@ padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
 .sidebar-title{font-size:.68rem;margin-bottom:10px}
 .fila-count{font-size:.65rem;padding:1px 6px}
 .fila-card,.paciente-card{padding:10px}
+.pc-especialidade{
+display:inline-flex;align-items:center;padding:3px 7px;border-radius:6px;
+border:1px solid rgba(94,224,160,.28);background:rgba(94,224,160,.08);
+color:#79dca8;font-size:.62rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+margin:0 0 6px;
+}
 
 /* Toast */
 .toast{bottom:auto;top:68px;right:10px;left:10px;text-align:center;font-size:.82rem}
@@ -2324,6 +2330,10 @@ function obterRelatoPaciente(p) {
   return obterQueixaPaciente(p);
 }
 
+function nomeEspecialidadeImediataPainel(valor){
+  return ({pediatria:'Pediatria',geriatria:'Geriatria',psiquiatria:'Psiquiatria'})[String(valor||'').toLowerCase()]||'';
+}
+
 function renderFila() {
 const lista=document.getElementById('fila-lista');
 const count=document.getElementById('fila-count');
@@ -2377,6 +2387,11 @@ const meuAssumido =
 const assumido = p.status === 'assumido' && !isAtual && !meuAssumido;
 const isAdmin=isAdminAtual();
 const isRenovacao=String(p.tipo||'').indexOf('renovacao')===0;
+const especialidade=String(p.especialidade_solicitada||'').toLowerCase();
+const especialidadeNome=nomeEspecialidadeImediataPainel(especialidade);
+const especialidadeBadge=especialidadeNome
+  ? `<div class="pc-especialidade">${p.fallback_decisao==='clinico'?especialidadeNome+' · fallback clínico':especialidadeNome+' · especialista'}</div>`
+  : '';
 const isTriagemPendente=isAdmin && p.pagamento_status==='confirmado' && (p.status==='triagem'||p.status==='pagamento_pendente');
 const nomeMediaco=p.medico_nome?p.medico_nome.split(' ').slice(0,2).join(' '):'';
 const nomeMediacoSafe=escHtml(nomeMediaco);
@@ -2395,7 +2410,7 @@ const acoesAguardando = isAdmin && isRenovacao
   ? `<span style="display:flex;gap:6px;align-items:center"><button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${p.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`
   : `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`;
 const acoesTriagemPendente = `<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pc-status-badge" style="pointer-events:none;color:#ffbd2e;border-color:rgba(255,189,46,.25)">Pago · sem triagem</span><button onclick="copiarLinkTriagemFila('${p.id}',event)" style="padding:4px 9px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.68rem;font-weight:700;cursor:pointer;">Copiar link</button></span>`;
-return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido||isTriagemPendente)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> <div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'Vídeo':'Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isTriagemPendente?acoesTriagemPendente:isAtual?'<span class="pc-status-badge" style="pointer-events:none">Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
+return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido||isTriagemPendente)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> ${especialidadeBadge}<div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'Vídeo':'Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isTriagemPendente?acoesTriagemPendente:isAtual?'<span class="pc-status-badge" style="pointer-events:none">Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
 }).join('');
 } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
@@ -2503,7 +2518,11 @@ const nome=p.nome||'-', tel=p.tel||'', tipo=p.tipo||'chat';
 document.getElementById('atend-nome').textContent=nome;
 const cmhNomeEl = document.getElementById('cmh-nome'); if(cmhNomeEl) cmhNomeEl.textContent=nome;
 const tipoTag=document.getElementById('atend-tipo-tag');
-tipoTag.textContent=tipo==='video'?'Consulta por vídeo':'Consulta por chat';
+const especialidadeAtendimento=String(p.especialidade_solicitada||'').toLowerCase();
+const especialidadeAtendimentoNome=nomeEspecialidadeImediataPainel(especialidadeAtendimento);
+tipoTag.textContent=especialidadeAtendimentoNome
+  ? `${especialidadeAtendimentoNome} · ${tipo==='video'?'vídeo':'chat'}${p.fallback_decisao==='clinico'?' · clínico':''}`
+  : (tipo==='video'?'Consulta por vídeo':'Consulta por chat');
 tipoTag.className='atend-tag '+tipo;
 document.getElementById('atend-crm-tag').textContent='CRM '+(medico.crm||'-');
 document.getElementById('atend-hist-badge').style.display=modoHistorico?'inline-flex':'none';
@@ -3749,21 +3768,22 @@ else { mostrarToast(d.error||'Erro ao rejeitar','error'); btn.disabled=false; bt
 async function moverMedicoParaEspecialista(id, btn) {
 const med=adminData.find(m=>Number(m.id)===Number(id));
 const sugestao=(med?.especialidade||'').trim().toLowerCase()||'psiquiatria';
-const especialidade=prompt('Mover para qual especialidade? Use: psiquiatria, endocrinologia ou dermatologia', sugestao);
+const especialidade=prompt('Vincular a qual especialidade? Exemplos: pediatria, geriatria, psiquiatria, endocrinologia ou dermatologia', sugestao);
 if(!especialidade)return;
 const valorPadrao=especialidade.toLowerCase().includes('psiqu')?'350':especialidade.toLowerCase().includes('dermat')?'220':'250';
 const valor=prompt('Valor da consulta em R$', valorPadrao);
 if(valor===null)return;
-if(!confirm('Mover este cadastro para especialistas e bloquear no plantão R$49,90?'))return;
-btn.disabled=true;btn.textContent='Movendo...';
+if(!confirm('Vincular este cadastro ao painel de especialistas?'))return;
+const manterNoPlantao=confirm('Manter também no plantão de R$ 49,90?\n\nOK = atende nos dois fluxos\nCancelar = somente especialistas');
+btn.disabled=true;btn.textContent='Vinculando...';
 try{
-const d=await apiFetch(`/api/admin/medico/${id}/mover-especialista`,{method:'PATCH',_admin:true,json:{especialidade:especialidade.trim().toLowerCase(),valor_consulta:Number(String(valor).replace(',','.'))||null}});
+const d=await apiFetch(`/api/admin/medico/${id}/mover-especialista`,{method:'PATCH',_admin:true,json:{especialidade:especialidade.trim().toLowerCase(),valor_consulta:Number(String(valor).replace(',','.'))||null,manter_medico_ativo:manterNoPlantao}});
 if(d.ok){
 adminData=adminData.filter(m=>Number(m.id)!==Number(id));
 renderMedicosPendentes();
 document.getElementById('admin-pendente-count').textContent=adminData.length;
 if(!adminData.length)document.getElementById('admin-tab-btn').style.display='none';
-mostrarToast('Movido para especialistas. Ele fica ativo, mas invisível na landing até você revisar.','success');
+mostrarToast(manterNoPlantao?'Vinculado aos especialistas e mantido no plantão.':'Vinculado somente aos especialistas.','success');
 }else{mostrarToast(d.error||'Erro ao mover','error');btn.disabled=false;btn.textContent='↗ Especialista';}
 }catch(e){mostrarToast('Erro de conexão','error');btn.disabled=false;btn.textContent='↗ Especialista';}
 }
