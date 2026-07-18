@@ -1663,7 +1663,7 @@ function abrirMemedDrawer(){const overlay=document.getElementById('memed-overlay
 async function salvarPrescricaoNoProntuario(dados){if(!consultaAtual)return;try{const ts=new Date().toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});const linhas=[`--- Prescrição Memed (${ts}) ---`];if(dados.medicamentos&&dados.medicamentos.length){linhas.push('💊 Medicamentos:');dados.medicamentos.forEach(m=>linhas.push(`  • ${m.nome}${m.posologia?' — '+m.posologia:''}` ));}if(dados.exames&&dados.exames.length){linhas.push('🔬 Exames:');dados.exames.forEach(e=>linhas.push(`  • ${e.nome||e}`));}if(dados.atestado)linhas.push(`📄 Atestado: ${dados.atestado}`);if(dados.link)linhas.push(`🔗 Link: ${dados.link}`);await apiFetch(`/api/especialista/consulta/${consultaAtual.id}/prontuario`,{method:'PUT',json:{prontuario:linhas.join('\n'),append:true}});mostrarToast('Prescrição salva no prontuário','success');}catch(e){console.error('Erro ao salvar prescrição:',e);}}
 function navegadorSafariMemed(){const ua=navigator.userAgent||'';return /Safari/i.test(ua)&&!/Chrome|CriOS|Chromium|Edg|OPR|Android/i.test(ua);}
 function erroMemed(){return navegadorSafariMemed()?'A Memed não abriu no Safari. Desative bloqueadores para este site ou tente pelo Chrome.':'Não foi possível abrir a prescrição. Recarregue e tente novamente.';}
-function aguardarSdkMemed(timeoutMs=12000){return new Promise((resolve,reject)=>{const inicio=Date.now();const verificar=()=>{if(window.MdHub?.module?.show&&window.MdHub?.command?.send&&window.MdSinapsePrescricao?.event?.add)return resolve();if(Date.now()-inicio>=timeoutMs)return reject(new Error('SDK Memed não inicializou'));setTimeout(verificar,100);};verificar();});}
+function aguardarSdkMemed(timeoutMs=20000){return new Promise((resolve,reject)=>{const inicio=Date.now();const verificar=async()=>{if(window.MdHub?.module?.show&&window.MdHub?.command?.send&&window.MdHub?.command?.ping){try{await Promise.race([Promise.resolve(window.MdHub.command.ping('plataforma.prescricao')),new Promise((_,rejeitar)=>setTimeout(()=>rejeitar(new Error('Ping Memed sem resposta')),1200))]);return resolve();}catch(e){}}if(Date.now()-inicio>=timeoutMs)return reject(new Error('Módulo de prescrição Memed não inicializou'));setTimeout(verificar,150);};verificar();});}
 function configurarPacienteEspecialistaMemed(){
   const pac=consultaAtual;
   if(!pac)throw new Error('Nenhuma consulta ativa');
@@ -1699,11 +1699,9 @@ async function abrirMemed(){
       try{
         await aguardarSdkMemed();
         memedCarregado=true;
-        MdSinapsePrescricao.event.add('core:moduleInit',async(module)=>{if(module.name!=='plataforma.prescricao')return;try{await mostrarMemedEspecialista();}catch(e){console.error('[MEMED] Falha ao abrir módulo:',e);mostrarToast(erroMemed(),'error');resetBtnMemed();}});
-        MdHub.event.add('prescricaoImpressa',async(ev)=>{const p=ev?.prescricao||ev||{};await salvarPrescricaoNoProntuario({link:p.link||'',medicamentos:p.medicamentos||p.itens||[],exames:p.exames||[],atestado:p.atestado||''});});
-        MdHub.event.add('prescricaoExcluida',()=>{});
-        MdSinapsePrescricao.event.add('core:moduleHide',(mod)=>{if(mod.moduleName==='plataforma.prescricao'||mod.name==='plataforma.prescricao')fecharMemedDrawer();});
-        setTimeout(async()=>{if(!document.body.classList.contains('memed-aberto')){try{await mostrarMemedEspecialista();}catch(e){console.error('[MEMED] Fallback falhou:',e);mostrarToast(erroMemed(),'error');resetBtnMemed();}}},900);
+        try{MdHub.event.add('prescricaoImpressa',async(ev)=>{const p=ev?.prescricao||ev||{};await salvarPrescricaoNoProntuario({link:p.link||'',medicamentos:p.medicamentos||p.itens||[],exames:p.exames||[],atestado:p.atestado||''});});MdHub.event.add('prescricaoExcluida',()=>{});}catch(e){console.warn('[MEMED] Eventos opcionais indisponíveis:',e);}
+        try{MdSinapsePrescricao.event.add('core:moduleHide',(mod)=>{if(mod.moduleName==='plataforma.prescricao'||mod.name==='plataforma.prescricao')fecharMemedDrawer();});}catch(e){}
+        await mostrarMemedEspecialista();
       }catch(e){console.error('[MEMED] SDK indisponível:',e);memedCarregado=false;mostrarToast(erroMemed(),'error');resetBtnMemed();}
     };
     script.onerror=()=>{mostrarToast(erroMemed(),'error');fecharMemedDrawer();};
