@@ -1537,6 +1537,12 @@ body.app-autenticado .bg-mesh{display:none}
         <div class="check-opt" onclick="toggleCheck(this)">🚫 Nenhum</div>
       </div>
     </div>
+    <div class="modal-field" id="avaliacao-google-field" style="display:none">
+      <label>Avaliação do atendimento</label>
+      <div class="check-group">
+        <div class="check-opt" id="avaliacao-google-opt" onclick="toggleCheck(this)">Mostrar convite para avaliar no Google</div>
+      </div>
+    </div>
     <div class="modal-actions"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-confirm" onclick="confirmarEncerramento()">Confirmar encerramento</button></div>
   </div>
 </div>
@@ -3574,6 +3580,11 @@ if (!atendimentoAtual) { mostrarToast('Nenhum atendimento ativo para encerrar.',
 document.getElementById('modal-encerrar').classList.add('open');
 document.querySelectorAll('#rg-status .radio-opt').forEach(r=>r.classList.remove('selected'));
 document.querySelectorAll('#cg-docs .check-opt').forEach(c=>c.classList.remove('selected'));
+const campoAvaliacao=document.getElementById('avaliacao-google-field');
+const opcaoAvaliacao=document.getElementById('avaliacao-google-opt');
+const souGustavo=String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com';
+if(campoAvaliacao) campoAvaliacao.style.display=souGustavo?'block':'none';
+if(opcaoAvaliacao) opcaoAvaliacao.classList.remove('selected');
 // Pre-seleciona "Atendido" por padrão
 const primeiroStatus = document.querySelector('#rg-status .radio-opt');
 if (primeiroStatus) primeiroStatus.classList.add('selected');
@@ -3595,6 +3606,10 @@ if (!ok) return;
 }
 const statusTexto=statusEl.querySelector('.radio-text').textContent.trim();
 const docs=[...document.querySelectorAll('#cg-docs .check-opt.selected')].map(el=>el.textContent.trim()).join(', ')||'Nenhum';
+const souGustavo=String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com';
+const mostrarAvaliacao=souGustavo
+  ? document.getElementById('avaliacao-google-opt')?.classList.contains('selected')===true
+  : undefined;
 const filaId = atendimentoAtual.id;
 const slotEncerrado = slotAtivo;
 // Para polling do slot sendo encerrado
@@ -3607,7 +3622,9 @@ const textoPront = montarTextoProntuarioComDocs(docs);
 if (textoPront && textoPront.trim()) await salvarProntuarioAgora(textoPront);
 } catch(e) { console.warn('[encerrar] erro ao salvar prontuario:', e); }
 try {
-const d = await apiFetch('/api/atendimento/encerrar',{method:'POST',json:{filaId,status:statusTexto,documentos_emitidos:docs}});
+const payloadEncerramento={filaId,status:statusTexto,documentos_emitidos:docs};
+if(souGustavo) payloadEncerramento.mostrar_avaliacao_google=mostrarAvaliacao;
+const d = await apiFetch('/api/atendimento/encerrar',{method:'POST',json:payloadEncerramento});
 if (!d.ok) { mostrarToast('Erro ao encerrar: '+(d.error||'tente novamente'),'error'); return; }
 } catch(e) { mostrarToast('Erro de conexão ao encerrar.','error'); return; }
 clearInterval(timerInterval); timerInterval = null;
