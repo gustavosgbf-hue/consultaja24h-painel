@@ -345,6 +345,7 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 .triagem-contact-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .triagem-mini-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 9px;border-radius:7px;border:1px solid rgba(94,224,160,.2);background:rgba(94,224,160,.055);color:#70e7ad;font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:650;text-decoration:none;cursor:pointer}
 .triagem-mini-btn:hover{background:rgba(94,224,160,.1)}
+.triagem-patient-link{max-width:100%;color:#70e7ad;font-size:.72rem;line-height:1.35;overflow-wrap:anywhere;text-underline-offset:3px}
 .tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid var(--line)}
 .tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;position:relative}
 .tab-badge{position:absolute;top:4px;right:6px;min-width:16px;height:16px;border-radius:8px;background:#ff5f57;color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 3px}
@@ -766,6 +767,9 @@ body.drawer-open{overflow:hidden;position:fixed;width:100%}
 .hist-card-nome{font-weight:600;font-size:.92rem;margin-bottom:4px}
 .hist-card-meta{font-size:.78rem;color:var(--muted);line-height:1.6}
 .hist-card-pront-badge{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(180,224,90,.1);border:1px solid rgba(180,224,90,.2);color:var(--g1)}
+.hist-card-actions{display:flex;gap:6px;margin-top:9px}
+.hist-card-action{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:30px;padding:5px 10px;border:1px solid rgba(94,224,160,.2);border-radius:7px;background:rgba(94,224,160,.055);color:#70e7ad;font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:650;cursor:pointer}
+.hist-card-action:hover{background:rgba(94,224,160,.12);border-color:rgba(94,224,160,.36)}
 .atend-tag.historico-badge{background:rgba(94,224,160,.08);color:var(--g2);border:1px solid rgba(94,224,160,.2)}
 .btn-voltar-hist{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-voltar-hist:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
@@ -1372,7 +1376,7 @@ body.app-autenticado .bg-mesh{display:none}
           <div class="triagem-item"><label>Telefone</label><span id="tr-tel-pac">-</span></div>
           <div class="triagem-item" id="tr-teldoc-wrap"><label>SMS de documentos</label><span id="tr-teldoc-pac">-</span></div>
           <div class="triagem-item triagem-item--wide" id="tr-email-wrap"><label>E-mail</label><div class="triagem-contact-actions"><span id="tr-email-pac">-</span><button class="triagem-mini-btn" id="btn-copiar-email" onclick="copiarEmailPaciente()" style="display:none" title="Copiar e-mail para uso no Memed">Copiar e-mail</button></div></div>
-          <div class="triagem-item triagem-item--wide" id="tr-link-paciente-wrap"><label>Recuperar acesso do paciente</label><div class="triagem-contact-actions"><a id="tr-link-paciente" href="#" style="display:none" aria-hidden="true" tabindex="-1"></a><button class="triagem-mini-btn" onclick="copiarLinkPaciente()">Copiar link do paciente</button><span style="font-size:.68rem;color:rgba(255,255,255,.3)">Envie apenas se o paciente perder o acesso à consulta</span></div></div>
+          <div class="triagem-item triagem-item--wide" id="tr-link-paciente-wrap"><label>Recuperar acesso do paciente</label><div class="triagem-contact-actions"><a class="triagem-patient-link" id="tr-link-paciente" href="#" style="display:none" aria-hidden="true" tabindex="-1"></a><button class="triagem-mini-btn" onclick="copiarLinkPaciente()">Copiar link do paciente</button><span style="font-size:.68rem;color:rgba(255,255,255,.3)">Envie apenas se o paciente perder o acesso à consulta</span></div></div>
         </div>
       </section>
       <section class="triagem-section">
@@ -2630,14 +2634,18 @@ if (btnCopiarEmail) btnCopiarEmail.style.display = p.email ? 'inline-flex' : 'no
 const telPrincipal = String(p.tel || '').replace(/\D/g, '');
 const telDocumentos = String(p.tel_documentos || '').replace(/\D/g, '');
 alternarCampoVazio('tr-teldoc-wrap', telDocumentos && telDocumentos !== telPrincipal ? telDocumentos : '');
-// Link do paciente — visível só no painel do médico que assumiu
+// O link continua oculto nos históricos médicos comuns e é liberado no histórico geral do admin.
 const linkPacEl = document.getElementById('tr-link-paciente');
 const linkPacWrap = document.getElementById('tr-link-paciente-wrap');
 if (linkPacEl && linkPacWrap && p.id) {
-  const linkPac = 'https://consultaja24h.com.br/triagem.html?consulta=' + p.id;
+  const adminHistoricoGeral = modoHistorico && isAdminAtual() && p._origemHistorico === 'geral';
+  const linkPac = p.link_consulta || ('https://consultaja24h.com.br/triagem.html?consulta=' + p.id);
   linkPacEl.href = linkPac;
   linkPacEl.textContent = linkPac;
-  linkPacWrap.style.display = modoHistorico ? 'none' : '';
+  linkPacEl.style.display = adminHistoricoGeral ? 'inline' : 'none';
+  linkPacEl.setAttribute('aria-hidden', adminHistoricoGeral ? 'false' : 'true');
+  linkPacEl.tabIndex = adminHistoricoGeral ? 0 : -1;
+  linkPacWrap.style.display = (!modoHistorico || adminHistoricoGeral) ? '' : 'none';
 }
 const idadeNascimento = calcularIdadeNascimento(p.data_nascimento);
 document.getElementById('tr-idade').textContent=idadeNascimento||p.idade||'-';
@@ -3404,8 +3412,8 @@ if (!atendimentoAtual) return;
 try { await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:texto}}); } catch(e) {}
 }
 // -- VER CHAT DA CONSULTA ------------------------------------
-async function abrirChatHistorico() {
-  const p = atendimentoAtual;
+async function abrirChatHistorico(atendimento) {
+  const p = atendimento || atendimentoAtual;
   if (!p) return;
   // Só faz sentido para atendimentos do tipo chat
   const overlay = document.getElementById('chat-hist-overlay');
@@ -3419,7 +3427,10 @@ overlay.classList.add('open');
 
 // Não inicia polling - apenas carrega mensagens existentes (histórico estático)
 try {
-const data = await apiFetch(`/api/chat/${p.id}`, { headers: {} });
+const adminHistoricoGeral = isAdminAtual() && p._origemHistorico === 'geral';
+const data = adminHistoricoGeral
+  ? await apiFetch(`/api/admin/atendimento/${encodeURIComponent(p.id)}/chat`, {_admin:true})
+  : await apiFetch(`/api/chat/${encodeURIComponent(p.id)}`, { headers: {} });
 if (!data.ok) { msgs.innerHTML = '<div class="chat-hist-empty">Não foi possível carregar a conversa.</div>'; return; }
 const lista = data.mensagens || [];
 if (lista.length === 0) {
@@ -3455,9 +3466,10 @@ if (overlay?.classList.contains('open')) { overlay.classList.remove('open'); ret
 function atualizarBtnVerChat() {
 const btn = document.getElementById('btn-ver-chat');
 if (!btn) return;
-// Visível para chat; escondido para vídeo/wpp (não há histórico de mensagens)
+// No histórico geral, o admin pode consultar também as mensagens vinculadas a atendimentos por vídeo.
 const p = atendimentoAtual;
-btn.style.display = (p && p.tipo === 'chat') ? '' : 'none';
+const adminHistoricoGeral = p && isAdminAtual() && p._origemHistorico === 'geral';
+btn.style.display = (p && (p.tipo === 'chat' || (adminHistoricoGeral && p.tipo === 'video'))) ? '' : 'none';
 }
 
 function copiarProntuario() {
@@ -3813,9 +3825,26 @@ hist.forEach(a=>{ histGeralCache[String(a.id)]=a; });
 lista.innerHTML=hist.map(a=>{
 const data_fmt=a.criado_em?new Date(a.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
 const statusColor=a.status==='encerrado'?'#5ee0a0':a.status==='assumido'?'#ffbd2e':a.status==='cancelado'?'#ff8080':'#aaa';
-return `<div class="hist-card" onclick="abrirAtendimentoHistorico(${a.id})" style="cursor:pointer;margin-bottom:10px"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"> <strong style="font-size:.88rem">${escHtml(a.nome||'-')}</strong> <span style="font-size:.7rem;color:${statusColor};background:${statusColor}22;padding:2px 7px;border-radius:20px">${a.status}</span> </div> <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px"> ${a.medico_nome?`Dr(a) ${escHtml(a.medico_nome)} · `:''}${escHtml(data_fmt)} </div> <div style="font-size:.77rem;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml((a.queixa||a.triagem||'').substring(0,60))}</div> </div>`;
+return `<div class="hist-card" onclick="abrirAtendimentoHistorico(${a.id})" style="cursor:pointer;margin-bottom:10px"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"> <strong style="font-size:.88rem">${escHtml(a.nome||'-')}</strong> <span style="font-size:.7rem;color:${statusColor};background:${statusColor}22;padding:2px 7px;border-radius:20px">${a.status}</span> </div> <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px"> ${a.medico_nome?`Dr(a) ${escHtml(a.medico_nome)} · `:''}${escHtml(data_fmt)} </div> <div style="font-size:.77rem;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml((a.queixa||a.triagem||'').substring(0,60))}</div> <div class="hist-card-actions"><button class="hist-card-action" onclick="abrirChatHistoricoGeral(${a.id},event)">Chat</button><button class="hist-card-action" onclick="copiarLinkHistoricoGeral(${a.id},event)">Copiar link</button></div> </div>`;
 }).join('');
 } catch(e){ document.getElementById('admin-hist-lista').innerHTML='<div style="color:#ff8080;font-size:.78rem;padding:8px 0">Erro de conexão</div>'; }
+}
+
+function abrirChatHistoricoGeral(id, event) {
+  if (event) event.stopPropagation();
+  const atendimento = histGeralCache[String(id)];
+  if (!atendimento) { mostrarToast('Atendimento não encontrado.','error'); return; }
+  abrirChatHistorico({...atendimento, _origemHistorico:'geral'});
+}
+
+function copiarLinkHistoricoGeral(id, event) {
+  if (event) event.stopPropagation();
+  const atendimento = histGeralCache[String(id)];
+  if (!atendimento) { mostrarToast('Atendimento não encontrado.','error'); return; }
+  const link = atendimento.link_consulta || ('https://consultaja24h.com.br/triagem.html?consulta=' + atendimento.id);
+  navigator.clipboard.writeText(link)
+    .then(() => mostrarToast('Link da consulta copiado!','success'))
+    .catch(() => mostrarToast('Não foi possível copiar o link.','error'));
 }
 function renderMedicosPendentes() {
 const container=document.getElementById('admin-medicos-lista');
