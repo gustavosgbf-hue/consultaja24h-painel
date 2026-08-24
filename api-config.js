@@ -110,3 +110,14 @@
     }
   }, 100);
 })(window);
+
+// Painel médico: carrega a automação que anexa ao chat o PDF oficial emitido pela Memed.
+(function () {
+  if (/\/(?:psicologo|especialista)\/?$/i.test(location.pathname)) return;
+  if (document.querySelector('script[data-cj-memed-auto-chat]')) return;
+  var script = document.createElement('script');
+  script.src = '/memed-auto-chat.js?v=1';
+  script.async = true;
+  script.dataset.cjMemedAutoChat = '1';
+  document.head.appendChild(script);
+})();
