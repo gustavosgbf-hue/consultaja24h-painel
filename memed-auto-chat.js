@@ -1,6 +1,7 @@
 (function () {
-  var registrados = false;
   var emProcessamento = new Set();
+  var coreRegistrado = false;
+  var registrosPrescricao = 0;
 
   function toast(msg, tipo) {
     try {
@@ -29,15 +30,30 @@
   }
 
   async function enviarReceitaAoChat(ev) {
+    console.log('[MEMED-AUTO-CHAT] Evento prescricaoImpressa recebido.', ev);
+
     var atendimento = atendimentoAtivo();
     var prescriptionId = prescriptionIdDoEvento(ev);
-    if (!atendimento || !atendimento.id || !prescriptionId) {
-      if (!prescriptionId) console.warn('[MEMED-AUTO-CHAT] Evento sem ID de prescrição.', ev);
+
+    if (!atendimento || !atendimento.id) {
+      console.warn('[MEMED-AUTO-CHAT] Evento recebido sem atendimento ativo.', ev);
+      return;
+    }
+    if (!prescriptionId) {
+      console.warn('[MEMED-AUTO-CHAT] Evento recebido sem ID de prescrição.', ev);
       return;
     }
 
+    console.log('[MEMED-AUTO-CHAT] Prescrição detectada.', {
+      atendimentoId: atendimento.id,
+      prescriptionId: prescriptionId
+    });
+
     var chave = String(atendimento.id) + ':' + prescriptionId;
-    if (emProcessamento.has(chave)) return;
+    if (emProcessamento.has(chave)) {
+      console.log('[MEMED-AUTO-CHAT] Evento duplicado ignorado.', chave);
+      return;
+    }
     emProcessamento.add(chave);
 
     try {
@@ -51,34 +67,68 @@
       });
       if (!data || !data.ok) throw new Error((data && data.error) || 'Não foi possível enviar a receita ao chat.');
 
+      console.log('[MEMED-AUTO-CHAT] Receita anexada ao chat.', data);
       toast(data.reutilizado
         ? 'Receita já estava disponível no chat do paciente.'
         : 'Receita enviada automaticamente ao chat do paciente.', 'success');
     } catch (err) {
-      console.error('[MEMED-AUTO-CHAT]', err);
+      console.error('[MEMED-AUTO-CHAT] Falha ao anexar receita.', err);
       toast('A receita foi emitida, mas não foi possível anexá-la automaticamente ao chat.', 'error');
-      // Permite nova tentativa caso a Memed ainda estivesse finalizando o PDF.
       emProcessamento.delete(chave);
     }
   }
 
-  function registrar() {
-    if (registrados || !window.MdHub || !window.MdHub.event || typeof window.MdHub.event.add !== 'function') return false;
+  function registrarPrescricao(origem) {
+    if (!window.MdHub || !window.MdHub.event || typeof window.MdHub.event.add !== 'function') return false;
     try {
       window.MdHub.event.add('prescricaoImpressa', enviarReceitaAoChat);
-      registrados = true;
-      console.log('[MEMED-AUTO-CHAT] Listener registrado.');
+      registrosPrescricao += 1;
+      console.log('[MEMED-AUTO-CHAT] Listener prescricaoImpressa registrado.', {
+        origem: origem || 'direto',
+        registro: registrosPrescricao
+      });
       return true;
     } catch (err) {
-      console.warn('[MEMED-AUTO-CHAT] Não foi possível registrar listener.', err);
+      console.warn('[MEMED-AUTO-CHAT] Não foi possível registrar prescricaoImpressa.', err);
       return false;
     }
   }
 
-  if (registrar()) return;
+  function registrarCore() {
+    if (coreRegistrado || !window.MdHub || !window.MdHub.event || typeof window.MdHub.event.add !== 'function') return false;
+    try {
+      window.MdHub.event.add('core:moduleInit', function (moduleData) {
+        var nome = moduleData && moduleData.name ? String(moduleData.name) : '';
+        if (nome === 'plataforma.prescricao') {
+          console.log('[MEMED-AUTO-CHAT] plataforma.prescricao inicializada; registrando listener definitivo.');
+          registrarPrescricao('core:moduleInit');
+        }
+      });
+      coreRegistrado = true;
+      console.log('[MEMED-AUTO-CHAT] Aguardando core:moduleInit da Memed.');
+      return true;
+    } catch (err) {
+      console.warn('[MEMED-AUTO-CHAT] Não foi possível observar core:moduleInit.', err);
+      return false;
+    }
+  }
+
+  function preparar() {
+    if (!window.MdHub || !window.MdHub.event || typeof window.MdHub.event.add !== 'function') return false;
+
+    // Registra imediatamente para o caso de o módulo já ter sido inicializado.
+    registrarPrescricao('direto');
+    // E também observa a inicialização oficial do módulo, porque a Memed pode
+    // recriar o barramento durante o bootstrap e descartar listeners precoces.
+    registrarCore();
+    return true;
+  }
+
+  if (preparar()) return;
+
   var tentativas = 0;
   var timer = setInterval(function () {
     tentativas += 1;
-    if (registrar() || tentativas >= 1200) clearInterval(timer);
+    if (preparar() || tentativas >= 1200) clearInterval(timer);
   }, 500);
 })();
