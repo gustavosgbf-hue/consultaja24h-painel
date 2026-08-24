@@ -1706,17 +1706,29 @@ return slots.length - 1;
 
 // [FIX-SLOTS] Fonte única de render do chat de um slot. Reconstrói o DOM a partir de slot.mensagens.
 // Chamada em: iniciarChatMedico (carga inicial), envio/polling (via adicionarMsgMedico que delega).
+function garantirEstadoChatSlot(slot) {
+if (!slot) return;
+if (!Array.isArray(slot.mensagens)) slot.mensagens = [];
+if (!(slot.msgIdsRendered instanceof Set)) {
+slot.msgIdsRendered = new Set(slot.mensagens.filter(m => m && m.id).map(m => String(m.id)));
+}
+}
+
 function renderSlotMsgs(idx) {
 const slot = slots[idx];
 const container = msgsContainer(idx);
 if (!slot || !container) return;
+garantirEstadoChatSlot(slot);
 if (!slot.mensagens || slot.mensagens.length === 0) {
 container.innerHTML = '<div class="chat-vazio"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Aguardando mensagens do paciente...</span></div>';
 return;
 }
 container.innerHTML = '';
 const frag = document.createDocumentFragment();
-slot.mensagens.forEach(m => frag.appendChild(_renderMsgBolha(m)));
+slot.mensagens.forEach(m => {
+try { frag.appendChild(_renderMsgBolha(m)); }
+catch(e) { console.error('[CHAT] Mensagem não pôde ser renderizada:', m?.id, e); }
+});
 container.appendChild(frag);
 container.scrollTop = container.scrollHeight;
 }
@@ -1755,6 +1767,7 @@ return div;
 function pushMsgSlot(idx, m) {
 const slot = slots[idx];
 if (!slot || !m || !m.id) return false;
+garantirEstadoChatSlot(slot);
 const msgKey = String(m.id);
 if (slot.msgIdsRendered.has(msgKey)) return false;
 slot.msgIdsRendered.add(msgKey);
@@ -1774,6 +1787,7 @@ return true;
 function reconciliarMensagensSlot(idx, atendId, mensagensServidor) {
 const slot = slots[idx];
 if (!slot || !slot.atendimento || String(slot.atendimento.id) !== String(atendId)) return [];
+garantirEstadoChatSlot(slot);
 const existentes = new Map();
 (slot.mensagens || []).forEach(m => { if (m && m.id) existentes.set(String(m.id), m); });
 const novas = [];
@@ -2970,8 +2984,14 @@ const capturedSlot = slotAtivo;
 // Assim uma revisita nunca fica presa a um histórico incompleto mantido na memória.
 renderSlotMsgs(capturedSlot);
 carregarHistoricoMedico(capturedSlot)
-  .then(()=>sincronizarMsgsPip())
-  .catch(()=>mostrarToast('Não foi possível atualizar o histórico do chat.', 'error'))
+  .then(()=>{
+    try { sincronizarMsgsPip(); }
+    catch(e) { console.error('[CHAT] Falha ao sincronizar janela flutuante:', e); }
+  })
+  .catch((e)=>{
+    console.error('[CHAT] Falha ao atualizar histórico:', e);
+    mostrarToast('Não foi possível atualizar o histórico do chat.', 'error');
+  })
   .finally(()=>_iniciarPollingChat(capturedSlot));
 
 // Listeners no textarea principal - re-registra sempre (evita perda de listener após re-render)
@@ -3010,6 +3030,7 @@ async function carregarHistoricoMedico(capturedSlot) {
 if (capturedSlot === undefined) capturedSlot = slotAtivo;
 const slot = slots[capturedSlot];
 if (!slot || !slot.atendimento) return;
+garantirEstadoChatSlot(slot);
 const atendId = slot.atendimento.id;
 try {
 const data = await apiFetch(`/api/chat/${atendId}?_=${Date.now()}`, {headers:{}, cache:'no-store'});
@@ -3026,6 +3047,7 @@ async function buscarMensagensNovasMedico(capturedSlot) {
 if (capturedSlot === undefined) capturedSlot = slotAtivo;
 const slot = slots[capturedSlot];
 if (!slot || !slot.chatAtivo || !slot.atendimento || document.hidden) return;
+garantirEstadoChatSlot(slot);
 // modoHistorico só pausa o polling do slot ativo (onde o histórico está sendo visualizado)
 if (modoHistorico && capturedSlot === slotAtivo) return;
 if (slot._busyFetch) return;
