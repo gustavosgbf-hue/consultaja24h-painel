@@ -115,14 +115,65 @@
 
   function preparar() {
     if (!window.MdHub || !window.MdHub.event || typeof window.MdHub.event.add !== 'function') return false;
-
-    // Registra imediatamente para o caso de o módulo já ter sido inicializado.
     registrarPrescricao('direto');
-    // E também observa a inicialização oficial do módulo, porque a Memed pode
-    // recriar o barramento durante o bootstrap e descartar listeners precoces.
     registrarCore();
     return true;
   }
+
+  function instalarEstiloResposta() {
+    if (document.getElementById('cj-chat-reply-style')) return;
+    var style = document.createElement('style');
+    style.id = 'cj-chat-reply-style';
+    style.textContent = '.cj-reply-quote{border-left:3px solid rgba(98,197,138,.55);background:rgba(255,255,255,.035);border-radius:7px;padding:6px 8px;margin:0 0 6px;max-width:100%;font-size:11px;line-height:1.35;color:rgba(231,235,233,.58)}.cj-reply-quote strong{display:block;color:rgba(143,207,157,.9);font-size:10px;margin-bottom:2px}.cj-reply-quote span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}';
+    document.head.appendChild(style);
+  }
+
+  function instalarContextoResposta() {
+    var original = window._renderMsgBolha;
+    if (typeof original !== 'function') return false;
+    if (original.__cjReplyContext) return true;
+
+    instalarEstiloResposta();
+    var wrapper = function (m) {
+      var el = original(m);
+      try {
+        var replyId = String(m && m.reply_to_id ? m.reply_to_id : '').replace(/\D/g, '');
+        if (!replyId || !el || !el.querySelector) return el;
+        var alvo = document.querySelector('[data-msg-id="' + replyId + '"]');
+        var resumo = 'Mensagem anterior';
+        var autor = 'Mensagem respondida';
+        if (alvo) {
+          var texto = alvo.querySelector('.bub');
+          var arquivo = alvo.querySelector('.pdf-nome');
+          resumo = String((texto && texto.innerText) || (arquivo && arquivo.innerText) || resumo).trim().slice(0, 140);
+          autor = alvo.classList.contains('medico') ? 'Você' : 'Paciente';
+        }
+        var wrap = el.querySelector('.bub-wrap');
+        if (!wrap) return el;
+        var quote = document.createElement('div');
+        quote.className = 'cj-reply-quote';
+        var strong = document.createElement('strong');
+        strong.textContent = autor;
+        var span = document.createElement('span');
+        span.textContent = resumo;
+        quote.appendChild(strong);
+        quote.appendChild(span);
+        wrap.insertBefore(quote, wrap.firstChild);
+      } catch (_) {}
+      return el;
+    };
+    wrapper.__cjReplyContext = true;
+    window._renderMsgBolha = wrapper;
+    console.log('[CHAT-UX] Contexto de respostas habilitado no painel.');
+    return true;
+  }
+
+  instalarContextoResposta();
+  var chatUxTentativas = 0;
+  var chatUxTimer = setInterval(function () {
+    chatUxTentativas += 1;
+    if (instalarContextoResposta() || chatUxTentativas >= 120) clearInterval(chatUxTimer);
+  }, 500);
 
   if (preparar()) return;
 
