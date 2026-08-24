@@ -1755,8 +1755,9 @@ return div;
 function pushMsgSlot(idx, m) {
 const slot = slots[idx];
 if (!slot || !m || !m.id) return false;
-if (slot.msgIdsRendered.has(m.id)) return false;
-slot.msgIdsRendered.add(m.id);
+const msgKey = String(m.id);
+if (slot.msgIdsRendered.has(msgKey)) return false;
+slot.msgIdsRendered.add(msgKey);
 slot.mensagens.push(m);
 if (m.id > (slot.ultimaMsgId||0)) slot.ultimaMsgId = m.id;
 const container = msgsContainer(idx);
@@ -1766,6 +1767,27 @@ container.appendChild(_renderMsgBolha(m));
 container.scrollTop = container.scrollHeight;
 }
 return true;
+}
+
+// Mescla uma fotografia do servidor com o estado já confirmado no navegador.
+// Uma resposta antiga nunca pode apagar uma mensagem enviada enquanto o GET estava em voo.
+function reconciliarMensagensSlot(idx, atendId, mensagensServidor) {
+const slot = slots[idx];
+if (!slot || !slot.atendimento || String(slot.atendimento.id) !== String(atendId)) return [];
+const existentes = new Map();
+(slot.mensagens || []).forEach(m => { if (m && m.id) existentes.set(String(m.id), m); });
+const novas = [];
+(mensagensServidor || []).forEach(m => {
+if (!m || !m.id) return;
+const key = String(m.id);
+if (!existentes.has(key)) novas.push(m);
+existentes.set(key, m);
+});
+slot.mensagens = Array.from(existentes.values()).sort((a,b) => Number(a.id) - Number(b.id));
+slot.msgIdsRendered = new Set(slot.mensagens.map(m => String(m.id)));
+slot.ultimaMsgId = slot.mensagens.reduce((max,m) => Math.max(max, Number(m.id)||0), 0);
+renderSlotMsgs(idx);
+return novas;
 }
 
 // Salva os campos clínicos do DOM no rascunho do slot atual ANTES de trocar
@@ -2992,17 +3014,10 @@ const atendId = slot.atendimento.id;
 try {
 const data = await apiFetch(`/api/chat/${atendId}?_=${Date.now()}`, {headers:{}, cache:'no-store'});
 if (!data.ok) throw new Error(data.error || 'Erro ao carregar histórico');
-// Reset do array e Set para evitar qualquer duplicação com carregamento anterior
-slot.mensagens = [];
-slot.msgIdsRendered = new Set();
-slot.ultimaMsgId = 0;
-(data.mensagens || []).forEach(m => {
-slot.mensagens.push(m);
-slot.msgIdsRendered.add(m.id);
-if (m.id > slot.ultimaMsgId) slot.ultimaMsgId = m.id;
-});
-renderSlotMsgs(capturedSlot);
-} catch(e) {}
+reconciliarMensagensSlot(capturedSlot, atendId, data.mensagens || []);
+} catch(e) {
+throw e;
+}
 }
 
 // [FIX-SLOTS] Recebe capturedSlot explícito. Busy flag é POR SLOT para permitir polls simultâneos
@@ -3016,15 +3031,14 @@ if (modoHistorico && capturedSlot === slotAtivo) return;
 if (slot._busyFetch) return;
 slot._busyFetch = true;
 const atendId = slot.atendimento.id;
-const lastId = slot.ultimaMsgId || 0;
 try {
 const data = await apiFetch(`/api/chat/${atendId}?_=${Date.now()}`, {headers:{}, cache:'no-store'});
 if (!data.ok) { slot.chatRetryMs = Math.min((slot.chatRetryMs||3000)*2, 15000); return; }
 slot.chatRetryMs = 3000;
-const novas = (data.mensagens||[]).filter(m => m.id > lastId && !slot.msgIdsRendered.has(m.id));
+const novas = (data.mensagens||[]).filter(m => m && m.id && !slot.msgIdsRendered.has(String(m.id)));
 if (novas.length === 0) return;
+reconciliarMensagensSlot(capturedSlot, atendId, data.mensagens || []);
 novas.forEach(m => {
-pushMsgSlot(capturedSlot, m);
 // PiP e tab-badge de consulta só reagem se for o slot ativo
 if (capturedSlot === slotAtivo) {
 if (m.autor === 'paciente') {
