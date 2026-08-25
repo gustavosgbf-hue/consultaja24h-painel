@@ -121,3 +121,14 @@
   script.dataset.cjMemedAutoChat = '1';
   document.head.appendChild(script);
 })();
+
+// Painel médico: dashboard privado de avaliações, exibido apenas ao administrador.
+(function () {
+  if (/\/(?:psicologo|especialista)\/?$/i.test(location.pathname)) return;
+  if (document.querySelector('script[data-cj-admin-avaliacoes]')) return;
+  var script = document.createElement('script');
+  script.src = '/admin-avaliacoes.js?v=1';
+  script.async = true;
+  script.dataset.cjAdminAvaliacoes = '1';
+  document.head.appendChild(script);
+})();
