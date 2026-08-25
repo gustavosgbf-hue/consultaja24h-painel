@@ -183,3 +183,12 @@
     if (preparar() || tentativas >= 1200) clearInterval(timer);
   }, 500);
 })();
+
+(function () {
+  if (document.querySelector('script[data-cj-admin-avaliacoes]')) return;
+  var script = document.createElement('script');
+  script.src = '/admin-avaliacoes.js?v=2';
+  script.async = true;
+  script.dataset.cjAdminAvaliacoes = '1';
+  document.head.appendChild(script);
+})();
