@@ -18,33 +18,30 @@
   }
 
   function prescriptionIdDoEvento(ev) {
-    var visitados = new Set();
-    var chavesPreferidas = ['id', 'prescricao_id', 'prescription_id', 'id_prescription', 'prescriptionId', 'prescricaoId'];
+    var candidatos = [];
+    if (ev && ev.prescricao) candidatos.push(ev.prescricao);
+    if (ev && ev.prescription) candidatos.push(ev.prescription);
+    if (ev && ev.data && ev.data.prescricao) candidatos.push(ev.data.prescricao);
+    if (ev && ev.data && ev.data.prescription) candidatos.push(ev.data.prescription);
+    if (ev && ev.data) candidatos.push(ev.data);
+    if (ev) candidatos.push(ev);
 
-    function buscar(value, depth) {
-      if (depth > 6 || value == null) return '';
-      if (typeof value === 'string' || typeof value === 'number') return '';
-      if (typeof value !== 'object') return '';
-      if (visitados.has(value)) return '';
-      visitados.add(value);
+    for (var i = 0; i < candidatos.length; i += 1) {
+      var p = candidatos[i];
+      if (!p || typeof p !== 'object') continue;
 
-      for (var i = 0; i < chavesPreferidas.length; i += 1) {
-        var key = chavesPreferidas[i];
-        if (value[key] != null && value[key] !== '') {
-          var id = String(value[key]).trim();
-          if (id) return id;
-        }
+      var direto = p.id || p.prescricao_id || p.prescription_id || p.id_prescription || p.prescriptionId || p.prescricaoId;
+      if (direto != null && String(direto).trim()) return String(direto).trim();
+
+      var docs = Array.isArray(p.documents) ? p.documents : (Array.isArray(p.documentos) ? p.documentos : []);
+      for (var j = 0; j < docs.length; j += 1) {
+        var doc = docs[j] || {};
+        var docId = doc.prescription_id || doc.prescricao_id || doc.id_prescription || doc.prescriptionId || doc.prescricaoId;
+        if (docId != null && String(docId).trim()) return String(docId).trim();
       }
-
-      var keys = Object.keys(value);
-      for (var j = 0; j < keys.length; j += 1) {
-        var found = buscar(value[keys[j]], depth + 1);
-        if (found) return found;
-      }
-      return '';
     }
 
-    return buscar(ev || {}, 0);
+    return '';
   }
 
   function sleep(ms) {
