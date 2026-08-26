@@ -18,24 +18,77 @@
   }
 
   function prescriptionIdDoEvento(ev) {
-    var p = ev && (ev.prescricao || ev.prescription) ? (ev.prescricao || ev.prescription) : (ev || {});
-    return String(
-      p.id ||
-      p.prescricao_id ||
-      p.prescription_id ||
-      p.id_prescription ||
-      (ev && (ev.prescricao_id || ev.prescription_id || ev.id_prescription)) ||
-      ''
-    ).trim();
+    var visitados = new Set();
+    var chavesPreferidas = ['id', 'prescricao_id', 'prescription_id', 'id_prescription', 'prescriptionId', 'prescricaoId'];
+
+    function buscar(value, depth) {
+      if (depth > 6 || value == null) return '';
+      if (typeof value === 'string' || typeof value === 'number') return '';
+      if (typeof value !== 'object') return '';
+      if (visitados.has(value)) return '';
+      visitados.add(value);
+
+      for (var i = 0; i < chavesPreferidas.length; i += 1) {
+        var key = chavesPreferidas[i];
+        if (value[key] != null && value[key] !== '') {
+          var id = String(value[key]).trim();
+          if (id) return id;
+        }
+      }
+
+      var keys = Object.keys(value);
+      for (var j = 0; j < keys.length; j += 1) {
+        var found = buscar(value[keys[j]], depth + 1);
+        if (found) return found;
+      }
+      return '';
+    }
+
+    return buscar(ev || {}, 0);
+  }
+
+  function sleep(ms) {
+    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+  }
+
+  async function apiEnviarPrescricao(atendimentoId, prescriptionId) {
+    if (typeof apiFetch !== 'function') throw new Error('API do painel indisponível');
+
+    var atrasos = [0, 1500, 4000];
+    var ultimoErro = null;
+    for (var i = 0; i < atrasos.length; i += 1) {
+      if (atrasos[i]) await sleep(atrasos[i]);
+      try {
+        var data = await apiFetch('/api/memed/prescricao-chat', {
+          method: 'POST',
+          json: {
+            atendimentoId: Number(atendimentoId),
+            prescriptionId: prescriptionId
+          }
+        });
+        if (data && data.ok) return data;
+        ultimoErro = new Error((data && data.error) || 'Não foi possível enviar a receita ao chat.');
+      } catch (err) {
+        ultimoErro = err;
+      }
+      console.warn('[MEMED-AUTO-CHAT] Tentativa de envio falhou.', {
+        atendimentoId: atendimentoId,
+        prescriptionId: prescriptionId,
+        tentativa: i + 1,
+        erro: ultimoErro && ultimoErro.message ? ultimoErro.message : String(ultimoErro || '')
+      });
+    }
+    throw ultimoErro || new Error('Não foi possível enviar a receita ao chat.');
   }
 
   async function enviarReceitaAoChat(ev) {
     console.log('[MEMED-AUTO-CHAT] Evento prescricaoImpressa recebido.', ev);
 
     var atendimento = atendimentoAtivo();
+    var atendimentoId = atendimento && atendimento.id ? Number(atendimento.id) : 0;
     var prescriptionId = prescriptionIdDoEvento(ev);
 
-    if (!atendimento || !atendimento.id) {
+    if (!atendimentoId) {
       console.warn('[MEMED-AUTO-CHAT] Evento recebido sem atendimento ativo.', ev);
       return;
     }
@@ -45,11 +98,11 @@
     }
 
     console.log('[MEMED-AUTO-CHAT] Prescrição detectada.', {
-      atendimentoId: atendimento.id,
+      atendimentoId: atendimentoId,
       prescriptionId: prescriptionId
     });
 
-    var chave = String(atendimento.id) + ':' + prescriptionId;
+    var chave = String(atendimentoId) + ':' + prescriptionId;
     if (emProcessamento.has(chave)) {
       console.log('[MEMED-AUTO-CHAT] Evento duplicado ignorado.', chave);
       return;
@@ -57,16 +110,7 @@
     emProcessamento.add(chave);
 
     try {
-      if (typeof apiFetch !== 'function') throw new Error('API do painel indisponível');
-      var data = await apiFetch('/api/memed/prescricao-chat', {
-        method: 'POST',
-        json: {
-          atendimentoId: Number(atendimento.id),
-          prescriptionId: prescriptionId
-        }
-      });
-      if (!data || !data.ok) throw new Error((data && data.error) || 'Não foi possível enviar a receita ao chat.');
-
+      var data = await apiEnviarPrescricao(atendimentoId, prescriptionId);
       console.log('[MEMED-AUTO-CHAT] Receita anexada ao chat.', data);
       toast(data.reutilizado
         ? 'Receita já estava disponível no chat do paciente.'
