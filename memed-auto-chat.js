@@ -256,4 +256,13 @@ window.__cjMemedAutoChatLoaded = true;
   document.head.appendChild(script);
 })();
 
+(function () {
+  if (document.querySelector('script[data-cj-memed-prontuario-guard]')) return;
+  var script = document.createElement('script');
+  script.src = '/memed-prontuario-guard.js?v=1';
+  script.async = true;
+  script.dataset.cjMemedProntuarioGuard = '1';
+  document.head.appendChild(script);
+})();
+
 }
