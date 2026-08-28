@@ -23,8 +23,7 @@ window.__cjMemedAutoChatLoaded = true;
   function atendimentoIdCongeladoMemed() {
     try {
       var id = Number(window.__cjMemedAtendimentoId || 0);
-      var ts = Number(window.__cjMemedAtendimentoTs || 0);
-      if (id && ts && Date.now() - ts <= 30 * 60 * 1000) return id;
+      if (id) return id;
     } catch (_) {}
     return 0;
   }
@@ -250,7 +249,7 @@ window.__cjMemedAutoChatLoaded = true;
 (function () {
   if (document.querySelector('script[data-cj-clinical-workspace]')) return;
   var script = document.createElement('script');
-  script.src = '/clinical-workspace.js?v=1';
+  script.src = '/clinical-workspace.js?v=2';
   script.async = true;
   script.dataset.cjClinicalWorkspace = '1';
   document.head.appendChild(script);
@@ -259,7 +258,7 @@ window.__cjMemedAutoChatLoaded = true;
 (function () {
   if (document.querySelector('script[data-cj-memed-prontuario-guard]')) return;
   var script = document.createElement('script');
-  script.src = '/memed-prontuario-guard.js?v=1';
+  script.src = '/memed-prontuario-guard.js?v=2';
   script.async = true;
   script.dataset.cjMemedProntuarioGuard = '1';
   document.head.appendChild(script);

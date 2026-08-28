@@ -9,6 +9,7 @@
   var apiFetchOriginal = null;
   var memedWrapperInstalado = false;
   var apiWrapperInstalado = false;
+  var ultimaRevisaoProntuario = 0;
 
   function esc(value) {
     return String(value == null ? '' : value)
@@ -62,6 +63,18 @@
     return (window.API_BASE_URL || 'https://triagem-api.onrender.com').replace(/\/$/, '');
   }
 
+  function proximaRevisaoProntuario() {
+    ultimaRevisaoProntuario = Math.max(Date.now(), ultimaRevisaoProntuario + 1);
+    return ultimaRevisaoProntuario;
+  }
+
+  function safeDocumentUrl(value) {
+    try {
+      var url = new URL(String(value || ''), window.location.origin);
+      return url.protocol === 'https:' ? url.href : '';
+    } catch (_) { return ''; }
+  }
+
   async function cjFetch(path, options) {
     options = options || {};
     var headers = Object.assign({}, options.headers || {}, { Authorization: 'Bearer ' + token() });
@@ -97,7 +110,7 @@
   }
 
   function detectarNomePacienteNoTexto(text) {
-    var raw = String(text || '').replace(/\s+/g, ' ').trim();
+    var raw = String(text || '').replace(/[ \t]+/g, ' ').trim();
     if (!raw) return '';
     var patterns = [
       /(?:nome\s+(?:do|da)\s+paciente\s*(?:é|e|:)?\s*)([A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ][A-Za-zÁÀÂÃÉÊÍÓÔÕÚÜÇáàâãéêíóôõúüç' -]{5,70})/i,
@@ -303,7 +316,7 @@
       (shared ? '<span class="cj-history-chip warn">Telefone compartilhado</span>' : '') + '</div>' +
       (candidate && String(candidate).toLowerCase() !== String(p.nome||'').toLowerCase() ? '<div class="cj-patient-candidate">A triagem menciona <strong>'+esc(candidate)+'</strong> como possível paciente. Confira a identidade; não houve alteração automática.</div>' : '') +
       '</div>' +
-      '<div class="cj-history-card"><h3>Vinculação</h3><div class="cj-history-meta">O histórico abaixo só reúne atendimentos com sinais fortes de identidade (CPF, nome, nascimento e/ou telefone combinados). Um telefone usado por familiares não é suficiente sozinho.</div>' +
+      '<div class="cj-history-card"><h3>Vinculação</h3><div class="cj-history-meta">O histórico abaixo só reúne atendimentos com CPF válido ou nome e nascimento coincidentes. Em atendimento para terceiro, exige nome e nascimento. Telefone nunca vincula sozinho.</div>' +
       (shared ? '<div class="cj-patient-candidate">Há '+shared+' atendimento'+(shared===1?'':'s')+' no mesmo telefone que <strong>não foi vinculado</strong> por falta de confirmação de identidade.</div>' : '') +
       '</div></div>';
 
@@ -318,7 +331,10 @@
         var events = eventMap[id] || [];
         var mirror = mirrorMap[id];
         var pront = (mirror && mirror.conteudo) || v.prontuario || '';
-        var docHtml = docs.map(function(d){ return '<a class="cj-doc-link" href="'+esc(d.arquivo_url)+'" target="_blank" rel="noopener">PDF · '+esc(d.arquivo_nome || 'Documento')+'</a>'; }).join('');
+        var docHtml = docs.map(function(d){
+          var url = safeDocumentUrl(d.arquivo_url);
+          return url ? '<a class="cj-doc-link" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">PDF · '+esc(d.arquivo_nome || 'Documento')+'</a>' : '';
+        }).join('');
         var memedCount = events.filter(function(e){ return e.tipo === 'prescricao_memed'; }).length;
         html += '<div class="cj-timeline-item"><article class="cj-visit">' +
           '<div class="cj-visit-head"><div><div class="cj-visit-date">'+esc(fmtDate(v.encerrado_em || v.assumido_em || v.criado_em, false))+'</div><div class="cj-visit-meta">'+esc(v.medico_nome || 'Profissional ConsultaJá24h')+' · '+esc(v.tipo || 'consulta')+'</div></div>' +
@@ -370,10 +386,17 @@
     if (apiWrapperInstalado || typeof window.apiFetch !== 'function') return false;
     apiFetchOriginal = window.apiFetch;
     window.apiFetch = async function(path, options) {
+      var espelhaProntuario = String(path) === '/api/atendimento/prontuario'
+        && options && options.method === 'POST' && options.json && options.json.filaId;
+      var revisao = 0;
+      if (espelhaProntuario) {
+        revisao = proximaRevisaoProntuario();
+        options.json.clientRevision = revisao;
+      }
       var result = await apiFetchOriginal.apply(this, arguments);
       try {
-        if (String(path) === '/api/atendimento/prontuario' && options && options.method === 'POST' && options.json && options.json.filaId) {
-          var payload = { filaId: Number(options.json.filaId), prontuario: String(options.json.prontuario || '') };
+        if (espelhaProntuario) {
+          var payload = { filaId: Number(options.json.filaId), prontuario: String(options.json.prontuario || ''), clientRevision: revisao };
           cjFetch('/api/medico/prontuario/espelho', { method:'POST', json:payload }).catch(function(e){ console.warn('[CLINICAL-WORKSPACE] Espelho não salvo:', e.message); });
           contextoCache.delete(String(payload.filaId));
         }
@@ -401,9 +424,26 @@
   }
 
   function prescriptionId(ev) {
-    var p = ev && (ev.prescricao || ev.prescription || (ev.data && (ev.data.prescricao || ev.data.prescription)) || ev.data || ev);
-    if (!p || typeof p !== 'object') return '';
-    return String(p.id || p.prescricao_id || p.prescription_id || p.id_prescription || p.prescriptionId || p.prescricaoId || '').trim();
+    var candidatos = [];
+    if (ev && ev.prescricao) candidatos.push(ev.prescricao);
+    if (ev && ev.prescription) candidatos.push(ev.prescription);
+    if (ev && ev.data && ev.data.prescricao) candidatos.push(ev.data.prescricao);
+    if (ev && ev.data && ev.data.prescription) candidatos.push(ev.data.prescription);
+    if (ev && ev.data) candidatos.push(ev.data);
+    if (ev) candidatos.push(ev);
+    for (var i=0; i<candidatos.length; i++) {
+      var p = candidatos[i];
+      if (!p || typeof p !== 'object') continue;
+      var direct = p.id || p.prescricao_id || p.prescription_id || p.id_prescription || p.prescriptionId || p.prescricaoId;
+      if (direct != null && String(direct).trim()) return String(direct).trim();
+      var docs = Array.isArray(p.documents) ? p.documents : (Array.isArray(p.documentos) ? p.documentos : []);
+      for (var j=0; j<docs.length; j++) {
+        var doc = docs[j] || {};
+        var docId = doc.prescription_id || doc.prescricao_id || doc.id_prescription || doc.prescriptionId || doc.prescricaoId;
+        if (docId != null && String(docId).trim()) return String(docId).trim();
+      }
+    }
+    return '';
   }
 
   function resumirPrescricao(ev) {
@@ -422,8 +462,7 @@
 
   function registrarEventoMemed(ev) {
     var id = Number(window.__cjMemedAtendimentoId || 0);
-    var ts = Number(window.__cjMemedAtendimentoTs || 0);
-    if (!id || !ts || Date.now() - ts > 30*60*1000) {
+    if (!id) {
       var p = ativo(); id = p && p.id ? Number(p.id) : 0;
     }
     if (!id) return;

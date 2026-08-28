@@ -116,7 +116,7 @@
   if (/\/(?:psicologo|especialista)\/?$/i.test(location.pathname)) return;
   if (document.querySelector('script[data-cj-memed-auto-chat]')) return;
   var script = document.createElement('script');
-  script.src = '/memed-auto-chat.js?v=5';
+  script.src = '/memed-auto-chat.js?v=7';
   script.async = true;
   script.dataset.cjMemedAutoChat = '1';
   document.head.appendChild(script);

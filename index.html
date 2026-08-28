@@ -4117,8 +4117,20 @@ function abrirMemedDrawer() {
   document.body.classList.add('memed-aberto');
 }
 
+function contextoProntuarioMemed() {
+  const atual = atendimentoAtual;
+  const congeladoId = Number(window.__cjMemedAtendimentoId || 0);
+  const id = congeladoId || Number(atual?.id || 0);
+  if (!id) return null;
+  const baseCongelada = congeladoId && typeof window.__cjMemedProntuarioBase === 'string'
+    ? window.__cjMemedProntuarioBase
+    : String(atual?.prontuario || '');
+  return { id, prontuario: baseCongelada };
+}
+
 async function salvarPrescricaoNoProntuario(dados) {
-  if (!atendimentoAtual) return;
+  const contexto = contextoProntuarioMemed();
+  if (!contexto) return;
   try {
     const ts = new Date().toLocaleString('pt-BR', {timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     const linhas = [`--- Prescrição Memed (${ts}) ---`];
@@ -4133,10 +4145,11 @@ async function salvarPrescricaoNoProntuario(dados) {
     if (dados.atestado) linhas.push(`📄 Atestado: ${dados.atestado}`);
     if (dados.link) linhas.push(`🔗 Link: ${dados.link}`);
     const obs = linhas.join('\n');
-    const prontAtual = atendimentoAtual.prontuario || '';
+    const prontAtual = contexto.prontuario;
     const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
-    await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
-    if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+    await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:contexto.id,prontuario:novoPront}});
+    window.__cjMemedProntuarioBase = novoPront;
+    if (atendimentoAtual && Number(atendimentoAtual.id) === contexto.id) atendimentoAtual.prontuario = novoPront;
     const out = document.getElementById('pront-output');
     if (out && out.style.display !== 'none') {
       const body = out.querySelector('.pront-card-body');
@@ -4145,6 +4158,7 @@ async function salvarPrescricaoNoProntuario(dados) {
     mostrarToast('Prescricao salva no prontuario', 'success');
   } catch(e) { console.error('Erro ao salvar prescricao:', e); }
 }
+salvarPrescricaoNoProntuario.__cjMemedTargetSafe = true;
 
 async function configurarPacienteMemed() {
   let pac = atendimentoAtual;
@@ -4199,14 +4213,16 @@ function registrarEventosMemed() {
 
     MdHub.event.add('prescricaoExcluida', async (ev) => {
       const link = ev?.prescricao?.link || ev?.link || '';
-      if (link && atendimentoAtual && atendimentoAtual.prontuario) {
+      const contexto = contextoProntuarioMemed();
+      if (link && contexto && contexto.prontuario) {
         try {
-          const novoPront = atendimentoAtual.prontuario
+          const novoPront = contexto.prontuario
             .split('\n\n')
             .filter(l => !l.includes(link))
             .join('\n\n');
-          await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:novoPront}});
-          if (atendimentoAtual) atendimentoAtual.prontuario = novoPront;
+          await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:contexto.id,prontuario:novoPront}});
+          window.__cjMemedProntuarioBase = novoPront;
+          if (atendimentoAtual && Number(atendimentoAtual.id) === contexto.id) atendimentoAtual.prontuario = novoPront;
           const out = document.getElementById('pront-output');
           if (out && out.style.display !== 'none') {
             const body = out.querySelector('.pront-card-body');
@@ -4230,6 +4246,9 @@ function registrarEventosMemed() {
 
 async function abrirMemed() {
   if (!atendimentoAtual) return mostrarToast('Nenhum atendimento ativo','error');
+  window.__cjMemedAtendimentoId = Number(atendimentoAtual.id);
+  window.__cjMemedAtendimentoTs = Date.now();
+  window.__cjMemedProntuarioBase = String(atendimentoAtual.prontuario || '');
   setMemedCarregando(true);
 
   // SDK já carregado — reabre sem recarregar script

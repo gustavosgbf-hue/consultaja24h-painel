@@ -9,9 +9,7 @@
 
   function frozenId(){
     var id = Number(window.__cjMemedAtendimentoId || 0);
-    var ts = Number(window.__cjMemedAtendimentoTs || 0);
-    if (!id || !ts || Date.now() - ts > 30 * 60 * 1000) return 0;
-    return id;
+    return id || 0;
   }
 
   function install(){
@@ -20,6 +18,7 @@
     if (original.__cjMemedContextGuard) return true;
 
     var guarded = async function(dados){
+      if (original.__cjMemedTargetSafe) return original.apply(this, arguments);
       var alvo = frozenId();
       var atual = atualId();
       if (alvo && atual && alvo !== atual) {
