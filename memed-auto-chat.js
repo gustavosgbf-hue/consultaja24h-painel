@@ -1,3 +1,6 @@
+if (!window.__cjMemedAutoChatLoaded) {
+window.__cjMemedAutoChatLoaded = true;
+
 (function () {
   var emProcessamento = new Set();
   var coreRegistrado = false;
@@ -252,3 +255,5 @@
   script.dataset.cjClinicalWorkspace = '1';
   document.head.appendChild(script);
 })();
+
+}
