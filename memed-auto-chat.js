@@ -17,6 +17,15 @@
     }
   }
 
+  function atendimentoIdCongeladoMemed() {
+    try {
+      var id = Number(window.__cjMemedAtendimentoId || 0);
+      var ts = Number(window.__cjMemedAtendimentoTs || 0);
+      if (id && ts && Date.now() - ts <= 30 * 60 * 1000) return id;
+    } catch (_) {}
+    return 0;
+  }
+
   function prescriptionIdDoEvento(ev) {
     var candidatos = [];
     if (ev && ev.prescricao) candidatos.push(ev.prescricao);
@@ -82,11 +91,11 @@
     console.log('[MEMED-AUTO-CHAT] Evento prescricaoImpressa recebido.', ev);
 
     var atendimento = atendimentoAtivo();
-    var atendimentoId = atendimento && atendimento.id ? Number(atendimento.id) : 0;
+    var atendimentoId = atendimentoIdCongeladoMemed() || (atendimento && atendimento.id ? Number(atendimento.id) : 0);
     var prescriptionId = prescriptionIdDoEvento(ev);
 
     if (!atendimentoId) {
-      console.warn('[MEMED-AUTO-CHAT] Evento recebido sem atendimento ativo.', ev);
+      console.warn('[MEMED-AUTO-CHAT] Evento recebido sem atendimento ativo/congelado.', ev);
       return;
     }
     if (!prescriptionId) {
@@ -96,7 +105,8 @@
 
     console.log('[MEMED-AUTO-CHAT] Prescrição detectada.', {
       atendimentoId: atendimentoId,
-      prescriptionId: prescriptionId
+      prescriptionId: prescriptionId,
+      contextoCongelado: !!atendimentoIdCongeladoMemed()
     });
 
     var chave = String(atendimentoId) + ':' + prescriptionId;
@@ -216,13 +226,13 @@
     if (instalarContextoResposta() || chatUxTentativas >= 120) clearInterval(chatUxTimer);
   }, 500);
 
-  if (preparar()) return;
-
-  var tentativas = 0;
-  var timer = setInterval(function () {
-    tentativas += 1;
-    if (preparar() || tentativas >= 1200) clearInterval(timer);
-  }, 500);
+  if (!preparar()) {
+    var tentativas = 0;
+    var timer = setInterval(function () {
+      tentativas += 1;
+      if (preparar() || tentativas >= 1200) clearInterval(timer);
+    }, 500);
+  }
 })();
 
 (function () {
@@ -231,5 +241,14 @@
   script.src = '/admin-avaliacoes.js?v=2';
   script.async = true;
   script.dataset.cjAdminAvaliacoes = '1';
+  document.head.appendChild(script);
+})();
+
+(function () {
+  if (document.querySelector('script[data-cj-clinical-workspace]')) return;
+  var script = document.createElement('script');
+  script.src = '/clinical-workspace.js?v=1';
+  script.async = true;
+  script.dataset.cjClinicalWorkspace = '1';
   document.head.appendChild(script);
 })();
