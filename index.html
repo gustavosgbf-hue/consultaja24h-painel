@@ -4149,13 +4149,16 @@ async function salvarPrescricaoNoProntuario(dados) {
     const novoPront = prontAtual ? prontAtual + '\n\n' + obs : obs;
     await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:contexto.id,prontuario:novoPront}});
     window.__cjMemedProntuarioBase = novoPront;
-    if (atendimentoAtual && Number(atendimentoAtual.id) === contexto.id) atendimentoAtual.prontuario = novoPront;
-    const out = document.getElementById('pront-output');
-    if (out && out.style.display !== 'none') {
-      const body = out.querySelector('.pront-card-body');
-      if (body) body.textContent = novoPront;
+    const mesmoAtendimento = atendimentoAtual && Number(atendimentoAtual.id) === contexto.id;
+    if (mesmoAtendimento) {
+      atendimentoAtual.prontuario = novoPront;
+      const out = document.getElementById('pront-output');
+      if (out && out.style.display !== 'none') {
+        const body = out.querySelector('.pront-card-body');
+        if (body) body.textContent = novoPront;
+      }
+      mostrarToast('Prescricao salva no prontuario', 'success');
     }
-    mostrarToast('Prescricao salva no prontuario', 'success');
   } catch(e) { console.error('Erro ao salvar prescricao:', e); }
 }
 salvarPrescricaoNoProntuario.__cjMemedTargetSafe = true;
@@ -4222,13 +4225,16 @@ function registrarEventosMemed() {
             .join('\n\n');
           await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:contexto.id,prontuario:novoPront}});
           window.__cjMemedProntuarioBase = novoPront;
-          if (atendimentoAtual && Number(atendimentoAtual.id) === contexto.id) atendimentoAtual.prontuario = novoPront;
-          const out = document.getElementById('pront-output');
-          if (out && out.style.display !== 'none') {
-            const body = out.querySelector('.pront-card-body');
-            if (body) body.textContent = novoPront;
+          const mesmoAtendimento = atendimentoAtual && Number(atendimentoAtual.id) === contexto.id;
+          if (mesmoAtendimento) {
+            atendimentoAtual.prontuario = novoPront;
+            const out = document.getElementById('pront-output');
+            if (out && out.style.display !== 'none') {
+              const body = out.querySelector('.pront-card-body');
+              if (body) body.textContent = novoPront;
+            }
+            mostrarToast('Prescricao removida do prontuario','info');
           }
-          mostrarToast('Prescricao removida do prontuario','info');
         } catch(e) {}
       }
     });
