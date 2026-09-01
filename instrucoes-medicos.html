@@ -3,248 +3,102 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Instruções, ConsultaJá24h</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<meta name="theme-color" content="#07100f"/>
+<title>Instruções para médicos · ConsultaJá24h</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-  :root{--bg:#060d0b;--box:#0d1a14;--g1:#b4e05a;--g2:#5ee0a0;--line:rgba(255,255,255,.08);--muted:rgba(255,255,255,.45)}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Outfit',sans-serif;background:var(--bg);color:#fff;padding:32px 16px;line-height:1.65}
-  .wrap{max-width:620px;margin:0 auto}
-  .logo{font-size:1.1rem;font-weight:700;color:var(--g1);margin-bottom:32px;text-align:center}
-  .logo span{color:rgba(255,255,255,.4);font-weight:300}
-  h1{font-size:1.4rem;font-weight:700;margin-bottom:6px}
-  .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:36px}
-  .step{display:flex;gap:16px;margin-bottom:28px;align-items:flex-start}
-  .step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));color:#051208;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-  .step-body h3{font-size:1rem;font-weight:600;margin-bottom:6px}
-  .step-body p{font-size:.88rem;color:rgba(255,255,255,.75);margin-bottom:8px}
-  .step-body p:last-child{margin-bottom:0}
-  .highlight{background:rgba(180,224,90,.08);border:1px solid rgba(180,224,90,.2);border-radius:10px;padding:12px 16px;font-size:.85rem;color:var(--g1);margin-top:8px}
-  .highlight strong{color:#fff}
-  .box{background:var(--box);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:28px}
-  .box-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;font-weight:600}
-  .item{display:flex;gap:10px;margin-bottom:10px;font-size:.88rem;align-items:flex-start}
-  .item:last-child{margin-bottom:0}
-  .item .dot{width:6px;height:6px;border-radius:50%;background:var(--g2);flex-shrink:0;margin-top:7px}
-  .divider{border:none;border-top:1px solid var(--line);margin:32px 0}
-  .tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.72rem;font-weight:600}
-  .tag.chat{background:rgba(94,224,160,.1);color:#5ee0a0;border:1px solid rgba(94,224,160,.2)}
-  .tag.video{background:rgba(66,133,244,.1);color:#4285f4;border:1px solid rgba(66,133,244,.2)}
-  .tag.memed{background:rgba(180,224,90,.1);color:#b4e05a;border:1px solid rgba(180,224,90,.2)}
-  .footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
-  a{color:var(--g2);text-decoration:none}
-  a:hover{text-decoration:underline}
-  .alert{background:rgba(255,189,46,.06);border:1px solid rgba(255,189,46,.2);border-radius:10px;padding:14px 16px;font-size:.85rem;color:#ffdd80;margin-bottom:28px}
-  .alert strong{color:#ffbd2e}
-  .note{background:rgba(94,224,160,.05);border:1px solid rgba(94,224,160,.15);border-radius:10px;padding:12px 16px;font-size:.83rem;color:rgba(255,255,255,.6);margin-top:8px}
-  .note strong{color:rgba(255,255,255,.85)}
+:root{--bg:#07100f;--card:#0c1714;--card2:#101f1a;--text:#f5f7f6;--muted:#9aa8a2;--green:#16c783;--lime:#78f25f;--line:rgba(255,255,255,.09);--warn:#f6c453;--shadow:0 20px 60px rgba(0,0,0,.25)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 20% 0%,rgba(22,199,131,.12),transparent 32%),var(--bg);color:var(--text);font-family:'Outfit',system-ui,-apple-system,sans-serif;line-height:1.58;padding:22px 14px 46px}.wrap{max-width:760px;margin:auto}.top{padding:22px 4px 18px}.brand{font-size:18px;font-weight:700;letter-spacing:-.02em}.brand .ja{color:var(--green)}.brand .h{color:#83928c;font-weight:500}.eyebrow{margin-top:34px;color:var(--green);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em}.hero h1{font-size:clamp(30px,7vw,44px);line-height:1.05;margin:8px 0 12px;letter-spacing:-.035em}.hero p{margin:0;color:var(--muted);font-size:16px;max-width:620px}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}.quick a{display:block;text-decoration:none;color:var(--text);background:rgba(255,255,255,.035);border:1px solid var(--line);padding:12px;border-radius:14px;font-size:13px;text-align:center}.quick a:hover{border-color:rgba(22,199,131,.45);background:rgba(22,199,131,.06)}.section{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.018));border:1px solid var(--line);border-radius:20px;padding:22px;margin:16px 0;box-shadow:var(--shadow)}.section h2{font-size:19px;margin:0 0 14px;letter-spacing:-.01em}.section h3{font-size:15px;margin:18px 0 8px}.section p{color:#cad2cf;margin:8px 0;font-size:14px}.step{display:grid;grid-template-columns:34px 1fr;gap:13px;padding:12px 0;border-top:1px solid var(--line)}.step:first-of-type{border-top:0;padding-top:0}.n{width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--lime));color:#062018;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px}.step strong{display:block;font-size:14px;margin-bottom:3px}.step span{display:block;color:var(--muted);font-size:13px}.callout{border-radius:14px;padding:14px 15px;margin-top:14px;background:rgba(22,199,131,.07);border:1px solid rgba(22,199,131,.2);font-size:13px;color:#d8f7e9}.warn{background:rgba(246,196,83,.07);border-color:rgba(246,196,83,.22);color:#ffe7a8}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.035);padding:6px 10px;border-radius:999px;font-size:12px;color:#cbd4d0;margin:4px 5px 4px 0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;font-size:13px;padding:10px 13px;border-radius:12px;background:var(--green);color:#042018}.btn.secondary{background:transparent;color:#d9e3df;border:1px solid var(--line)}ul{padding-left:18px;margin:8px 0}li{color:#c9d1ce;font-size:14px;margin:7px 0}.mini{font-size:12px!important;color:#899892!important}.footer{text-align:center;color:#71817a;font-size:12px;padding:28px 8px 0}.good{color:var(--lime)}@media(max-width:620px){body{padding:14px 10px 34px}.section{padding:18px;border-radius:16px}.quick{grid-template-columns:1fr}.hero h1{font-size:34px}.actions .btn{width:100%}}
 </style>
 </head>
 <body>
 <div class="wrap">
-
-  <div class="logo">ConsultaJá<span>24h</span></div>
-
-  <h1>Bem-vindo à plataforma! 👋</h1>
-  <p class="subtitle">Leia com atenção, isso explica tudo que você precisa saber para começar a atender.</p>
-
-  <div class="alert">
-    <strong>⚠️ Importante:</strong> Faça o cadastro com o mesmo e-mail que você usa no dia a dia. É nele que você vai receber os avisos de pacientes novos.
-  </div>
-
-  <!-- PASSO 1 -->
-  <div class="step">
-    <div class="step-num">1</div>
-    <div class="step-body">
-      <h3>Fazer o cadastro</h3>
-      <p>Acesse o link abaixo e preencha seus dados:</p>
-      <div class="highlight">
-        <strong>🔗 </strong><a href="https://painel.consultaja24h.com.br/medico-cadastro.html">painel.consultaja24h.com.br/medico-cadastro.html</a>
-      </div>
-      <p style="margin-top:12px">Preencha:</p>
-      <div class="item"><div class="dot"></div><span><strong>Nome completo</strong>, seu nome real</span></div>
-      <div class="item"><div class="dot"></div><span><strong>Nome de exibição</strong>, como quer aparecer no painel. Ex: <em>Dra. Marta Campos</em></span></div>
-      <div class="item"><div class="dot"></div><span><strong>E-mail</strong>, use o que você acessa todo dia</span></div>
-      <div class="item"><div class="dot"></div><span><strong>Senha e confirmação da senha</strong>, você mesmo cria, mínimo 6 caracteres</span></div>
-      <div class="item"><div class="dot"></div><span><strong>CRM e UF</strong></span></div>
-      <div class="item"><div class="dot"></div><span><strong>Telefone / WhatsApp</strong></span></div>
-      <div class="item"><div class="dot"></div><span><strong>Especialidade</strong>, opcional</span></div>
-      <div class="item"><div class="dot"></div><span><strong>Dados profissionais</strong>: informe se possui CNPJ, assinatura digital ICP-Brasil e se já usa o Memed. Quando aplicável, informe também o CNPJ, o provedor da assinatura e o e-mail cadastrado no Memed.</span></div>
-      <p style="margin-top:12px">No final, marque a declaração e clique em <strong>Solicitar cadastro</strong>.</p>
-      <div class="highlight" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.1)">
-        Após enviar, aparecerá a mensagem: <strong style="color:var(--g2)">"✓ Cadastro recebido! Seu perfil será analisado pela equipe da plataforma. Você receberá um retorno em breve."</strong><br/>
-        Você ainda não consegue entrar, aguarde a aprovação.
-      </div>
+  <div class="top">
+    <div class="brand">Consulta<span class="ja">Já</span><span class="h">24h</span></div>
+    <div class="eyebrow">Guia rápido do médico</div>
+    <div class="hero">
+      <h1>Do cadastro ao encerramento da consulta.</h1>
+      <p>O essencial para atender pela ConsultaJá24h sem perder tempo procurando informação no painel.</p>
+    </div>
+    <div class="quick">
+      <a href="#inicio">Cadastro e acesso</a>
+      <a href="#atendimento">Atendimento</a>
+      <a href="#memed">Memed e documentos</a>
     </div>
   </div>
 
-  <!-- PASSO 2 -->
-  <div class="step">
-    <div class="step-num">2</div>
-    <div class="step-body">
-      <h3>Avisar que concluiu o cadastro</h3>
-      <p>Depois de enviar o formulário, você pode <strong>avisar pelo WhatsApp</strong> que concluiu o cadastro para agilizar a análise.</p>
-      <div class="note">
-        A equipe também recebe um <strong>aviso automático por e-mail</strong> assim que você envia o formulário, então não é obrigatório avisar, mas ajuda a agilizar.
-      </div>
+  <section class="section" id="inicio">
+    <h2>1. Cadastro e acesso</h2>
+    <div class="step"><div class="n">1</div><div><strong>Faça seu cadastro</strong><span>Use seu e-mail habitual. Preencha nome, CRM/UF, telefone, especialidade e os dados profissionais solicitados.</span></div></div>
+    <div class="step"><div class="n">2</div><div><strong>Aguarde a aprovação</strong><span>Após a análise, você recebe um e-mail confirmando a liberação do painel.</span></div></div>
+    <div class="step"><div class="n">3</div><div><strong>Entre com seu e-mail e senha</strong><span>Depois da aprovação, o acesso é feito normalmente pelo painel médico.</span></div></div>
+    <div class="actions">
+      <a class="btn" href="https://painel.consultaja24h.com.br/medico-cadastro.html">Fazer cadastro</a>
+      <a class="btn secondary" href="https://painel.consultaja24h.com.br">Abrir painel</a>
     </div>
-  </div>
+    <div class="callout">Você pode avisar pelo WhatsApp depois de concluir o cadastro, mas a equipe também recebe uma notificação automática.</div>
+  </section>
 
-  <!-- PASSO 3 -->
-  <div class="step">
-    <div class="step-num">3</div>
-    <div class="step-body">
-      <h3>Aguardar a aprovação</h3>
-      <p>Quando seu cadastro for aprovado, você receberá um <strong>e-mail automático de confirmação</strong> com o link de acesso ao painel.</p>
-      <p>A partir daí, é só entrar com seu e-mail e senha.</p>
-      <div class="highlight">
-        <strong>🔗 Painel: </strong><a href="https://painel.consultaja24h.com.br">painel.consultaja24h.com.br</a>
-      </div>
+  <section class="section" id="atendimento">
+    <h2>2. Quando estiver disponível para atender</h2>
+    <p>Clique em <strong>Entrar em plantão</strong>. Você não precisa ficar olhando a fila o tempo todo.</p>
+    <div class="callout">Quando chegar um paciente, você recebe um <strong>e-mail individual</strong> com os dados do atendimento e o botão <strong>Assumir atendimento</strong>. Também é possível assumir direto pelo painel. O primeiro médico a assumir fica com a consulta.</div>
+    <h3>Durante a consulta</h3>
+    <div>
+      <span class="pill">💬 Chat no próprio painel</span>
+      <span class="pill">🎥 Vídeo via link de chamada</span>
+      <span class="pill">📋 Triagem disponível antes do atendimento</span>
     </div>
-  </div>
+    <ul>
+      <li>Confira a triagem e confirme as informações importantes com o paciente.</li>
+      <li>Registre a evolução na aba <strong>Avaliação clínica</strong>.</li>
+      <li>Marque os documentos emitidos quando aplicável.</li>
+      <li>Ao terminar, clique em <strong>Encerrar</strong> para finalizar e salvar o atendimento no histórico.</li>
+    </ul>
+    <p class="mini">Consultas antigas ficam disponíveis em “Meu histórico”, incluindo prontuário e conversa de chat.</p>
+  </section>
 
-  <!-- PASSO 4 -->
-  <div class="step">
-    <div class="step-num">4</div>
-    <div class="step-body">
-      <h3>Entrar em plantão</h3>
-      <p>Quando estiver disponível para atender, clique no botão <strong>"Entrar em plantão"</strong> no canto superior do painel.</p>
-      <p>Isso sinaliza que você está disponível. Quando quiser parar, clique de novo para sair do plantão.</p>
-      <div class="highlight">
-        <strong>📧 Você não precisa ficar com o painel aberto o tempo todo.</strong><br/><br/>
-        Quando chegar um paciente, você recebe um <strong>e-mail automático individual</strong> com nome, queixa e dados, mesmo que esteja com o celular no bolso.<br/><br/>
-        Você pode assumir o atendimento de <strong>duas formas: pelo próprio painel, quando ele aparecer disponível na fila, ou pelo e-mail</strong>, clicando em <strong>"▶ Assumir atendimento"</strong>.<br/><br/>
-        O link do e-mail é individual e já identifica qual médico clicou, mesmo que você ainda precise fazer login no painel depois. O primeiro médico a assumir, pelo painel ou pelo e-mail, fica com o atendimento. Quem tentar depois verá apenas um aviso de que o atendimento já foi assumido.
-      </div>
-      <div class="note" style="margin-top:10px">
-        <strong>📅 Para agendamentos:</strong> você não precisa estar em plantão. Você recebe um e-mail de lembrete <strong>1 hora antes</strong> com novo botão de assumir. No painel, os agendamentos ficam numa seção separada.
-      </div>
-    </div>
-  </div>
+  <section class="section">
+    <h2>3. Agendamentos</h2>
+    <p>Agendamentos ficam em uma área separada do painel. Você não precisa estar em plantão para atendê-los.</p>
+    <ul>
+      <li>A triagem é preenchida pelo paciente no momento do agendamento.</li>
+      <li>Você recebe aviso por e-mail e um lembrete antes do horário.</li>
+      <li>Quando chegar a hora, use <strong>Iniciar consulta agora</strong>.</li>
+    </ul>
+    <div class="callout warn">Como a triagem pode ter sido preenchida horas ou dias antes, confirme os dados principais no início da consulta.</div>
+  </section>
 
-  <hr class="divider"/>
+  <section class="section" id="memed">
+    <h2>4. Memed e documentos</h2>
+    <p>Com o atendimento aberto, clique em <strong>Prescrever</strong>. O painel envia automaticamente os dados disponíveis do paciente para a Memed.</p>
 
-  <!-- COMO FUNCIONA -->
-  <div class="box">
-    <div class="box-title">Como funciona quando chega um paciente</div>
+    <div class="step"><div class="n">1</div><div><strong>Abra a Memed pelo painel</strong><span>Não é necessário cadastrar o paciente manualmente como etapa habitual.</span></div></div>
+    <div class="step"><div class="n">2</div><div><strong>Monte e gere o documento</strong><span>Use medicamento, exame, texto livre ou seus modelos salvos, conforme a necessidade.</span></div></div>
+    <div class="step"><div class="n">3</div><div><strong>Finalize a emissão</strong><span>Depois que o documento é efetivamente emitido na Memed, a plataforma detecta a prescrição.</span></div></div>
+    <div class="step"><div class="n">4</div><div><strong class="good">O PDF vai automaticamente para o chat do paciente</strong><span>O sistema busca o PDF oficial da Memed e anexa no chat. Você não precisa baixar e reenviar o arquivo manualmente.</span></div></div>
 
-    <div class="item"><div class="dot"></div><span>O paciente acessa o site, paga e faz uma triagem com a IA</span></div>
-    <div class="item"><div class="dot"></div><span>Assim que a triagem termina, o atendimento fica disponível conforme o fluxo da plataforma e você recebe um <strong>e-mail individual</strong> com nome, queixa e dados do paciente, além do botão <strong>"▶ Assumir atendimento"</strong></span></div>
-    <div class="item"><div class="dot"></div><span><strong>Você pode assumir pelo painel ou pelo botão do e-mail.</strong> O primeiro médico a assumir fica com o paciente; os demais verão que o atendimento já foi assumido. O e-mail também tem contato direto pelo WhatsApp do paciente.</span></div>
-    <div class="item"><div class="dot"></div><span>Se assumir pelo e-mail, você é levado ao painel. Se já estiver logado, o atendimento abre automaticamente. Se não estiver, faça login e o atendimento estará esperando no seu nome.</span></div>
-    <div class="item"><div class="dot"></div><span>O atendimento começa, por chat ou por vídeo, dependendo do que o paciente escolheu</span></div>
-    <div class="item"><div class="dot"></div><span>Depois de assumir, o painel mostra os dados do paciente e, quando disponível, o link do paciente para suporte. Esse link é só para ajudar o paciente se ele perder o acesso; não é um link para o médico entrar.</span></div>
-  </div>
+    <div class="callout">Se o documento já tiver sido anexado anteriormente, a plataforma evita duplicar o mesmo PDF no chat.</div>
 
-  <!-- CHAT vs VIDEO -->
-  <div class="box">
-    <div class="box-title">Tipos de atendimento</div>
+    <h3>Modelos úteis</h3>
+    <p>Para documentos que você usa com frequência, vale salvar um modelo na própria Memed. Nas próximas consultas, basta carregar o modelo e ajustar dose, dias, CID ou texto.</p>
 
-    <div class="item" style="margin-bottom:14px">
-      <div class="dot" style="background:#5ee0a0"></div>
-      <span>
-        <span class="tag chat">💬 Chat</span>
-        <span style="display:block;margin-top:6px;color:rgba(255,255,255,.7)">Conversa por texto dentro do próprio painel. Você digita, o paciente responde em tempo real na tela dele.</span>
-      </span>
-    </div>
-    <div class="item">
-      <div class="dot" style="background:#4285f4"></div>
-      <span>
-        <span class="tag video">🎥 Vídeo</span>
-        <span style="display:block;margin-top:6px;color:rgba(255,255,255,.7)">Consulta por chamada de vídeo. Você cria uma sala no Google Meet, cola o link no painel e o paciente recebe para entrar.</span>
-      </span>
-    </div>
-  </div>
+    <div class="callout warn"><strong>Se a Memed não abrir:</strong> atualize o painel completamente e tente novamente. Se ainda falhar, teste outra aba ou outro navegador. Isso é plano B; não é necessário usar Chrome obrigatoriamente.</div>
+  </section>
 
-  <!-- PASSO 5 -->
-  <div class="step">
-    <div class="step-num">5</div>
-    <div class="step-body">
-      <h3>Durante o atendimento</h3>
-      <p>No painel você vê a triagem completa do paciente antes de começar, queixa, sintomas, alergias, medicações em uso.</p>
-      <p>Durante o atendimento, preencha os dados clínicos na aba <strong>"Avaliação clínica"</strong>. O prontuário é salvo automaticamente enquanto você digita.</p>
-      <p>Na mesma aba, marque os documentos emitidos (receita, atestado, exames). Ao encerrar, o prontuário completo, incluindo os documentos marcados, é salvo automaticamente no histórico.</p>
-      <p>Quando terminar, clique em <strong>"Encerrar"</strong> para finalizar o atendimento no painel. É esse botão que registra o prontuário no histórico.</p>
-      <p>Para ver uma consulta antiga, acesse <strong>"Meu histórico"</strong> na barra lateral e clique no atendimento. A conversa de chat e o prontuário ficam disponíveis.</p>
+  <section class="section">
+    <h2>5. Resumo de bolso</h2>
+    <ul>
+      <li>Entre em plantão quando estiver disponível.</li>
+      <li>Assuma pelo painel ou pelo e-mail.</li>
+      <li>Faça a consulta e registre a avaliação clínica.</li>
+      <li>Use <strong>Prescrever</strong> para abrir a Memed.</li>
+      <li>Após a emissão, o PDF da Memed é enviado automaticamente ao chat.</li>
+      <li>Finalize sempre pelo botão <strong>Encerrar</strong>.</li>
+    </ul>
+  </section>
 
-      <div class="note">
-        <strong>📋 Como usar o Memed integrado:</strong>
-        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px">
-            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">1 · Abrir pelo painel</div>
-            <span style="color:rgba(255,255,255,.75);font-size:.84rem">Com o atendimento aberto, clique em <strong style="color:#fff">Prescrever</strong>. O paciente é carregado automaticamente no Memed com os dados do atendimento; não é necessário cadastrá-lo manualmente como etapa habitual.</span>
-          </div>
-          <div style="background:rgba(255,189,46,.06);border:1px solid rgba(255,189,46,.18);border-radius:8px;padding:10px 12px">
-            <span style="color:rgba(255,255,255,.75);font-size:.84rem"><strong style="color:#ffdd80">⚠️ Se o botão Prescrever não abrir:</strong> alguns navegadores, extensões ou sessões antigas podem bloquear a abertura do Memed. Tente acessar o painel em outro navegador, de preferência <strong style="color:#fff">Google Chrome</strong>, ou abra uma <strong style="color:#fff">aba anônima</strong> e faça login novamente.</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="note" style="margin-top:14px">
-        <strong>📋 Como fazer documentos no Memed integrado</strong>
-        <p style="color:rgba(255,255,255,.6);font-size:.83rem;margin-top:6px;margin-bottom:12px">O Memed está integrado ao painel, você consegue emitir e salvar os documentos a partir da própria plataforma.</p>
-
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px">
-            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">Passo 1, Buscar e clicar em "Texto livre"</div>
-            <p style="color:rgba(255,255,255,.75);font-size:.84rem;margin-bottom:10px">Com o paciente aberto, clique em <strong style="color:#fff">Novo documento → Prescrição</strong>. No campo de busca, pesquise <strong style="color:#fff">Atestado Médico</strong> (ou medicamento, exame, etc.). Depois clique em <strong style="color:#fff">Texto livre</strong> para digitar livremente.</p>
-          </div>
-
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px">
-            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">Passo 2, Escrever o documento</div>
-            <p style="color:rgba(255,255,255,.75);font-size:.84rem;margin-bottom:10px">Para atestado: <em style="color:rgba(255,255,255,.55)">"Atesto, para os devidos fins, que..."</em>. Para prescrição: medicamento, dose e posologia. Adicione CID se necessário.</p>
-          </div>
-
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px">
-            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">Passo 3, Salvar como modelo (só na primeira vez)</div>
-            <p style="color:rgba(255,255,255,.75);font-size:.84rem;margin-bottom:10px">Antes de gerar, clique em <strong style="color:#fff">Salvar como modelo</strong>. Nas próximas consultas não precisará reescrever. Depois clique em <strong style="color:#fff">Gerar prescrição</strong> para finalizar com assinatura digital.</p>
-          </div>
-
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px">
-            <div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;font-weight:600">Passo 4, Nomear e confirmar o modelo</div>
-            <p style="color:rgba(255,255,255,.75);font-size:.84rem;margin-bottom:10px">Dê um nome ao modelo (ex: <em>Atestado Médico</em>, <em>Receita Dipirona</em>) e clique em <strong style="color:#fff">Salvar modelo</strong>.</p>
-          </div>
-
-          <div style="background:rgba(94,224,160,.06);border:1px solid rgba(94,224,160,.2);border-radius:8px;padding:10px 12px;font-size:.84rem;color:rgba(255,255,255,.75)">
-            ✅ <strong style="color:#5ee0a0">Da segunda vez em diante:</strong> clique em <strong style="color:#fff">Adicionar modelo</strong> → escolha o modelo → <strong style="color:#fff">Adicionar</strong>. Altere só o que precisar (dias, CID, dose) e gere. O documento fica vinculado ao prontuário dentro da plataforma.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PASSO 6 -->
-  <div class="step">
-    <div class="step-num">6</div>
-    <div class="step-body">
-      <h3>Agendamentos</h3>
-      <p>Pacientes também podem agendar consultas para um horário específico. O paciente já faz a triagem no momento do agendamento, quando chegar a hora, a ficha dele já estará preenchida no painel.</p>
-      <p>Você recebe um e-mail quando o paciente faz a triagem (feita no ato do agendamento). O e-mail mostra o horário agendado e tem o botão <strong>"▶ Assumir atendimento"</strong>.</p>
-      <p>Você também recebe um <strong>lembrete automático 1 hora antes</strong> do horário marcado, com um novo botão de assumir válido por 3h.</p>
-      <p>No painel, os agendamentos aparecem em seção separada. Clique em <strong>"Iniciar consulta agora"</strong> quando chegar a hora, ou antes, se preferir.</p>
-      <div class="note" style="margin-top:10px">⚠️ A triagem do agendamento foi preenchida no momento do agendamento e pode estar desatualizada. Confirme os dados com o paciente no início da consulta.</div>
-    </div>
-  </div>
-
-  <hr class="divider"/>
-
-  <div class="box">
-    <div class="box-title">Resumo rápido</div>
-    <div class="item"><div class="dot"></div><span>Cadastro → <a href="https://painel.consultaja24h.com.br/medico-cadastro.html">painel.consultaja24h.com.br/medico-cadastro.html</a></span></div>
-    <div class="item"><div class="dot"></div><span>Painel → <a href="https://painel.consultaja24h.com.br">painel.consultaja24h.com.br</a></span></div>
-    <div class="item"><div class="dot"></div><span>Use o e-mail do dia a dia no cadastro</span></div>
-    <div class="item"><div class="dot"></div><span>Avise pelo WhatsApp após concluir o cadastro</span></div>
-    <div class="item"><div class="dot"></div><span>Aguarde a aprovação antes de tentar entrar</span></div>
-    <div class="item"><div class="dot"></div><span>Quando chegar paciente, assuma <strong>pelo painel ou pelo botão "▶ Assumir" do e-mail</strong>; o primeiro a assumir fica com o atendimento</span></div>
-    <div class="item"><div class="dot"></div><span>Chat acontece dentro do painel; nas consultas por vídeo, o link da chamada é gerenciado pelo painel</span></div>
-    <div class="item"><div class="dot"></div><span>Marque os documentos emitidos na aba de avaliação; o prontuário é salvo automaticamente</span></div>
-    <div class="item"><div class="dot"></div><span>Memed integrado ao painel: clique em <strong>Prescrever</strong>; se não abrir, tente Chrome ou uma aba anônima</span></div>
-  </div>
-
-  <div class="footer">
-    ConsultaJá24h · Qualquer dúvida, chama no WhatsApp
-  </div>
-
+  <div class="footer">ConsultaJá24h · Guia operacional para médicos</div>
 </div>
 </body>
 </html>
