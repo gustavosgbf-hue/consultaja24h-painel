@@ -4108,6 +4108,24 @@ function abrirMemedDrawer() {
   document.body.classList.add('memed-aberto');
 }
 
+async function aguardarComandoMemed(promessa, etapa, timeoutMs = 2500) {
+  let timer;
+  try {
+    return await Promise.race([
+      Promise.resolve(promessa),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => {
+          const erro = new Error(`Tempo excedido em ${etapa}`);
+          erro.codigo = 'MEMED_TIMEOUT';
+          reject(erro);
+        }, timeoutMs);
+      })
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function salvarPrescricaoNoProntuario(dados) {
   if (!atendimentoAtual) return;
   try {
@@ -4148,26 +4166,37 @@ async function configurarPacienteMemed() {
     }
   } catch(e) {}
   const nomeCompleto = (pac.nome_completo || pac.paciente_nome || pac.nome || '').trim() || 'Paciente';
-  await MdHub.command.send('plataforma.prescricao', 'setPaciente', {
-    idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
-    nome: nomeCompleto,
-    cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
-    email: pac.email || undefined,
-    telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
-    data_nascimento: pac.data_nascimento || undefined,
-    sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
-  });
+  console.log('[MEMED] Enviando paciente.');
+  try {
+    await aguardarComandoMemed(MdHub.command.send('plataforma.prescricao', 'setPaciente', {
+      idExterno: `paciente-${pac.id || pac.cpf || Date.now()}`,
+      nome: nomeCompleto,
+      cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
+      email: pac.email || undefined,
+      telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
+      data_nascimento: pac.data_nascimento || undefined,
+      sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
+    }), 'setPaciente');
+    console.log('[MEMED] Paciente configurado.');
+  } catch (e) {
+    if (e?.codigo !== 'MEMED_TIMEOUT') throw e;
+    console.warn('[MEMED] setPaciente enviado, mas o SDK legado não confirmou; continuando.');
+  }
 }
 
 async function mostrarModuloMemed() {
   try {
-    await MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
+    console.log('[MEMED] Enviando configurações.');
+    await aguardarComandoMemed(MdHub.command.send('plataforma.prescricao', 'setFeatureToggle', {
       historyPrescription: true,
       buttonClose: true,
       allowShareModal: true
-    });
-  } catch(e) {}
+    }), 'setFeatureToggle', 1500);
+  } catch(e) {
+    console.warn('[MEMED] Configurações opcionais não confirmadas; continuando.');
+  }
   await configurarPacienteMemed();
+  console.log('[MEMED] Exibindo módulo de prescrição.');
   await Promise.resolve(MdHub.module.show('plataforma.prescricao'));
   abrirMemedDrawer();
   setMemedCarregando(false);
