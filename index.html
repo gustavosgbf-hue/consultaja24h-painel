@@ -4166,6 +4166,15 @@ async function configurarPacienteMemed() {
     }
   } catch(e) {}
   const nomeCompleto = (pac.nome_completo || pac.paciente_nome || pac.nome || '').trim() || 'Paciente';
+  const sexoOriginal = String(pac.sexo || '').trim().toLowerCase();
+  const sexoMemed = /^(f|fem|feminino|feminina|mulher)$/.test(sexoOriginal)
+    ? 'Feminino'
+    : /^(m|masc|masculino|masculina|homem)$/.test(sexoOriginal)
+      ? 'Masculino'
+      : 'Não informado';
+  const nascimentoMemed = pac.data_nascimento
+    ? formatarNascimento(String(pac.data_nascimento).slice(0, 10))
+    : undefined;
   console.log('[MEMED] Enviando paciente.');
   try {
     await aguardarComandoMemed(MdHub.command.send('plataforma.prescricao', 'setPaciente', {
@@ -4174,8 +4183,8 @@ async function configurarPacienteMemed() {
       cpf: (pac.cpf||'').replace(/\D/g,'') || undefined,
       email: pac.email || undefined,
       telefone: (pac.tel||'').replace(/\D/g,'') || undefined,
-      data_nascimento: pac.data_nascimento || undefined,
-      sexo: pac.sexo==='F'?'Feminino':pac.sexo==='M'?'Masculino':undefined
+      data_nascimento: nascimentoMemed,
+      sexo: sexoMemed
     }), 'setPaciente');
     console.log('[MEMED] Paciente configurado.');
   } catch (e) {
