@@ -10,24 +10,6 @@
     return new Promise(function (resolve) { setTimeout(resolve, ms); });
   }
 
-  function diagnosticarCamada() {
-    var raiz = document.getElementById('memed-auto-generated')
-      || document.getElementById('memed-sinapse-container');
-    var iframe = document.getElementById('mdhub-module-plataforma.prescricao')
-      || document.querySelector('#memed-auto-generated>iframe[title="Memed Prescrição"],#memed-sinapse-container>iframe[title="Memed Prescrição"]');
-    var retangulo = iframe && iframe.getBoundingClientRect ? iframe.getBoundingClientRect() : null;
-    console.log('[MEMED-V4] Camada visual.', {
-      raiz: raiz ? raiz.id : null,
-      iframe: iframe ? (iframe.id || iframe.title || 'iframe') : null,
-      largura: retangulo ? Math.round(retangulo.width) : 0,
-      altura: retangulo ? Math.round(retangulo.height) : 0,
-      display: iframe ? getComputedStyle(iframe).display : null,
-      visibility: iframe ? getComputedStyle(iframe).visibility : null,
-      opacity: iframe ? getComputedStyle(iframe).opacity : null
-    });
-    return !!(iframe && retangulo && retangulo.width > 0 && retangulo.height > 0);
-  }
-
   function nomeModulo(data) {
     return String((data && (data.name || data.moduleName)) || '');
   }
@@ -121,8 +103,6 @@
       for (var i = 0; i < 5; i += 1) {
         try {
           await mostrarAnterior();
-          await sleep(80);
-          if (!diagnosticarCamada()) throw new Error('Iframe da Memed abriu sem dimensão visível');
           console.log('[MEMED-V4] Prescrição aberta com sucesso.');
           return;
         } catch (err) {
