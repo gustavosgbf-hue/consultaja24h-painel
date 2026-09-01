@@ -354,6 +354,49 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 #memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
 body.memed-aberto{overflow:hidden}
+body.memed-aberto #memed-auto-generated,
+body.memed-aberto #memed-sinapse-container{
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100vh!important;
+  height:100dvh!important;
+  max-width:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  overflow:visible!important;
+  z-index:2147483646!important;
+  background:#fff!important
+}
+body.memed-aberto #iframe-container{
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100vh!important;
+  height:100dvh!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  z-index:2147483646!important
+}
+body.memed-aberto #mdhub-module-plataforma\.prescricao,
+body.memed-aberto #memed-auto-generated>iframe[title="Memed Prescrição"],
+body.memed-aberto #memed-sinapse-container>iframe[title="Memed Prescrição"]{
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100vh!important;
+  height:100dvh!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  border:0!important;
+  z-index:2147483647!important
+}
 /* -- CHAT PICTURE-IN-PICTURE ------------------------------- */
 #chat-pip{position:fixed;bottom:24px;right:24px;width:320px;z-index:5000;border-radius:18px;overflow:hidden;border:1px solid rgba(94,224,160,.2);background:#0d1a14;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);transform:translateY(120%) scale(.95);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s;display:flex;flex-direction:column}
 #chat-pip.visivel{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
@@ -4607,6 +4650,6 @@ function abrirEdicaoPacienteMobile() {
   </div>
 </div>
 <script src="/memed-auto-chat.js?v=4"></script>
-<script src="/memed-open-fix-v4.js?v=3"></script>
+<script src="/memed-open-fix-v4.js?v=4"></script>
 </body>
 </html>
