@@ -3,6 +3,7 @@
   window.__cjMemedOpenFixV4 = true;
 
   var moduloPronto = false;
+  var todosModulosProntos = false;
   var listenerInstalado = false;
   var wrappersInstalados = false;
 
@@ -37,7 +38,27 @@
           console.log('[MEMED-V4] plataforma.prescricao pronta para abrir.');
         }
       });
+      window.MdHub.event.add('core:allmodulesareready', function () {
+        todosModulosProntos = true;
+        console.log('[MEMED-V4] Todos os módulos estão prontos.');
+      });
       listenerInstalado = true;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function legadoCompletamentePronto() {
+    if (todosModulosProntos) return true;
+    try {
+      var modulo = window.MdHub && window.MdHub.module;
+      var pendentes = modulo && modulo.lazyModulesNames;
+      var controles = modulo && modulo.objControlLazyModules;
+      if (!modulo || !Array.isArray(pendentes) || pendentes.length > 0 || !controles) return false;
+      var nomes = Object.keys(controles);
+      if (!nomes.length || !nomes.every(function (nome) { return controles[nome] && controles[nome].ready === true; })) return false;
+      todosModulosProntos = true;
       return true;
     } catch (_) {
       return false;
@@ -58,7 +79,7 @@
         await sleep(120);
         continue;
       }
-      if (moduloPronto) return true;
+      if (moduloPronto && legadoCompletamentePronto()) return true;
 
       // Fallback para casos em que o evento ocorreu antes do listener.
       if (window.MdHub && window.MdHub.module && typeof window.MdHub.module.show === 'function' &&
@@ -69,7 +90,7 @@
               Promise.resolve(window.MdHub.command.ping('plataforma.prescricao')),
               sleep(500).then(function () { return null; })
             ]);
-            if (resposta !== null && resposta !== false) {
+            if (resposta !== null && resposta !== false && legadoCompletamentePronto()) {
               moduloPronto = true;
               return true;
             }
@@ -91,14 +112,15 @@
     var mostrarAnterior = window.mostrarModuloMemed;
 
     window.aguardarSdkMemed = async function (timeoutMs) {
-      await aguardarAnterior(timeoutMs || 20000);
-      await aguardarModuloReal(timeoutMs || 20000);
+      var limite = Math.max(Number(timeoutMs) || 20000, 30000);
+      await aguardarAnterior(limite);
+      await aguardarModuloReal(limite);
       // Pequena folga depois do core:moduleInit; evita corrida interna do SDK.
       await sleep(180);
     };
 
     window.mostrarModuloMemed = async function () {
-      await aguardarModuloReal(8000);
+      await aguardarModuloReal(30000);
       var ultimoErro = null;
       for (var i = 0; i < 5; i += 1) {
         try {

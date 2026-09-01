@@ -120,7 +120,7 @@
   document.head.appendChild(script);
 
   var fix = document.createElement('script');
-  fix.src = '/memed-open-fix-v4.js?v=5';
+  fix.src = '/memed-open-fix-v4.js?v=6';
   fix.async = true;
   fix.dataset.cjMemedOpenFix = '1';
   document.head.appendChild(fix);
