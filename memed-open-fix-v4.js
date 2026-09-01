@@ -1,4 +1,7 @@
 (function () {
+  if (window.__cjMemedOpenFixV4) return;
+  window.__cjMemedOpenFixV4 = true;
+
   var moduloPronto = false;
   var listenerInstalado = false;
   var wrappersInstalados = false;
