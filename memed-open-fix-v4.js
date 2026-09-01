@@ -14,6 +14,19 @@
     return String((data && (data.name || data.moduleName)) || '');
   }
 
+  function estadoV4() {
+    var api = window.MdSinapsePrescricao;
+    if (!api || typeof api.getContract !== 'function') {
+      return { detectado: false, pronto: false };
+    }
+    try {
+      var contrato = api.getContract() || {};
+      return { detectado: true, pronto: !!contrato.version, versao: contrato.version || null };
+    } catch (_) {
+      return { detectado: true, pronto: false, versao: null };
+    }
+  }
+
   function instalarListenerCore() {
     if (listenerInstalado) return true;
     if (!window.MdHub || !window.MdHub.event || typeof window.MdHub.event.add !== 'function') return false;
@@ -36,6 +49,15 @@
     var limite = Number(timeoutMs) || 20000;
     while (Date.now() - inicio < limite) {
       instalarListenerCore();
+      var v4 = estadoV4();
+      if (v4.detectado) {
+        if (v4.pronto) {
+          console.log('[MEMED-V4] iframe pronto.', { versao: v4.versao });
+          return true;
+        }
+        await sleep(120);
+        continue;
+      }
       if (moduloPronto) return true;
 
       // Fallback para casos em que o evento ocorreu antes do listener.
@@ -56,7 +78,9 @@
       }
       await sleep(120);
     }
-    throw new Error('Módulo de prescrição Memed não inicializou');
+    throw new Error(estadoV4().detectado
+      ? 'O iframe da Memed não concluiu a inicialização'
+      : 'Módulo de prescrição Memed não inicializou');
   }
 
   function instalarWrappers() {
