@@ -95,8 +95,6 @@
         return retorno;
       };
 
-      // Se o painel já tiver sido renderizado antes do wrapper ser instalado,
-      // recupera os dados atuais e injeta o campo sem exigir novo login.
       var token = localStorage.getItem('psi_token') || '';
       if (token && document.getElementById('perfil-rows')) {
         fetch(w.API_BASE_URL + '/api/psicologo/me', {
@@ -116,10 +114,16 @@
   if (/\/(?:psicologo|especialista)\/?$/i.test(location.pathname)) return;
   if (document.querySelector('script[data-cj-memed-auto-chat]')) return;
   var script = document.createElement('script');
-  script.src = '/memed-auto-chat.js?v=2';
+  script.src = '/memed-auto-chat.js?v=4';
   script.async = true;
   script.dataset.cjMemedAutoChat = '1';
   document.head.appendChild(script);
+
+  var fix = document.createElement('script');
+  fix.src = '/memed-open-fix-v4.js?v=1';
+  fix.async = true;
+  fix.dataset.cjMemedOpenFix = '1';
+  document.head.appendChild(fix);
 })();
 
 // Painel médico: dashboard privado de avaliações, exibido apenas ao administrador.
