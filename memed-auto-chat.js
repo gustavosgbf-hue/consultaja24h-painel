@@ -225,6 +225,70 @@
   }, 500);
 })();
 
+// Memed opening hardening: the integration can expose MdHub methods slightly before
+// plataforma.prescricao is actually ready to accept setPaciente/show. Do not block on
+// ping (it is flaky), but give the module a short settle window and retry the real open.
+(function () {
+  var instalado = false;
+
+  function sleep(ms) {
+    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+  }
+
+  function instalar() {
+    if (instalado) return true;
+    if (typeof window.aguardarSdkMemed !== 'function' || typeof window.mostrarModuloMemed !== 'function') return false;
+
+    var aguardarOriginal = window.aguardarSdkMemed;
+    var mostrarOriginal = window.mostrarModuloMemed;
+
+    window.aguardarSdkMemed = async function (timeoutMs) {
+      await aguardarOriginal(timeoutMs || 20000);
+      // MdHub can exist before the prescription module finishes its internal bootstrap.
+      await sleep(350);
+      // Ping is useful as a hint only; it must never prevent opening.
+      try {
+        if (window.MdHub && window.MdHub.command && typeof window.MdHub.command.ping === 'function') {
+          await Promise.race([
+            Promise.resolve(window.MdHub.command.ping('plataforma.prescricao')),
+            sleep(1200)
+          ]);
+        }
+      } catch (_) {}
+      await sleep(120);
+    };
+
+    window.mostrarModuloMemed = async function () {
+      var ultimoErro = null;
+      for (var tentativa = 0; tentativa < 7; tentativa += 1) {
+        try {
+          await mostrarOriginal();
+          return;
+        } catch (err) {
+          ultimoErro = err;
+          console.warn('[MEMED] Abertura ainda não pronta; nova tentativa.', {
+            tentativa: tentativa + 1,
+            erro: err && err.message ? err.message : String(err || '')
+          });
+          await sleep(350 + tentativa * 150);
+        }
+      }
+      throw ultimoErro || new Error('Módulo de prescrição Memed não abriu');
+    };
+
+    instalado = true;
+    console.log('[MEMED] Hardening de abertura instalado.');
+    return true;
+  }
+
+  if (instalar()) return;
+  var tentativas = 0;
+  var timer = setInterval(function () {
+    tentativas += 1;
+    if (instalar() || tentativas >= 120) clearInterval(timer);
+  }, 250);
+})();
+
 (function () {
   if (document.querySelector('script[data-cj-admin-avaliacoes]')) return;
   var script = document.createElement('script');
