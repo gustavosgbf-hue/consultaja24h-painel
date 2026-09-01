@@ -4083,19 +4083,10 @@ function mensagemErroMemed() {
 function aguardarSdkMemed(timeoutMs = 20000) {
   return new Promise((resolve, reject) => {
     const inicio = Date.now();
-    const verificar = async () => {
+    const verificar = () => {
       const hubPronto = window.MdHub?.module?.show
-        && window.MdHub?.command?.send
-        && window.MdHub?.command?.ping;
-      if (hubPronto) {
-        try {
-          await Promise.race([
-            Promise.resolve(window.MdHub.command.ping('plataforma.prescricao')),
-            new Promise((_, rejeitar) => setTimeout(() => rejeitar(new Error('Ping Memed sem resposta')), 1200))
-          ]);
-          return resolve();
-        } catch(e) {}
-      }
+        && window.MdHub?.command?.send;
+      if (hubPronto) return resolve();
       if (Date.now() - inicio >= timeoutMs) return reject(new Error('Módulo de prescrição Memed não inicializou'));
       setTimeout(verificar, 150);
     };
