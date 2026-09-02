@@ -4296,6 +4296,15 @@ async function abrirMemed() {
     // 2. Carrega SDK
     const scriptAntigo = document.getElementById('memed-script');
     if (scriptAntigo) scriptAntigo.remove();
+    // O registrador oficial da Memed falha no Chrome desktop e deixa o iframe
+    // fullscreen vazio. O SDK respeita este marcador e carrega os módulos pela rede.
+    if (!document.getElementById('memed-sw-register')) {
+      const swMarker = document.createElement('span');
+      swMarker.id = 'memed-sw-register';
+      swMarker.hidden = true;
+      swMarker.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(swMarker);
+    }
     memedEventosRegistrados = false;
     const script = document.createElement('script');
     script.id = 'memed-script';
