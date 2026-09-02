@@ -354,6 +354,21 @@ body.app-autenticado .sidebar-toggle { display:flex !important; }
 #memed-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s}
 #memed-overlay.ativo{opacity:1;pointer-events:auto}
 body.memed-aberto{overflow:hidden}
+#memed-host{display:none}
+@media(min-width:769px){
+  #memed-host.ativo{
+    display:block;
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    height:100dvh;
+    overflow:hidden;
+    background:#fff;
+    z-index:2147483636
+  }
+  #memed-host #iframe-container{width:100%!important;height:100%!important;min-height:100%!important}
+}
 /* -- CHAT PICTURE-IN-PICTURE ------------------------------- */
 #chat-pip{position:fixed;bottom:24px;right:24px;width:320px;z-index:5000;border-radius:18px;overflow:hidden;border:1px solid rgba(94,224,160,.2);background:#0d1a14;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);transform:translateY(120%) scale(.95);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s;display:flex;flex-direction:column}
 #chat-pip.visivel{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
@@ -4097,6 +4112,7 @@ function aguardarSdkMemed(timeoutMs = 20000) {
 function fecharMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
+  document.getElementById('memed-host')?.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
   try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
   setMemedCarregando(false);
@@ -4105,6 +4121,7 @@ function fecharMemedDrawer() {
 function abrirMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
+  document.getElementById('memed-host')?.classList.add('ativo');
   document.body.classList.add('memed-aberto');
 }
 
@@ -4206,8 +4223,13 @@ async function mostrarModuloMemed() {
   }
   await configurarPacienteMemed();
   console.log('[MEMED] Exibindo módulo de prescrição.');
-  await Promise.resolve(MdHub.module.show('plataforma.prescricao'));
   abrirMemedDrawer();
+  try {
+    await Promise.resolve(MdHub.module.show('plataforma.prescricao'));
+  } catch (e) {
+    fecharMemedDrawer();
+    throw e;
+  }
   setMemedCarregando(false);
 }
 
@@ -4293,6 +4315,9 @@ async function abrirMemed() {
     script.type = 'text/javascript';
     script.setAttribute('data-color', '#b4e05a');
     script.setAttribute('data-token', memedToken);
+    if (window.matchMedia('(min-width: 769px)').matches) {
+      script.setAttribute('data-container', 'memed-host');
+    }
     script.src = 'https://partners.memed.com.br/integration.js';
 
     script.onload = async () => {
@@ -4594,6 +4619,8 @@ function abrirEdicaoPacienteMobile() {
 
 <!-- -- DRAWER MEMED --------------------------------------- -->
 
+<div id="memed-host" aria-label="Prescrição Memed"></div>
+
 <!-- Chat PiP -->
 
 <div id="chat-pip">
@@ -4645,6 +4672,6 @@ function abrirEdicaoPacienteMobile() {
   </div>
 </div>
 <script src="/memed-auto-chat.js?v=4"></script>
-<script src="/memed-open-fix-v4.js?v=6"></script>
+<script src="/memed-open-fix-v4.js?v=7"></script>
 </body>
 </html>
