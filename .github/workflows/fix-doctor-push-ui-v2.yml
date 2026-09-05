@@ -1,0 +1,43 @@
+name: Fix doctor push UI v2
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-doctor-push-ui-v2.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch push UI
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('var cjDocPushBusy=false;','var cjDocPushBusy=false;var cjDocPushRegistered=false;',1)
+          old="function cjDocAtualizarPushUI(){var x=cjDocPushBar();if(!cjDocPodePush()){x.classList.remove('show');return}if(Notification.permission==='denied'){x.classList.remove('show');return}if(Notification.permission==='granted'){x.classList.remove('show');cjRegistrarPushMedico(false);return}x.classList.add('show');}"
+          new="function cjDocAtualizarPushUI(){var x=cjDocPushBar();if(!cjDocPodePush()){x.classList.remove('show');return}var b=x.querySelector('button');if(Notification.permission==='denied'){x.classList.add('show');if(b){b.textContent='Bloqueado';b.disabled=true}return}if(Notification.permission==='granted'){if(b){b.textContent='Ativado';b.disabled=true}x.classList.remove('show');if(!cjDocPushRegistered)cjRegistrarPushMedico(false);return}if(b){b.textContent='Ativar';b.disabled=false}x.classList.add('show');}"
+          if old not in s: raise SystemExit('push UI function not found')
+          s=s.replace(old,new,1)
+          old="if(!r.ok||!d.ok)throw new Error(d.error||'push_failed');cjDocPushBar().classList.remove('show');return true"
+          new="if(!r.ok||!d.ok)throw new Error(d.error||'push_failed');cjDocPushRegistered=true;var bar=cjDocPushBar(),btn=bar.querySelector('button');if(btn){btn.textContent='Ativado';btn.disabled=true}bar.classList.remove('show');return true"
+          if old not in s: raise SystemExit('push success block not found')
+          s=s.replace(old,new,1)
+          old="function cjAtivarPushMedico(){cjRegistrarPushMedico(true)}window.cjAtivarPushMedico=cjAtivarPushMedico;"
+          new="async function cjAtivarPushMedico(){var bar=cjDocPushBar(),b=bar.querySelector('button');if(b){b.textContent='Ativando...';b.disabled=true}var ok=await cjRegistrarPushMedico(true);if(ok){if(b)b.textContent='Ativado';setTimeout(function(){bar.classList.remove('show')},700)}else{if(Notification.permission==='denied'){if(b){b.textContent='Bloqueado';b.disabled=true}}else if(b){b.textContent='Tentar novamente';b.disabled=false}}}window.cjAtivarPushMedico=cjAtivarPushMedico;"
+          if old not in s: raise SystemExit('activate function not found')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          grep -q "cjDocPushRegistered=true" index.html
+          grep -q "Ativando..." index.html
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix doctor push activation feedback and repeated registration" || exit 0
+          git push
