@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Bloqueio de pacientes · ConsultaJá24h</title>
+<style>
+:root{--bg:#07100f;--card:#0d1815;--line:rgba(255,255,255,.09);--text:#eef4f1;--muted:#8a9892;--green:#16c783;--red:#e27676}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#0b2019 0,#07100f 42%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}.wrap{max-width:760px;margin:0 auto;padding:28px 18px 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{font-size:20px;font-weight:700}.brand b{color:var(--green)}.back{color:var(--muted);text-decoration:none;font-size:14px}.card{background:rgba(13,24,21,.94);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.28)}h1{font-size:24px;margin:0 0 6px}.sub{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:22px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{display:block;font-size:12px;color:#aeb9b4;margin:0 0 7px;text-transform:uppercase;letter-spacing:.05em}input,textarea,select{width:100%;border:1px solid var(--line);border-radius:11px;background:#09120f;color:var(--text);padding:12px 13px;font:inherit;outline:none}input:focus,textarea:focus,select:focus{border-color:rgba(22,199,131,.55)}textarea{min-height:90px;resize:vertical}.row{display:flex;align-items:center;gap:10px}.row input[type=checkbox]{width:18px;height:18px;accent-color:var(--green)}.actions{display:flex;gap:10px;margin-top:20px}.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:700;cursor:pointer}.btn-danger{background:#7e2f35;color:#fff}.btn-danger:hover{filter:brightness(1.08)}.btn:disabled{opacity:.55;cursor:not-allowed}.status{display:none;margin-top:16px;padding:12px 14px;border-radius:11px;font-size:14px;line-height:1.45}.status.ok{display:block;background:rgba(22,199,131,.1);border:1px solid rgba(22,199,131,.25);color:#8ce3bd}.status.err{display:block;background:rgba(226,118,118,.1);border:1px solid rgba(226,118,118,.25);color:#ffb0b0}.warn{margin-top:16px;color:#c8a873;font-size:13px;line-height:1.45}.small{font-size:12px;color:var(--muted);margin-top:8px}@media(max-width:640px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.top{align-items:flex-start;flex-direction:column}.card{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="brand">Consulta<b>Já</b>24h · Admin</div><a class="back" href="/">← Voltar ao painel</a></div>
+  <div class="card">
+    <h1>Bloquear paciente</h1>
+    <div class="sub">Impede novos atendimentos usando os identificadores informados. Para evitar bloqueio da pessoa errada, prefira CPF quando disponível.</div>
+    <div class="grid">
+      <div><label for="nome">Nome</label><input id="nome" autocomplete="off" placeholder="Nome do paciente" /></div>
+      <div><label for="cpf">CPF</label><input id="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" /></div>
+      <div><label for="tel">Telefone</label><input id="tel" inputmode="tel" autocomplete="off" placeholder="DDD + número" /></div>
+      <div><label for="email">E-mail</label><input id="email" inputmode="email" autocomplete="off" placeholder="email@exemplo.com" /></div>
+      <div class="full"><label for="motivo">Motivo interno</label><textarea id="motivo" placeholder="Ex.: Bloqueio administrativo permanente"></textarea></div>
+      <div class="full row"><input id="permanente" type="checkbox" checked /><label for="permanente" style="margin:0;text-transform:none;letter-spacing:0">Bloqueio permanente</label></div>
+      <div id="diasWrap" style="display:none"><label for="dias">Dias de bloqueio</label><input id="dias" type="number" min="1" max="90" value="30" /></div>
+    </div>
+    <div class="actions"><button id="bloquear" class="btn btn-danger">Bloquear paciente</button></div>
+    <div id="status" class="status"></div>
+    <div class="warn">A ação afeta novos atendimentos. Antes de confirmar, confira CPF/telefone/e-mail e mantenha o motivo estritamente administrativo.</div>
+    <div class="small">Esta tela usa a mesma sessão autenticada do painel médico.</div>
+  </div>
+</div>
+<script>
+const API='https://triagem-api.onrender.com';
+const $=id=>document.getElementById(id);
+const digits=v=>String(v||'').replace(/\D/g,'');
+$('permanente').addEventListener('change',()=>{$('diasWrap').style.display=$('permanente').checked?'none':'block'});
+function setStatus(msg,type){const el=$('status');el.className='status '+type;el.textContent=msg}
+async function bloquear(){
+  const token=localStorage.getItem('token')||'';
+  const adminPwd=sessionStorage.getItem('adminPwd')||'';
+  if(!token&&!adminPwd){setStatus('Sessão administrativa não encontrada. Volte ao painel, faça login e tente novamente.','err');return}
+  const payload={
+    nome:$('nome').value.trim(),
+    cpf:digits($('cpf').value),
+    tel:digits($('tel').value),
+    email:$('email').value.trim().toLowerCase(),
+    motivo:$('motivo').value.trim()||'Bloqueio administrativo',
+    permanente:$('permanente').checked,
+    dias:Math.max(1,Math.min(90,parseInt($('dias').value||'30',10)||30))
+  };
+  if(!payload.cpf&&!payload.tel&&!payload.email){setStatus('Informe pelo menos CPF, telefone ou e-mail.','err');return}
+  const idResumo=[payload.cpf&&('CPF '+payload.cpf),payload.tel&&('tel '+payload.tel),payload.email&&payload.email].filter(Boolean).join(' · ');
+  if(!confirm('Confirmar bloqueio de '+(payload.nome||'paciente')+'?\n\n'+idResumo))return;
+  const btn=$('bloquear');btn.disabled=true;btn.textContent='Bloqueando...';
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(token)headers.Authorization='Bearer '+token;
+    if(adminPwd)headers['x-admin-password']=adminPwd;
+    const res=await fetch(API+'/api/admin/pacientes/bloquear',{method:'POST',headers,body:JSON.stringify(payload)});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.error||data.message||('Erro HTTP '+res.status));
+    setStatus('Paciente bloqueado com sucesso'+(payload.permanente?' permanentemente.':'.'),'ok');
+  }catch(err){setStatus('Não foi possível bloquear: '+(err.message||'erro desconhecido'),'err')}
+  finally{btn.disabled=false;btn.textContent='Bloquear paciente'}
+}
+$('bloquear').addEventListener('click',bloquear);
+</script>
+</body>
+</html>
