@@ -7,6 +7,26 @@
     }catch(_){return false}
   }
 
+  function enforceRenovacoesAdminOnly(){
+    var admin=isAdmin();
+    var style=document.getElementById('cj-renov-admin-only-style');
+    if(!admin){
+      if(!style){
+        style=document.createElement('style');
+        style.id='cj-renov-admin-only-style';
+        style.textContent='#renov-tab-btn,#renov-lista{display:none!important}';
+        document.head.appendChild(style);
+      }
+      var tab=document.getElementById('renov-tab-btn');
+      var lista=document.getElementById('renov-lista');
+      if(tab){ tab.style.display='none'; tab.setAttribute('aria-hidden','true'); }
+      if(lista) lista.style.display='none';
+      try{ if(typeof renovVisible!=='undefined') renovVisible=false; }catch(_){ }
+    }else if(style){
+      style.remove();
+    }
+  }
+
   function origemRaw(obj){
     return String(obj&&(
       obj.origem_plataforma || obj.platform || obj.origem || obj.source
@@ -129,6 +149,7 @@
   }
 
   function aplicarTudo(){
+    enforceRenovacoesAdminOnly();
     ensureStyles();
     install();
     aplicarFila();
