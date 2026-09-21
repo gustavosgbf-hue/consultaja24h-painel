@@ -1345,6 +1345,7 @@ body.app-autenticado .bg-mesh{display:none}
       <input type="text" id="hist-busca" placeholder="Buscar paciente, CPF, tel..." oninput="renderHistorico()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#eee;border-radius:8px;padding:7px 10px;font-size:.78rem;width:100%;box-sizing:border-box;font-family:'Outfit',sans-serif">
     </div>
     <div id="hist-lista" style="display:none"></div>
+    <button onclick="abrirDadosRegulatorios(false)" style="width:100%;margin-top:16px;padding:10px 12px;border-radius:9px;border:1px solid rgba(180,224,90,.22);background:rgba(180,224,90,.055);color:#b4e05a;font-family:inherit;font-size:.76rem;font-weight:600;cursor:pointer;text-align:left">Dados de prescrição</button>
   </div><!-- /sidebar-inner -->
 </aside>
 
@@ -1616,6 +1617,24 @@ body.app-autenticado .bg-mesh{display:none}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="fecharEscalaPrioridade()">Cancelar</button>
       <button class="btn-confirm" id="btn-salvar-escala" onclick="salvarEscalaPrioridade()">Salvar turnos</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-dados-regulatorios" onclick="if(event.target===this)fecharDadosRegulatorios()">
+  <div class="modal">
+    <div class="modal-title">Dados para prescrição</div>
+    <div class="modal-sub">Esses dados são do médico prescritor e são exigidos pela Memed. Não são dados da anamnese do paciente.</div>
+    <div id="dados-regulatorios-faltantes" style="display:none;margin:-8px 0 18px;padding:10px 12px;border-radius:9px;background:rgba(255,189,46,.08);border:1px solid rgba(255,189,46,.18);color:#ffd36b;font-size:.78rem"></div>
+    <div style="display:grid;grid-template-columns:1fr 90px;gap:10px">
+      <div class="modal-field"><label for="reg-crm">CRM</label><input class="modal-input" id="reg-crm" type="text" inputmode="numeric" maxlength="10" autocomplete="off"></div>
+      <div class="modal-field"><label for="reg-uf">UF</label><input class="modal-input" id="reg-uf" type="text" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div>
+    </div>
+    <div class="modal-field"><label for="reg-cpf">CPF do médico</label><input class="modal-input" id="reg-cpf" type="text" inputmode="numeric" maxlength="14" autocomplete="off" oninput="mascararCpfEdicao(this)"></div>
+    <div class="modal-field"><label for="reg-nascimento">Data de nascimento</label><input class="modal-input" id="reg-nascimento" type="date"></div>
+    <div id="dados-regulatorios-erro" style="display:none;margin-top:-4px;color:#ff8080;font-size:.78rem"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharDadosRegulatorios()">Cancelar</button>
+      <button class="btn-confirm" id="btn-salvar-regulatorios" onclick="salvarDadosRegulatorios()">Salvar e continuar</button>
     </div>
   </div>
 </div>
@@ -4172,6 +4191,87 @@ if (histVisible) renderHistorico();
 } catch(e) {}
 }
 
+// - DADOS REGULATÓRIOS / MEMED -----------------------------
+let continuarMemedAposDadosRegulatorios = false;
+
+function fecharDadosRegulatorios() {
+  document.getElementById('modal-dados-regulatorios')?.classList.remove('open');
+  continuarMemedAposDadosRegulatorios = false;
+}
+
+async function abrirDadosRegulatorios(continuarMemed = false) {
+  continuarMemedAposDadosRegulatorios = !!continuarMemed;
+  const modal = document.getElementById('modal-dados-regulatorios');
+  const erro = document.getElementById('dados-regulatorios-erro');
+  const faltantesEl = document.getElementById('dados-regulatorios-faltantes');
+  const btn = document.getElementById('btn-salvar-regulatorios');
+  if (erro) { erro.style.display='none'; erro.textContent=''; }
+  if (faltantesEl) { faltantesEl.style.display='none'; faltantesEl.textContent=''; }
+  if (btn) btn.textContent = continuarMemed ? 'Salvar e prescrever' : 'Salvar dados';
+  modal?.classList.add('open');
+
+  try {
+    const data = await apiFetch('/api/prescritor/dados-regulatorios');
+    if (!data.ok) throw new Error(data.error || 'Não foi possível carregar seus dados.');
+    const p = data.prescritor || {};
+    document.getElementById('reg-crm').value = p.crm || medico?.crm || '';
+    document.getElementById('reg-uf').value = (p.uf || '').toUpperCase();
+    const cpf = String(p.cpf_medico || '').replace(/\D/g,'');
+    const cpfEl = document.getElementById('reg-cpf');
+    cpfEl.value = cpf;
+    if (cpf) mascararCpfEdicao(cpfEl);
+    document.getElementById('reg-nascimento').value = p.data_nascimento_medico || '';
+    if (data.faltantes?.length && faltantesEl) {
+      faltantesEl.textContent = 'Para liberar a prescrição, complete: ' + data.faltantes.join(', ') + '.';
+      faltantesEl.style.display = 'block';
+    }
+  } catch (err) {
+    if (erro) {
+      erro.textContent = err.message || 'Não foi possível carregar seus dados.';
+      erro.style.display = 'block';
+    }
+  }
+}
+
+async function salvarDadosRegulatorios() {
+  const erro = document.getElementById('dados-regulatorios-erro');
+  const btn = document.getElementById('btn-salvar-regulatorios');
+  if (erro) { erro.style.display='none'; erro.textContent=''; }
+  const payload = {
+    crm: document.getElementById('reg-crm').value.trim(),
+    uf: document.getElementById('reg-uf').value.trim().toUpperCase(),
+    cpf_medico: document.getElementById('reg-cpf').value.replace(/\D/g,''),
+    data_nascimento_medico: document.getElementById('reg-nascimento').value
+  };
+  if (btn) { btn.disabled=true; btn.textContent='Salvando…'; }
+  try {
+    const data = await apiFetch('/api/prescritor/dados-regulatorios',{method:'PUT',json:payload});
+    if (!data.ok) throw new Error(data.error || 'Não foi possível salvar os dados.');
+    if (medico) medico.crm = data.prescritor?.crm || payload.crm;
+    const deveContinuar = continuarMemedAposDadosRegulatorios;
+    document.getElementById('modal-dados-regulatorios')?.classList.remove('open');
+    continuarMemedAposDadosRegulatorios = false;
+    mostrarToast('Dados de prescrição salvos.','success');
+    if (deveContinuar) {
+      memedCarregado = false;
+      memedToken = null;
+      const scriptAntigo = document.getElementById('memed-script');
+      if (scriptAntigo) scriptAntigo.remove();
+      setTimeout(()=>abrirMemed(), 250);
+    }
+  } catch (err) {
+    if (erro) {
+      erro.textContent = err.message || 'Não foi possível salvar os dados.';
+      erro.style.display='block';
+    }
+  } finally {
+    if (btn) {
+      btn.disabled=false;
+      btn.textContent = continuarMemedAposDadosRegulatorios ? 'Salvar e prescrever' : 'Salvar dados';
+    }
+  }
+}
+
 // - MEMED ----------------------------------
 let memedCarregado = false;
 let memedToken = null;
@@ -4415,6 +4515,11 @@ async function abrirMemed() {
     const data = await apiFetch('/api/memed/token');
     if (!data.ok || !data.token) {
       setMemedCarregando(false);
+      if (data.code === 'missing_regulatory_data') {
+        mostrarToast('Complete seus dados de prescritor para continuar.','info');
+        await abrirDadosRegulatorios(true);
+        return;
+      }
       mostrarToast(data.error || 'Não foi possível carregar a prescrição','error');
       return;
     }
