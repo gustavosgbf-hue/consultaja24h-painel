@@ -1689,6 +1689,9 @@ rascunho: { 'cl-hda':'', 'cl-comorbidades':'', 'cl-medicacoes':'', 'cl-alergias'
 mensagens: [],
 // Set de IDs já presentes em mensagens[] — dedupe rápido no polling/envio
 msgIdsRendered: new Set(),
+// Proteção anti-sobrescrita: se o atendimento já tem prontuário salvo, só permite
+// novo autosave depois que o texto persistido for reidratado nos campos clínicos.
+prontuarioHidratado: !atendimento?.prontuario_salvo,
 // [UX] Badge de "mensagem nova não lida" na tab do slot inativo
 temMsgNova: false
 };
@@ -2741,6 +2744,15 @@ document.querySelectorAll('textarea.clinic-input').forEach(t=>{t.disabled=false;
 document.getElementById('hist-clinico-notice').style.display=modoHistorico?'block':'none';
 document.getElementById('hist-consulta-notice').style.display=modoHistorico?'block':'none';
 document.querySelectorAll('.doc-check').forEach(d=>d.classList.remove('checked'));
+// Em atendimento recuperado após refresh, reidrata os campos a partir do prontuário persistido.
+// Se a leitura falhar, o slot permanece protegido contra autosave destrutivo.
+if (!modoHistorico && p.prontuario_salvo) {
+const okHidratacao = hidratarProntuarioSalvoNoFormulario(p);
+if (slots[slotAtivo]) {
+slots[slotAtivo].prontuarioHidratado = !!okHidratacao;
+if (okHidratacao) salvarRascunhoSlot(slotAtivo);
+}
+}
 document.getElementById('pront-output').style.display='none';
 document.getElementById('btn-copiar').style.display='none';
 document.getElementById('autosave-status').className='autosave-status';
@@ -2771,6 +2783,78 @@ switchTab('consulta');
 atualizarBtnVerChat();
 }
 
+function extrairCamposProntuarioSalvo(texto) {
+if (!texto || typeof texto !== 'string') return null;
+const norm = texto.replace(/\r\n/g,'\n');
+const sep = '-----------';
+// Só reidrata formatos de prontuário estruturados conhecidos. Se for texto legado/livre,
+// mantém o registro protegido em vez de tentar adivinhar e sobrescrever conteúdo.
+if (!norm.includes('QUEIXA PRINCIPAL / HDA\n' + sep + '\n') || !norm.includes('CONDUTA\n' + sep + '\n')) return null;
+const sec = (titulo, proximos) => {
+const ini = titulo + '\n' + sep + '\n';
+const i = norm.indexOf(ini);
+if (i < 0) return '';
+const start = i + ini.length;
+let end = norm.length;
+proximos.forEach(prox => {
+const marker = '\n\n' + sep + '\n' + prox;
+const j = norm.indexOf(marker, start);
+if (j >= 0 && j < end) end = j;
+});
+return norm.slice(start, end).trim();
+};
+const hda = sec('QUEIXA PRINCIPAL / HDA', ['ANTECEDENTES']);
+const ant = sec('ANTECEDENTES', ['OBSERVAÇÕES (TELEMEDICINA)','CONDUTA']);
+const obs = sec('OBSERVAÇÕES (TELEMEDICINA)', ['CONDUTA']);
+const conduta = sec('CONDUTA', ['Documentos emitidos:']);
+const valorAntecedente = (rotulo, proximoRotulo) => {
+if (!ant) return '';
+const ini = ant.indexOf(rotulo);
+if (ini < 0) return '';
+const start = ini + rotulo.length;
+let end = ant.length;
+if (proximoRotulo) {
+const j = ant.indexOf('\n' + proximoRotulo, start);
+if (j >= 0) end = j;
+}
+return ant.slice(start,end).trim();
+};
+const docsMatch = norm.match(/(?:^|\n)Documentos emitidos:\s*([^\n]*)/);
+const limparDefault = (v, defaults=[]) => {
+const t = (v||'').trim();
+return defaults.includes(t) ? '' : t;
+};
+return {
+hda: limparDefault(hda, ['(preencher)','(não informado)']),
+comorbidades: limparDefault(valorAntecedente('Comorbidades:', 'Medicações em uso:'), ['Nega comorbidades referidas']),
+medicacoes: limparDefault(valorAntecedente('Medicações em uso:', 'Alergias:'), ['Nega uso contínuo de medicações']),
+alergias: limparDefault(valorAntecedente('Alergias:', null), ['Nega alergias medicamentosas']),
+obs: limparDefault(obs, ['(preencher)','(não informado)']),
+conduta: limparDefault(conduta, ['(preencher)','(não informado)']),
+docs: docsMatch ? docsMatch[1].trim() : ''
+};
+}
+
+function hidratarProntuarioSalvoNoFormulario(p) {
+if (!p?.prontuario_salvo) return true;
+const campos = extrairCamposProntuarioSalvo(p.prontuario_salvo);
+if (!campos) return false;
+document.getElementById('cl-hda').value = campos.hda || '';
+document.getElementById('cl-comorbidades').value = campos.comorbidades || '';
+document.getElementById('cl-medicacoes').value = campos.medicacoes || '';
+document.getElementById('cl-alergias').value = campos.alergias || '';
+document.getElementById('cl-obs').value = campos.obs || '';
+document.getElementById('cl-conduta').value = campos.conduta || '';
+if (campos.docs) {
+const escolhidos = campos.docs.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+document.querySelectorAll('.doc-check').forEach(d=>{
+const nome=(d.querySelector('.dc-text')?.textContent||'').trim().toLowerCase();
+d.classList.toggle('checked', escolhidos.includes(nome));
+});
+}
+return true;
+}
+
 function inserirConduta(texto) {
 const campo = document.getElementById('cl-conduta');
 if (!campo) return;
@@ -2787,6 +2871,12 @@ document.getElementById(id).addEventListener('input',agendarAutosave);
 }
 function agendarAutosave() {
 if (modoHistorico||!atendimentoAtual) return;
+// Segurança: nunca sobrescrever um prontuário persistido após refresh antes de reidratá-lo.
+if (atendimentoAtual.prontuario_salvo && slots[slotAtivo] && !slots[slotAtivo].prontuarioHidratado) {
+const s=document.getElementById('autosave-status');
+if (s) { s.className='autosave-status visible err'; s.textContent='⚠ Prontuário protegido'; }
+return;
+}
 clearTimeout(autosaveTimer);
 const s=document.getElementById('autosave-status');
 s.className='autosave-status visible'; s.textContent='💾 Salvando...';
@@ -2834,6 +2924,11 @@ const s = document.getElementById('autosave-status');
 try {
 const _pr=await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendCapturado.id,prontuario:texto}});
 if (_pr.ok) {
+// Mantém a cópia local sincronizada com o backend. Isso evita que uma prescrição Memed
+// posterior parta de string vazia e substitua o prontuário clínico já salvo.
+atendCapturado.prontuario = texto;
+atendCapturado.prontuario_salvo = texto;
+if (slots[slotCapturado]) slots[slotCapturado].prontuarioHidratado = true;
 // Atualiza status visual apenas se o slot salvo ainda for o ativo
 if (slotCapturado === slotAtivo) {
 s.className='autosave-status visible ok'; s.textContent='✓ Salvo';
@@ -3481,7 +3576,14 @@ salvarProntuarioAgora(texto);
 }
 async function salvarProntuarioAgora(texto) {
 if (!atendimentoAtual) return;
-try { await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:texto}}); } catch(e) {}
+try {
+const r = await apiFetch('/api/atendimento/prontuario',{method:'POST',json:{filaId:atendimentoAtual.id,prontuario:texto}});
+if (r.ok) {
+atendimentoAtual.prontuario = texto;
+atendimentoAtual.prontuario_salvo = texto;
+if (slots[slotAtivo]) slots[slotAtivo].prontuarioHidratado = true;
+}
+} catch(e) {}
 }
 // -- VER CHAT DA CONSULTA ------------------------------------
 async function abrirChatHistorico(atendimento) {
@@ -3545,7 +3647,10 @@ btn.style.display = (p && (p.tipo === 'chat' || (adminHistoricoGeral && p.tipo =
 }
 
 function copiarProntuario() {
-navigator.clipboard.writeText(montarTextoProntuario()).then(()=>{
+const texto = (modoHistorico && atendimentoAtual?.prontuario_salvo)
+? atendimentoAtual.prontuario_salvo
+: montarTextoProntuario();
+navigator.clipboard.writeText(texto).then(()=>{
 const btn=document.getElementById('btn-copiar'); btn.classList.add('copied'); btn.textContent='✓ Copiado!';
 mostrarToast('Prontuário copiado!','success'); setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Copiar texto';},3000);
 });
