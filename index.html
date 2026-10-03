@@ -1585,6 +1585,10 @@ body.app-autenticado .bg-mesh{display:none}
       <label for="editar-paciente-cpf">CPF</label>
       <input class="modal-input" id="editar-paciente-cpf" type="text" maxlength="14" inputmode="numeric" autocomplete="off" oninput="mascararCpfEdicao(this)">
     </div>
+    <div class="modal-field">
+      <label for="editar-paciente-nascimento">Data de nascimento</label>
+      <input class="modal-input" id="editar-paciente-nascimento" type="date">
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="fecharModalEditarPaciente()">Cancelar</button>
       <button class="btn-confirm" id="btn-salvar-paciente" onclick="salvarEdicaoPaciente()">Salvar dados</button>
@@ -3732,8 +3736,10 @@ const p=atendimentoAtual;
 if(!p){ mostrarToast('Nenhum atendimento selecionado.','error'); return; }
 const nomeInput=document.getElementById('editar-paciente-nome');
 const cpfInput=document.getElementById('editar-paciente-cpf');
+const nascimentoInput=document.getElementById('editar-paciente-nascimento');
 nomeInput.value=p.nome||'';
 cpfInput.value=formatarCpfEdicao(p.cpf||'');
+nascimentoInput.value=String(p.data_nascimento||'').slice(0,10);
 document.getElementById('modal-editar-paciente').classList.add('open');
 setTimeout(()=>nomeInput.focus(),50);
 }
@@ -3747,25 +3753,27 @@ const p=atendimentoAtual;
 if(!p) return;
 const nome=document.getElementById('editar-paciente-nome').value.trim().replace(/\s+/g,' ');
 const cpf=document.getElementById('editar-paciente-cpf').value.replace(/\D/g,'');
+const data_nascimento=document.getElementById('editar-paciente-nascimento').value;
 if(nome.length<3){ mostrarToast('Informe o nome completo do paciente.','error'); return; }
 if(cpf.length!==11){ mostrarToast('Informe um CPF válido com 11 dígitos.','error'); return; }
+if(!data_nascimento){ mostrarToast('Informe a data de nascimento do paciente.','error'); return; }
 
 const btn=document.getElementById('btn-salvar-paciente');
 btn.disabled=true; btn.textContent='Salvando...';
 try {
   const d=await apiFetch('/api/atendimento/atualizar-paciente',{
     method:'POST',
-    json:{filaId:p.id,nome,cpf}
+    json:{filaId:p.id,nome,cpf,data_nascimento}
   });
   if(!d.ok){ mostrarToast(d.error||'Não foi possível atualizar o paciente.','error'); return; }
 
-  Object.assign(p,d.atendimento||{nome,cpf});
+  Object.assign(p,d.atendimento||{nome,cpf,data_nascimento});
   const filaItem=filaData.find(item=>String(item.id)===String(p.id));
-  if(filaItem&&filaItem!==p) Object.assign(filaItem,d.atendimento||{nome,cpf});
+  if(filaItem&&filaItem!==p) Object.assign(filaItem,d.atendimento||{nome,cpf,data_nascimento});
   const histItem=histData.find(item=>String(item.id)===String(p.id));
-  if(histItem&&histItem!==p) Object.assign(histItem,d.atendimento||{nome,cpf});
+  if(histItem&&histItem!==p) Object.assign(histItem,d.atendimento||{nome,cpf,data_nascimento});
   const histGeralItem=histGeralCache&&histGeralCache[String(p.id)];
-  if(histGeralItem&&histGeralItem!==p) Object.assign(histGeralItem,d.atendimento||{nome,cpf});
+  if(histGeralItem&&histGeralItem!==p) Object.assign(histGeralItem,d.atendimento||{nome,cpf,data_nascimento});
 
   if(slotAtivo===0) sessionStorage.setItem('atendimentoAtual',JSON.stringify(p));
   renderPainelAtendimento();
@@ -3775,7 +3783,7 @@ try {
     try { await configurarPacienteMemed(); } catch(e) { console.warn('[MEMED] Não foi possível atualizar paciente já carregado:',e); }
   }
   fecharModalEditarPaciente();
-  mostrarToast('Nome e CPF atualizados. A Memed usará os novos dados.','success');
+  mostrarToast('Nome, CPF e nascimento atualizados. A Memed usará os novos dados.','success');
 } catch(e) {
   mostrarToast('Erro ao atualizar dados do paciente.','error');
 } finally {
