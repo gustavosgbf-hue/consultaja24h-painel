@@ -4587,6 +4587,11 @@ const q=(document.getElementById('hist-busca')?.value||'').toLowerCase().trim();
 const lista=q?histData.filter(a=>(a.nome||'').toLowerCase().includes(q)||(a.cpf||'').includes(q)||(a.tel||'').includes(q)):histData;
 if (!lista.length) { container.innerHTML='<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
 container.innerHTML=lista.map((a)=>{
+if(a.historico_recuperado){
+  const inicio=String(a.periodo_inicio||'').slice(0,10).split('-').reverse().join('/');
+  const fim=String(a.periodo_fim||'').slice(0,10).split('-').reverse().join('/');
+  return `<div class="hist-card" style="cursor:default"><div class="hist-card-nome">${escHtml(a.nome||'-')}</div><div class="hist-card-meta">Atendimento histórico recuperado · ${escHtml(inicio)} a ${escHtml(fim)}<br>Registro anterior à recuperação do banco. Sem prontuário digital disponível.</div></div>`;
+}
 const encerrado=a.encerrado_em?new Date(a.encerrado_em).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'-';
 const tipo=a.tipo||'chat', tipoIcon=tipo==='video'?'🎥':'💬', temPront=!!a.prontuario_salvo;
 return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${Number(a.id)||0})"><div class="hist-card-nome">${escHtml(a.nome||'-')}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${escHtml(encerrado)}<br>CPF: ${escHtml(a.cpf||'-')} · Tel.: ${escHtml(a.tel||'-')}</div>${temPront?'<div class="hist-card-pront-badge">📄 Prontuário salvo</div>':''}</div>`;
