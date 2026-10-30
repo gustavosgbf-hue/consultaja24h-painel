@@ -2088,7 +2088,7 @@ function getToken() { return localStorage.getItem('token')||''; }
 let agendInterval = null;
 function toggleAdminField() { const f=document.getElementById('field-admin-pwd'); f.style.display=f.style.display==='none'?'block':'none'; }
 function isAdminAtual() {
-return String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com'||!!sessionStorage.getItem('adminPwd');
+return String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com';
 }
 function podeEditarEscalaPrioridade() {
   const email=String(medico?.email||'').trim().toLowerCase();
