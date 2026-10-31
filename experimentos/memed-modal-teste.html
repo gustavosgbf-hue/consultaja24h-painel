@@ -1289,6 +1289,28 @@ body.app-autenticado .bg-mesh{display:none}
 #memed-modal-topo .memed-pip-actions{gap:3px}
 }
 
+
+/* Memed floating window polish - controls and resize/drag handles */
+#memed-modal-topo{height:42px!important;min-height:42px!important;padding:0 9px!important;gap:8px;background:#0d211a!important}
+#memed-pip-grip{touch-action:none;cursor:grab!important}
+#memed-pip-grip:active{cursor:grabbing!important}
+#memed-modal-topo .memed-pip-left{display:flex;align-items:center;gap:8px;min-width:0}
+#memed-modal-topo .memed-pip-brand{font:600 12px Inter,sans-serif;letter-spacing:.015em;color:#d7e7dc;white-space:nowrap}
+#memed-modal-topo .memed-pip-actions{display:flex;align-items:center;gap:4px}
+#memed-modal-topo .memed-pip-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;min-width:34px;border:0!important;border-radius:9px;background:transparent!important;color:#c2d6cb;cursor:pointer;padding:7px;transition:background .16s,color .16s}
+#memed-modal-topo .memed-pip-icon:hover,#memed-modal-topo .memed-pip-icon:focus-visible{background:rgba(133,224,174,.13)!important;color:#a4ffc6;outline:none}
+#memed-modal-topo .memed-pip-icon:active{background:rgba(133,224,174,.22)!important}
+#memed-pip-resize{position:absolute;top:0;left:0;width:27px;height:27px;transform:translate(-4px,-4px);display:none;align-items:center;justify-content:center;border-radius:9px;border:1px solid rgba(133,224,174,.32);background:#133c2b;color:#a4f6c4;z-index:5;touch-action:none;cursor:nwse-resize;padding:4px;box-shadow:0 3px 10px #0006}
+#memed-modal-experimental.pip #memed-modal-janela{position:relative;transform:translate(var(--memed-pip-x,0px),var(--memed-pip-y,0px));width:min(var(--memed-pip-width,390px),calc(100vw - 24px))!important;height:min(var(--memed-pip-height,500px),calc(100dvh - 110px))!important}
+#memed-modal-experimental.pip #memed-pip-resize{display:flex}
+#memed-modal-experimental:not(.pip) #memed-pip-grip{opacity:.55}
+@media(max-width:851px){
+#memed-modal-topo{height:40px!important;min-height:40px!important}
+#memed-modal-topo .memed-pip-icon{width:32px;height:32px;min-width:32px;padding:6px}
+#memed-modal-topo .memed-pip-brand{font-size:11px}
+#memed-modal-experimental.pip #memed-modal-janela{width:min(var(--memed-pip-width,320px),calc(100vw - 20px))!important;height:min(var(--memed-pip-height,380px),calc(100dvh - 105px))!important}
+}
+
 </style>
 
 <link rel="stylesheet" href="/panel-experience-v3.css?v=3">
@@ -4376,14 +4398,66 @@ function memedTesteDesktop(){return true;} // Experimento: container embutido ta
 function prepararMemedTeste(){
   if(!document.getElementById('memed-modal-experimental')){
     const modal=document.createElement('div');modal.id='memed-modal-experimental';
-    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><span>Prescricao · Memed</span><div class="memed-pip-actions"><button type="button" class="memed-pip-btn" id="memed-pip-toggle">PiP</button><button type="button" class="memed-pip-btn" id="memed-pip-min">Recolher</button><button type="button" id="memed-modal-fechar">Fechar</button></div></div><div id="memed-container-experimental"></div></div>';
+    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><div class="memed-pip-left"><button type="button" id="memed-pip-grip" class="memed-pip-icon" title="Segure e arraste a janela" aria-label="Arrastar janela"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="6" cy="7" r="1.45"/><circle cx="12" cy="7" r="1.45"/><circle cx="18" cy="7" r="1.45"/><circle cx="6" cy="13" r="1.45"/><circle cx="12" cy="13" r="1.45"/><circle cx="18" cy="13" r="1.45"/></svg></button><span class="memed-pip-brand">Memed</span></div><div class="memed-pip-actions"><button type="button" class="memed-pip-icon" id="memed-pip-toggle" title="Alternar janela pequena e grande" aria-label="Alternar tamanho da janela"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 21h5v-5M3 3l7 7M21 21l-7-7"/></svg></button><button type="button" class="memed-pip-icon" id="memed-pip-min" title="Recolher para continuar no chat" aria-label="Recolher prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 15h8"/></svg></button><button type="button" class="memed-pip-icon" id="memed-modal-fechar" title="Fechar prescrição" aria-label="Fechar prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div></div><div id="memed-container-experimental"></div><button type="button" id="memed-pip-resize" aria-label="Arrastar para redimensionar janela" title="Arraste para ajustar o tamanho"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M19 5L5 19M11 19H5v-6M13 5h6v6"/></svg></button></div>';
     document.body.appendChild(modal);
     modal.querySelector('#memed-modal-fechar').addEventListener('click',fecharMemedDrawer);
     modal.querySelector('#memed-pip-toggle').addEventListener('click',alternarMemedPip);
     modal.querySelector('#memed-pip-min').addEventListener('click',recolherMemedPip);
+    inicializarInteracaoJanelaMemed(modal);
     const restore=document.createElement('button');restore.id='memed-pip-restore';restore.type='button';restore.textContent='✚ Reabrir receita';restore.addEventListener('click',restaurarMemedPip);document.body.appendChild(restore);
   }
   return true;
+}
+
+
+function inicializarInteracaoJanelaMemed(modal){
+  // Pointer events work for touch and mouse. Only interact with dedicated handles,
+  // never the Memed iframe, so form gestures stay untouched.
+  const janela=modal.querySelector('#memed-modal-janela');
+  function iniciar(handle,mode){
+    handle.addEventListener('pointerdown',e=>{
+      if(!modal.classList.contains('pip'))return;
+      if(e.button!==undefined&&e.button!==0)return;
+      e.preventDefault();
+      const startX=e.clientX,startY=e.clientY;
+      const originX=Number(modal.style.getPropertyValue('--memed-pip-x').replace('px',''))||0;
+      const originY=Number(modal.style.getPropertyValue('--memed-pip-y').replace('px',''))||0;
+      const width=janela.getBoundingClientRect().width;
+      const height=janela.getBoundingClientRect().height;
+      const maxW=Math.max(230,window.innerWidth-20);
+      const maxH=Math.max(240,window.innerHeight-105);
+      const pointer=e.pointerId;
+      try{handle.setPointerCapture(pointer)}catch(_){}
+      function mover(ev){
+        if(ev.pointerId!==pointer)return;
+        const dx=ev.clientX-startX,dy=ev.clientY-startY;
+        if(mode==='resize'){
+          const w=Math.max(230,Math.min(maxW,width-dx));
+          const h=Math.max(240,Math.min(maxH,height-dy));
+          modal.style.setProperty('--memed-pip-width',w+'px');
+          modal.style.setProperty('--memed-pip-height',h+'px');
+        }else{
+          // Keep the floating window within the visible screen.
+          const x=Math.max(-window.innerWidth+width+8,Math.min(0,originX+dx));
+          const y=Math.max(-window.innerHeight+height+75,Math.min(0,originY+dy));
+          modal.style.setProperty('--memed-pip-x',x+'px');
+          modal.style.setProperty('--memed-pip-y',y+'px');
+        }
+      }
+      function terminar(ev){
+        if(ev.pointerId!==pointer)return;
+        handle.removeEventListener('pointermove',mover);
+        handle.removeEventListener('pointerup',terminar);
+        handle.removeEventListener('pointercancel',terminar);
+        try{handle.releasePointerCapture(pointer)}catch(_){}
+      }
+      handle.addEventListener('pointermove',mover);
+      handle.addEventListener('pointerup',terminar);
+      handle.addEventListener('pointercancel',terminar);
+    });
+  }
+  iniciar(modal.querySelector('#memed-pip-grip'),'move');
+  iniciar(modal.querySelector('#memed-pip-resize'),'resize');
 }
 
 function alternarMemedPip(){
@@ -4391,14 +4465,14 @@ function alternarMemedPip(){
   if(!m)return;
   const on=m.classList.toggle('pip');
   m.classList.remove('recolhido');
-  document.getElementById('memed-pip-toggle').textContent=on?'Expandir':'PiP';
+  document.getElementById('memed-pip-toggle').setAttribute('aria-label',on?'Expandir prescrição':'Reduzir para PiP');
   document.getElementById('memed-pip-restore')?.classList.remove('visivel');
   document.body.classList.toggle('memed-aberto',!on);
 }
 function recolherMemedPip(){
   const m=document.getElementById('memed-modal-experimental');if(!m)return;
   m.classList.add('pip','recolhido');
-  document.getElementById('memed-pip-toggle').textContent='Expandir';
+  document.getElementById('memed-pip-toggle').setAttribute('aria-label','Expandir prescrição');
   document.getElementById('memed-pip-restore')?.classList.add('visivel');
   document.body.classList.remove('memed-aberto');
 }
@@ -4412,7 +4486,7 @@ function restaurarMemedPip(){
 function fecharMemedDrawer() {
   document.getElementById('memed-modal-experimental')?.classList.remove('ativo','pip','recolhido');
   document.getElementById('memed-pip-restore')?.classList.remove('visivel');
-  const pipToggle=document.getElementById('memed-pip-toggle');if(pipToggle)pipToggle.textContent='PiP';
+  const pipToggle=document.getElementById('memed-pip-toggle');if(pipToggle)pipToggle.setAttribute('aria-label','Reduzir para PiP');
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
