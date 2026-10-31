@@ -4533,6 +4533,7 @@ function ajustarMemedOrientacao(){
   // O SDK precisa receber uma área larga real para revelar os controles desktop.
   m.classList.toggle('memed-landscape',landscape&&active);
   if(landscape&&active){
+    if(!m.classList.contains('memed-landscape'))m.dataset.pipAntesPaisagem=m.classList.contains('pip')?'1':'0';
     m.classList.remove('pip');
     document.body.classList.add('memed-aberto');
     m.style.removeProperty('--memed-pip-x');
