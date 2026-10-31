@@ -1253,14 +1253,23 @@ body.app-autenticado .bg-mesh{display:none}
 @media(prefers-reduced-motion:reduce){.atend-header,.triagem-box,.chat-medico-wrap,.cj-panel-skeleton__bar:after,.cj-panel-skeleton__card:after{animation:none!important}.sidebar-inner button,.nav button,.tab{transition:none!important}}
 
 
-/* EXPERIMENTO MEMED: somente desktop; nao altera API nem prontuario */
+/* EXPERIMENTO MEMED: modal responsivo isolado; nao altera API nem prontuario */
 #memed-modal-experimental{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:16px}
 #memed-modal-experimental.ativo{display:flex}
 #memed-modal-janela{width:min(1120px,calc(100vw - 32px));height:min(860px,calc(100dvh - 32px));min-width:820px;min-height:700px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 80px #0009;display:flex;flex-direction:column}
 #memed-modal-topo{height:44px;flex:none;background:#0d1f18;color:#e7ebe9;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font:600 13px Inter,sans-serif}
 #memed-modal-fechar{border:1px solid #ffffff44;background:transparent;color:white;border-radius:8px;padding:6px 12px;cursor:pointer}
 #memed-container-experimental{flex:1;min-height:656px;width:100%;background:#fff}
-@media(max-width:851px), (max-height:731px){#memed-modal-experimental{display:none!important}}
+/* No mobile, preservar o contexto do painel e conter o SDK em uma janela dedicada. */
+@media(max-width:851px), (max-height:731px){
+  #memed-modal-experimental{padding:8px!important;display:none;align-items:center;justify-content:center}
+  #memed-modal-experimental.ativo{display:flex!important}
+  #memed-modal-janela{width:calc(100vw - 16px);max-width:calc(100vw - 16px);min-width:0;height:calc(100dvh - 32px);max-height:calc(100dvh - 32px);min-height:0;border-radius:12px}
+  #memed-modal-topo{height:44px;min-height:44px;padding:0 10px;gap:6px;font-size:11px;z-index:2}
+  #memed-modal-fechar{padding:6px 10px;white-space:nowrap;min-height:30px}
+  #memed-container-experimental{flex:1 1 auto;min-height:0;max-height:calc(100dvh - 76px);overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+}
+
 </style>
 
 <link rel="stylesheet" href="/panel-experience-v3.css?v=3">
@@ -4344,9 +4353,8 @@ function aguardarSdkMemed(timeoutMs = 20000) {
 
 
 // Prototipo isolado: incorpora o SDK somente em telas com espaco minimo.
-function memedTesteDesktop(){return window.innerWidth>=852 && window.innerHeight>=732;}
+function memedTesteDesktop(){return true;} // Experimento: usar container embutido também em telas móveis.
 function prepararMemedTeste(){
-  if(!memedTesteDesktop()) return false;
   if(!document.getElementById('memed-modal-experimental')){
     const modal=document.createElement('div');modal.id='memed-modal-experimental';
     modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><span>Prescricao digital · Memed (teste)</span><button type="button" id="memed-modal-fechar">Fechar</button></div><div id="memed-container-experimental"></div></div>';
@@ -4366,7 +4374,7 @@ function fecharMemedDrawer() {
 }
 
 function abrirMemedDrawer() {
-  if(memedTesteDesktop()) document.getElementById('memed-modal-experimental')?.classList.add('ativo');
+  document.getElementById('memed-modal-experimental')?.classList.add('ativo');
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.add('memed-aberto');
