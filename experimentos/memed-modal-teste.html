@@ -1350,6 +1350,32 @@ body.app-autenticado .bg-mesh{display:none}
 #memed-modal-experimental:not(.pip) #memed-pip-grip{width:27px!important;min-width:27px!important}
 #memed-pip-restore{background:#12291f!important;border:1px solid rgba(172,225,193,.36)!important;color:#dcefe3!important;font-weight:600!important}
 
+
+/* Prescrição experimental: acabamento neutro e largura útil em landscape */
+#memed-modal-topo,#memed-modal-experimental.pip #memed-modal-topo{background:#121b1a!important;color:#e8efed!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
+#memed-modal-topo .memed-pip-brand{font-size:12px!important;font-weight:600!important;color:#e8efed!important;letter-spacing:0!important}
+#memed-modal-topo .memed-pip-icon{color:#bbc9c4!important}
+#memed-modal-topo .memed-pip-icon:hover{background:rgba(255,255,255,.09)!important;color:white!important}
+#memed-modal-experimental.pip #memed-modal-janela{border:1px solid rgba(185,203,195,.24)!important;box-shadow:0 16px 40px rgba(0,0,0,.38)!important}
+#memed-modal-experimental.pip #memed-pip-resize{background:#202e29!important;color:#c5d5cb!important}
+#memed-modal-topo{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#memed-modal-topo:active{cursor:grabbing}
+#memed-modal-topo button{cursor:pointer}
+#memed-modal-experimental:not(.pip) #memed-modal-topo{cursor:default;touch-action:auto}
+#memed-modal-experimental:not(.pip) #memed-pip-grip{cursor:default!important}
+#memed-modal-experimental.memed-landscape #memed-modal-janela{
+  width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;
+  height:calc(100dvh - 14px)!important;max-height:calc(100dvh - 14px)!important;
+  min-width:0!important;min-height:0!important;transform:none!important;border-radius:12px!important
+}
+#memed-modal-experimental.memed-landscape{padding:7px!important;align-items:center!important;justify-content:center!important}
+#memed-modal-experimental.memed-landscape #memed-container-experimental{min-height:0!important;flex:1 1 auto!important;overflow:auto!important}
+#memed-modal-experimental.memed-landscape #memed-pip-resize{display:none!important}
+@media (orientation:landscape) and (max-height:550px){
+  #memed-modal-experimental.ativo:not(.recolhido){display:flex!important}
+  #memed-modal-experimental.memed-landscape #memed-modal-topo{height:36px!important;min-height:36px!important}
+}
+
 </style>
 
 <link rel="stylesheet" href="/panel-experience-v3.css?v=3">
@@ -4437,7 +4463,7 @@ function memedTesteDesktop(){return true;} // Experimento: container embutido ta
 function prepararMemedTeste(){
   if(!document.getElementById('memed-modal-experimental')){
     const modal=document.createElement('div');modal.id='memed-modal-experimental';
-    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><div class="memed-pip-left"><button type="button" id="memed-pip-grip" class="memed-pip-icon" title="Segure e arraste a janela" aria-label="Arrastar janela"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="6" cy="7" r="1.45"/><circle cx="12" cy="7" r="1.45"/><circle cx="18" cy="7" r="1.45"/><circle cx="6" cy="13" r="1.45"/><circle cx="12" cy="13" r="1.45"/><circle cx="18" cy="13" r="1.45"/></svg></button><span class="memed-pip-brand">Memed</span></div><div class="memed-pip-actions"><button type="button" class="memed-pip-icon" id="memed-pip-toggle" title="Alternar janela pequena e grande" aria-label="Alternar tamanho da janela"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 21h5v-5M3 3l7 7M21 21l-7-7"/></svg></button><button type="button" class="memed-pip-icon" id="memed-pip-min" title="Recolher para continuar no chat" aria-label="Recolher prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 15h8"/></svg></button><button type="button" class="memed-pip-icon" id="memed-modal-fechar" title="Fechar prescrição" aria-label="Fechar prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div></div><div id="memed-container-experimental"></div><button type="button" id="memed-pip-resize" aria-label="Arrastar para redimensionar janela" title="Arraste para ajustar o tamanho"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M19 5L5 19M11 19H5v-6M13 5h6v6"/></svg></button></div>';
+    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><div class="memed-pip-left"><button type="button" id="memed-pip-grip" class="memed-pip-icon" title="Segure e arraste a janela" aria-label="Arrastar janela"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="6" cy="7" r="1.45"/><circle cx="12" cy="7" r="1.45"/><circle cx="18" cy="7" r="1.45"/><circle cx="6" cy="13" r="1.45"/><circle cx="12" cy="13" r="1.45"/><circle cx="18" cy="13" r="1.45"/></svg></button><span class="memed-pip-brand">Prescrição</span></div><div class="memed-pip-actions"><button type="button" class="memed-pip-icon" id="memed-pip-toggle" title="Alternar janela pequena e grande" aria-label="Alternar tamanho da janela"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 21h5v-5M3 3l7 7M21 21l-7-7"/></svg></button><button type="button" class="memed-pip-icon" id="memed-pip-min" title="Recolher para continuar no chat" aria-label="Recolher prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 15h8"/></svg></button><button type="button" class="memed-pip-icon" id="memed-modal-fechar" title="Fechar prescrição" aria-label="Fechar prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div></div><div id="memed-container-experimental"></div><button type="button" id="memed-pip-resize" aria-label="Arrastar para redimensionar janela" title="Arraste para ajustar o tamanho"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M19 5L5 19M11 19H5v-6M13 5h6v6"/></svg></button></div>';
     document.body.appendChild(modal);
     modal.querySelector('#memed-modal-fechar').addEventListener('click',fecharMemedDrawer);
     modal.querySelector('#memed-pip-toggle').addEventListener('click',alternarMemedPip);
@@ -4455,7 +4481,8 @@ function inicializarInteracaoJanelaMemed(modal){
   const janela=modal.querySelector('#memed-modal-janela');
   function iniciar(handle,mode){
     handle.addEventListener('pointerdown',e=>{
-      if(!modal.classList.contains('pip'))return;
+      if(!modal.classList.contains('pip') || modal.classList.contains('memed-landscape'))return;
+      if(mode==='move' && e.target.closest('button'))return;
       if(e.button!==undefined&&e.button!==0)return;
       e.preventDefault();
       const startX=e.clientX,startY=e.clientY;
@@ -4495,9 +4522,29 @@ function inicializarInteracaoJanelaMemed(modal){
       handle.addEventListener('pointercancel',terminar);
     });
   }
-  iniciar(modal.querySelector('#memed-pip-grip'),'move');
+  iniciar(modal.querySelector('#memed-modal-topo'),'move');
   iniciar(modal.querySelector('#memed-pip-resize'),'resize');
 }
+
+function ajustarMemedOrientacao(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  const landscape=window.innerWidth>window.innerHeight && window.innerHeight<=550;
+  const active=m.classList.contains('ativo')&&!m.classList.contains('recolhido');
+  // O SDK precisa receber uma área larga real para revelar os controles desktop.
+  m.classList.toggle('memed-landscape',landscape&&active);
+  if(landscape&&active){
+    m.classList.remove('pip');
+    document.body.classList.add('memed-aberto');
+    m.style.removeProperty('--memed-pip-x');
+    m.style.removeProperty('--memed-pip-y');
+  }else if(active && m.dataset.pipAntesPaisagem==='1'){
+    m.classList.add('pip');
+    document.body.classList.remove('memed-aberto');
+  }
+  if(!landscape)m.dataset.pipAntesPaisagem=m.classList.contains('pip')?'1':'0';
+}
+window.addEventListener('resize',ajustarMemedOrientacao,{passive:true});
+window.addEventListener('orientationchange',()=>requestAnimationFrame(ajustarMemedOrientacao));
 
 function alternarMemedPip(){
   const m=document.getElementById('memed-modal-experimental');
@@ -4507,6 +4554,7 @@ function alternarMemedPip(){
   document.getElementById('memed-pip-toggle').setAttribute('aria-label',on?'Expandir prescrição':'Reduzir para PiP');
   document.getElementById('memed-pip-restore')?.classList.remove('visivel');
   document.body.classList.toggle('memed-aberto',!on);
+  ajustarMemedOrientacao();
 }
 function recolherMemedPip(){
   const m=document.getElementById('memed-modal-experimental');if(!m)return;
@@ -4529,6 +4577,7 @@ function fecharMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
+  document.getElementById('memed-modal-experimental')?.classList.remove('memed-landscape');
   try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
   setMemedCarregando(false);
 }
@@ -4540,6 +4589,7 @@ function abrirMemedDrawer() {
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.add('memed-aberto');
+  ajustarMemedOrientacao();
 }
 
 async function aguardarComandoMemed(promessa, etapa, timeoutMs = 2500) {
