@@ -1252,6 +1252,129 @@ body.app-autenticado .bg-mesh{display:none}
 @media(max-width:768px){.cj-panel-skeleton{padding:14px 10px 80px}.sidebar-inner{scroll-behavior:smooth}.sidebar-title{min-height:34px}.sidebar-title-icon{width:14px;height:14px}}
 @media(prefers-reduced-motion:reduce){.atend-header,.triagem-box,.chat-medico-wrap,.cj-panel-skeleton__bar:after,.cj-panel-skeleton__card:after{animation:none!important}.sidebar-inner button,.nav button,.tab{transition:none!important}}
 
+/* MEMED: visual validado em ambiente experimental; apenas interface */
+#memed-modal-experimental{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:16px}
+#memed-modal-experimental.ativo{display:flex}
+#memed-modal-janela{width:min(1120px,calc(100vw - 32px));height:min(860px,calc(100dvh - 32px));min-width:820px;min-height:700px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 80px #0009;display:flex;flex-direction:column}
+#memed-modal-topo{height:44px;flex:none;background:#0d1f18;color:#e7ebe9;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font:600 13px Inter,sans-serif}
+#memed-modal-fechar{border:1px solid #ffffff44;background:transparent;color:white;border-radius:8px;padding:6px 12px;cursor:pointer}
+#memed-container-experimental{flex:1;min-height:656px;width:100%;background:#fff}
+/* Mobile: bottom-sheet compacta com scroll interno; não forçar fullscreen do SDK. */
+@media (max-width:851px), (max-height:731px) {
+  #memed-modal-experimental { padding:8px!important;align-items:flex-end;justify-content:center;display:none;overscroll-behavior:contain }
+  #memed-modal-experimental.ativo { display:flex!important }
+  #memed-modal-janela { width:100%;max-width:100%;min-width:0;min-height:0;height:min(76dvh,760px);max-height:calc(100dvh - 78px);border-radius:16px 16px 12px 12px }
+  #memed-modal-topo { height:46px;min-height:46px;z-index:2;font-size:12px;gap:8px;padding:0 12px }
+  #memed-modal-fechar { padding:7px 12px;min-height:34px;white-space:nowrap }
+  #memed-container-experimental { flex:1 1 auto;min-height:0;height:auto;width:100%;max-width:100%;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch }
+  #memed-container-experimental iframe { display:block;max-width:100%!important;width:100%!important;min-width:0!important }
+}
+
+
+/* Memed PiP experimental: frame flutuante no mesmo DOM, sem recriar o SDK */
+#memed-modal-experimental.pip{background:transparent!important;pointer-events:none!important;align-items:flex-end!important;justify-content:flex-end!important;padding:12px!important}
+#memed-modal-experimental.pip #memed-modal-janela{pointer-events:auto!important;width:min(390px,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important;min-width:0!important;height:min(500px,65dvh)!important;min-height:0!important;max-height:65dvh!important;border:1px solid rgba(98,197,138,.45);box-shadow:0 8px 40px #000b;border-radius:15px}
+#memed-modal-experimental.pip #memed-container-experimental{min-height:0!important;overflow:auto!important}
+#memed-modal-experimental.pip.recolhido #memed-modal-janela{visibility:hidden!important;pointer-events:none!important;opacity:0!important}
+#memed-pip-restore{display:none;position:fixed;bottom:calc(92px + env(safe-area-inset-bottom,0px));right:14px;z-index:10000;background:#0d291e;color:#d9fce9;border:1px solid #62c58a;border-radius:999px;padding:12px 16px;font:700 13px Inter,sans-serif;box-shadow:0 7px 26px #0009;cursor:pointer}
+#memed-pip-restore.visivel{display:block}
+#memed-modal-topo .memed-pip-actions{display:flex;align-items:center;gap:5px}
+#memed-modal-topo .memed-pip-btn{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font:600 11px Inter,sans-serif;white-space:nowrap}
+@media(max-width:851px){
+#memed-modal-experimental.pip{padding:8px!important}
+#memed-modal-experimental.pip #memed-modal-janela{width:min(320px,calc(100vw - 20px))!important;max-width:calc(100vw - 20px)!important;height:min(380px,51dvh)!important;max-height:51dvh!important}
+#memed-modal-topo{font-size:11px!important;padding:0 7px!important}
+#memed-modal-topo .memed-pip-btn{padding:6px;font-size:10px}
+#memed-modal-topo .memed-pip-actions{gap:3px}
+}
+
+
+/* Memed floating window polish - controls and resize/drag handles */
+#memed-modal-topo{height:42px!important;min-height:42px!important;padding:0 9px!important;gap:8px;background:#0d211a!important}
+#memed-pip-grip{touch-action:none;cursor:grab!important}
+#memed-pip-grip:active{cursor:grabbing!important}
+#memed-modal-topo .memed-pip-left{display:flex;align-items:center;gap:8px;min-width:0}
+#memed-modal-topo .memed-pip-brand{font:600 12px Inter,sans-serif;letter-spacing:.015em;color:#d7e7dc;white-space:nowrap}
+#memed-modal-topo .memed-pip-actions{display:flex;align-items:center;gap:4px}
+#memed-modal-topo .memed-pip-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;min-width:34px;border:0!important;border-radius:9px;background:transparent!important;color:#c2d6cb;cursor:pointer;padding:7px;transition:background .16s,color .16s}
+#memed-modal-topo .memed-pip-icon:hover,#memed-modal-topo .memed-pip-icon:focus-visible{background:rgba(133,224,174,.13)!important;color:#a4ffc6;outline:none}
+#memed-modal-topo .memed-pip-icon:active{background:rgba(133,224,174,.22)!important}
+#memed-pip-resize{position:absolute;top:0;left:0;width:27px;height:27px;transform:translate(-4px,-4px);display:none;align-items:center;justify-content:center;border-radius:9px;border:1px solid rgba(133,224,174,.32);background:#133c2b;color:#a4f6c4;z-index:5;touch-action:none;cursor:nwse-resize;padding:4px;box-shadow:0 3px 10px #0006}
+#memed-modal-experimental.pip #memed-modal-janela{position:relative;transform:translate(var(--memed-pip-x,0px),var(--memed-pip-y,0px));width:min(var(--memed-pip-width,390px),calc(100vw - 24px))!important;height:min(var(--memed-pip-height,500px),calc(100dvh - 110px))!important;max-height:calc(100dvh - 110px)!important}
+#memed-modal-experimental.pip #memed-pip-resize{display:flex}
+#memed-modal-experimental:not(.pip) #memed-pip-grip{opacity:.55}
+@media(max-width:851px){
+#memed-modal-topo{height:40px!important;min-height:40px!important}
+#memed-modal-topo .memed-pip-icon{width:32px;height:32px;min-width:32px;padding:6px}
+#memed-modal-topo .memed-pip-brand{font-size:11px}
+#memed-modal-experimental.pip #memed-modal-janela{width:min(var(--memed-pip-width,320px),calc(100vw - 20px))!important;height:min(var(--memed-pip-height,380px),calc(100dvh - 105px))!important;max-height:calc(100dvh - 105px)!important}
+}
+
+
+/* Refinamento visual 2026-10-31: janela flutuante discreta */
+#memed-modal-experimental.pip #memed-modal-janela{
+  border:1px solid rgba(201,229,211,.20)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.42),0 2px 9px rgba(0,0,0,.16)!important;
+  border-radius:19px!important;
+}
+#memed-modal-experimental.pip #memed-modal-topo{
+  background:#10241c!important;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+#memed-modal-topo .memed-pip-brand{
+  font-size:11px!important;
+  font-weight:500!important;
+  color:rgba(231,244,237,.77)!important;
+  letter-spacing:.02em!important;
+}
+#memed-modal-topo .memed-pip-left{gap:3px!important}
+#memed-modal-topo .memed-pip-actions{gap:2px!important}
+#memed-modal-topo .memed-pip-icon{color:#a8c3b4!important;border-radius:10px!important}
+#memed-modal-topo #memed-modal-fechar{color:#b8c6be!important}
+#memed-modal-topo .memed-pip-icon svg{width:17px;height:17px}
+#memed-modal-experimental.pip #memed-pip-resize{
+  top:0!important;left:0!important;
+  transform:translate(-2px,-2px)!important;
+  width:20px!important;height:20px!important;
+  border:0!important;border-radius:0 0 9px 0!important;
+  box-shadow:none!important;
+  background:rgba(27,63,46,.94)!important;
+  color:#89bfa3!important;padding:3px!important;
+  opacity:.82;
+}
+#memed-modal-experimental.pip #memed-pip-resize svg{width:13px;height:13px}
+#memed-modal-experimental.pip #memed-modal-topo .memed-pip-left{padding-left:16px}
+#memed-modal-experimental.pip #memed-pip-grip{width:27px!important;min-width:27px!important;padding:5px!important;opacity:.65}
+#memed-modal-experimental.pip #memed-pip-grip svg{width:16px;height:16px}
+#memed-modal-experimental:not(.pip) #memed-pip-grip{width:27px!important;min-width:27px!important}
+#memed-pip-restore{background:#12291f!important;border:1px solid rgba(172,225,193,.36)!important;color:#dcefe3!important;font-weight:600!important}
+
+
+/* Prescrição experimental: acabamento neutro e largura útil em landscape */
+#memed-modal-topo,#memed-modal-experimental.pip #memed-modal-topo{background:#121b1a!important;color:#e8efed!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
+#memed-modal-topo .memed-pip-brand{font-size:12px!important;font-weight:600!important;color:#e8efed!important;letter-spacing:0!important}
+#memed-modal-topo .memed-pip-icon{color:#bbc9c4!important}
+#memed-modal-topo .memed-pip-icon:hover{background:rgba(255,255,255,.09)!important;color:white!important}
+#memed-modal-experimental.pip #memed-modal-janela{border:1px solid rgba(185,203,195,.24)!important;box-shadow:0 16px 40px rgba(0,0,0,.38)!important}
+#memed-modal-experimental.pip #memed-pip-resize{background:#202e29!important;color:#c5d5cb!important}
+#memed-modal-topo{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#memed-modal-topo:active{cursor:grabbing}
+#memed-modal-topo button{cursor:pointer}
+#memed-modal-experimental:not(.pip) #memed-modal-topo{cursor:default;touch-action:auto}
+#memed-modal-experimental:not(.pip) #memed-pip-grip{cursor:default!important}
+#memed-modal-experimental.memed-landscape #memed-modal-janela{
+  width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;
+  height:calc(100dvh - 14px)!important;max-height:calc(100dvh - 14px)!important;
+  min-width:0!important;min-height:0!important;transform:none!important;border-radius:12px!important
+}
+#memed-modal-experimental.memed-landscape{padding:7px!important;align-items:center!important;justify-content:center!important}
+#memed-modal-experimental.memed-landscape #memed-container-experimental{min-height:0!important;flex:1 1 auto!important;overflow:auto!important}
+#memed-modal-experimental.memed-landscape #memed-pip-resize{display:none!important}
+@media (orientation:landscape) and (max-height:550px){
+  #memed-modal-experimental.ativo:not(.recolhido){display:flex!important}
+  #memed-modal-experimental.memed-landscape #memed-modal-topo{height:36px!important;min-height:36px!important}
+}
+
 </style>
 
 <link rel="stylesheet" href="/panel-experience-v3.css?v=3">
@@ -4333,18 +4456,138 @@ function aguardarSdkMemed(timeoutMs = 20000) {
   });
 }
 
+function memedTesteDesktop(){return true;} // Experimento: container embutido também no mobile.
+function prepararMemedTeste(){
+  if(!document.getElementById('memed-modal-experimental')){
+    const modal=document.createElement('div');modal.id='memed-modal-experimental';
+    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><div class="memed-pip-left"><button type="button" id="memed-pip-grip" class="memed-pip-icon" title="Segure e arraste a janela" aria-label="Arrastar janela"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="6" cy="7" r="1.45"/><circle cx="12" cy="7" r="1.45"/><circle cx="18" cy="7" r="1.45"/><circle cx="6" cy="13" r="1.45"/><circle cx="12" cy="13" r="1.45"/><circle cx="18" cy="13" r="1.45"/></svg></button><span class="memed-pip-brand">Prescrição</span></div><div class="memed-pip-actions"><button type="button" class="memed-pip-icon" id="memed-pip-toggle" title="Alternar janela pequena e grande" aria-label="Alternar tamanho da janela"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 21h5v-5M3 3l7 7M21 21l-7-7"/></svg></button><button type="button" class="memed-pip-icon" id="memed-pip-min" title="Recolher para continuar no chat" aria-label="Recolher prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 15h8"/></svg></button><button type="button" class="memed-pip-icon" id="memed-modal-fechar" title="Fechar prescrição" aria-label="Fechar prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div></div><div id="memed-container-experimental"></div><button type="button" id="memed-pip-resize" aria-label="Arrastar para redimensionar janela" title="Arraste para ajustar o tamanho"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M19 5L5 19M11 19H5v-6M13 5h6v6"/></svg></button></div>';
+    document.body.appendChild(modal);
+    modal.querySelector('#memed-modal-fechar').addEventListener('click',fecharMemedDrawer);
+    modal.querySelector('#memed-pip-toggle').addEventListener('click',alternarMemedPip);
+    modal.querySelector('#memed-pip-min').addEventListener('click',recolherMemedPip);
+    inicializarInteracaoJanelaMemed(modal);
+    const restore=document.createElement('button');restore.id='memed-pip-restore';restore.type='button';restore.textContent='✚ Reabrir receita';restore.addEventListener('click',restaurarMemedPip);document.body.appendChild(restore);
+  }
+  return true;
+}
+
+
+function inicializarInteracaoJanelaMemed(modal){
+  // Pointer events work for touch and mouse. Only interact with dedicated handles,
+  // never the Memed iframe, so form gestures stay untouched.
+  const janela=modal.querySelector('#memed-modal-janela');
+  function iniciar(handle,mode){
+    handle.addEventListener('pointerdown',e=>{
+      if(!modal.classList.contains('pip') || modal.classList.contains('memed-landscape'))return;
+      if(mode==='move' && e.target.closest('button'))return;
+      if(e.button!==undefined&&e.button!==0)return;
+      e.preventDefault();
+      const startX=e.clientX,startY=e.clientY;
+      const originX=Number(modal.style.getPropertyValue('--memed-pip-x').replace('px',''))||0;
+      const originY=Number(modal.style.getPropertyValue('--memed-pip-y').replace('px',''))||0;
+      const width=janela.getBoundingClientRect().width;
+      const height=janela.getBoundingClientRect().height;
+      const maxW=Math.max(230,window.innerWidth-20);
+      const maxH=Math.max(240,window.innerHeight-105);
+      const pointer=e.pointerId;
+      try{handle.setPointerCapture(pointer)}catch(_){}
+      function mover(ev){
+        if(ev.pointerId!==pointer)return;
+        const dx=ev.clientX-startX,dy=ev.clientY-startY;
+        if(mode==='resize'){
+          const w=Math.max(230,Math.min(maxW,width-dx));
+          const h=Math.max(240,Math.min(maxH,height-dy));
+          modal.style.setProperty('--memed-pip-width',w+'px');
+          modal.style.setProperty('--memed-pip-height',h+'px');
+        }else{
+          // Keep the floating window within the visible screen.
+          const x=Math.max(-window.innerWidth+width+8,Math.min(0,originX+dx));
+          const y=Math.max(-window.innerHeight+height+75,Math.min(0,originY+dy));
+          modal.style.setProperty('--memed-pip-x',x+'px');
+          modal.style.setProperty('--memed-pip-y',y+'px');
+        }
+      }
+      function terminar(ev){
+        if(ev.pointerId!==pointer)return;
+        handle.removeEventListener('pointermove',mover);
+        handle.removeEventListener('pointerup',terminar);
+        handle.removeEventListener('pointercancel',terminar);
+        try{handle.releasePointerCapture(pointer)}catch(_){}
+      }
+      handle.addEventListener('pointermove',mover);
+      handle.addEventListener('pointerup',terminar);
+      handle.addEventListener('pointercancel',terminar);
+    });
+  }
+  iniciar(modal.querySelector('#memed-modal-topo'),'move');
+  iniciar(modal.querySelector('#memed-pip-resize'),'resize');
+}
+
+function ajustarMemedOrientacao(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  const landscape=window.innerWidth>window.innerHeight && window.innerHeight<=550;
+  const active=m.classList.contains('ativo')&&!m.classList.contains('recolhido');
+  // O SDK precisa receber uma área larga real para revelar os controles desktop.
+  m.classList.toggle('memed-landscape',landscape&&active);
+  if(landscape&&active){
+    if(!m.classList.contains('memed-landscape'))m.dataset.pipAntesPaisagem=m.classList.contains('pip')?'1':'0';
+    m.classList.remove('pip');
+    document.body.classList.add('memed-aberto');
+    m.style.removeProperty('--memed-pip-x');
+    m.style.removeProperty('--memed-pip-y');
+  }else if(active && m.dataset.pipAntesPaisagem==='1'){
+    m.classList.add('pip');
+    document.body.classList.remove('memed-aberto');
+  }
+  if(!landscape)m.dataset.pipAntesPaisagem=m.classList.contains('pip')?'1':'0';
+}
+window.addEventListener('resize',ajustarMemedOrientacao,{passive:true});
+window.addEventListener('orientationchange',()=>requestAnimationFrame(ajustarMemedOrientacao));
+
+function alternarMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');
+  if(!m)return;
+  const on=m.classList.toggle('pip');
+  m.classList.remove('recolhido');
+  document.getElementById('memed-pip-toggle').setAttribute('aria-label',on?'Expandir prescrição':'Reduzir para PiP');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  document.body.classList.toggle('memed-aberto',!on);
+  ajustarMemedOrientacao();
+}
+function recolherMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  m.classList.add('pip','recolhido');
+  document.getElementById('memed-pip-toggle').setAttribute('aria-label','Expandir prescrição');
+  document.getElementById('memed-pip-restore')?.classList.add('visivel');
+  document.body.classList.remove('memed-aberto');
+}
+function restaurarMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  m.classList.add('ativo','pip');m.classList.remove('recolhido');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  document.body.classList.remove('memed-aberto');
+}
+
 function fecharMemedDrawer() {
+  document.getElementById('memed-modal-experimental')?.classList.remove('ativo','pip','recolhido');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  const pipToggle=document.getElementById('memed-pip-toggle');if(pipToggle)pipToggle.setAttribute('aria-label','Reduzir para PiP');
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
+  document.getElementById('memed-modal-experimental')?.classList.remove('memed-landscape');
   try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
   setMemedCarregando(false);
 }
 
 function abrirMemedDrawer() {
+  const modal=document.getElementById('memed-modal-experimental');
+  modal?.classList.add('ativo');
+  if(modal?.classList.contains('recolhido'))restaurarMemedPip();
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.add('memed-aberto');
+  ajustarMemedOrientacao();
 }
 
 async function aguardarComandoMemed(promessa, etapa, timeoutMs = 2500) {
@@ -4555,6 +4798,7 @@ async function abrirMemed() {
     script.type = 'text/javascript';
     script.setAttribute('data-color', '#b4e05a');
     script.setAttribute('data-token', memedToken);
+    if(prepararMemedTeste()) script.setAttribute('data-container', 'memed-container-experimental');
     script.src = 'https://partners.memed.com.br/integration.js';
 
     script.onload = async () => {
