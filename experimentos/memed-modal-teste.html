@@ -1311,6 +1311,45 @@ body.app-autenticado .bg-mesh{display:none}
 #memed-modal-experimental.pip #memed-modal-janela{width:min(var(--memed-pip-width,320px),calc(100vw - 20px))!important;height:min(var(--memed-pip-height,380px),calc(100dvh - 105px))!important;max-height:calc(100dvh - 105px)!important}
 }
 
+
+/* Refinamento visual 2026-10-31: janela flutuante discreta */
+#memed-modal-experimental.pip #memed-modal-janela{
+  border:1px solid rgba(201,229,211,.20)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.42),0 2px 9px rgba(0,0,0,.16)!important;
+  border-radius:19px!important;
+}
+#memed-modal-experimental.pip #memed-modal-topo{
+  background:#10241c!important;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+#memed-modal-topo .memed-pip-brand{
+  font-size:11px!important;
+  font-weight:500!important;
+  color:rgba(231,244,237,.77)!important;
+  letter-spacing:.02em!important;
+}
+#memed-modal-topo .memed-pip-left{gap:3px!important}
+#memed-modal-topo .memed-pip-actions{gap:2px!important}
+#memed-modal-topo .memed-pip-icon{color:#a8c3b4!important;border-radius:10px!important}
+#memed-modal-topo #memed-modal-fechar{color:#b8c6be!important}
+#memed-modal-topo .memed-pip-icon svg{width:17px;height:17px}
+#memed-modal-experimental.pip #memed-pip-resize{
+  top:0!important;left:0!important;
+  transform:translate(-2px,-2px)!important;
+  width:20px!important;height:20px!important;
+  border:0!important;border-radius:0 0 9px 0!important;
+  box-shadow:none!important;
+  background:rgba(27,63,46,.94)!important;
+  color:#89bfa3!important;padding:3px!important;
+  opacity:.82;
+}
+#memed-modal-experimental.pip #memed-pip-resize svg{width:13px;height:13px}
+#memed-modal-experimental.pip #memed-modal-topo .memed-pip-left{padding-left:16px}
+#memed-modal-experimental.pip #memed-pip-grip{width:27px!important;min-width:27px!important;padding:5px!important;opacity:.65}
+#memed-modal-experimental.pip #memed-pip-grip svg{width:16px;height:16px}
+#memed-modal-experimental:not(.pip) #memed-pip-grip{width:27px!important;min-width:27px!important}
+#memed-pip-restore{background:#12291f!important;border:1px solid rgba(172,225,193,.36)!important;color:#dcefe3!important;font-weight:600!important}
+
 </style>
 
 <link rel="stylesheet" href="/panel-experience-v3.css?v=3">
