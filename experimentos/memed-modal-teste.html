@@ -1271,6 +1271,24 @@ body.app-autenticado .bg-mesh{display:none}
   #memed-container-experimental iframe { display:block;max-width:100%!important;width:100%!important;min-width:0!important }
 }
 
+
+/* Memed PiP experimental: frame flutuante no mesmo DOM, sem recriar o SDK */
+#memed-modal-experimental.pip{background:transparent!important;pointer-events:none!important;align-items:flex-end!important;justify-content:flex-end!important;padding:12px!important}
+#memed-modal-experimental.pip #memed-modal-janela{pointer-events:auto!important;width:min(390px,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important;min-width:0!important;height:min(500px,65dvh)!important;min-height:0!important;max-height:65dvh!important;border:1px solid rgba(98,197,138,.45);box-shadow:0 8px 40px #000b;border-radius:15px}
+#memed-modal-experimental.pip #memed-container-experimental{min-height:0!important;overflow:auto!important}
+#memed-modal-experimental.pip.recolhido #memed-modal-janela{visibility:hidden!important;pointer-events:none!important;opacity:0!important}
+#memed-pip-restore{display:none;position:fixed;bottom:calc(92px + env(safe-area-inset-bottom,0px));right:14px;z-index:10000;background:#0d291e;color:#d9fce9;border:1px solid #62c58a;border-radius:999px;padding:12px 16px;font:700 13px Inter,sans-serif;box-shadow:0 7px 26px #0009;cursor:pointer}
+#memed-pip-restore.visivel{display:block}
+#memed-modal-topo .memed-pip-actions{display:flex;align-items:center;gap:5px}
+#memed-modal-topo .memed-pip-btn{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font:600 11px Inter,sans-serif;white-space:nowrap}
+@media(max-width:851px){
+#memed-modal-experimental.pip{padding:8px!important}
+#memed-modal-experimental.pip #memed-modal-janela{width:min(320px,calc(100vw - 20px))!important;max-width:calc(100vw - 20px)!important;height:min(380px,51dvh)!important;max-height:51dvh!important}
+#memed-modal-topo{font-size:11px!important;padding:0 7px!important}
+#memed-modal-topo .memed-pip-btn{padding:6px;font-size:10px}
+#memed-modal-topo .memed-pip-actions{gap:3px}
+}
+
 </style>
 
 <link rel="stylesheet" href="/panel-experience-v3.css?v=3">
@@ -4358,15 +4376,43 @@ function memedTesteDesktop(){return true;} // Experimento: container embutido ta
 function prepararMemedTeste(){
   if(!document.getElementById('memed-modal-experimental')){
     const modal=document.createElement('div');modal.id='memed-modal-experimental';
-    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><span>Prescricao digital · Memed (teste)</span><button type="button" id="memed-modal-fechar">Fechar</button></div><div id="memed-container-experimental"></div></div>';
+    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><span>Prescricao · Memed</span><div class="memed-pip-actions"><button type="button" class="memed-pip-btn" id="memed-pip-toggle">PiP</button><button type="button" class="memed-pip-btn" id="memed-pip-min">Recolher</button><button type="button" id="memed-modal-fechar">Fechar</button></div></div><div id="memed-container-experimental"></div></div>';
     document.body.appendChild(modal);
     modal.querySelector('#memed-modal-fechar').addEventListener('click',fecharMemedDrawer);
+    modal.querySelector('#memed-pip-toggle').addEventListener('click',alternarMemedPip);
+    modal.querySelector('#memed-pip-min').addEventListener('click',recolherMemedPip);
+    const restore=document.createElement('button');restore.id='memed-pip-restore';restore.type='button';restore.textContent='✚ Reabrir receita';restore.addEventListener('click',restaurarMemedPip);document.body.appendChild(restore);
   }
   return true;
 }
 
+function alternarMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');
+  if(!m)return;
+  const on=m.classList.toggle('pip');
+  m.classList.remove('recolhido');
+  document.getElementById('memed-pip-toggle').textContent=on?'Expandir':'PiP';
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  document.body.classList.toggle('memed-aberto',!on);
+}
+function recolherMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  m.classList.add('pip','recolhido');
+  document.getElementById('memed-pip-toggle').textContent='Expandir';
+  document.getElementById('memed-pip-restore')?.classList.add('visivel');
+  document.body.classList.remove('memed-aberto');
+}
+function restaurarMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  m.classList.add('ativo','pip');m.classList.remove('recolhido');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  document.body.classList.remove('memed-aberto');
+}
+
 function fecharMemedDrawer() {
-  document.getElementById('memed-modal-experimental')?.classList.remove('ativo');
+  document.getElementById('memed-modal-experimental')?.classList.remove('ativo','pip','recolhido');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  const pipToggle=document.getElementById('memed-pip-toggle');if(pipToggle)pipToggle.textContent='PiP';
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
@@ -4375,7 +4421,9 @@ function fecharMemedDrawer() {
 }
 
 function abrirMemedDrawer() {
-  document.getElementById('memed-modal-experimental')?.classList.add('ativo');
+  const modal=document.getElementById('memed-modal-experimental');
+  modal?.classList.add('ativo');
+  if(modal?.classList.contains('recolhido'))restaurarMemedPip();
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.add('memed-aberto');
