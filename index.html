@@ -2577,6 +2577,7 @@ if (isAdminAtual()) buscarRenovacoes();
 
 function obterQueixaPaciente(p) {
   const queixa = String((p && p.queixa) || '').replace(/\s+/g, ' ').trim();
+  if (/^\(?\s*(aguardando|esperando|pendente|confirmando)\s+(o\s+)?pagamento\s*[.!?]*\)?$/i.test(queixa)) return 'Queixa clínica não informada — confirmar com paciente';
   if (queixa && !/RELATO COMPLETO DO PACIENTE|DADOS ORGANIZADOS PELA TRIAGEM/i.test(queixa)) {
     return queixa;
   }
@@ -2610,6 +2611,18 @@ function obterRelatoPaciente(p) {
 
 function nomeEspecialidadeImediataPainel(valor){
   return ({pediatria:'Pediatria',geriatria:'Geriatria',psiquiatria:'Psiquiatria'})[String(valor||'').toLowerCase()]||'';
+}
+
+function tempoPacienteNaFila(p) {
+  if (p.status === 'assumido') return {texto:'Em atendimento',classe:''};
+  const ref = p.fila_entrada_em || p.prioridade_geral_notificada_em || p.pagamento_confirmado_em || p.criado_em;
+  const ts = ref ? new Date(ref).getTime() : NaN;
+  if (!Number.isFinite(ts)) return {texto:'Aguardando',classe:''};
+  const min = Math.max(0,Math.floor((Date.now()-ts)/60000));
+  // Sem timestamp de entrada, compras antigas nao podem ser interpretadas como horas de fila.
+  if (!p.fila_entrada_em && min > 180) return {texto:'Retorno antigo',classe:''};
+  const texto = min>=1440 ? `${Math.floor(min/1440)}d ${Math.floor(min%1440/60)}h` : min>=60 ? `${Math.floor(min/60)}h ${min%60}min` : `${min}min`;
+  return {texto,classe:min>=10?'critico':min>=5?'urgente':''};
 }
 
 function renderFila() {
@@ -2650,9 +2663,7 @@ lista.innerHTML=filaData.map(p=>{
 const nome=p.nome||'Paciente', tipo=p.tipo||'chat';
 const nomeSafe=escHtml(String(nome));
 const triagemSafe=escHtml(obterQueixaPaciente(p));
-const criado=p.criado_em||new Date().toISOString();
-const mins=Math.floor((Date.now()-new Date(criado))/60000);
-const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
+const {texto: tempoFila, classe: tempoClass}=tempoPacienteNaFila(p);
 const isAtual = slots.some(s => s && !modoHistorico && String(s.atendimento.id) === String(p.id));
 // meuAssumido: assumido por mim mas não é o atendimento ativo agora
 // compara medico_id como string E como número para evitar mismatch de tipo
@@ -2688,7 +2699,7 @@ const acoesAguardando = isAdmin && isRenovacao
   ? `<span style="display:flex;gap:6px;align-items:center"><button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button><button onclick="encerrarRenovacaoResolvida('${p.id}',event)" style="padding:7px 10px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.7rem;font-weight:700;cursor:pointer;">Resolvida</button></span>`
   : `<button class="btn-assumir" onclick="assumirAtendimento('${p.id}',event)">Assumir</button>`;
 const acoesTriagemPendente = `<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pc-status-badge" style="pointer-events:none;color:#ffbd2e;border-color:rgba(255,189,46,.25)">Pago · sem triagem</span><button onclick="copiarLinkTriagemFila('${p.id}',event)" style="padding:4px 9px;border-radius:8px;border:1px solid rgba(94,224,160,.26);background:rgba(94,224,160,.08);color:#5ee0a0;font-size:.68rem;font-weight:700;cursor:pointer;">Copiar link</button></span>`;
-return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido||isTriagemPendente)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> ${especialidadeBadge}<div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'Vídeo':'Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${mins}min</div>${p.status==='aguardando'?acoesAguardando:isTriagemPendente?acoesTriagemPendente:isAtual?'<span class="pc-status-badge" style="pointer-events:none">Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
+return `<div class="paciente-card ${isAtual?'active':''} ${(assumido||meuAssumido||isTriagemPendente)?'assumido':''} ${isAtual||meuAssumido?'clicavel-slot':''}" ${cardOnClick}> ${especialidadeBadge}<div class="pc-header"><div class="pc-nome">${nomeSafe}</div><span class="pc-tipo ${tipo}">${tipo==='video'?'Vídeo':'Chat'}</span></div> <div class="pc-queixa">${triagemSafe}</div>  <div class="pc-footer"><div class="pc-tempo ${tempoClass}">${escHtml(tempoFila)}</div>${p.status==='aguardando'?acoesAguardando:isTriagemPendente?acoesTriagemPendente:isAtual?'<span class="pc-status-badge" style="pointer-events:none">Abrir</span>':meuAssumido?'<span class="pc-status-badge" style="pointer-events:none;color:#5ee0a0;border-color:rgba(94,224,160,.3)">Retomar</span>':isAdmin?`<button onclick="encerrarTravado('${p.id}',event)" style="padding:4px 10px;border-radius:8px;border:1px solid rgba(255,95,87,.3);background:rgba(255,95,87,.06);color:#ff8080;font-size:.7rem;font-weight:600;cursor:pointer;">Encerrar</button>`:'<span class="pc-status-badge">Em atendimento</span>'}</div> </div>`;
 }).join('');
 } catch(e) { lista.innerHTML='<div class="fila-vazia"><p>Erro ao carregar fila</p></div>'; }
 }
@@ -2727,9 +2738,9 @@ function abrirPreviewFila(id) {
 const p = filaData.find(f=>String(f.id)===String(id));
 if (!p) return;
 const tipo = p.tipo||'chat';
-const mins = Math.floor((Date.now()-new Date(p.criado_em).getTime())/60000);
+const tempoFila=tempoPacienteNaFila(p).texto;
 document.getElementById('fp-nome').textContent = p.nome||'-';
-document.getElementById('fp-meta').textContent = (tipo==='video'?'Vídeo':'Chat') + ' · ' + mins + ' min na fila' + (p.cpf?' · CPF: '+p.cpf:'');
+document.getElementById('fp-meta').textContent = (tipo==='video'?'Vídeo':'Chat') + ' · ' + tempoFila + (tempoFila==='Em atendimento'||tempoFila==='Retorno antigo'?'':' na fila') + (p.cpf?' · CPF: '+p.cpf:'');
 document.getElementById('fp-queixa').textContent = obterQueixaPaciente(p);
 const btn = document.getElementById('fp-assumir-btn');
 btn.onclick = function(e) { fecharPreviewFila(); assumirAtendimento(id, e); };
