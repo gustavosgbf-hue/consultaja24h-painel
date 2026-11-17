@@ -1,4 +1,5 @@
 /* ConsultaJá24h — tema do painel médico (claro/escuro) + ícones SVG de interface.
+ * Design system v5 (panel-ds-v5.css).
  * Camada puramente visual: não toca API, sessão, plantão, fila, Memed ou regras de admin.
  * Carregado de forma síncrona no <head> para aplicar o tema antes da primeira pintura.
  */
@@ -9,14 +10,24 @@
 
   var STORAGE_KEY = 'cj-panel-theme';
   var root = document.documentElement;
-  var THEME_COLORS = { dark: '#070d0b', light: '#f4f7f5' };
+  var THEME_COLORS = { dark: '#050c0b', light: '#07100f' };
+
+  // Páginas de demonstração marcam <html data-cj-theme-storage="off">: nada é lido
+  // nem gravado no armazenamento do navegador.
+  var SEM_STORAGE = root.getAttribute('data-cj-theme-storage') === 'off';
 
   function lerTema() {
-    try {
+    var inicial = root.getAttribute('data-theme-initial');
+    if (inicial === 'light' || inicial === 'dark') return inicial;
+    if (!SEM_STORAGE) try {
       var v = localStorage.getItem(STORAGE_KEY);
       if (v === 'light' || v === 'dark') return v;
     } catch (_) {}
-    return 'dark'; // padrão: mantém a experiência atual do painel
+    // Sem preferência salva: segue o sistema operacional.
+    try {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+    } catch (_) {}
+    return 'dark';
   }
 
   function metaThemeColor() {
@@ -38,6 +49,7 @@
   }
 
   function salvarTema(tema) {
+    if (SEM_STORAGE) return;
     try { localStorage.setItem(STORAGE_KEY, tema); } catch (_) {}
   }
 
@@ -70,7 +82,15 @@
     alert: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
     check: '<path d="m5 12 5 5L20 7"/>',
     edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/>',
-    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'
+    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+    history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    stetho: '<path d="M5 3v5a4 4 0 0 0 8 0V3"/><path d="M9 12v3a5 5 0 0 0 10 0v-2"/><circle cx="19" cy="11" r="2"/>',
+    idcard: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16a3 3 0 0 1 6 0M14 10h4M14 14h3"/>',
+    lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
   };
 
   // Retorna SVG inline (sem nós de texto: não altera textContent de quem o contém).
@@ -171,15 +191,36 @@
     atualizarBotoes(root.getAttribute('data-theme') || 'dark');
   }
 
+  // Avatar com iniciais do médico na barra superior (somente leitura do nome
+  // já exibido em #nav-nome; não altera o elemento nem seu texto).
+  function iniciais(nome) {
+    var partes = String(nome || '').replace(/^(dra?\.?|dr\(a\))\s+/i, '').trim().split(/\s+/).filter(Boolean);
+    if (!partes.length) return '';
+    var a = partes[0].charAt(0);
+    var b = partes.length > 1 ? partes[partes.length - 1].charAt(0) : '';
+    return (a + b).toUpperCase();
+  }
+
+  function montarAvatar() {
+    var alvo = document.getElementById('nav-nome');
+    var av = document.querySelector('.nav-medico .cj-avatar');
+    if (!alvo || !av) return;
+    var sync = function () { av.textContent = iniciais(alvo.textContent); };
+    sync();
+    try { new MutationObserver(sync).observe(alvo, { childList: true, characterData: true, subtree: true }); } catch (_) {}
+  }
+
   function iniciarDom() {
     try { montarBotoes(); } catch (e) { console.warn('[TEMA] botões', e); }
     try { decorarRotulos(); } catch (e) { console.warn('[TEMA] ícones', e); }
+    try { montarAvatar(); } catch (e) { console.warn('[TEMA] avatar', e); }
   }
 
   aplicarTema(lerTema());
+  window.cjPanelTheme = { aplicar: aplicarTema, alternar: alternar, decorarRotulos: decorarRotulos, iniciais: iniciais };
 
   // Sincroniza entre abas abertas do painel.
-  window.addEventListener('storage', function (ev) {
+  if (!SEM_STORAGE) window.addEventListener('storage', function (ev) {
     if (ev.key === STORAGE_KEY && (ev.newValue === 'light' || ev.newValue === 'dark')) aplicarTema(ev.newValue);
   });
 
