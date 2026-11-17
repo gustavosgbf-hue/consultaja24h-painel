@@ -1,0 +1,742 @@
+/* ==========================================================================
+   ConsultaJá24h · Painel médico — Design system v4 (claro/escuro)
+   Camada visual isolada. Não altera fluxo, API, Memed, fila, plantão ou
+   regras de admin. Tema controlado por html[data-theme] (panel-theme.js).
+   Sem JS o atributo não existe e o painel mantém o visual anterior.
+   ========================================================================== */
+
+/* ── 1. Tokens ───────────────────────────────────────────────────────────── */
+html[data-theme="dark"]{
+  --cj-bg:#070d0b;
+  --cj-bg-elev:#09110e;
+  --cj-surface:#0d1512;
+  --cj-surface-2:#111b17;
+  --cj-surface-3:#16221d;
+  --cj-hover:rgba(255,255,255,.045);
+  --cj-border:rgba(220,235,227,.085);
+  --cj-border-2:rgba(220,235,227,.15);
+  --cj-text:#edf3ef;
+  --cj-text-2:rgba(228,238,232,.76);
+  --cj-text-3:rgba(228,238,232,.55);
+  --cj-text-4:rgba(228,238,232,.38);
+  --cj-accent:#62c58a;
+  --cj-accent-ink:#86dcaa;
+  --cj-accent-soft:rgba(98,197,138,.11);
+  --cj-accent-line:rgba(98,197,138,.3);
+  --cj-grad:linear-gradient(135deg,#b4e05a 0%,#5ee0a0 100%);
+  --cj-on-accent:#06140c;
+  --cj-danger:#ef8f8f;
+  --cj-danger-soft:rgba(226,118,118,.1);
+  --cj-danger-line:rgba(226,118,118,.3);
+  --cj-warn:#e6bd6b;
+  --cj-warn-soft:rgba(214,170,98,.12);
+  --cj-warn-line:rgba(214,170,98,.3);
+  --cj-info:#86c8ec;
+  --cj-info-soft:rgba(94,180,224,.1);
+  --cj-input:rgba(255,255,255,.035);
+  --cj-input-focus:rgba(255,255,255,.055);
+  --cj-chat-bg:#080f0c;
+  --cj-bubble-me:#14382a;
+  --cj-bubble-me-line:rgba(98,197,138,.22);
+  --cj-bubble-me-text:#e6f4ec;
+  --cj-bubble-them:#131c18;
+  --cj-bubble-them-line:rgba(220,235,227,.09);
+  --cj-bubble-them-text:#e9efec;
+  --cj-overlay:rgba(2,6,4,.68);
+  --cj-shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  --cj-shadow-md:0 12px 32px -14px rgba(0,0,0,.6);
+  --cj-shadow-lg:0 32px 90px -24px rgba(0,0,0,.75);
+  --cj-ring:0 0 0 3px rgba(98,197,138,.38);
+  /* variáveis legadas usadas pelo CSS original */
+  --muted:var(--cj-text-3);
+  --line:var(--cj-border);
+  --line2:rgba(220,235,227,.055);
+  --card:rgba(255,255,255,.028);
+  --card2:rgba(255,255,255,.04);
+}
+html[data-theme="light"]{
+  --cj-bg:#f3f6f4;
+  --cj-bg-elev:#fbfcfb;
+  --cj-surface:#ffffff;
+  --cj-surface-2:#f6f9f7;
+  --cj-surface-3:#ecf2ee;
+  --cj-hover:rgba(15,45,30,.05);
+  --cj-border:rgba(18,48,33,.12);
+  --cj-border-2:rgba(18,48,33,.22);
+  --cj-text:#0e1d16;
+  --cj-text-2:#2e443a;
+  --cj-text-3:#52665c;
+  --cj-text-4:#66786f;
+  --cj-accent:#1f9a59;
+  --cj-accent-ink:#13764a;
+  --cj-accent-soft:rgba(31,154,89,.09);
+  --cj-accent-line:rgba(31,154,89,.34);
+  --cj-grad:linear-gradient(135deg,#a6dc4c 0%,#4fd696 100%);
+  --cj-on-accent:#06140c;
+  --cj-danger:#b8352b;
+  --cj-danger-soft:rgba(192,57,47,.07);
+  --cj-danger-line:rgba(192,57,47,.3);
+  --cj-warn:#8a5d0c;
+  --cj-warn-soft:rgba(214,150,30,.12);
+  --cj-warn-line:rgba(180,120,20,.32);
+  --cj-info:#1c648c;
+  --cj-info-soft:rgba(28,100,140,.08);
+  --cj-input:#ffffff;
+  --cj-input-focus:#ffffff;
+  --cj-chat-bg:#f0f4f1;
+  --cj-bubble-me:#daf1e3;
+  --cj-bubble-me-line:rgba(31,154,89,.26);
+  --cj-bubble-me-text:#0c2a1b;
+  --cj-bubble-them:#ffffff;
+  --cj-bubble-them-line:rgba(18,48,33,.12);
+  --cj-bubble-them-text:#12231b;
+  --cj-overlay:rgba(14,29,22,.42);
+  --cj-shadow-sm:0 1px 2px rgba(16,40,28,.08);
+  --cj-shadow-md:0 12px 30px -14px rgba(16,40,28,.22);
+  --cj-shadow-lg:0 30px 80px -24px rgba(16,40,28,.32);
+  --cj-ring:0 0 0 3px rgba(31,154,89,.3);
+  --g1:#2a8a54;
+  --g2:#1f8a52;
+  --red:#b8352b;
+  --amber:#8a5d0c;
+  --muted:var(--cj-text-3);
+  --line:var(--cj-border);
+  --line2:rgba(18,48,33,.08);
+  --card:#ffffff;
+  --card2:#f8faf9;
+}
+
+/* ── 2. Base ─────────────────────────────────────────────────────────────── */
+html[data-theme] body{
+  background:var(--cj-bg);
+  color:var(--cj-text);
+  font-feature-settings:"cv11","ss01","ss03";
+  text-rendering:optimizeLegibility;
+}
+html[data-theme] #screen-app{background:var(--cj-bg)}
+html[data-theme] ::selection{background:rgba(98,197,138,.28)}
+html[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(18,48,33,.18)}
+html[data-theme] :is(button,a,input,textarea,select,[onclick],[tabindex]):focus-visible{
+  outline:2px solid var(--cj-accent);
+  outline-offset:2px;
+  box-shadow:none;
+}
+html[data-theme] :is(input,textarea,select):focus-visible{outline-offset:0}
+html[data-theme] .bg-mesh{
+  background:
+    radial-gradient(900px 520px at -10% -20%,rgba(98,197,138,.10),transparent 60%),
+    radial-gradient(700px 480px at 110% 110%,rgba(180,224,90,.06),transparent 60%);
+}
+html[data-theme="light"] .bg-mesh{
+  background:
+    radial-gradient(900px 520px at -10% -20%,rgba(79,214,150,.18),transparent 60%),
+    radial-gradient(700px 480px at 110% 110%,rgba(166,220,76,.14),transparent 60%);
+}
+
+/* Ícones SVG de interface */
+html[data-theme] .cj-i{width:1.05em;height:1.05em;flex:0 0 auto;display:inline-block;vertical-align:-.16em}
+html[data-theme] .cj-emo{display:none}
+html[data-theme] .cj-ico-inline{display:inline-flex;align-items:center;gap:5px}
+
+/* ── 3. Botão de tema ────────────────────────────────────────────────────── */
+.cj-theme-toggle{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:38px;flex:0 0 auto;padding:0;
+  border-radius:11px;border:1px solid var(--cj-border,rgba(255,255,255,.1));
+  background:var(--cj-surface-2,rgba(255,255,255,.04));
+  color:var(--cj-text-2,rgba(255,255,255,.7));
+  cursor:pointer;transition:background .18s ease,color .18s ease,border-color .18s ease,transform .15s ease;
+}
+.cj-theme-toggle:hover{color:var(--cj-text);border-color:var(--cj-border-2);background:var(--cj-surface-3)}
+.cj-theme-toggle:active{transform:scale(.95)}
+.cj-theme-toggle .cj-i{width:17px;height:17px}
+html[data-theme="dark"] .cj-theme-toggle .cj-theme-moon{display:none}
+html[data-theme="light"] .cj-theme-toggle .cj-theme-sun{display:none}
+.cj-theme-toggle--login{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;z-index:2}
+
+/* ── 4. Login ────────────────────────────────────────────────────────────── */
+html[data-theme] #screen-login{
+  background:var(--cj-bg);
+  background-image:
+    radial-gradient(760px 460px at 15% 0%,rgba(98,197,138,.12),transparent 62%),
+    radial-gradient(620px 420px at 100% 100%,rgba(180,224,90,.07),transparent 60%);
+  padding:20px;overflow-y:auto;
+}
+html[data-theme="light"] #screen-login{
+  background-image:
+    radial-gradient(760px 460px at 15% 0%,rgba(79,214,150,.2),transparent 62%),
+    radial-gradient(620px 420px at 100% 100%,rgba(166,220,76,.16),transparent 60%);
+}
+html[data-theme] .login-card{
+  max-width:420px;padding:44px 38px 34px;
+  background:var(--cj-surface);
+  background:color-mix(in srgb,var(--cj-surface) 88%,transparent);
+  border:1px solid var(--cj-border);
+  border-radius:24px;
+  box-shadow:var(--cj-shadow-lg);
+  margin:auto;
+}
+html[data-theme] .login-logo{margin-bottom:30px}
+html[data-theme] .login-logo .c1{color:var(--cj-text)}
+html[data-theme] .login-logo .tag{color:var(--cj-text-4);-webkit-text-fill-color:var(--cj-text-4)}
+html[data-theme="light"] .login-logo .c2,html[data-theme="light"] .nav-brand .c2{
+  background:linear-gradient(135deg,#5aa61f,#13955a);-webkit-background-clip:text;background-clip:text;
+}
+html[data-theme] .login-title{font-size:1.4rem;font-weight:650;letter-spacing:-.025em;color:var(--cj-text)}
+html[data-theme] .login-sub{color:var(--cj-text-3);font-weight:400;margin-bottom:28px}
+html[data-theme] .field label{color:var(--cj-text-3);font-size:.72rem;font-weight:600;letter-spacing:.06em}
+html[data-theme] #screen-login #field-admin-pwd label{color:var(--cj-warn)!important}
+html[data-theme] .field input,
+html[data-theme] #inp-recovery-email{
+  background:var(--cj-input)!important;
+  border:1px solid var(--cj-border-2)!important;
+  color:var(--cj-text)!important;
+  border-radius:12px;font-family:'Inter',sans-serif;font-size:.95rem;
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+html[data-theme] .field input::placeholder{color:var(--cj-text-4)}
+html[data-theme] .field input:focus{border-color:var(--cj-accent)!important;box-shadow:var(--cj-ring);outline:none}
+html[data-theme] .btn-login{
+  border-radius:12px;padding:14px;font-family:'Inter',sans-serif;font-weight:650;letter-spacing:-.005em;
+  background:var(--cj-grad);color:var(--cj-on-accent);
+  box-shadow:0 10px 26px -12px rgba(94,224,160,.65);
+}
+html[data-theme] .login-link,
+html[data-theme] #screen-login button[onclick="toggleAdminField()"]{color:var(--cj-text-3)!important;font-size:.76rem!important;padding:8px 4px!important;min-height:36px}
+html[data-theme] #screen-login .login-link{width:auto;white-space:nowrap}
+html[data-theme] #screen-login button[onclick="toggleAdminField()"]{white-space:nowrap}
+html[data-theme] .login-link:hover,
+html[data-theme] #screen-login button[onclick="toggleAdminField()"]:hover{color:var(--cj-text)!important}
+html[data-theme] .login-err,html[data-theme] .recovery-msg.err,html[data-theme] .trocar-err{color:var(--cj-danger)}
+html[data-theme] .recovery-msg.ok{color:var(--cj-accent-ink)}
+html[data-theme] #recovery-section{border-top-color:var(--cj-border)!important}
+html[data-theme] #recovery-section > div:first-child{color:var(--cj-text-3)!important}
+html[data-theme] #btn-recovery{background:var(--cj-accent-soft)!important;border-color:var(--cj-accent-line)!important;color:var(--cj-accent-ink)!important}
+
+/* ── 5. Navegação ────────────────────────────────────────────────────────── */
+html[data-theme] .nav{
+  background:var(--cj-bg);
+  background:color-mix(in srgb,var(--cj-bg) 86%,transparent);
+  border-bottom:1px solid var(--cj-border);
+  backdrop-filter:saturate(1.4) blur(16px);-webkit-backdrop-filter:saturate(1.4) blur(16px);
+  gap:12px;
+}
+html[data-theme] .nav-brand .c1{color:var(--cj-text)}
+html[data-theme] .nav-tag-24h{color:var(--cj-text-4);-webkit-text-fill-color:var(--cj-text-4)}
+html[data-theme] .nav-medico{color:var(--cj-text-3)}
+html[data-theme] .nav-medico strong{color:var(--cj-text)}
+html[data-theme] .plantao-btn{font-family:'Inter',sans-serif;font-weight:600;min-height:38px}
+html[data-theme] .plantao-btn.offline{background:var(--cj-surface-2);color:var(--cj-text-2);border:1px solid var(--cj-border)}
+html[data-theme] .plantao-btn.offline .plantao-indicator{background:var(--cj-text-4)}
+html[data-theme] .plantao-btn.offline:hover{background:var(--cj-accent-soft);border-color:var(--cj-accent-line);color:var(--cj-accent-ink)}
+html[data-theme] .plantao-btn.online{background:var(--cj-accent-soft);color:var(--cj-accent-ink);border:1px solid var(--cj-accent-line)}
+html[data-theme] .plantao-btn.online:hover{background:var(--cj-danger-soft);color:var(--cj-danger);border-color:var(--cj-danger-line)}
+html[data-theme] .nav-logout{
+  min-height:38px;border-radius:11px;border:1px solid var(--cj-border);background:transparent;color:var(--cj-text-3);
+  font-family:'Inter',sans-serif;font-weight:500;
+}
+html[data-theme] .nav-logout:hover{border-color:var(--cj-danger-line);color:var(--cj-danger)}
+html[data-theme] #nav-fila-btn{background:var(--cj-surface-2);border-color:var(--cj-border);color:var(--cj-text-2)}
+html[data-theme] #nav-fila-badge{border-color:var(--cj-bg)}
+
+/* ── 6. Sidebar e cartões da fila ───────────────────────────────────────── */
+html[data-theme] .sidebar{background:var(--cj-bg-elev);border-right:1px solid var(--cj-border)}
+html[data-theme] .sidebar-toggle{background:var(--cj-surface);border-color:var(--cj-border-2);color:var(--cj-text-3);box-shadow:var(--cj-shadow-sm)}
+html[data-theme] .sidebar-toggle:hover{background:var(--cj-surface-3);color:var(--cj-text)}
+html[data-theme] .sidebar-rail button{color:var(--cj-text-3)!important}
+html[data-theme] .rail-label{color:var(--cj-text-4)}
+html[data-theme] .sidebar-title{
+  color:var(--cj-text-3);font-size:.7rem;font-weight:650;letter-spacing:.08em;
+  border-radius:10px;padding:8px 8px;margin-left:-8px;margin-right:-8px;
+}
+html[data-theme] .sidebar-title[onclick]:hover{background:var(--cj-hover);color:var(--cj-text)}
+html[data-theme] .sidebar-title{justify-content:flex-start}
+html[data-theme] .sidebar-title > :last-child{margin-left:auto}
+@media(min-width:769px){
+  html[data-theme] .sidebar{min-height:calc(100vh - var(--nav-h))}
+  /* Chat nunca é esmagado pela triagem expandida: a área do atendimento rola. */
+  html[data-theme] #tab-consulta.active{min-height:440px;flex-shrink:0}
+}
+html[data-theme] .sidebar-title-icon{color:var(--cj-accent)}
+html[data-theme] .fila-count{background:var(--cj-accent-soft);color:var(--cj-accent-ink);border:1px solid transparent;font-variant-numeric:tabular-nums}
+html[data-theme] #admin-pendente-count{background:var(--cj-warn-soft)!important;color:var(--cj-warn)!important}
+html[data-theme] #admin-hist-count{background:var(--cj-info-soft)!important;color:var(--cj-info)!important}
+html[data-theme] #renov-count,html[data-theme] #hist-count{background:var(--cj-accent-soft)!important;color:var(--cj-accent-ink)!important}
+html[data-theme] .fila-vazia{color:var(--cj-text-3);border:1px dashed var(--cj-border);border-radius:14px;background:transparent;margin:2px 0 10px}
+html[data-theme] .fila-vazia svg{color:var(--cj-accent);opacity:.45}
+html[data-theme] .fila-vazia p{color:var(--cj-text-3)}
+html[data-theme] .paciente-card,
+html[data-theme] .fila-card,
+html[data-theme] .hist-card,
+html[data-theme] .medico-card{
+  background:var(--cj-surface);
+  border:1px solid var(--cj-border);
+  border-radius:14px;
+  box-shadow:var(--cj-shadow-sm);
+  transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+html[data-theme] .fila-card{padding:13px 14px;margin-bottom:9px}
+html[data-theme] .paciente-card{padding:12px}
+html[data-theme] .paciente-card:hover,
+html[data-theme] .hist-card:hover{border-color:var(--cj-accent-line);background:var(--cj-surface-2);box-shadow:var(--cj-shadow-md)}
+html[data-theme] .paciente-card.active{border-color:var(--cj-accent);background:var(--cj-accent-soft);box-shadow:inset 3px 0 0 var(--cj-accent)}
+html[data-theme] .pc-nome,html[data-theme] .hist-card-nome,html[data-theme] .medico-card-nome{color:var(--cj-text)}
+html[data-theme] .pc-queixa,html[data-theme] .hist-card-meta,html[data-theme] .medico-card-meta{color:var(--cj-text-3)}
+html[data-theme] .pc-tempo{color:var(--cj-text-4)}
+html[data-theme] .pc-tempo.urgente{color:var(--cj-warn)}
+html[data-theme] .pc-tempo.critico{color:var(--cj-danger)}
+html[data-theme] .pc-tipo{border-radius:7px;letter-spacing:.04em}
+html[data-theme] .pc-tipo.video,html[data-theme] .pc-tipo.chat{background:var(--cj-accent-soft);color:var(--cj-accent-ink)}
+html[data-theme] .pc-tipo .cj-i{margin-right:3px}
+html[data-theme] .pc-status-badge{background:var(--cj-warn-soft);color:var(--cj-warn);border-radius:7px}
+html[data-theme] .hist-card-pront-badge{background:var(--cj-accent-soft)!important;border-color:var(--cj-accent-line)!important;color:var(--cj-accent-ink)!important}
+html[data-theme] .hist-card-action{color:var(--cj-accent-ink);border-color:var(--cj-accent-line);background:var(--cj-accent-soft)}
+html[data-theme] .btn-assumir,
+html[data-theme] .btn-iniciar-agora,
+html[data-theme] .fila-preview-assumir,
+html[data-theme] .btn-gerar,
+html[data-theme] .btn-confirm{
+  background:var(--cj-grad);color:var(--cj-on-accent);border:none;
+  font-family:'Inter',sans-serif;font-weight:650;letter-spacing:-.005em;
+  box-shadow:0 8px 22px -12px rgba(94,224,160,.7);
+  transition:filter .15s ease,transform .12s ease,box-shadow .18s ease,opacity .15s ease;
+}
+html[data-theme] .btn-assumir:hover,
+html[data-theme] .btn-iniciar-agora:hover,
+html[data-theme] .fila-preview-assumir:hover,
+html[data-theme] .btn-confirm:hover{opacity:1;filter:brightness(1.05) saturate(1.05)}
+html[data-theme] .btn-assumir:active,
+html[data-theme] .btn-confirm:active,
+html[data-theme] .fila-preview-assumir:active{transform:scale(.985)}
+html[data-theme] :is(.btn-confirm,.btn-login,.btn-assumir,.fila-preview-assumir):disabled{opacity:.55;filter:none;box-shadow:none}
+html[data-theme] .btn-aprovar{background:var(--cj-accent-soft);border-color:var(--cj-accent-line);color:var(--cj-accent-ink)}
+html[data-theme] .btn-rejeitar{background:var(--cj-danger-soft);border-color:var(--cj-danger-line);color:var(--cj-danger)}
+html[data-theme] .medico-card-meta .cj-i{color:var(--cj-text-4);margin-right:2px}
+
+/* Botões utilitários da sidebar (inline styles no HTML/JS) */
+html[data-theme] #admin-manual-btn,
+html[data-theme] #escala-prioridade-btn,
+html[data-theme] .sidebar-inner > button[onclick^="abrirDadosRegulatorios"],
+html[data-theme] #cj-admin-pacientes-btn,
+html[data-theme] #cj-avaliacoes-btn{
+  display:flex;align-items:center;gap:8px;min-height:42px;
+  border-radius:12px!important;
+  background:var(--cj-surface)!important;
+  border:1px solid var(--cj-border)!important;
+  color:var(--cj-text-2)!important;
+  font-family:'Inter',sans-serif!important;font-weight:600!important;
+  box-shadow:var(--cj-shadow-sm);
+  transition:background .18s ease,border-color .18s ease,color .18s ease;
+}
+html[data-theme] #admin-manual-btn[style*="display:none"],html[data-theme] #admin-manual-btn[style*="display: none"],
+html[data-theme] #escala-prioridade-btn[style*="display:none"],html[data-theme] #escala-prioridade-btn[style*="display: none"],
+html[data-theme] #cj-admin-pacientes-btn[style*="display:none"],html[data-theme] #cj-admin-pacientes-btn[style*="display: none"],
+html[data-theme] #cj-avaliacoes-btn[style*="display:none"],html[data-theme] #cj-avaliacoes-btn[style*="display: none"]{display:none!important}
+html[data-theme] #admin-manual-btn:hover,
+html[data-theme] #escala-prioridade-btn:hover,
+html[data-theme] .sidebar-inner > button[onclick^="abrirDadosRegulatorios"]:hover,
+html[data-theme] #cj-admin-pacientes-btn:hover,
+html[data-theme] #cj-avaliacoes-btn:hover{border-color:var(--cj-accent-line)!important;color:var(--cj-accent-ink)!important;background:var(--cj-accent-soft)!important}
+html[data-theme] #admin-hist-filtros{background:var(--cj-surface-2)!important;border:1px solid var(--cj-border);border-radius:12px!important}
+html[data-theme] #admin-hist-filtros :is(input,select),
+html[data-theme] #hist-busca{
+  background:var(--cj-input)!important;border:1px solid var(--cj-border-2)!important;color:var(--cj-text)!important;
+  border-radius:9px!important;min-height:36px;font-family:'Inter',sans-serif!important;
+}
+html[data-theme] :is(#admin-hist-filtros input,#hist-busca)::placeholder{color:var(--cj-text-4)}
+
+/* ── 7. Área principal ──────────────────────────────────────────────────── */
+html[data-theme] .empty-state,html[data-theme] .offline-state{gap:14px}
+html[data-theme] .empty-state svg,html[data-theme] .offline-state svg{
+  opacity:1;color:var(--cj-accent);
+  padding:18px;width:76px;height:76px;border-radius:24px;
+  background:var(--cj-accent-soft);border:1px solid var(--cj-accent-line);
+}
+html[data-theme] .empty-state h2,html[data-theme] .offline-state h2{
+  font-family:'Inter',sans-serif;font-weight:650;font-size:1.35rem;letter-spacing:-.025em;color:var(--cj-text);
+}
+html[data-theme] .empty-state p,html[data-theme] .offline-state p{color:var(--cj-text-3);font-weight:400;font-size:.9rem}
+html[data-theme] .offline-badge{background:var(--cj-surface);border-color:var(--cj-border);color:var(--cj-text-3)}
+html[data-theme] .offline-badge > div{background:var(--cj-text-4)!important}
+html[data-theme] .slot-tabs{border-bottom-color:var(--cj-border)}
+html[data-theme] .slot-tab-btn{background:var(--cj-surface);border-color:var(--cj-border);color:var(--cj-text-3);font-family:'Inter',sans-serif}
+html[data-theme] .slot-tab-btn.active{background:var(--cj-accent-soft);border-color:var(--cj-accent-line);color:var(--cj-text)}
+html[data-theme] .slot-tab-btn .slot-name{display:inline-flex;align-items:center;gap:5px}
+html[data-theme] .atend-nome{color:var(--cj-text);letter-spacing:-.03em}
+html[data-theme] .atend-tag.chat,html[data-theme] .atend-tag.video{background:var(--cj-accent-soft);border-color:var(--cj-accent-line);color:var(--cj-accent-ink)}
+html[data-theme] .atend-tag.crm{color:var(--cj-text-3);border-color:var(--cj-border)}
+html[data-theme] .atend-tag.historico-badge{background:var(--cj-info-soft);border-color:transparent;color:var(--cj-info)}
+html[data-theme] .atend-timer{color:var(--cj-text-3);font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:5px}
+html[data-theme] :is(.btn-wpp,.btn-prescrever,.btn-encerrar,.btn-voltar-hist,#btn-reabrir-atend){
+  min-height:40px;border-radius:11px;font-family:'Inter',sans-serif!important;font-weight:600;
+}
+html[data-theme] .btn-wpp{background:var(--cj-surface);border:1px solid var(--cj-border);color:var(--cj-text-2)}
+html[data-theme] .btn-wpp:hover{background:var(--cj-surface-2);border-color:var(--cj-border-2);color:var(--cj-text)}
+html[data-theme] .btn-prescrever{background:var(--cj-grad);border:1px solid transparent;color:var(--cj-on-accent);box-shadow:0 8px 22px -12px rgba(94,224,160,.75)}
+html[data-theme] .btn-prescrever:hover{background:var(--cj-grad);filter:brightness(1.05)}
+html[data-theme] .btn-encerrar{background:transparent;border:1px solid var(--cj-danger-line);color:var(--cj-danger)}
+html[data-theme] .btn-encerrar:hover{background:var(--cj-danger-soft)}
+html[data-theme] .btn-voltar-hist{background:var(--cj-surface);border-color:var(--cj-border);color:var(--cj-text-2)}
+html[data-theme] .btn-voltar-hist:hover{color:var(--cj-text);border-color:var(--cj-border-2)}
+html[data-theme] #btn-reabrir-atend{background:var(--cj-warn-soft)!important;border-color:var(--cj-warn-line)!important;color:var(--cj-warn)!important;font-family:'Inter',sans-serif!important}
+
+/* Triagem */
+html[data-theme] .triagem-box{background:var(--cj-surface);border:1px solid var(--cj-border);border-radius:16px;box-shadow:var(--cj-shadow-sm)}
+html[data-theme] .triagem-box-title{color:var(--cj-text);border-bottom-color:var(--cj-border);font-size:.8rem}
+html[data-theme] .triagem-section+.triagem-section{border-top-color:var(--cj-border)}
+html[data-theme] .triagem-section-title{color:var(--cj-accent-ink);font-weight:650}
+html[data-theme] .triagem-item{background:var(--cj-surface-2);border:1px solid var(--cj-border);border-radius:10px}
+html[data-theme] .triagem-item label{color:var(--cj-text-3)}
+html[data-theme] .triagem-item span{color:var(--cj-text)}
+html[data-theme] .triagem-item [style*="color:rgba(255,255,255"]{color:var(--cj-text-3)!important}
+html[data-theme] .triagem-mini-btn,html[data-theme] .triagem-edit-btn{
+  min-height:30px;border-radius:8px;background:var(--cj-surface);border:1px solid var(--cj-border-2);color:var(--cj-text-2);
+}
+html[data-theme] .triagem-mini-btn:hover,html[data-theme] .triagem-edit-btn:hover{border-color:var(--cj-accent-line);color:var(--cj-accent-ink);background:var(--cj-accent-soft)}
+html[data-theme] .triagem-patient-link{color:var(--cj-accent-ink)}
+html[data-theme] .triagem-toggle-btn{color:var(--cj-text-3);display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px}
+html[data-theme] .triagem-toggle-btn:hover{background:var(--cj-hover)}
+html[data-theme] .solicita-badge{background:var(--cj-surface-3)!important;color:var(--cj-text-2)!important}
+
+/* Abas */
+html[data-theme] .tabs{background:var(--cj-surface-2);border:1px solid var(--cj-border);border-radius:13px;padding:4px}
+html[data-theme] .tab{color:var(--cj-text-3);border-radius:10px;font-family:'Inter',sans-serif}
+html[data-theme] .tab:hover{color:var(--cj-text)}
+html[data-theme] .tab.active{background:var(--cj-surface);color:var(--cj-text);box-shadow:var(--cj-shadow-sm),0 0 0 1px var(--cj-border)}
+html[data-theme] .tab.active svg{color:var(--cj-accent)}
+
+/* ── 8. Chat ─────────────────────────────────────────────────────────────── */
+html[data-theme] .chat-medico-wrap{background:var(--cj-surface);border:1px solid var(--cj-border);border-radius:16px;box-shadow:var(--cj-shadow-sm)}
+html[data-theme] .chat-medico-header{background:var(--cj-surface);border-bottom:1px solid var(--cj-border)}
+html[data-theme] .chat-medico-header h3{color:var(--cj-text)}
+html[data-theme] .chat-medico-header > span{color:var(--cj-text-4)!important}
+html[data-theme] .chat-medico-msgs{background:var(--cj-chat-bg)}
+html[data-theme] .chat-vazio{color:var(--cj-text-3);opacity:1}
+html[data-theme] .cmsg .bub{border-radius:16px;line-height:1.55}
+html[data-theme] .cmsg.paciente .bub{background:var(--cj-bubble-them);border:1px solid var(--cj-bubble-them-line);color:var(--cj-bubble-them-text);border-bottom-left-radius:5px}
+html[data-theme] .cmsg.medico .bub{background:var(--cj-bubble-me);border:1px solid var(--cj-bubble-me-line);color:var(--cj-bubble-me-text);border-bottom-right-radius:5px}
+html[data-theme] .cmsg .bub a{color:var(--cj-accent-ink);text-underline-offset:2px;overflow-wrap:anywhere}
+html[data-theme] .cmsg .ts{color:var(--cj-text-4)}
+html[data-theme] .cmsg .bub-wrap{min-width:0;max-width:100%}
+html[data-theme] .msg-arquivo-img{border-color:var(--cj-border);max-width:min(240px,100%);height:auto}
+html[data-theme] .msg-arquivo-pdf{
+  background:var(--cj-surface);border:1px solid var(--cj-border);color:var(--cj-text);
+  max-width:100%;min-width:0;box-sizing:border-box;box-shadow:var(--cj-shadow-sm);
+}
+html[data-theme] .msg-arquivo-pdf:hover{border-color:var(--cj-accent-line);background:var(--cj-surface-2)}
+html[data-theme] .msg-arquivo-pdf .pdf-ico{background:var(--cj-accent-soft);color:var(--cj-accent-ink)}
+html[data-theme] .msg-arquivo-pdf .pdf-nome{color:var(--cj-text)}
+html[data-theme] .msg-arquivo-pdf .pdf-sub{color:var(--cj-text-3)}
+html[data-theme] .msg-arquivo-pdf .pdf-arrow{color:var(--cj-accent-ink)}
+html[data-theme] .chat-medico-input{background:var(--cj-surface);border-top:1px solid var(--cj-border);backdrop-filter:none;-webkit-backdrop-filter:none}
+html[data-theme] .chat-medico-input textarea{background:var(--cj-input);border:1px solid var(--cj-border-2);color:var(--cj-text);font-family:'Inter',sans-serif}
+html[data-theme] .chat-medico-input textarea::placeholder{color:var(--cj-text-4)}
+html[data-theme] .chat-medico-input textarea:focus{border-color:var(--cj-accent);box-shadow:var(--cj-ring);background:var(--cj-input-focus)}
+html[data-theme] .chat-medico-send,html[data-theme] #chat-pip-send{background:var(--cj-grad);color:var(--cj-on-accent);box-shadow:0 8px 20px -10px rgba(94,224,160,.75)}
+html[data-theme] .chat-clip-btn{border-color:var(--cj-border-2);color:var(--cj-text-3)}
+html[data-theme] .chat-clip-btn:hover{background:var(--cj-hover);color:var(--cj-text)}
+html[data-theme] .chat-sec-foot{background:var(--cj-surface);color:var(--cj-text-4);backdrop-filter:none;-webkit-backdrop-filter:none}
+html[data-theme] .chat-preview-wrap{background:var(--cj-accent-soft);border-top-color:var(--cj-accent-line)}
+html[data-theme] .chat-preview-item{background:var(--cj-surface)}
+html[data-theme] .chat-preview-nome{color:var(--cj-text-2)!important}
+html[data-theme] .chat-preview-cancel{background:var(--cj-danger-soft)!important;color:var(--cj-danger)!important}
+html[data-theme] .cj-reply-quote{background:var(--cj-hover);color:var(--cj-text-3);border-left-color:var(--cj-accent)}
+html[data-theme] .cj-reply-quote strong{color:var(--cj-accent-ink)}
+
+/* Picture-in-picture (somente cores; posição/z-index preservados) */
+html[data-theme] #chat-pip{background:var(--cj-surface);border:1px solid var(--cj-border-2);border-radius:16px;box-shadow:var(--cj-shadow-lg)}
+html[data-theme] #chat-pip-header{background:var(--cj-surface-2);border-bottom-color:var(--cj-border)}
+html[data-theme] #chat-pip-header .pip-title{color:var(--cj-text)}
+html[data-theme] #chat-pip-header .pip-btn{background:var(--cj-hover);color:var(--cj-text-2);width:28px;height:28px;border-radius:8px}
+html[data-theme] #chat-pip-header .pip-btn:hover{background:var(--cj-surface-3);color:var(--cj-text)}
+html[data-theme] #chat-pip-msgs{background:var(--cj-chat-bg)}
+html[data-theme] #chat-pip-msgs .msg-medico{background:var(--cj-bubble-me);border-color:var(--cj-bubble-me-line);color:var(--cj-bubble-me-text)}
+html[data-theme] #chat-pip-msgs .msg-paciente{background:var(--cj-bubble-them);border-color:var(--cj-bubble-them-line);color:var(--cj-bubble-them-text)}
+html[data-theme] #chat-pip-input{background:var(--cj-surface);border-top-color:var(--cj-border)}
+html[data-theme] #chat-pip-input textarea{background:var(--cj-input);border-color:var(--cj-border-2);color:var(--cj-text)}
+html[data-theme] #chat-pip-input textarea::placeholder{color:var(--cj-text-4)}
+
+/* Videochamada */
+html[data-theme] .meet-section{background:var(--cj-surface);border-color:var(--cj-border);border-radius:16px}
+html[data-theme] .meet-title{color:var(--cj-accent-ink)}
+html[data-theme] .meet-input{background:var(--cj-input);border-color:var(--cj-border-2);color:var(--cj-text)}
+html[data-theme] .meet-input::placeholder{color:var(--cj-text-4)}
+html[data-theme] .meet-input:focus{border-color:var(--cj-accent);box-shadow:var(--cj-ring)}
+html[data-theme] .meet-link-atual{color:var(--cj-text-3)}
+html[data-theme] .meet-link-atual a{color:var(--cj-accent-ink);overflow-wrap:anywhere}
+html[data-theme] .meet-badge.ok{background:var(--cj-accent-soft);color:var(--cj-accent-ink);border-color:var(--cj-accent-line)}
+html[data-theme] .meet-badge.pendente{background:var(--cj-danger-soft);color:var(--cj-danger);border-color:var(--cj-danger-line)}
+html[data-theme] #wpp-consulta-section p{color:var(--cj-text-3)!important}
+
+/* ── 9. Avaliação clínica, documentos e prontuário ──────────────────────── */
+html[data-theme] .hist-readonly-notice{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--cj-info-soft);border:1px solid var(--cj-border);border-radius:12px;color:var(--cj-text-2);
+}
+html[data-theme] .hist-readonly-notice[style*="display:none"],html[data-theme] .hist-readonly-notice[style*="display: none"]{display:none!important}
+html[data-theme] .hist-readonly-notice .cj-i{color:var(--cj-info);margin-top:2px}
+html[data-theme] .clinic-section-title,html[data-theme] .docs-title{color:var(--cj-text-3);font-weight:650;letter-spacing:.08em}
+html[data-theme] .clinic-label{color:var(--cj-text-2);font-weight:600}
+html[data-theme] .clinic-label span{color:var(--cj-text-4)!important}
+html[data-theme] textarea.clinic-input{
+  background:var(--cj-input);border:1px solid var(--cj-border-2);color:var(--cj-text);
+  border-radius:12px;font-family:'Inter',sans-serif;font-weight:400;
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+html[data-theme] textarea.clinic-input::placeholder{color:var(--cj-text-4)}
+html[data-theme] textarea.clinic-input:focus{border-color:var(--cj-accent);box-shadow:var(--cj-ring)}
+html[data-theme] .conduta-btn{
+  min-height:32px;padding:6px 12px;border-radius:999px;
+  background:var(--cj-surface);border:1px solid var(--cj-border-2);color:var(--cj-text-2);font-family:'Inter',sans-serif;font-size:.72rem;
+}
+html[data-theme] .conduta-btn:hover{border-color:var(--cj-accent-line);background:var(--cj-accent-soft);color:var(--cj-accent-ink)}
+html[data-theme] .doc-check{
+  min-height:38px;padding:7px 14px;border-radius:999px;gap:7px;
+  background:var(--cj-surface);border:1px solid var(--cj-border-2);color:var(--cj-text-2);
+}
+html[data-theme] .doc-check:hover{border-color:var(--cj-accent-line)}
+html[data-theme] .doc-check.checked{background:var(--cj-accent-soft);border-color:var(--cj-accent);color:var(--cj-text);box-shadow:inset 0 0 0 1px var(--cj-accent-line)}
+html[data-theme] .dc-text{display:inline-flex;align-items:center;gap:7px}
+html[data-theme] .dc-text .cj-i,html[data-theme] .check-opt .cj-i,html[data-theme] .radio-text .cj-i{color:var(--cj-accent-ink)}
+html[data-theme] .pront-section{background:var(--cj-surface);border:1px solid var(--cj-border);border-radius:16px;box-shadow:var(--cj-shadow-sm)}
+html[data-theme] .pront-title{color:var(--cj-accent-ink)}
+html[data-theme] .pront-card{background:var(--cj-surface-2);border-color:var(--cj-border);border-radius:12px;min-width:0}
+html[data-theme] .pront-card-title{color:var(--cj-accent-ink);opacity:1}
+html[data-theme] .pront-card-body{color:var(--cj-text);font-weight:400;overflow-wrap:anywhere;word-break:break-word}
+html[data-theme] .pront-header{border-bottom-color:var(--cj-border)}
+html[data-theme] .pront-paciente{color:var(--cj-text)}
+html[data-theme] .pront-meta{color:var(--cj-text-3)}
+html[data-theme] .pront-meta .cj-i{margin-right:2px}
+html[data-theme] .pront-empty{color:var(--cj-text-4)}
+html[data-theme] .pront-output{min-width:0;max-width:100%}
+html[data-theme] .btn-ver-chat,html[data-theme] .btn-copiar{
+  min-height:36px;border-radius:10px;background:var(--cj-surface);border:1px solid var(--cj-border-2);color:var(--cj-text-2);font-family:'Inter',sans-serif;
+}
+html[data-theme] .btn-ver-chat{display:inline-flex}
+html[data-theme] .btn-ver-chat[style*="display:none"],html[data-theme] .btn-ver-chat[style*="display: none"]{display:none!important}
+html[data-theme] .btn-ver-chat:hover,html[data-theme] .btn-copiar:hover{border-color:var(--cj-accent-line);color:var(--cj-accent-ink);background:var(--cj-accent-soft)}
+html[data-theme] .btn-copiar.copied{background:var(--cj-accent-soft);border-color:var(--cj-accent);color:var(--cj-accent-ink)}
+html[data-theme] .autosave-status{color:var(--cj-text-4);gap:5px}
+html[data-theme] .autosave-status.ok{color:var(--cj-accent-ink)}
+html[data-theme] .autosave-status.err{color:var(--cj-danger)}
+html[data-theme] .autosave-status.visible::before{
+  content:"";width:13px;height:13px;flex:0 0 auto;background:currentColor;
+  -webkit-mask:var(--cj-mask-dot) center/contain no-repeat;mask:var(--cj-mask-dot) center/contain no-repeat;
+}
+html[data-theme] .autosave-status.ok::before{-webkit-mask-image:var(--cj-mask-check);mask-image:var(--cj-mask-check)}
+html[data-theme] .autosave-status.err::before{-webkit-mask-image:var(--cj-mask-alert);mask-image:var(--cj-mask-alert)}
+html[data-theme]{
+  --cj-mask-dot:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.2-8.6'/%3E%3C/svg%3E");
+  --cj-mask-check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5L20 7'/%3E%3C/svg%3E");
+  --cj-mask-alert:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E");
+  --cj-mask-play:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='m7 4 13 8-13 8z'/%3E%3C/svg%3E");
+}
+html[data-theme] .fila-preview-assumir{display:flex;align-items:center;justify-content:center;gap:8px}
+html[data-theme] .fila-preview-assumir::before{
+  content:"";width:12px;height:12px;background:currentColor;
+  -webkit-mask:var(--cj-mask-play) center/contain no-repeat;mask:var(--cj-mask-play) center/contain no-repeat;
+}
+
+/* ── 10. Modais, sheets, toasts ─────────────────────────────────────────── */
+html[data-theme] :is(.modal-overlay,.chat-hist-overlay,.trocar-overlay){background:var(--cj-overlay);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+html[data-theme] .fila-preview-backdrop,html[data-theme] #chat-dados-overlay{background:var(--cj-overlay)}
+html[data-theme] :is(.modal,.trocar-card,.chat-hist-modal,.fila-preview-card){
+  background:var(--cj-surface);border:1px solid var(--cj-border);color:var(--cj-text);box-shadow:var(--cj-shadow-lg);
+}
+html[data-theme] .modal{border-radius:22px;max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain}
+html[data-theme] .trocar-card{max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow-y:auto}
+html[data-theme] .modal-title,html[data-theme] .trocar-title{color:var(--cj-text);font-weight:650;letter-spacing:-.02em}
+html[data-theme] .modal-sub,html[data-theme] .trocar-sub{color:var(--cj-text-3);font-weight:400;line-height:1.55}
+html[data-theme] .modal-field label{color:var(--cj-text-3)}
+html[data-theme] .modal-input,
+html[data-theme] .escala-turno :is(select,input){
+  background:var(--cj-input);border:1px solid var(--cj-border-2);color:var(--cj-text);font-family:'Inter',sans-serif;
+}
+html[data-theme] .modal-input::placeholder{color:var(--cj-text-4)}
+html[data-theme] .modal-input:focus{border-color:var(--cj-accent);box-shadow:var(--cj-ring)}
+html[data-theme="light"] .escala-turno :is(select,input){color-scheme:light}
+html[data-theme] select.modal-input option{background:var(--cj-surface);color:var(--cj-text)}
+html[data-theme] .radio-opt,html[data-theme] .check-opt,html[data-theme] .escala-turno{
+  background:var(--cj-surface-2);border:1px solid var(--cj-border);border-radius:12px;
+}
+html[data-theme] .radio-opt{min-height:46px}
+html[data-theme] .check-opt{min-height:40px;color:var(--cj-text-2);border-radius:999px}
+html[data-theme] .radio-opt:hover,html[data-theme] .check-opt:hover{border-color:var(--cj-border-2)}
+html[data-theme] .radio-opt.selected{border-color:var(--cj-accent);background:var(--cj-accent-soft)}
+html[data-theme] .check-opt.selected{border-color:var(--cj-accent);background:var(--cj-accent-soft);color:var(--cj-text)}
+html[data-theme] .radio-dot{border-color:var(--cj-border-2)}
+html[data-theme] .radio-opt.selected .radio-dot{border-color:var(--cj-accent);background:var(--cj-accent);box-shadow:inset 0 0 0 2px var(--cj-surface)}
+html[data-theme] .radio-text{color:var(--cj-text-2);display:inline-flex;align-items:center;gap:8px}
+html[data-theme] .radio-opt.selected .radio-text{color:var(--cj-text)}
+html[data-theme] .btn-cancel{background:transparent;border:1px solid var(--cj-border-2);color:var(--cj-text-2);border-radius:12px;font-family:'Inter',sans-serif;font-weight:600}
+html[data-theme] .btn-cancel:hover{background:var(--cj-hover);color:var(--cj-text)}
+html[data-theme] .btn-confirm{border-radius:12px}
+html[data-theme] .escala-remover{background:var(--cj-danger-soft);border-color:var(--cj-danger-line);color:var(--cj-danger)}
+html[data-theme] .escala-add{background:var(--cj-accent-soft);border-color:var(--cj-accent-line);color:var(--cj-accent-ink)}
+html[data-theme] #dados-regulatorios-faltantes{background:var(--cj-warn-soft)!important;border-color:var(--cj-warn-line)!important;color:var(--cj-warn)!important}
+html[data-theme] #dados-regulatorios-erro{color:var(--cj-danger)!important}
+html[data-theme] .chat-hist-header{border-bottom-color:var(--cj-border)}
+html[data-theme] .chat-hist-title{color:var(--cj-text)}
+html[data-theme] .chat-hist-msgs{background:var(--cj-chat-bg)}
+html[data-theme] :is(.chat-hist-close,#chat-dados-close,.cj-av-close){
+  display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;
+  border:1px solid var(--cj-border);background:var(--cj-surface);color:var(--cj-text-2);
+}
+html[data-theme] :is(.chat-hist-close,#chat-dados-close):hover{border-color:var(--cj-danger-line);color:var(--cj-danger)}
+html[data-theme] .fila-preview-card{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow-y:auto}
+html[data-theme] .fila-preview-title{color:var(--cj-accent-ink)}
+html[data-theme] .fila-preview-nome{color:var(--cj-text)}
+html[data-theme] .fila-preview-meta{color:var(--cj-text-3)}
+html[data-theme] .fila-preview-queixa{background:var(--cj-surface-2);border-color:var(--cj-border);color:var(--cj-text);font-weight:400;overflow-wrap:anywhere}
+html[data-theme] .toast{border-radius:14px;box-shadow:var(--cj-shadow-md);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-weight:550}
+html[data-theme] .toast{background:var(--cj-surface)}
+html[data-theme] .toast.success{background:color-mix(in srgb,var(--cj-surface) 86%,#5ee0a0);border-color:var(--cj-accent-line);color:var(--cj-accent-ink)}
+html[data-theme] .toast.error{background:color-mix(in srgb,var(--cj-surface) 90%,#e27676);border-color:var(--cj-danger-line);color:var(--cj-danger)}
+html[data-theme] .toast.info{background:color-mix(in srgb,var(--cj-surface) 92%,#b4e05a);border-color:var(--cj-border-2);color:var(--cj-text)}
+html[data-theme] .memed-loading{background:var(--cj-surface);border-color:var(--cj-accent-line);color:var(--cj-text);box-shadow:var(--cj-shadow-lg)}
+html[data-theme] .memed-loading-spinner{border-color:var(--cj-accent-soft);border-top-color:var(--cj-accent)}
+html[data-theme] .cj-push-doctor{background:var(--cj-surface)!important;border-color:var(--cj-border-2)!important;color:var(--cj-text);box-shadow:var(--cj-shadow-lg)!important}
+html[data-theme] .cj-push-doctor__title{color:var(--cj-text)!important}
+html[data-theme] .cj-push-doctor__sub{color:var(--cj-text-3)!important}
+html[data-theme] .cj-panel-skeleton{background:var(--cj-bg)}
+html[data-theme="light"] .cj-panel-skeleton__bar,html[data-theme="light"] .cj-panel-skeleton__card{background:rgba(18,48,33,.06);border-color:rgba(18,48,33,.05)}
+
+/* Bottom sheet de dados (mobile) */
+html[data-theme] #chat-dados-panel,html[data-theme] #chat-dados-panel-header{background:var(--cj-surface)}
+html[data-theme] #chat-dados-panel{border-top-color:var(--cj-border)}
+html[data-theme] #chat-dados-panel-header{border-bottom-color:var(--cj-border)}
+html[data-theme] #chat-dados-panel-header h4{color:var(--cj-text)}
+html[data-theme] #chat-dados-editar{background:var(--cj-accent-soft);border-color:var(--cj-accent-line);color:var(--cj-accent-ink);min-height:36px}
+
+/* Cabeçalho compacto do chat (mobile) */
+html[data-theme] #chat-mobile-header{background:var(--cj-surface);border-bottom-color:var(--cj-border)}
+html[data-theme] #chat-mobile-header .cmh-back{color:var(--cj-accent-ink);display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;border-radius:10px}
+html[data-theme] #chat-mobile-header .cmh-back .cj-i{width:22px;height:22px}
+html[data-theme] #chat-mobile-header .cmh-nome{color:var(--cj-text)}
+html[data-theme] #chat-mobile-header .cmh-timer{color:var(--cj-accent-ink)}
+html[data-theme] #chat-mobile-header .cmh-btn{background:var(--cj-surface-2);border-color:var(--cj-border);color:var(--cj-text-2);min-height:36px;font-family:'Inter',sans-serif}
+html[data-theme] #chat-mobile-header .cmh-btn.green{background:var(--cj-grad);border-color:transparent;color:var(--cj-on-accent)}
+html[data-theme] #chat-mobile-header .cmh-btn.red{background:var(--cj-danger-soft);border-color:var(--cj-danger-line);color:var(--cj-danger)}
+
+/* Avaliações (módulo admin) */
+html[data-theme] #cj-avaliacoes-overlay{background:var(--cj-overlay)}
+html[data-theme] .cj-av-card{background:var(--cj-surface);border-color:var(--cj-border);box-shadow:var(--cj-shadow-lg)}
+html[data-theme] :is(.cj-av-head,.cj-av-filters){border-bottom-color:var(--cj-border)}
+html[data-theme] :is(.cj-av-title,.cj-av-med-name,.cj-av-kpi b){color:var(--cj-text)}
+html[data-theme] :is(.cj-av-sub,.cj-av-med-meta,.cj-av-kpi span,.cj-av-dist,.cj-av-section,.cj-av-empty,.cj-av-table th){color:var(--cj-text-3)}
+html[data-theme] .cj-av-table td{color:var(--cj-text);border-bottom-color:var(--cj-border)}
+html[data-theme] .cj-av-table th{border-bottom-color:var(--cj-border)}
+html[data-theme] .cj-av-comment{color:var(--cj-text-2)}
+html[data-theme] :is(.cj-av-med,.cj-av-kpi){background:var(--cj-surface-2);border-color:var(--cj-border)}
+html[data-theme] .cj-av-filters :is(input,select){background:var(--cj-input);color:var(--cj-text);border-color:var(--cj-border-2)}
+html[data-theme="light"] .cj-av-filters :is(input,select){color-scheme:light}
+html[data-theme="light"] .cj-rating-star{color:rgba(18,48,33,.18)}
+html[data-theme="light"] .cj-rating-star.on{color:#d69a12}
+html[data-theme="light"] .cj-origin-badge{border-color:var(--cj-border-2);background:var(--cj-surface-3);color:var(--cj-text-2)}
+html[data-theme="light"] .cj-origin-android{color:#13764a}
+html[data-theme="light"] .cj-origin-ios{color:#3b4650}
+html[data-theme="light"] .cj-origin-web{color:#1c648c}
+html[data-theme="light"] .cj-origin-app{color:#7a5a10}
+
+/* ── 11. Tema claro: neutraliza cores fixas de estilos inline ───────────── */
+/* Limitado aos contêineres do painel — nunca afeta o iframe/overlay da Memed. */
+html[data-theme="light"] :is(#screen-login,#screen-app,.modal-overlay,.fila-preview,.chat-hist-overlay,.trocar-overlay,#chat-pip) [style*="color:rgba(255,255,255"]{color:var(--cj-text-3)!important}
+html[data-theme="light"] :is(#screen-login,#screen-app,.modal-overlay,.fila-preview,.chat-hist-overlay,.trocar-overlay,#chat-pip) :is([style*="color:#eee"],[style*="color: #eee"],[style*="color:#fff;"],[style*="color:#fff\""]){color:var(--cj-text)!important}
+html[data-theme="light"] :is(#screen-app,.modal-overlay) [style*="background:#1a2a1a"]{background:var(--cj-input)!important;color:var(--cj-text)!important;border-color:var(--cj-border-2)!important}
+html[data-theme="light"] :is(#screen-login,#screen-app,.modal-overlay,.fila-preview) [style*="background:rgba(255,255,255"]{background:var(--cj-surface-2)!important}
+html[data-theme="light"] :is(#screen-login,#screen-app,.modal-overlay,.fila-preview) :is([style*="border:1px solid rgba(255,255,255"],[style*="border-top:1px solid rgba(255,255,255"]){border-color:var(--cj-border)!important}
+html[data-theme="light"] :is(#screen-app,.modal-overlay,.fila-preview) :is([style*="color:#b4e05a"],[style*="color:#5ee0a0"],[style*="color:#78d99f"],[style*="color:#9cd6af"],[style*="color:#70e7ad"],[style*="color:#a7df9d"],[style*="color:#79dca8"]){color:var(--cj-accent-ink)!important}
+html[data-theme="light"] :is(#screen-app,.modal-overlay,.fila-preview) :is([style*="color:#ffbd2e"],[style*="color:#ffd36b"]){color:var(--cj-warn)!important}
+html[data-theme="light"] :is(#screen-app,.modal-overlay,.fila-preview) :is([style*="color:#ff8080"],[style*="color:#ff5f57"],[style*="color:#ffaaaa"],[style*="color:#e89a9a"]){color:var(--cj-danger)!important}
+html[data-theme="light"] :is(#screen-app,.modal-overlay) [style*="color:#5eb4e0"]{color:var(--cj-info)!important}
+html[data-theme="light"] .rail-badge,html[data-theme="light"] .tab-badge,html[data-theme="light"] #nav-fila-badge{color:#fff}
+html[data-theme="light"] .pc-especialidade{border-color:var(--cj-accent-line);background:var(--cj-accent-soft);color:var(--cj-accent-ink)}
+html[data-theme="light"] .chat-online-dot,html[data-theme="light"] .live-dot{background:var(--cj-accent)!important}
+html[data-theme="light"] input[type="date"],html[data-theme="light"] input[type="time"],html[data-theme="light"] select{color-scheme:light}
+
+/* ── 12. Visibilidade administrativa (reforço) ──────────────────────────── */
+/* A regra mobile da v3 (.sidebar-title{display:flex!important}) sobrepunha o
+   display:none inline que o JS usa para esconder itens só-admin. Aqui o estado
+   decidido pelo JS volta a prevalecer — o CSS nunca torna esses itens visíveis. */
+#admin-tab-btn[style*="display:none"],#admin-tab-btn[style*="display: none"],
+#admin-hist-tab-btn[style*="display:none"],#admin-hist-tab-btn[style*="display: none"],
+#renov-tab-btn[style*="display:none"],#renov-tab-btn[style*="display: none"],
+#renov-lista[style*="display:none"],#renov-lista[style*="display: none"]{display:none!important}
+
+/* ── 13. Mobile ─────────────────────────────────────────────────────────── */
+@media(max-width:768px){
+  html[data-theme] body{background:var(--cj-bg)!important}
+  html[data-theme] .nav{background:var(--cj-bg)!important;background:color-mix(in srgb,var(--cj-bg) 92%,transparent)!important;border-bottom:1px solid var(--cj-border)!important;gap:8px!important}
+  html[data-theme] .cj-theme-toggle--nav{width:40px;height:40px;border-radius:13px}
+  html[data-theme] .plantao-btn{background:var(--cj-surface-2)!important}
+  html[data-theme] .plantao-btn.online{background:var(--cj-accent-soft)!important}
+  html[data-theme] #nav-fila-btn{background:var(--cj-surface-2)!important;border-color:var(--cj-border)!important}
+  html[data-theme] .nav-logout{color:var(--cj-text-3)!important}
+  html[data-theme] .sidebar,html[data-theme] .app-body .sidebar{background:var(--cj-bg-elev)!important;border-right:1px solid var(--cj-border)!important;box-shadow:var(--cj-shadow-lg)!important}
+  html[data-theme] .sidebar-overlay{background:var(--cj-overlay)!important}
+  html[data-theme] .sidebar-title{color:var(--cj-text-3)!important;margin-left:0;margin-right:0}
+  html[data-theme] .sidebar-title:hover,html[data-theme] .sidebar-title:active{background:var(--cj-hover)!important;color:var(--cj-text)!important}
+  html[data-theme] .fila-count{background:var(--cj-accent-soft)!important;color:var(--cj-accent-ink)!important;border-color:transparent!important}
+  html[data-theme] .fila-vazia{border-color:var(--cj-border)!important;background:transparent!important}
+  html[data-theme] .fila-vazia p{color:var(--cj-text-3)!important}
+  html[data-theme] .fila-vazia svg{opacity:.45!important}
+  html[data-theme] #admin-manual-btn,html[data-theme] #escala-prioridade-btn{background:var(--cj-surface)!important;border-color:var(--cj-border)!important;color:var(--cj-text-2)!important}
+  html[data-theme] #admin-hist-filtros{background:var(--cj-surface-2)!important;border-color:var(--cj-border)!important}
+  html[data-theme] #admin-hist-filtros :is(input,select),html[data-theme] #hist-busca-wrap input{background:var(--cj-input)!important;border-color:var(--cj-border-2)!important;color:var(--cj-text)!important}
+  html[data-theme] .offline-state p,html[data-theme] .empty-state p{color:var(--cj-text-3)!important}
+  html[data-theme] .offline-state svg,html[data-theme] .empty-state svg{opacity:1!important;width:64px!important;height:64px!important;padding:15px}
+  html[data-theme] .triagem-box{background:var(--cj-surface)!important;border-color:var(--cj-border)!important}
+  html[data-theme] .triagem-item{background:var(--cj-surface-2)!important}
+  html[data-theme] .triagem-section{border-radius:0!important;background:transparent!important}
+  html[data-theme] body.app-autenticado .sidebar-toggle{display:none!important}
+  html[data-theme] #chat-mobile-header .cmh-meta{white-space:nowrap;min-width:0}
+  html[data-theme] #chat-mobile-header .cmh-meta span{overflow:hidden;text-overflow:ellipsis}
+  /* Não cortar dados no mobile: textos da triagem quebram linha. */
+  html[data-theme] .triagem-item span,
+  html[data-theme] #chat-dados-panel-body .triagem-item span{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+  html[data-theme] .tabs{background:var(--cj-surface-2)!important}
+  html[data-theme] .chat-medico-input,
+  html[data-theme] #tab-consulta.active .chat-medico-input,
+  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-input{background:var(--cj-surface)!important;border-top-color:var(--cj-border)!important}
+  html[data-theme] #tab-consulta.active .chat-medico-wrap{background:var(--cj-chat-bg)}
+  html[data-theme] .cj-push-doctor{background:var(--cj-surface)!important;border-color:var(--cj-border-2)!important}
+  html[data-theme] .msg-arquivo-img{max-width:min(220px,100%)}
+  html[data-theme] .msg-arquivo-pdf{padding:10px 12px;gap:10px}
+  html[data-theme] .msg-arquivo-pdf .pdf-ico{width:34px;height:34px}
+  /* Modais em bottom-sheet: rolagem interna em vez de cortar campos/botões. */
+  html[data-theme] .modal{border-radius:22px 22px 0 0;max-height:calc(100vh - 12px);max-height:calc(100dvh - 12px);padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  html[data-theme] .modal-actions{position:sticky;bottom:0;z-index:1;margin-bottom:calc(-24px - env(safe-area-inset-bottom,0px));margin-left:-16px;margin-right:-16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--cj-surface);border-top:1px solid var(--cj-border)}
+  html[data-theme] .chat-hist-msgs{min-height:0}
+  html[data-theme] .pront-section{padding:14px}
+  html[data-theme] .pront-card{padding:14px}
+  html[data-theme] .pront-header{flex-wrap:wrap;gap:10px}
+  html[data-theme] .login-card{padding:36px 22px 26px;border-radius:22px}
+  html[data-theme] .toast{left:10px;right:10px}
+}
+@media(max-width:600px){
+  html[data-theme] .modal{padding-left:20px;padding-right:20px}
+  html[data-theme] .modal-actions{margin-left:-20px;margin-right:-20px;padding-left:20px;padding-right:20px}
+}
+@media(max-width:380px){
+  html[data-theme] .nav-tag-24h{display:none}
+  html[data-theme] .cj-theme-toggle--nav{width:36px;height:36px}
+}
+
+/* ── 14. Transição suave de tema e movimento reduzido ───────────────────── */
+@media(prefers-reduced-motion:no-preference){
+  html[data-theme] :is(body,.nav,.sidebar,.triagem-box,.chat-medico-wrap,.chat-medico-msgs,.tabs,.modal,.paciente-card,.hist-card){
+    transition-property:background-color,border-color,color,box-shadow,transform,opacity;
+    transition-duration:.22s;transition-timing-function:ease;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme] *,html[data-theme] *::before,html[data-theme] *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+/* Alto contraste do sistema */
+@media(forced-colors:active){
+  .cj-theme-toggle,html[data-theme] .btn-prescrever,html[data-theme] .btn-confirm{border:1px solid ButtonText}
+}
