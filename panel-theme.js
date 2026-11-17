@@ -101,18 +101,19 @@
   }
   window.cjIcon = cjIcon;
 
-  // ── Botão de alternância ──────────────────────────────────────────────────
+  // ── Switch de tema (claro/escuro) ─────────────────────────────────────────
+  // <button role="switch">: aria-checked="true" = tema escuro ativo.
   function rotuloPara(tema) {
-    return tema === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro';
+    return tema === 'dark' ? 'Tema escuro ativado. Alternar para tema claro' : 'Tema claro ativado. Alternar para tema escuro';
   }
 
   function atualizarBotoes(tema) {
     var botoes = document.querySelectorAll('.cj-theme-toggle');
     for (var i = 0; i < botoes.length; i += 1) {
       var b = botoes[i];
-      b.setAttribute('aria-pressed', tema === 'light' ? 'true' : 'false');
+      b.setAttribute('aria-checked', tema === 'dark' ? 'true' : 'false');
       b.setAttribute('aria-label', rotuloPara(tema));
-      b.title = rotuloPara(tema);
+      b.title = tema === 'dark' ? 'Tema escuro · clique para claro' : 'Tema claro · clique para escuro';
     }
   }
 
@@ -125,8 +126,11 @@
   function criarBotao(extraClass) {
     var b = document.createElement('button');
     b.type = 'button';
+    b.setAttribute('role', 'switch');
     b.className = 'cj-theme-toggle' + (extraClass ? ' ' + extraClass : '');
-    b.innerHTML = cjIcon('sun', 'cj-theme-sun') + cjIcon('moon', 'cj-theme-moon');
+    b.innerHTML = '<span class="cj-switch-track" aria-hidden="true">' +
+      cjIcon('sun', 'cj-theme-sun') + cjIcon('moon', 'cj-theme-moon') +
+      '<span class="cj-switch-thumb"></span></span>';
     b.addEventListener('click', alternar);
     return b;
   }
@@ -180,13 +184,17 @@
   function montarBotoes() {
     var nav = document.querySelector('#screen-app .nav');
     if (nav && !nav.querySelector('.cj-theme-toggle')) {
-      var sair = nav.querySelector('.nav-logout');
       var b = criarBotao('cj-theme-toggle--nav');
-      if (sair) nav.insertBefore(b, sair); else nav.appendChild(b);
+      var slot = document.getElementById('cj-theme-slot-nav');
+      var sair = nav.querySelector(':scope > .nav-logout');
+      if (slot) slot.appendChild(b);
+      else if (sair) nav.insertBefore(b, sair);
+      else nav.appendChild(b);
     }
     var login = document.getElementById('screen-login');
     if (login && !login.querySelector('.cj-theme-toggle')) {
-      login.appendChild(criarBotao('cj-theme-toggle--login'));
+      var topo = login.querySelector('.login-top');
+      (topo || login).appendChild(criarBotao('cj-theme-toggle--login'));
     }
     atualizarBotoes(root.getAttribute('data-theme') || 'dark');
   }
@@ -203,7 +211,7 @@
 
   function montarAvatar() {
     var alvo = document.getElementById('nav-nome');
-    var av = document.querySelector('.nav-medico .cj-avatar');
+    var av = document.querySelector('.cj-status-btn .cj-avatar, .nav-medico .cj-avatar');
     if (!alvo || !av) return;
     var sync = function () { av.textContent = iniciais(alvo.textContent); };
     sync();

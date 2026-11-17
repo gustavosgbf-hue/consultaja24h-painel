@@ -4,7 +4,8 @@
 - Copia apenas o HTML estático do <body> (sem nenhum <script> do painel).
 - Remove os elementos da Memed (overlay/loading) — a demo não carrega Memed.
 - Troca nomes reais citados em textos de interface por textos genéricos.
-- Reaproveita o CSS real: panel-base.css + panel-experience-v3.css + panel-ds-v5.css.
+- Reaproveita o CSS real: panel-base.css + panel-experience-v3.css + panel-ds-v5.css + panel-v6.css
+  e o JS visual panel-theme.js + panel-v6.js (menu de status; sem rede).
 - A lógica da demo fica em demo-review.js (dados 100% fictícios, sem rede).
 
 Uso:  python3 scripts/build_demo_review.py
@@ -37,6 +38,10 @@ def main():
     if 'memed-overlay' in markup or 'memed-loading' in markup:
         sys.exit('erro: elementos da Memed permaneceram no markup da demo')
 
+    # O item Ganhos do sistema real precisa chegar desativado (a demo só o ativa com dados fictícios).
+    if 'id="cj-menu-ganhos"' not in markup:
+        sys.exit('erro: item de menu Ganhos ausente no markup')
+
     # Nenhum script inline pode sobrar.
     if re.search(r'<script\b', markup, flags=re.I):
         sys.exit('erro: o markup copiado contém <script>')
@@ -67,7 +72,9 @@ TEMPLATE = r'''<!doctype html>
 <link rel="stylesheet" href="panel-base.css">
 <link rel="stylesheet" href="panel-experience-v3.css">
 <link rel="stylesheet" href="panel-ds-v5.css">
+<link rel="stylesheet" href="panel-v6.css">
 <script src="panel-theme.js"></script>
+<script src="panel-v6.js" defer></script>
 <style>
   /* Barra de revisão (exclusiva da demo) */
   .demo-bar{position:fixed;left:16px;bottom:16px;z-index:9000;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
@@ -91,6 +98,20 @@ TEMPLATE = r'''<!doctype html>
   .demo-phone{position:relative;width:390px;height:min(844px,calc(100vh - 60px));border-radius:42px;padding:12px;background:#111;box-shadow:0 30px 90px rgba(0,0,0,.5)}
   .demo-phone iframe{width:100%;height:100%;border:0;border-radius:32px;background:#fff}
   .demo-frame-close{position:absolute;top:18px;right:18px;height:38px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font:700 13px 'Manrope',system-ui,sans-serif;cursor:pointer}
+  /* ── Áreas EXCLUSIVAS da demo (dados fictícios) ── */
+  .demo-ficticio{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:.68rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    background:var(--cj-warn-soft);color:var(--cj-warn);border:1px solid var(--cj-warn-line)}
+  .demo-ganhos .modal{max-width:440px}
+  .demo-ganhos-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 4px}
+  .demo-kpi{padding:14px;border-radius:14px;border:1px solid var(--cj-border);background:var(--cj-surface-2)}
+  .demo-kpi span{display:block;font-size:.72rem;font-weight:750;color:var(--cj-text-3);margin-bottom:6px}
+  .demo-kpi b{font-size:1.25rem;font-weight:800;letter-spacing:-.03em;color:var(--cj-text);font-variant-numeric:tabular-nums}
+  .demo-kpi--wide{grid-column:1/-1}
+  .demo-nota{font-size:.78rem;line-height:1.5;color:var(--cj-text-3);margin-top:12px}
+  .cj-demo-prev .demo-prev-lista{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+  .cj-demo-prev .demo-prev-lista li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:12px;border:1px solid var(--cj-border);background:var(--cj-surface-2);font-size:.82rem;color:var(--cj-text-2)}
+  .cj-demo-prev .demo-prev-lista time{font-weight:750;color:var(--cj-text);font-variant-numeric:tabular-nums}
+  .cj-demo-prev .triagem-section-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   @media(max-width:768px){.demo-bar{left:8px;right:8px;bottom:84px;gap:6px;padding:6px;max-width:none}.demo-bar.is-min{right:auto}.demo-bar label span{display:none}}
 </style>
 </head>
@@ -123,6 +144,8 @@ TEMPLATE = r'''<!doctype html>
       <option value="regulatorios">Dados de prescrição</option>
       <option value="chathist">Chat da consulta</option>
       <option value="senha">Troca de senha</option>
+      <option value="menu">Menu de status / plantão</option>
+      <option value="ganhos">Ganhos (fictício)</option>
       <option value="manual">Atendimento manual (admin)</option>
       <option value="turnos">Turnos prioritários (admin)</option>
     </select>
@@ -134,6 +157,22 @@ TEMPLATE = r'''<!doctype html>
   <button type="button" id="demo-tema">Alternar tema</button>
   <button type="button" id="demo-mobile">Ver em mobile</button>
   <button type="button" id="demo-recolher" aria-expanded="false" title="Mostrar/ocultar controles">Controles</button>
+</div>
+
+<div class="modal-overlay demo-ganhos" id="demo-ganhos" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="demo-ganhos-titulo">
+    <span class="demo-ficticio">Demonstração · valores fictícios</span>
+    <div class="modal-title" id="demo-ganhos-titulo" style="margin-top:10px">Ganhos</div>
+    <div class="modal-sub">Ilustração de layout. No painel real este item fica indisponível até existir uma fonte oficial de dados financeiros.</div>
+    <div class="demo-ganhos-grid">
+      <div class="demo-kpi"><span>Produtividade hoje</span><b>7 atend.</b></div>
+      <div class="demo-kpi"><span>Valor do dia</span><b>R$ 000,00</b></div>
+      <div class="demo-kpi demo-kpi--wide"><span>Total a receber no período</span><b>R$ 0.000,00</b></div>
+      <div class="demo-kpi demo-kpi--wide"><span>Próximo pagamento</span><b>dd/mm/aaaa</b></div>
+    </div>
+    <div class="demo-nota">Todos os números são fictícios e mascarados de propósito. Não existe hoje endpoint de ganhos para médicos nem regra oficial de calendário de pagamento (quinzenal ou outra) no backend; a integração real fica pendente.</div>
+    <div class="modal-actions"><button class="btn-confirm" type="button" onclick="document.getElementById('demo-ganhos').classList.remove('open')">Fechar</button></div>
+  </div>
 </div>
 
 <div class="demo-frame" id="demo-frame" role="dialog" aria-label="Pré-visualização mobile (390 × 844)">

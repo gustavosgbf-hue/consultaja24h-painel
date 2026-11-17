@@ -16,7 +16,9 @@
 <link rel="stylesheet" href="panel-base.css">
 <link rel="stylesheet" href="panel-experience-v3.css">
 <link rel="stylesheet" href="panel-ds-v5.css">
+<link rel="stylesheet" href="panel-v6.css">
 <script src="panel-theme.js"></script>
+<script src="panel-v6.js" defer></script>
 <style>
   /* Barra de revisão (exclusiva da demo) */
   .demo-bar{position:fixed;left:16px;bottom:16px;z-index:9000;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
@@ -40,31 +42,35 @@
   .demo-phone{position:relative;width:390px;height:min(844px,calc(100vh - 60px));border-radius:42px;padding:12px;background:#111;box-shadow:0 30px 90px rgba(0,0,0,.5)}
   .demo-phone iframe{width:100%;height:100%;border:0;border-radius:32px;background:#fff}
   .demo-frame-close{position:absolute;top:18px;right:18px;height:38px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font:700 13px 'Manrope',system-ui,sans-serif;cursor:pointer}
+  /* ── Áreas EXCLUSIVAS da demo (dados fictícios) ── */
+  .demo-ficticio{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:.68rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    background:var(--cj-warn-soft);color:var(--cj-warn);border:1px solid var(--cj-warn-line)}
+  .demo-ganhos .modal{max-width:440px}
+  .demo-ganhos-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 4px}
+  .demo-kpi{padding:14px;border-radius:14px;border:1px solid var(--cj-border);background:var(--cj-surface-2)}
+  .demo-kpi span{display:block;font-size:.72rem;font-weight:750;color:var(--cj-text-3);margin-bottom:6px}
+  .demo-kpi b{font-size:1.25rem;font-weight:800;letter-spacing:-.03em;color:var(--cj-text);font-variant-numeric:tabular-nums}
+  .demo-kpi--wide{grid-column:1/-1}
+  .demo-nota{font-size:.78rem;line-height:1.5;color:var(--cj-text-3);margin-top:12px}
+  .cj-demo-prev .demo-prev-lista{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+  .cj-demo-prev .demo-prev-lista li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:12px;border:1px solid var(--cj-border);background:var(--cj-surface-2);font-size:.82rem;color:var(--cj-text-2)}
+  .cj-demo-prev .demo-prev-lista time{font-weight:750;color:var(--cj-text);font-variant-numeric:tabular-nums}
+  .cj-demo-prev .triagem-section-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   @media(max-width:768px){.demo-bar{left:8px;right:8px;bottom:84px;gap:6px;padding:6px;max-width:none}.demo-bar.is-min{right:auto}.demo-bar label span{display:none}}
 </style>
 </head>
 <body>
 <div class="bg-mesh" aria-hidden="true"></div>
 <div id="screen-login">
-  <aside class="login-aside">
-    <div class="cj-brand"><svg class="cj-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 11.6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v5.3a3 3 0 0 1-3 3h-4.1l-3.9 3v-3.1a3 3 0 0 1-2-2.9z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11.7v4.6M13.7 14h4.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg><span class="cj-wordmark"><span class="cj-wm-a">Consulta</span><span class="cj-wm-b">Já</span><span class="cj-wm-c">24h</span></span></div>
-    <div class="login-aside-body">
-      <div class="login-eyebrow">Painel médico</div>
-      <h1 class="login-aside-title">Atendimento clínico <span>com foco</span> no paciente.</h1>
-      <p class="login-aside-lead">Fila, triagem, chat, avaliação clínica e prontuário reunidos em um único fluxo de trabalho.</p>
-      <ul class="login-aside-points">
-        <li><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg><span>Triagem estruturada antes de assumir o atendimento</span></li>
-        <li><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg><span>Chat seguro com o paciente e envio de documentos</span></li>
-        <li><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Prontuário de telemedicina conforme Res. CFM 2.314/2022</span></li>
-      </ul>
-    </div>
-    <div class="login-aside-foot">Acesso exclusivo para profissionais cadastrados e aprovados.</div>
-  </aside>
+  <header class="login-top">
+    <span class="cj-wordmark">Consulta<span class="cj-wm-ja">Já</span>24h</span>
+    <span class="login-top-ctx">Painel médico</span>
+  </header>
   <div class="login-main">
   <div class="login-card">
-    <div class="login-logo"><span class="cj-brand"><svg class="cj-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 11.6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v5.3a3 3 0 0 1-3 3h-4.1l-3.9 3v-3.1a3 3 0 0 1-2-2.9z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11.7v4.6M13.7 14h4.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg><span class="cj-wordmark"><span class="cj-wm-a">Consulta</span><span class="cj-wm-b">Já</span><span class="cj-wm-c">24h</span></span></span></div>
-    <div class="login-title">Entrar no painel</div>
-    <div class="login-sub">Use o e-mail e a senha cadastrados na ConsultaJá24h.</div>
+    <div class="login-eyebrow">Área clínica</div>
+    <h1 class="login-title">Acesso médico</h1>
+    <div class="login-sub">Entre com o e-mail e a senha cadastrados.</div>
     <div class="field"><label>E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
     <div class="field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/></div>
     <div class="field" id="field-admin-pwd" style="display:none"><label class="login-label-admin">Senha admin (opcional)</label><input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off"/></div>
@@ -87,10 +93,33 @@
 </div>
 <div id="screen-app">
   <nav class="nav">
-    <a href="#" class="nav-brand cj-brand" aria-label="ConsultaJá24h · Painel médico"><span class="live-dot" id="nav-dot" hidden></span><svg class="cj-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 11.6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v5.3a3 3 0 0 1-3 3h-4.1l-3.9 3v-3.1a3 3 0 0 1-2-2.9z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11.7v4.6M13.7 14h4.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg><span class="cj-wordmark"><span class="cj-wm-a">Consulta</span><span class="cj-wm-b">Já</span><span class="cj-wm-c">24h</span></span><span class="cj-brand-sep" aria-hidden="true"></span><span class="cj-brand-ctx">Painel médico</span></a>
+    <a href="#" class="nav-brand cj-brand" aria-label="ConsultaJá24h · Painel médico"><span class="live-dot" id="nav-dot" hidden></span><span class="cj-wordmark">Consulta<span class="cj-wm-ja">Já</span>24h</span><span class="cj-brand-sep" aria-hidden="true"></span><span class="cj-brand-ctx">Painel médico</span></a>
     <div class="nav-spacer"></div>
-    <div class="nav-medico"><span class="cj-avatar" aria-hidden="true"></span><span><span class="cj-nav-greet">Olá, </span><strong id="nav-nome"></strong></span></div>
-    <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
+    <span class="cj-theme-slot" id="cj-theme-slot-nav"></span>
+    <!-- Menu compacto de status do médico. #btn-plantao, #plantao-txt, #nav-nome e .nav-logout
+         mantêm IDs, classes e handlers originais; só mudaram de lugar (dentro do menu). -->
+    <div class="cj-status-menu" id="cj-status-menu">
+      <button type="button" class="cj-status-btn" id="cj-status-btn" aria-haspopup="true" aria-expanded="false" aria-controls="cj-status-pop">
+        <span class="cj-avatar" aria-hidden="true"></span>
+        <span class="nav-medico"><span class="cj-nav-greet">Olá, </span><strong id="nav-nome"></strong></span>
+        <span class="cj-status-badge" aria-hidden="true"><span class="cj-status-dot"></span><span class="cj-status-on">Em plantão</span><span class="cj-status-off">Fora do plantão</span></span>
+        <span class="cj-sr">Status e opções da conta</span>
+        <svg class="cj-i cj-status-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="cj-status-pop" id="cj-status-pop" role="menu" aria-label="Status do médico" hidden>
+        <div class="cj-pop-head">
+          <span class="cj-pop-label">Status</span>
+          <span class="cj-pop-state"><span class="cj-status-dot"></span><span class="cj-status-on">Em plantão · recebendo pacientes</span><span class="cj-status-off">Fora do plantão</span></span>
+        </div>
+        <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()" role="menuitem"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
+        <div class="cj-pop-sep" role="separator"></div>
+        <button type="button" class="cj-menu-item" id="cj-menu-ganhos" role="menuitem" aria-disabled="true" disabled title="Aguardando integração com dados financeiros oficiais">
+          <span class="cj-menu-ico" aria-hidden="true">$</span><span class="cj-menu-txt">Ganhos</span><span class="cj-menu-note">Em breve</span>
+        </button>
+        <div class="cj-pop-sep" role="separator"></div>
+        <button class="nav-logout" onclick="logout()" role="menuitem">Sair</button>
+      </div>
+    </div>
     <!-- Botão fila mobile - só aparece em mobile autenticado -->
     <button id="nav-fila-btn" onclick="toggleSidebarMobile()" aria-label="Ver fila de pacientes" title="Ver fila">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -99,7 +128,6 @@
       </svg>
       <span id="nav-fila-badge">0</span>
     </button>
-    <button class="nav-logout" onclick="logout()">Sair</button>
   </nav>
   <div class="app-body" id="app-body">
     <aside class="sidebar" id="sidebar">
@@ -169,7 +197,7 @@
   </div>
   <div id="state-atend" style="display:none">
     <!-- MULTI CONSULT: seletor de atendimentos -->
-    <div class="slot-tabs" id="slot-tabs"></div>
+    <div class="slot-tabs" id="slot-tabs" role="group" aria-label="Atendimentos ativos"></div>
     <div class="atend-header">
       <div class="atend-paciente">
         <div class="atend-nome" id="atend-nome">-</div>
@@ -233,9 +261,9 @@
         </div>
       </div>
       <div class="cmh-actions">
-        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></svg>Dados</button>
+        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></svg><span>Dados</span></button>
         <button class="cmh-btn green" id="btn-memed-mobile" onclick="abrirMemed()" aria-label="Abrir prescrição" title="Receitas, atestados e exames"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg><span>Prescrever</span></button>
-        <button class="cmh-btn red" onclick="abrirModalEncerrar()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4 4L19 6"/></svg>Enc.</button>
+        <button class="cmh-btn red" onclick="abrirModalEncerrar()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4 4L19 6"/></svg><span>Encerrar</span></button>
       </div>
     </div>
 
@@ -326,6 +354,7 @@
       </div>
       <div class="docs-section">
         <div class="docs-title">Documentos a emitir</div>
+        <div class="docs-hint">Marque o que será emitido nesta consulta. A seleção entra no prontuário.</div>
         <div class="docs-grid">
           <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="receita"><span class="dc-text">💊 Receita</span></label>
           <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="atestado"><span class="dc-text">📋 Atestado</span></label>
@@ -540,6 +569,8 @@
       <option value="regulatorios">Dados de prescrição</option>
       <option value="chathist">Chat da consulta</option>
       <option value="senha">Troca de senha</option>
+      <option value="menu">Menu de status / plantão</option>
+      <option value="ganhos">Ganhos (fictício)</option>
       <option value="manual">Atendimento manual (admin)</option>
       <option value="turnos">Turnos prioritários (admin)</option>
     </select>
@@ -551,6 +582,22 @@
   <button type="button" id="demo-tema">Alternar tema</button>
   <button type="button" id="demo-mobile">Ver em mobile</button>
   <button type="button" id="demo-recolher" aria-expanded="false" title="Mostrar/ocultar controles">Controles</button>
+</div>
+
+<div class="modal-overlay demo-ganhos" id="demo-ganhos" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="demo-ganhos-titulo">
+    <span class="demo-ficticio">Demonstração · valores fictícios</span>
+    <div class="modal-title" id="demo-ganhos-titulo" style="margin-top:10px">Ganhos</div>
+    <div class="modal-sub">Ilustração de layout. No painel real este item fica indisponível até existir uma fonte oficial de dados financeiros.</div>
+    <div class="demo-ganhos-grid">
+      <div class="demo-kpi"><span>Produtividade hoje</span><b>7 atend.</b></div>
+      <div class="demo-kpi"><span>Valor do dia</span><b>R$ 000,00</b></div>
+      <div class="demo-kpi demo-kpi--wide"><span>Total a receber no período</span><b>R$ 0.000,00</b></div>
+      <div class="demo-kpi demo-kpi--wide"><span>Próximo pagamento</span><b>dd/mm/aaaa</b></div>
+    </div>
+    <div class="demo-nota">Todos os números são fictícios e mascarados de propósito. Não existe hoje endpoint de ganhos para médicos nem regra oficial de calendário de pagamento (quinzenal ou outra) no backend; a integração real fica pendente.</div>
+    <div class="modal-actions"><button class="btn-confirm" type="button" onclick="document.getElementById('demo-ganhos').classList.remove('open')">Fechar</button></div>
+  </div>
 </div>
 
 <div class="demo-frame" id="demo-frame" role="dialog" aria-label="Pré-visualização mobile (390 × 844)">

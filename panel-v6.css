@@ -1,0 +1,267 @@
+/* ==========================================================================
+   ConsultaJá24h · Painel médico — ajustes v6 (revisão do usuário)
+   Carregado DEPOIS de panel-ds-v5.css. Camada exclusivamente visual.
+   Não estiliza #memed-overlay, iframe da Memed nem altera posição do drawer.
+   Seções:
+     1. Wordmark        2. Login            3. Switch de tema
+     4. Menu de status  5. Slots ativos     6. Header mobile / ações
+     7. Nomes completos 8. Camadas: modais × PiP
+     9. Movimento       10. Documentos
+   ========================================================================== */
+
+/* ── 1. Wordmark: texto exato "ConsultaJá24h", sem ícone, sem itálico ───── */
+html[data-theme] .cj-wordmark{
+  display:inline-block;font-family:var(--cj-font)!important;font-style:normal!important;font-weight:800;
+  font-size:1.08rem;letter-spacing:-.03em;line-height:1;white-space:nowrap;color:inherit
+}
+html[data-theme] .cj-wordmark .cj-wm-ja{color:var(--cj-brand-ja)}
+/* Neutraliza regra legada ".nav-brand span" (Playfair itálico, tamanhos !important do v3) */
+html[data-theme] .nav-brand span{font-family:var(--cj-font)!important;font-style:normal!important}
+html[data-theme] .nav-brand .cj-wordmark{font-size:1.08rem!important}
+html[data-theme] .nav-brand .cj-wordmark .cj-wm-ja{font-size:inherit!important}
+html[data-theme] .nav-brand .cj-brand-ctx{font-size:.8rem!important}
+html[data-theme] .cj-mark,html[data-theme] .nav-brand .live-dot,html[data-theme] .login-logo .dot{display:none!important}
+html[data-theme] .nav-brand{text-decoration:none}
+html[data-theme] .cj-brand-ctx{font-size:.8rem;font-weight:700;color:var(--cj-top-muted)}
+html[data-theme] .cj-brand-sep{width:1px;height:16px;background:var(--cj-top-chip-line)}
+
+/* ── 2. Login: título curto, sem hero de marketing ──────────────────────── */
+html[data-theme] #screen-login{flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;background:var(--cj-bg)!important}
+html[data-theme] .login-aside{display:none!important}
+html[data-theme] .login-top{
+  display:flex;align-items:center;gap:12px;padding:18px 28px;min-height:64px;box-sizing:border-box;
+  border-bottom:1px solid var(--cj-border);background:var(--cj-bg-elev);color:var(--cj-text)
+}
+html[data-theme] .login-top .cj-wm-ja{color:var(--cj-accent)}
+html[data-theme] .login-top-ctx{font-size:.8rem;font-weight:700;color:var(--cj-text-3);padding-left:12px;border-left:1px solid var(--cj-border-2);margin-right:auto}
+html[data-theme] .login-main{flex:1 0 auto;display:flex;align-items:center;justify-content:center;padding:48px 20px 64px!important}
+html[data-theme] .login-card{
+  max-width:420px!important;width:100%;box-sizing:border-box;padding:36px 34px 30px!important;
+  background:var(--cj-surface)!important;border:1px solid var(--cj-border)!important;border-radius:var(--cj-r-xl)!important;box-shadow:var(--cj-shadow-md)!important
+}
+html[data-theme] .login-card .login-eyebrow{display:block;margin:0 0 10px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cj-accent-ink)}
+html[data-theme] .login-card .login-eyebrow::before{content:none}
+html[data-theme] .login-title{font-size:1.6rem!important;margin:0 0 6px!important;line-height:1.15}
+html[data-theme] .login-sub{margin-bottom:26px!important}
+html[data-theme] .login-legal{margin-top:26px;padding-top:18px;border-top:1px solid var(--cj-border)}
+@media(max-width:768px){
+  html[data-theme] .login-top{padding:12px 16px;min-height:56px}
+  html[data-theme] .login-main{align-items:flex-start;padding:24px 14px 40px!important}
+  html[data-theme] .login-card{padding:26px 20px 22px!important;border-radius:20px!important;box-shadow:var(--cj-shadow-sm)!important}
+  html[data-theme] .login-title{font-size:1.4rem!important}
+}
+@media(max-width:360px){html[data-theme] .login-top-ctx{display:none}}
+
+/* ── 3. Switch de tema (claro/escuro) ───────────────────────────────────── */
+html[data-theme] .cj-theme-toggle{
+  position:static!important;width:auto!important;height:auto!important;padding:4px!important;margin:0;border:0!important;border-radius:999px!important;
+  background:transparent!important;box-shadow:none!important;cursor:pointer;display:inline-flex;align-items:center;flex:0 0 auto;color:inherit;transform:none!important
+}
+html[data-theme] .cj-switch-track{
+  position:relative;display:inline-flex;align-items:center;justify-content:space-between;box-sizing:border-box;
+  width:52px;height:28px;padding:0 7px;border-radius:999px;border:1px solid var(--cj-border-2);background:var(--cj-surface-3)
+}
+html[data-theme] .cj-switch-track .cj-i{display:block!important;width:13px;height:13px;color:var(--cj-text-3);position:relative;z-index:1}
+html[data-theme] .cj-switch-thumb{
+  position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--cj-surface);
+  box-shadow:0 1px 3px rgba(0,0,0,.22);transition:transform .18s ease
+}
+html[data-theme="dark"] .cj-switch-thumb{transform:translateX(24px)}
+html[data-theme="light"] .cj-theme-toggle .cj-theme-sun,html[data-theme="dark"] .cj-theme-toggle .cj-theme-moon{color:var(--cj-text)}
+/* Na barra superior (verde-tinta nos dois temas) */
+html[data-theme] .cj-theme-toggle--nav .cj-switch-track{background:rgba(255,255,255,.08);border-color:var(--cj-top-chip-line)}
+html[data-theme] .cj-theme-toggle--nav .cj-switch-track .cj-i{color:rgba(255,255,255,.55)}
+html[data-theme] .cj-theme-toggle--nav .cj-switch-thumb{background:#fff}
+html[data-theme="light"] .cj-theme-toggle--nav .cj-theme-sun,html[data-theme="dark"] .cj-theme-toggle--nav .cj-theme-moon{color:#07100f}
+html[data-theme] .cj-theme-toggle:focus-visible{box-shadow:var(--cj-ring)!important}
+html[data-theme] .cj-theme-slot{display:inline-flex;align-items:center}
+@media(prefers-reduced-motion:reduce){html[data-theme] .cj-switch-thumb{transition:none}}
+
+/* ── 4. Menu compacto de status do médico ───────────────────────────────── */
+.cj-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+html[data-theme] .cj-status-menu{position:relative;display:flex;align-items:center;flex:0 0 auto}
+html[data-theme] .cj-status-btn{
+  display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:4px 10px 4px 4px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--cj-top-chip-line);background:var(--cj-top-chip);color:#fff;font:inherit;max-width:min(46vw,380px)
+}
+html[data-theme] .cj-status-btn:hover,html[data-theme] .cj-status-menu.is-open .cj-status-btn{background:rgba(255,255,255,.1)}
+html[data-theme] .cj-status-btn .cj-avatar{width:30px;height:30px}
+html[data-theme] .cj-status-btn .nav-medico{display:inline-flex!important;min-width:0;font-size:.82rem;color:var(--cj-top-muted)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-theme] .cj-status-btn .nav-medico>*{min-width:0}
+html[data-theme] .cj-status-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:750;white-space:nowrap;background:rgba(255,255,255,.07);color:rgba(255,255,255,.72)}
+html[data-theme] .cj-status-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;box-sizing:border-box;border:1.5px solid rgba(255,255,255,.55);background:transparent;animation:none!important}
+html[data-theme] .cj-status-on{display:none}
+html[data-theme] .cj-status-menu[data-plantao="on"] .cj-status-on{display:inline}
+html[data-theme] .cj-status-menu[data-plantao="on"] .cj-status-off{display:none}
+html[data-theme] .cj-status-menu[data-plantao="on"] .cj-status-badge{background:rgba(63,174,134,.18);color:#c9eedd}
+html[data-theme] .cj-status-menu[data-plantao="on"] .cj-status-dot{background:#5fd0a4;border-color:#5fd0a4}
+html[data-theme] .cj-status-caret{width:14px;height:14px;color:rgba(255,255,255,.6)}
+html[data-theme] .cj-status-pop{
+  position:absolute;top:calc(100% + 10px);right:0;z-index:400;width:290px;box-sizing:border-box;padding:8px;
+  background:var(--cj-surface);color:var(--cj-text);border:1px solid var(--cj-border-2);border-radius:16px;box-shadow:var(--cj-shadow-lg)
+}
+html[data-theme] .cj-status-pop[hidden]{display:none!important}
+html[data-theme] .cj-pop-head{display:flex;flex-direction:column;gap:4px;padding:8px 10px 10px}
+html[data-theme] .cj-pop-label{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cj-text-4)}
+html[data-theme] .cj-pop-state{display:inline-flex;align-items:center;gap:8px;font-size:.88rem;font-weight:750;color:var(--cj-text)}
+html[data-theme] .cj-pop-state .cj-status-dot{border-color:var(--cj-text-4)}
+html[data-theme] .cj-status-menu[data-plantao="on"] .cj-pop-state .cj-status-dot{background:var(--cj-accent);border-color:var(--cj-accent)}
+html[data-theme] .cj-pop-sep{height:1px;margin:6px 4px;background:var(--cj-border)}
+/* #btn-plantao original como item do menu (vence regras mobile antigas com !important) */
+html[data-theme] .cj-status-pop #btn-plantao.plantao-btn{
+  display:flex!important;width:100%!important;height:auto!important;min-height:44px!important;padding:0 12px!important;justify-content:flex-start!important;gap:10px!important;
+  border-radius:12px!important;font-size:.88rem!important;font-weight:750!important;box-shadow:none!important
+}
+html[data-theme] .cj-status-pop #btn-plantao span{display:inline!important}
+html[data-theme] .cj-status-pop #btn-plantao.offline{background:var(--cj-primary)!important;color:var(--cj-on-primary)!important;border:1px solid transparent!important}
+html[data-theme] .cj-status-pop #btn-plantao.offline:hover{background:var(--cj-primary-hover)!important}
+html[data-theme] .cj-status-pop #btn-plantao.offline .plantao-indicator{border-color:currentColor!important}
+html[data-theme] .cj-status-pop #btn-plantao.online{background:var(--cj-surface)!important;color:var(--cj-danger)!important;border:1px solid var(--cj-danger-line)!important}
+html[data-theme] .cj-status-pop #btn-plantao.online:hover{background:var(--cj-danger-soft)!important}
+html[data-theme] .cj-status-pop #btn-plantao.online .plantao-indicator{background:var(--cj-danger)!important}
+html[data-theme] .cj-status-pop :is(.cj-menu-item,.nav-logout){
+  display:flex!important;align-items:center;gap:10px;width:100%;min-height:42px!important;height:auto!important;padding:0 12px!important;border-radius:12px!important;
+  border:0!important;background:transparent!important;color:var(--cj-text-2)!important;font-size:.86rem!important;font-weight:700!important;text-align:left;cursor:pointer
+}
+html[data-theme] .cj-status-pop :is(.cj-menu-item:not(:disabled),.nav-logout):hover{background:var(--cj-hover)!important;color:var(--cj-text)!important}
+html[data-theme] .cj-menu-ico{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--cj-accent-soft);color:var(--cj-accent-ink);font-weight:800;font-size:.85rem}
+html[data-theme] .cj-menu-txt{flex:1}
+html[data-theme] .cj-menu-note{font-size:.68rem;font-weight:750;padding:2px 8px;border-radius:999px;background:var(--cj-surface-3);color:var(--cj-text-3)}
+html[data-theme] .cj-status-pop .cj-menu-item:disabled{cursor:not-allowed;opacity:.72}
+html[data-theme] .cj-status-pop .cj-menu-item:disabled .cj-menu-ico{background:var(--cj-surface-3);color:var(--cj-text-4)}
+@media(max-width:1100px){html[data-theme] .cj-status-btn .nav-medico{display:none!important}}
+@media(max-width:768px){
+  html[data-theme] .nav{gap:6px!important}
+  html[data-theme] .cj-status-btn{padding:3px 8px 3px 3px;gap:6px;min-height:40px}
+  html[data-theme] .cj-status-pop{position:fixed;top:calc(var(--cj-nav-h) + 6px);left:8px;right:8px;width:auto}
+}
+@media(max-width:480px){
+  html[data-theme] .cj-status-badge{padding:0;background:transparent!important;gap:0}
+  html[data-theme] .cj-status-badge>:not(.cj-status-dot){display:none!important}
+  html[data-theme] .cj-status-badge .cj-status-dot{width:10px;height:10px}
+}
+@media(max-width:360px){
+  html[data-theme] .cj-status-caret{display:none}
+  html[data-theme] .cj-switch-track{width:46px}
+  html[data-theme="dark"] .cj-switch-thumb{transform:translateX(18px)}
+  html[data-theme] .nav-brand .cj-wordmark,html[data-theme] .cj-wordmark{font-size:1rem!important}
+}
+
+/* ── 5. Atendimentos ativos (slots): janelinhas com nome completo ───────── */
+html[data-theme] .slot-tabs.visivel{display:flex!important;flex-wrap:wrap;gap:8px!important}
+html[data-theme] .slot-tab-btn{
+  position:relative;display:flex!important;align-items:center;gap:8px;min-height:44px!important;height:auto!important;padding:8px 14px!important;
+  max-width:360px;text-align:left;border-radius:14px!important;line-height:1.25;
+  background:var(--cj-surface)!important;color:var(--cj-text-2)!important;border:1px solid var(--cj-border-2)!important;box-shadow:var(--cj-shadow-xs)
+}
+html[data-theme] .slot-tab-btn.active{background:var(--cj-accent-soft)!important;color:var(--cj-text)!important;border-color:var(--cj-accent)!important;box-shadow:inset 0 0 0 1px var(--cj-accent)!important}
+html[data-theme] .slot-tab-btn .slot-name{
+  display:block;flex:1 1 auto;max-width:none!important;min-width:0;
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:break-word;word-break:normal;font-weight:750
+}
+html[data-theme] .slot-tab-btn .slot-name .cj-i{vertical-align:-3px;margin-right:4px}
+html[data-theme] .slot-tab-btn .slot-dot{animation:none!important;background:var(--cj-text-4)!important;flex:0 0 auto}
+html[data-theme] .slot-tab-btn.active .slot-dot{background:var(--cj-accent)!important}
+html[data-theme] .slot-badge-nova{animation:none!important;flex:0 0 auto;width:9px;height:9px;margin-left:auto!important;background:#e5484d!important;box-shadow:0 0 0 2px var(--cj-surface)}
+@media(max-width:768px){
+  html[data-theme] .slot-tabs.visivel{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px!important;margin-bottom:10px!important}
+  html[data-theme] .slot-tab-btn{max-width:none;width:100%;padding:8px 10px!important;font-size:.8rem!important}
+  /* Fullscreen do chat: abas continuam visíveis logo abaixo do header compacto */
+  html[data-theme] body.chat-fullscreen #state-atend>#chat-mobile-header{order:-2}
+  html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs{order:-1}
+  html[data-theme] body.chat-fullscreen .slot-tabs.visivel{
+    display:grid!important;flex-shrink:0;margin:0!important;padding:8px 10px!important;
+    background:var(--cj-bg-elev);border-bottom:1px solid var(--cj-border)!important;max-height:40vh;overflow-y:auto;overscroll-behavior:contain
+  }
+  html[data-theme] body.chat-fullscreen .slot-tab-btn{min-height:42px!important}
+}
+
+/* ── 6. Cabeçalho mobile do chat: ações sempre visíveis (320–430 px) ────── */
+@media(max-width:768px){
+  html[data-theme] body.chat-fullscreen #chat-mobile-header{
+    display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:6px;row-gap:8px;
+    padding:8px 10px 10px!important;padding-top:calc(8px + env(safe-area-inset-top,0px))!important;min-height:0
+  }
+  html[data-theme] #chat-mobile-header .cmh-nome{
+    white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:break-word;word-break:normal;font-size:.95rem!important;line-height:1.25
+  }
+  html[data-theme] #chat-mobile-header .cmh-actions{
+    grid-column:1/-1;display:grid!important;grid-template-columns:minmax(0,.8fr) minmax(0,1.1fr) minmax(0,1fr);gap:6px!important;width:100%
+  }
+  html[data-theme] #chat-mobile-header .cmh-btn{
+    justify-content:center;min-height:40px;padding:0 6px!important;gap:5px!important;font-size:.8rem!important;white-space:nowrap;min-width:0;overflow:hidden
+  }
+  html[data-theme] #chat-mobile-header .cmh-btn svg{flex:0 0 auto;width:14px;height:14px}
+  /* Cabeçalho do atendimento fora do fullscreen: ações em grade, sem rolagem horizontal */
+  html[data-theme] .atend-nome{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:break-word;word-break:normal}
+  html[data-theme] .atend-actions{display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px!important;overflow:visible!important;padding-bottom:0}
+  html[data-theme] .atend-actions[style*="display:none"],html[data-theme] .atend-actions[style*="display: none"]{display:none!important}
+  html[data-theme] .atend-actions>*{min-width:0;justify-content:center;white-space:nowrap;padding-left:8px!important;padding-right:8px!important}
+}
+@media(max-width:340px){
+  html[data-theme] #chat-mobile-header .cmh-actions{grid-template-columns:minmax(0,.7fr) minmax(0,1.15fr) minmax(0,1.05fr);gap:4px!important}
+  html[data-theme] #chat-mobile-header .cmh-btn{font-size:.76rem!important;gap:4px!important}
+  html[data-theme] #chat-mobile-header .cmh-btn svg{width:12px;height:12px}
+}
+
+/* ── 7. Nomes completos (sem reticências) ───────────────────────────────── */
+html[data-theme] .pc-header{align-items:flex-start!important}
+html[data-theme] :is(.pc-nome,.hist-card-nome,.cj-hist-nome,.cj-agend-nome,.medico-card-nome,.fila-preview-nome){
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:break-word;word-break:normal;line-height:1.3
+}
+html[data-theme] .pc-tipo{margin-top:1px}
+html[data-theme] .pc-queixa{white-space:normal!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ── 8. Camadas: modais sempre acima do PiP ─────────────────────────────── */
+/* PiP = 5000 (inalterado). Overlays de decisão sobem para 6000; Memed (9999+) intacta. */
+html[data-theme] :is(.modal-overlay,.fila-preview,.chat-hist-overlay,.trocar-overlay){z-index:6000!important}
+html[data-theme] .toast{z-index:6500!important}
+/* Com modal/overlay/drawer aberto o PiP some (só CSS; estado e handlers do PiP intactos). */
+html[data-theme] body:has(:is(.modal-overlay,.fila-preview,.chat-hist-overlay,.trocar-overlay).open) #chat-pip,
+html[data-theme] body:has(#chat-dados-sheet.open) #chat-pip,
+html[data-theme] body:has(.sidebar.open) #chat-pip{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+html[data-theme] #chat-pip{transition:transform .22s ease,opacity .18s ease,visibility .18s!important}
+/* Modal: rolagem interna e ação de confirmar sempre visível */
+html[data-theme] .modal{overflow-y:auto;overscroll-behavior:contain;max-height:calc(100dvh - 40px)}
+html[data-theme] .modal-actions{position:sticky;bottom:-28px;z-index:1;background:var(--cj-surface);margin:20px -28px -28px!important;padding:14px 28px 18px;border-top:1px solid var(--cj-border)}
+@media(max-width:768px){
+  html[data-theme] .modal-overlay{align-items:flex-end!important;padding:0!important}
+  html[data-theme] .modal{max-height:calc(100dvh - 12px)!important;width:100%;max-width:100%!important}
+  html[data-theme] .modal-actions{bottom:calc(-18px - env(safe-area-inset-bottom,0px));margin:20px -18px calc(-18px - env(safe-area-inset-bottom,0px))!important;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px))}
+  /* PiP aberto não deve esconder botões de finalizar: reserva espaço ao rolar */
+  html[data-theme] body:has(#chat-pip.visivel:not(.minimizado)) .main{padding-bottom:calc(330px + env(safe-area-inset-bottom,0px))!important}
+  html[data-theme] body:has(#chat-pip.visivel.minimizado) .main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+  html[data-theme] #chat-pip-msgs{height:min(200px,28vh)}
+}
+
+/* ── 9. Movimento: sem rotação/pulsação infinita ─────────────────────────── */
+html[data-theme] :is(.live-dot,.plantao-indicator,.slot-dot,.pip-dot,.chat-online-dot,.slot-badge-nova,.login-logo .dot){animation:none!important}
+/* Carregando prescrição: barra discreta no lugar do spinner giratório */
+html[data-theme] .memed-loading-spinner{
+  position:relative;overflow:hidden;width:44px!important;height:3px!important;border:0!important;border-radius:3px!important;
+  background:rgba(255,255,255,.2)!important;animation:none!important;transform:none!important
+}
+html[data-theme] .memed-loading-spinner::after{content:'';position:absolute;top:0;bottom:0;left:0;width:40%;border-radius:3px;background:#9fd2bf}
+html[data-theme] .memed-loading.show .memed-loading-spinner::after{animation:cjBarra 1.1s ease-in-out infinite alternate}
+@keyframes cjBarra{from{transform:translateX(-10%)}to{transform:translateX(160%)}}
+html[data-theme] #chat-mobile-header .cmh-btn.green.loading svg{animation:none!important;opacity:.45}
+html[data-theme] #chat-mobile-header .cmh-btn.green.loading{opacity:.82}
+html[data-theme] :is(.cj-panel-skeleton__bar,.cj-panel-skeleton__card)::after{animation:none!important;background:none!important}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme] .memed-loading.show .memed-loading-spinner::after{animation:none!important;width:100%;opacity:.7}
+}
+
+/* ── 10. Documentos a emitir / emitidos (somente visual; textos intactos) ── */
+html[data-theme] .docs-hint{margin:-4px 0 12px;font-size:.8rem;font-weight:500;color:var(--cj-text-3)}
+html[data-theme] .doc-check{position:relative;padding-right:40px!important;cursor:pointer}
+html[data-theme] .doc-check::after{
+  content:'';position:absolute;right:14px;top:50%;width:18px;height:18px;margin-top:-9px;box-sizing:border-box;border-radius:6px;border:1.5px solid var(--cj-border-2);background:var(--cj-surface)
+}
+html[data-theme] .doc-check.checked::after{
+  border-color:var(--cj-primary);background:var(--cj-primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5L20 7'/%3E%3C/svg%3E") center/12px no-repeat
+}
+html[data-theme] #modal-encerrar .modal-field{padding:14px;border:1px solid var(--cj-border);border-radius:16px;background:var(--cj-surface-2);margin-bottom:12px}
+html[data-theme] #modal-encerrar .modal-field>label{display:block;margin-bottom:10px;font-size:.74rem!important;font-weight:800!important;letter-spacing:.06em;text-transform:uppercase;color:var(--cj-text-3)!important}
+html[data-theme] #cg-docs{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px!important}
+html[data-theme] #cg-docs .check-opt{justify-content:flex-start;border-radius:12px!important;min-height:44px}
+html[data-theme] #cg-docs .check-opt.selected{box-shadow:inset 0 0 0 1px var(--cj-accent)}

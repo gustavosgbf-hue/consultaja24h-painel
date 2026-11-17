@@ -42,7 +42,7 @@
       cpf: '000.111.222-33', nasc: '14/03/1997', tel: '(85) 90000-0001', email: 'ana.demo@example.com',
       alergias: 'Dipirona', cronicas: 'Nega', medicacoes: 'Anticoncepcional oral', solicita: 'Atestado',
       queixa: 'Dor de garganta e febre de 38 °C há 2 dias, dor ao engolir. Nega falta de ar.' },
-    { id: 'd2', nome: 'Carlos Eduardo Nunes', tipo: 'video', status: 'aguardando', criado_em: minAtras(6), idade: '41 anos', sexo: 'Masculino',
+    { id: 'd2', nome: 'Carlos Eduardo Nascimento de Albuquerque Nunes', tipo: 'video', status: 'aguardando', criado_em: minAtras(6), idade: '41 anos', sexo: 'Masculino',
       cpf: '000.333.444-55', nasc: '02/09/1985', tel: '(85) 90000-0002', email: 'carlos.demo@example.com',
       alergias: 'Nega', cronicas: 'Hipertensão arterial', medicacoes: 'Losartana 50 mg', solicita: 'Receita',
       queixa: 'Lombalgia após esforço físico há 3 dias, sem irradiação. Melhora parcial com repouso.' },
@@ -158,7 +158,7 @@
   function atualizarPlantaoUI() {
     var b = $('btn-plantao');
     b.className = 'plantao-btn ' + (estado.plantao ? 'online' : 'offline');
-    $('plantao-txt').textContent = estado.plantao ? 'Em plantão' : 'Entrar em plantão';
+    $('plantao-txt').textContent = estado.plantao ? 'Sair do plantão' : 'Entrar em plantão';
   }
   window.togglePlantao = function () {
     estado.plantao = !estado.plantao;
@@ -330,11 +330,26 @@
     if (estado.slots.length < 2) { wrap.classList.remove('visivel'); wrap.innerHTML = ''; return; }
     wrap.classList.add('visivel');
     wrap.innerHTML = estado.slots.map(function (s, i) {
-      return '<button class="slot-tab-btn ' + (i === estado.ativo ? 'active' : '') + '" onclick="ativarSlot(' + i + ')"> <span class="slot-dot"></span><span class="slot-name">' + (s.p.tipo === 'video' ? 'Vídeo' : 'Chat') + ' ' + esc(s.p.nome) + '</span></button>';
+      var novaMsg = !!s.nova && i !== estado.ativo;
+      return '<button type="button" class="slot-tab-btn ' + (i === estado.ativo ? 'active' : '') + '" onclick="ativarSlot(' + i + ')" aria-pressed="' + (i === estado.ativo) + '" aria-label="' + esc('Atendimento ' + (i + 1) + ': ' + s.p.nome + (novaMsg ? ' (nova mensagem)' : '')) + '"> <span class="slot-dot"></span><span class="slot-name">' + ico(s.p.tipo === 'video' ? 'video' : 'chat') + ' ' + esc(s.p.nome) + '</span>' + (novaMsg ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '') + '</button>';
     }).join('');
   }
 
+  // Atendimentos anteriores do paciente: ILUSTRAÇÃO da demo, dados 100% fictícios,
+  // sem nome de médico. No painel real não há endpoint escopado para isso (ver docs/).
+  var ANTERIORES = { d1: ['02/10/2026 · 21:14', '18/07/2026 · 09:03'], d2: ['11/09/2026 · 14:40'], d3: [], d4: ['01/08/2026 · 08:12', '03/05/2026 · 19:55', '02/02/2026 · 10:20'] };
+  function renderAnteriores(p) {
+    var body = $('triagem-body'); if (!body) return;
+    var sec = body.querySelector('.cj-demo-prev');
+    if (!sec) { sec = document.createElement('section'); sec.className = 'triagem-section cj-demo-prev'; body.appendChild(sec); }
+    var lista = (p && ANTERIORES[p.id]) || [];
+    sec.innerHTML = '<div class="triagem-section-head"><span class="triagem-section-title">Atendimentos anteriores</span><span class="demo-ficticio">Ilustrativo · fictício</span></div>' +
+      (lista.length ? '<ul class="demo-prev-lista">' + lista.map(function (d) { var x = d.split(' · '); return '<li><time>' + x[0] + '</time><span>' + x[1] + '</span></li>'; }).join('') + '</ul>'
+        : '<p class="demo-nota" style="margin:0">Nenhum atendimento anterior (exemplo).</p>');
+  }
+
   function preencherTriagem(p) {
+    renderAnteriores(p);
     var set = function (id, v) { var el = $(id); if (el) el.textContent = v || '-'; };
     set('tr-cpf-pac', p.cpf); set('tr-nascimento-pac', p.nasc); set('tr-tel-pac', p.tel); set('tr-teldoc-pac', p.tel);
     set('tr-email-pac', p.email); set('tr-idade', p.idade); set('tr-sexo', p.sexo); set('tr-alergias', p.alergias);
@@ -361,9 +376,9 @@
 
   window.ativarSlot = function (i) {
     var s = estado.slots[i]; if (!s) return;
-    estado.ativo = i; estado.historico = null;
+    estado.ativo = i; estado.historico = null; s.nova = false;
     var p = s.p;
-    $('atend-nome').textContent = p.nome;
+    $('atend-nome').textContent = p.nome; $('cmh-nome').textContent = p.nome;
     var tag = $('atend-tipo-tag'); tag.className = 'atend-tag ' + p.tipo; tag.innerHTML = ico(p.tipo === 'video' ? 'video' : 'chat') + (p.tipo === 'video' ? 'Vídeo' : 'Chat');
     $('atend-crm-tag').textContent = 'CRM ' + estado.medico.crm + '/' + estado.medico.uf;
     $('atend-hist-badge').style.display = 'none';
@@ -397,7 +412,7 @@
     s.msgs.push({ autor: 'medico', texto: txt, hora: hora }); ta.value = ''; renderChat();
     setTimeout(function () {
       s.msgs.push({ autor: 'paciente', texto: RESPOSTAS[s.msgs.length % RESPOSTAS.length], hora: hora });
-      if (estado.slots[estado.ativo] === s) renderChat();
+      if (estado.slots[estado.ativo] === s) renderChat(); else { s.nova = true; renderSlots(); }
       var aba = qsa('.tab')[0]; if (aba && !aba.classList.contains('active')) $('tab-consulta-badge').classList.add('visivel');
     }, 1400);
   };
@@ -525,6 +540,17 @@
   };
   window.fecharChatHistorico = function () { $('chat-hist-overlay').classList.remove('open'); };
 
+  // Ganhos: só na demo, com valores fictícios mascarados. No painel real o item é desativado.
+  function ativarGanhosDemo() {
+    var g = $('cj-menu-ganhos'); if (!g) return;
+    g.disabled = false; g.removeAttribute('aria-disabled'); g.title = 'Demonstração com valores fictícios';
+    var n = g.querySelector('.cj-menu-note'); if (n) n.textContent = 'Fictício';
+    g.addEventListener('click', function () { $('demo-ganhos').classList.add('open'); });
+  }
+  function abrirMenuStatus() {
+    var b = $('cj-status-btn'); if (b && $('cj-status-pop').hidden) b.click();
+  }
+
   // Prescrição (Memed não é carregada na demo)
   window.abrirMemed = function () { toast('A prescrição (Memed) não é carregada na demo', 'info'); };
   window.fecharMemedDrawer = function () {};
@@ -644,7 +670,9 @@
     manual: function () { garantirApp(); definirPerfil('admin', true); window.abrirAtendimentoManual(); },
     turnos: function () { garantirApp(); definirPerfil('admin', true); window.abrirEscalaPrioridade(); },
     chathist: function () { garantirApp(); window.abrirChatHistorico(); },
-    senha: function () { garantirApp(); $('trocar-overlay').classList.add('open'); }
+    senha: function () { garantirApp(); $('trocar-overlay').classList.add('open'); },
+    menu: function () { garantirApp(); setTimeout(abrirMenuStatus, 0); },
+    ganhos: function () { garantirApp(); $('demo-ganhos').classList.add('open'); }
   };
   function fecharModais() {
     qsa('.modal-overlay.open,.chat-hist-overlay.open,.trocar-overlay.open,.fila-preview.open').forEach(function (m) { m.classList.remove('open'); });
@@ -696,7 +724,7 @@
     $('inp-email').value = 'medico.demo@example.com';
     $('inp-senha').value = 'demo-sem-senha';
     definirPerfil(q.get('perfil') === 'admin' ? 'admin' : 'medico', true);
-    atualizarPlantaoUI(); ajustarMobile(); montarBarra();
+    atualizarPlantaoUI(); ajustarMobile(); montarBarra(); ativarGanhosDemo();
     var tela = q.get('tela') || 'login';
     if (tela !== 'login') aplicarTela(tela); else { var sel = $('demo-tela'); if (sel) sel.value = 'login'; }
   }

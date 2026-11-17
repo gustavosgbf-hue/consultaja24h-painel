@@ -11,30 +11,22 @@
 
 <link rel="stylesheet" href="/panel-experience-v3.css?v=3">
 <link rel="stylesheet" href="/panel-ds-v5.css?v=1">
-<script src="/panel-theme.js?v=2"></script>
+<link rel="stylesheet" href="/panel-v6.css?v=1">
+<script src="/panel-theme.js?v=3"></script>
+<script src="/panel-v6.js?v=1" defer></script>
 </head>
 <body>
 <div class="bg-mesh" aria-hidden="true"></div>
 <div id="screen-login">
-  <aside class="login-aside">
-    <div class="cj-brand"><svg class="cj-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 11.6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v5.3a3 3 0 0 1-3 3h-4.1l-3.9 3v-3.1a3 3 0 0 1-2-2.9z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11.7v4.6M13.7 14h4.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg><span class="cj-wordmark"><span class="cj-wm-a">Consulta</span><span class="cj-wm-b">Já</span><span class="cj-wm-c">24h</span></span></div>
-    <div class="login-aside-body">
-      <div class="login-eyebrow">Painel médico</div>
-      <h1 class="login-aside-title">Atendimento clínico <span>com foco</span> no paciente.</h1>
-      <p class="login-aside-lead">Fila, triagem, chat, avaliação clínica e prontuário reunidos em um único fluxo de trabalho.</p>
-      <ul class="login-aside-points">
-        <li><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg><span>Triagem estruturada antes de assumir o atendimento</span></li>
-        <li><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg><span>Chat seguro com o paciente e envio de documentos</span></li>
-        <li><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Prontuário de telemedicina conforme Res. CFM 2.314/2022</span></li>
-      </ul>
-    </div>
-    <div class="login-aside-foot">Acesso exclusivo para profissionais cadastrados e aprovados.</div>
-  </aside>
+  <header class="login-top">
+    <span class="cj-wordmark">Consulta<span class="cj-wm-ja">Já</span>24h</span>
+    <span class="login-top-ctx">Painel médico</span>
+  </header>
   <div class="login-main">
   <div class="login-card">
-    <div class="login-logo"><span class="cj-brand"><svg class="cj-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 11.6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v5.3a3 3 0 0 1-3 3h-4.1l-3.9 3v-3.1a3 3 0 0 1-2-2.9z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11.7v4.6M13.7 14h4.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg><span class="cj-wordmark"><span class="cj-wm-a">Consulta</span><span class="cj-wm-b">Já</span><span class="cj-wm-c">24h</span></span></span></div>
-    <div class="login-title">Entrar no painel</div>
-    <div class="login-sub">Use o e-mail e a senha cadastrados na ConsultaJá24h.</div>
+    <div class="login-eyebrow">Área clínica</div>
+    <h1 class="login-title">Acesso médico</h1>
+    <div class="login-sub">Entre com o e-mail e a senha cadastrados.</div>
     <div class="field"><label>E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
     <div class="field"><label>Senha</label><input type="password" id="inp-senha" placeholder="••••••••" autocomplete="current-password"/></div>
     <div class="field" id="field-admin-pwd" style="display:none"><label class="login-label-admin">Senha admin (opcional)</label><input type="password" id="inp-admin-pwd" placeholder="Só para administradores" autocomplete="off"/></div>
@@ -57,10 +49,33 @@
 </div>
 <div id="screen-app">
   <nav class="nav">
-    <a href="#" class="nav-brand cj-brand" aria-label="ConsultaJá24h · Painel médico"><span class="live-dot" id="nav-dot" hidden></span><svg class="cj-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 11.6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v5.3a3 3 0 0 1-3 3h-4.1l-3.9 3v-3.1a3 3 0 0 1-2-2.9z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 11.7v4.6M13.7 14h4.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg><span class="cj-wordmark"><span class="cj-wm-a">Consulta</span><span class="cj-wm-b">Já</span><span class="cj-wm-c">24h</span></span><span class="cj-brand-sep" aria-hidden="true"></span><span class="cj-brand-ctx">Painel médico</span></a>
+    <a href="#" class="nav-brand cj-brand" aria-label="ConsultaJá24h · Painel médico"><span class="live-dot" id="nav-dot" hidden></span><span class="cj-wordmark">Consulta<span class="cj-wm-ja">Já</span>24h</span><span class="cj-brand-sep" aria-hidden="true"></span><span class="cj-brand-ctx">Painel médico</span></a>
     <div class="nav-spacer"></div>
-    <div class="nav-medico"><span class="cj-avatar" aria-hidden="true"></span><span><span class="cj-nav-greet">Olá, </span><strong id="nav-nome"></strong></span></div>
-    <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
+    <span class="cj-theme-slot" id="cj-theme-slot-nav"></span>
+    <!-- Menu compacto de status do médico. #btn-plantao, #plantao-txt, #nav-nome e .nav-logout
+         mantêm IDs, classes e handlers originais; só mudaram de lugar (dentro do menu). -->
+    <div class="cj-status-menu" id="cj-status-menu">
+      <button type="button" class="cj-status-btn" id="cj-status-btn" aria-haspopup="true" aria-expanded="false" aria-controls="cj-status-pop">
+        <span class="cj-avatar" aria-hidden="true"></span>
+        <span class="nav-medico"><span class="cj-nav-greet">Olá, </span><strong id="nav-nome"></strong></span>
+        <span class="cj-status-badge" aria-hidden="true"><span class="cj-status-dot"></span><span class="cj-status-on">Em plantão</span><span class="cj-status-off">Fora do plantão</span></span>
+        <span class="cj-sr">Status e opções da conta</span>
+        <svg class="cj-i cj-status-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="cj-status-pop" id="cj-status-pop" role="menu" aria-label="Status do médico" hidden>
+        <div class="cj-pop-head">
+          <span class="cj-pop-label">Status</span>
+          <span class="cj-pop-state"><span class="cj-status-dot"></span><span class="cj-status-on">Em plantão · recebendo pacientes</span><span class="cj-status-off">Fora do plantão</span></span>
+        </div>
+        <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()" role="menuitem"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
+        <div class="cj-pop-sep" role="separator"></div>
+        <button type="button" class="cj-menu-item" id="cj-menu-ganhos" role="menuitem" aria-disabled="true" disabled title="Aguardando integração com dados financeiros oficiais">
+          <span class="cj-menu-ico" aria-hidden="true">$</span><span class="cj-menu-txt">Ganhos</span><span class="cj-menu-note">Em breve</span>
+        </button>
+        <div class="cj-pop-sep" role="separator"></div>
+        <button class="nav-logout" onclick="logout()" role="menuitem">Sair</button>
+      </div>
+    </div>
     <!-- Botão fila mobile - só aparece em mobile autenticado -->
     <button id="nav-fila-btn" onclick="toggleSidebarMobile()" aria-label="Ver fila de pacientes" title="Ver fila">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -69,7 +84,6 @@
       </svg>
       <span id="nav-fila-badge">0</span>
     </button>
-    <button class="nav-logout" onclick="logout()">Sair</button>
   </nav>
   <div class="app-body" id="app-body">
     <aside class="sidebar" id="sidebar">
@@ -139,7 +153,7 @@
   </div>
   <div id="state-atend" style="display:none">
     <!-- MULTI CONSULT: seletor de atendimentos -->
-    <div class="slot-tabs" id="slot-tabs"></div>
+    <div class="slot-tabs" id="slot-tabs" role="group" aria-label="Atendimentos ativos"></div>
     <div class="atend-header">
       <div class="atend-paciente">
         <div class="atend-nome" id="atend-nome">-</div>
@@ -203,9 +217,9 @@
         </div>
       </div>
       <div class="cmh-actions">
-        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></svg>Dados</button>
+        <button class="cmh-btn" onclick="abrirDadosPacienteSheet()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></svg><span>Dados</span></button>
         <button class="cmh-btn green" id="btn-memed-mobile" onclick="abrirMemed()" aria-label="Abrir prescrição" title="Receitas, atestados e exames"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg><span>Prescrever</span></button>
-        <button class="cmh-btn red" onclick="abrirModalEncerrar()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4 4L19 6"/></svg>Enc.</button>
+        <button class="cmh-btn red" onclick="abrirModalEncerrar()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4 4L19 6"/></svg><span>Encerrar</span></button>
       </div>
     </div>
 
@@ -296,6 +310,7 @@
       </div>
       <div class="docs-section">
         <div class="docs-title">Documentos a emitir</div>
+        <div class="docs-hint">Marque o que será emitido nesta consulta. A seleção entra no prontuário.</div>
         <div class="docs-grid">
           <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="receita"><span class="dc-text">💊 Receita</span></label>
           <label class="doc-check" onclick="toggleDoc(this)"><input type="checkbox" value="atestado"><span class="dc-text">📋 Atestado</span></label>
@@ -710,11 +725,13 @@ if (ativos.length < 2) { wrap.classList.remove('visivel'); return; }
 wrap.classList.add('visivel');
 wrap.innerHTML = slots.map((s, i) => {
 if (!s) return '';
-const nome = (s.atendimento.nome || 'Paciente').split(' ')[0];
+// [v6] Nome completo (quebra de linha via CSS), sem truncar. Mesma chamada ativarSlot(i).
+const nome = String(s.atendimento.nome || 'Paciente').trim() || 'Paciente';
 const tipo = cjIco(s.atendimento.tipo === 'video' ? 'video' : 'chat');
 // [UX] Badge "nova msg" só aparece na tab inativa
-const badge = (s.temMsgNova && i !== slotAtivo) ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '';
-return `<button class="slot-tab-btn ${i === slotAtivo ? 'active' : ''}" onclick="ativarSlot(${i})"> <span class="slot-dot"></span><span class="slot-name">${tipo} ${escHtml(nome)}</span>${badge}</button>`;
+const novaMsg = s.temMsgNova && i !== slotAtivo;
+const badge = novaMsg ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '';
+return `<button type="button" class="slot-tab-btn ${i === slotAtivo ? 'active' : ''}" onclick="ativarSlot(${i})" aria-pressed="${i === slotAtivo}" aria-label="${escAttr('Atendimento ' + (i + 1) + ': ' + nome + (novaMsg ? ' (nova mensagem)' : ''))}"> <span class="slot-dot"></span><span class="slot-name">${tipo} ${escHtml(nome)}</span>${badge}</button>`;
 }).join('');
 }
 
