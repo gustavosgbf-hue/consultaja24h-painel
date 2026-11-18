@@ -3,6 +3,11 @@
 <html lang="pt-BR">
 <head>
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/app-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ConsultaJá24h">
+
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"/>
 <title>Painel Médico · ConsultaJá24h</title>
@@ -14,9 +19,11 @@
 <link rel="stylesheet" href="/panel-v6.css?v=4">
 <link rel="stylesheet" href="/panel-ui-v16.css?v=1">
 <link rel="stylesheet" href="/panel-motion-v17.css?v=1">
+<link rel="stylesheet" href="/panel-notify-v1.css?v=1">
 <script src="/panel-theme.js?v=3"></script>
 <script src="/panel-v6.js?v=3" defer></script>
 <script src="/panel-ui-v16.js?v=1" defer></script>
+<script src="/panel-notify-v1.js?v=1" defer></script>
 <script src="/panel-repasses-admin.js?v=1" defer></script>
 </head>
 <body>
@@ -56,6 +63,40 @@
     <a href="#" class="nav-brand cj-brand" aria-label="ConsultaJá24h · Painel médico"><span class="live-dot" id="nav-dot" hidden></span><span class="cj-wordmark">Consulta<span class="cj-wm-ja">Já</span>24h</span><span class="cj-brand-sep" aria-hidden="true"></span><span class="cj-brand-ctx">Painel médico</span></a>
     <div class="nav-spacer"></div>
     <span class="cj-theme-slot" id="cj-theme-slot-nav"></span>
+    <div class="cj-notify-wrap" id="cj-notify-wrap">
+      <button type="button" class="cj-notify-trigger" id="cj-notify-trigger"
+              aria-label="Configurar notificações" aria-expanded="false" aria-haspopup="dialog"
+              aria-controls="cj-notify-pop" title="Notificações">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+        <span class="cj-notify-live-dot" id="cj-notify-live-dot" hidden></span>
+      </button>
+      <section id="cj-notify-pop" class="cj-notify-pop" role="dialog" aria-label="Preferências de notificações" hidden>
+        <div class="cj-notify-head">
+          <div><strong>Notificações</strong><p>Escolha quais avisos deseja receber.</p></div>
+          <button type="button" id="cj-notify-close" class="cj-notify-close" aria-label="Fechar notificações">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <label class="cj-notify-option cj-notify-master" for="cj-notify-enabled">
+          <span><strong>Ativar notificações</strong><small>Receba avisos mesmo com o painel fechado.</small></span>
+          <input type="checkbox" id="cj-notify-enabled" role="switch" aria-label="Ativar notificações">
+          <span class="cj-notify-switch" aria-hidden="true"></span>
+        </label>
+        <div class="cj-notify-divider"></div>
+        <label class="cj-notify-option" for="cj-notify-fila">
+          <span><strong>Paciente novo</strong><small>Aviso quando chegar à fila.</small></span>
+          <input type="checkbox" id="cj-notify-fila" role="switch" checked disabled>
+          <span class="cj-notify-switch" aria-hidden="true"></span>
+        </label>
+        <label class="cj-notify-option" for="cj-notify-mensagens">
+          <span><strong>Mensagens do paciente</strong><small>Aviso ao receber uma mensagem.</small></span>
+          <input type="checkbox" id="cj-notify-mensagens" role="switch" checked disabled>
+          <span class="cj-notify-switch" aria-hidden="true"></span>
+        </label>
+        <p class="cj-notify-privacy">Por privacidade, o conteúdo clínico não aparece na notificação.</p>
+        <p class="cj-notify-status" id="cj-notify-status" role="status" aria-live="polite">Notificações desativadas.</p>
+      </section>
+    </div>
     <!-- Menu compacto de status do médico. #btn-plantao, #plantao-txt, #nav-nome e .nav-logout
          mantêm IDs, classes e handlers originais; só mudaram de lugar (dentro do menu). -->
     <div class="cj-status-menu" id="cj-status-menu">
@@ -791,6 +832,8 @@ return safeJson(res);
 // Chamada APENAS por ação explícita (clique em "$ Ganhos" ou "Atualizar" no modal; ver panel-v6.js).
 // Requer GET /api/medico/ganhos (triagem-api, checkMedico) publicado em produção.
 // Enquanto a rota não existir, o 404 vira {} em safeJson e o modal mostra "indisponível".
+window.cjMedicoPushApi = function (path, body) { return apiFetch(path, { method: 'POST', json: body || {} }); };
+window.cjMedicoPushPublicKey = function () { return apiFetch('/api/web-push/public-key'); };
 window.cjGanhosFonte = function () { return apiFetch('/api/medico/ganhos'); };
 // Financeiro administrativo. A autorização de verdade é sempre verificada no servidor.
 window.cjRepassesFonte = function (periodo) { return apiFetch('/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo)); };
@@ -1148,6 +1191,8 @@ mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
 // No consultation-on-duty mode: queue is available throughout the authenticated session.
 plantaoAtivo=true;
 iniciarPollingFila();
+// Apenas consulta o estado já autorizado; nunca exibe prompt automático.
+if (typeof window.cjMedicoPushRestore === 'function') window.cjMedicoPushRestore();
 setTimeout(function() {
 setupMobileSidebar();      // drawer mobile: fecha e ajusta
 restoreSidebarState();     // desktop: restaura colapso se salvo - aqui o DOM já está montado
@@ -1178,6 +1223,7 @@ mostrarToast('Atendimento assumido com sucesso!', 'success');
 }
 
 function logout() {
+if (typeof window.cjMedicoPushOnLogout === 'function') window.cjMedicoPushOnLogout();
 pararPollingFila();
 plantaoAtivo=false;
 // Para polling de todos os slots antes de sair

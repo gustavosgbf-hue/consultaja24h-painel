@@ -24,14 +24,14 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = sys.argv[1] if len(sys.argv) > 1 else 'painel-redesign-v5-deep'
 
 PERMITIDOS_NOVOS = {
-    'ids': {'cj-status-menu', 'cj-status-btn', 'cj-status-pop', 'cj-menu-ganhos', 'cj-theme-slot-nav'},
+    'ids': {'cj-status-menu', 'cj-status-btn', 'cj-status-pop', 'cj-menu-ganhos', 'cj-theme-slot-nav', 'cj-notify-close', 'cj-notify-enabled', 'cj-notify-fila', 'cj-notify-live-dot', 'cj-notify-mensagens', 'cj-notify-pop', 'cj-notify-status', 'cj-notify-trigger', 'cj-notify-wrap'},
     'handlers': {"if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirHistoricoAtendimento(${Number(a.id)||0})}"},
     # GET somente leitura, disparado apenas por clique explícito em "$ Ganhos" (window.cjGanhosFonte).
     # Depende de triagem-api feat/medico-ganhos-backend publicado em produção (ver docs/ganhos-medico.md).
-    'api': collections.Counter({"'/api/medico/ganhos'": 1, "'/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo": 1, "'/api/admin/medicos/repasses/confirmar'": 1}),
+    'api': collections.Counter({"'/api/medico/ganhos'": 1, "path": 1, "'/api/web-push/public-key'": 1, "'/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo": 1, "'/api/admin/medicos/repasses/confirmar'": 1}),
     'fetch': collections.Counter(),
     # v16: camada visual (abas compactas, ocultar só na barra, composer). Sem rede, sem novos IDs/handlers no HTML.
-    'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1', '/panel-ui-v16.css?v=1', '/panel-ui-v16.js?v=1', '/panel-motion-v17.css?v=1'},
+    'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1', '/panel-ui-v16.css?v=1', '/panel-ui-v16.js?v=1', '/panel-motion-v17.css?v=1', '/panel-notify-v1.css?v=1', '/panel-notify-v1.js?v=1'},
 }
 
 

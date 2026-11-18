@@ -1,0 +1,84 @@
+/* ConsultaJá24h · preferências de notificações do médico.
+   Abre por escolha explícita. Nenhum overlay bloqueia a assistência. */
+html[data-theme] .cj-notify-wrap{position:relative;display:flex;align-items:center;flex:0 0 auto}
+html[data-theme] .cj-notify-trigger{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:40px;height:40px;min-width:40px;box-sizing:border-box;
+  border-radius:12px;border:1px solid var(--cj-top-chip-line);
+  background:var(--cj-top-chip);color:#fff;cursor:pointer;
+  transition:background-color 180ms ease,transform 140ms cubic-bezier(.2,.75,.3,1);
+}
+html[data-theme] .cj-notify-trigger:hover,
+html[data-theme] .cj-notify-trigger[aria-expanded="true"]{background:rgba(255,255,255,.13)}
+html[data-theme] .cj-notify-trigger:active{transform:scale(.96)}
+html[data-theme] .cj-notify-trigger:focus-visible{outline:2px solid #9fd2bf;outline-offset:3px}
+html[data-theme] .cj-notify-live-dot{
+  position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:999px;
+  background:#78f25f;border:1px solid #07100f;pointer-events:none;
+}
+html[data-theme] .cj-notify-live-dot[hidden]{display:none!important}
+html[data-theme] .cj-notify-pop{
+  position:absolute;right:0;top:calc(100% + 10px);z-index:5400;
+  width:min(342px,calc(100vw - 24px));box-sizing:border-box;
+  padding:15px;border-radius:16px;border:1px solid var(--cj-border-2);
+  background:var(--cj-surface);color:var(--cj-text);box-shadow:var(--cj-shadow-lg);
+  animation:cj17-pop-in 220ms cubic-bezier(.22,1,.36,1) both;
+}
+html[data-theme] .cj-notify-pop[hidden]{display:none!important}
+html[data-theme] .cj-notify-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:10px}
+html[data-theme] .cj-notify-head strong{display:block;font-size:15px;font-weight:800;line-height:1.35}
+html[data-theme] .cj-notify-head p{margin:3px 0 0;font-size:12px;color:var(--cj-text-3);line-height:1.45}
+html[data-theme] .cj-notify-close{
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 32px;
+ width:32px;height:32px;border:0;border-radius:9px;background:transparent;
+ color:var(--cj-text-3);cursor:pointer;
+}
+html[data-theme] .cj-notify-close:hover{background:var(--cj-surface-2)}
+html[data-theme] .cj-notify-option{
+  position:relative;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;min-height:59px;padding:9px 3px;cursor:pointer;
+}
+html[data-theme] .cj-notify-option>span:first-child{display:flex;flex-direction:column;gap:3px;min-width:0}
+html[data-theme] .cj-notify-option strong{font-size:13px;font-weight:750;line-height:1.3;color:var(--cj-text)}
+html[data-theme] .cj-notify-option small{font-size:11px;line-height:1.45;color:var(--cj-text-3)}
+html[data-theme] .cj-notify-option input{
+  position:absolute;right:4px;width:46px;height:28px;opacity:0;
+  z-index:1;cursor:pointer;margin:0;
+}
+html[data-theme] .cj-notify-switch{
+ position:relative;flex:0 0 43px;width:43px;height:25px;border-radius:30px;
+ background:var(--cj-surface-3);border:1px solid var(--cj-border-2);
+ box-sizing:border-box;transition:background-color 180ms ease,border-color 180ms ease;
+}
+html[data-theme] .cj-notify-switch::before{
+ content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;
+ background:var(--cj-text-3);box-shadow:0 1px 3px rgba(0,0,0,.14);
+ transition:transform 210ms cubic-bezier(.22,1,.36,1),background-color 210ms ease;
+}
+html[data-theme] .cj-notify-option input:checked+.cj-notify-switch{
+ background:var(--cj-primary);border-color:var(--cj-primary);
+}
+html[data-theme] .cj-notify-option input:checked+.cj-notify-switch::before{
+ transform:translateX(18px);background:var(--cj-on-primary);
+}
+html[data-theme] .cj-notify-option input:focus-visible+.cj-notify-switch{outline:2px solid var(--cj-accent);outline-offset:3px}
+html[data-theme] .cj-notify-option:has(input:disabled){opacity:.53;cursor:default}
+html[data-theme] .cj-notify-option input:disabled{cursor:default}
+html[data-theme] .cj-notify-divider{height:1px;background:var(--cj-border);margin:4px 0}
+html[data-theme] .cj-notify-privacy{
+  color:var(--cj-text-3);font-size:11px;line-height:1.5;
+  padding:10px 0 2px;margin:4px 0 0;
+}
+html[data-theme] .cj-notify-status{font-size:11px;line-height:1.5;margin:3px 0 0;font-weight:650;color:var(--cj-text-2)}
+html[data-theme] .cj-notify-status.is-error{color:var(--cj-danger)}
+html[data-theme] .cj-notify-status.is-success{color:var(--cj-accent-ink)}
+@media(max-width:768px){
+ html[data-theme] .cj-notify-trigger{width:36px;height:36px;min-width:36px;border-radius:10px}
+ html[data-theme] .cj-notify-pop{position:fixed;top:calc(var(--cj-nav-h) + 7px);right:9px;left:auto;max-width:calc(100vw - 18px)}
+ html[data-theme] .cj-notify-wrap{min-width:36px}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-theme] .cj-notify-pop{animation:none!important}
+ html[data-theme] .cj-notify-option .cj-notify-switch,
+ html[data-theme] .cj-notify-option .cj-notify-switch::before{transition:none!important}
+}
