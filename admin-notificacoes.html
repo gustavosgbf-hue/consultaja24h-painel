@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notificações do aplicativo · ConsultaJá24h</title>
+<style>
+:root{color-scheme:dark;--bg:#07100f;--panel:#0e1b17;--line:#26382f;--txt:#edf8f1;--muted:#9eafa5;--green:#16c783;--red:#ef9898}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,#153629,var(--bg) 52%);font:15px/1.55 system-ui,-apple-system,sans-serif;color:var(--txt)}main{max-width:950px;padding:32px 18px 80px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:29px}a{color:#a5d9c0;text-decoration:none}.brand{font:700 21px Georgia,serif}.brand span{color:var(--green)}h1{font-size:29px;line-height:1.2;margin:0 0 7px}h2{font-size:19px;margin:0 0 15px}.lead,.muted{color:var(--muted)}.lead{margin:0 0 23px}.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:17px}.card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:23px;margin-bottom:17px;box-shadow:0 18px 55px #0002}label{display:block;font-weight:600;font-size:13px;margin:18px 0 7px}input,textarea,select{display:block;width:100%;border:1px solid #365143;background:#091510;border-radius:11px;padding:12px;color:var(--txt);font:inherit;outline:none}textarea{min-height:115px;resize:vertical}input:focus,textarea:focus{border-color:var(--green)}button{background:var(--green);border:0;color:#062519;font:700 14px system-ui;padding:13px 18px;border-radius:11px;cursor:pointer}button:disabled{opacity:.45;cursor:default}.secondary{background:transparent;border:1px solid #3b5547;color:#d3e9da}.stat{font-size:30px;font-weight:750;line-height:1.2}.statline{display:grid;grid-template-columns:1fr 1fr;gap:12px}.statitem{background:#0a1711;border-radius:12px;border:1px solid var(--line);padding:13px}.statitem small{display:block;color:var(--muted);font-size:12px}.note{font-size:13px;color:#e3c69a;margin-top:13px}.preview{background:#222f2b;border:1px solid #516057;border-radius:18px;padding:15px;display:flex;align-items:flex-start;gap:12px;margin:13px 0 5px;min-width:0}.appicon{border-radius:13px;width:48px;height:48px;display:grid;place-items:center;background:linear-gradient(135deg,#16c783,#147f57);font-weight:800;color:white;flex:none}.preview-content{min-width:0;overflow-wrap:anywhere}.preview-title{font-weight:700}.preview-message{color:#dce7dd;font-size:13px}.fine{font-size:12px;color:var(--muted)}.status{display:none;margin-top:13px;padding:12px;border:1px solid var(--line);border-radius:12px;white-space:pre-line}.status.show{display:block}.status.error{color:var(--red);border-color:#7b4545}.history{display:grid;gap:10px}.entry{border:1px solid var(--line);padding:13px;border-radius:12px;background:#091510}.entry-title{font-weight:700}.entry-meta{font-size:12px;color:var(--muted);margin-top:5px}.confirm-line{display:flex;gap:9px;align-items:start;margin:14px 0}.confirm-line input{width:18px;height:18px;flex:none;accent-color:var(--green);margin:4px 0 0}.confirm-line label{margin:0;font-weight:400}@media(max-width:720px){.layout{grid-template-columns:1fr}main{padding-top:20px}.card{padding:18px}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand">Consulta<span>Já</span>24h <small style="font:12px system-ui;color:var(--muted)">Admin</small></div><a href="/">← Voltar ao painel</a></header>
+<h1>Notificações do aplicativo</h1>
+<p class="lead">Crie campanhas push para pacientes que optaram por receber comunicações promocionais. O envio é definitivo, sem etapa de teste.</p>
+<div class="layout">
+<section>
+<div class="card">
+<h2>Nova campanha</h2>
+<label for="titulo">Título da notificação</label>
+<input id="titulo" maxlength="90" value="🩺 Precisa falar com um médico?" autocomplete="off">
+<label for="mensagem">Mensagem</label>
+<textarea id="mensagem" maxlength="230">Consulta médica online por R$ 49,90, sem sair de casa. Consulte-se agora!</textarea>
+<p class="fine"><span id="contador">0</span>/230 caracteres · Ao tocar, o paciente abre o aplicativo.</p>
+<label for="publico">Destinatários</label>
+<select id="publico"><option value="marketing_autorizado">Dispositivos ativos com autorização promocional</option></select>
+<div class="confirm-line"><input type="checkbox" id="confirmar"><label for="confirmar">Confirmo o envio desta mensagem aos dispositivos autorizados. Entendo que a operação não poderá ser desfeita.</label></div>
+<button id="enviar" disabled>Enviar notificação</button>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+</div>
+<div class="card">
+<h2>Histórico de envios</h2>
+<div id="historico" class="history"><p class="muted">Carregando campanhas…</p></div>
+<button id="atualizar" class="secondary" style="margin-top:15px">Atualizar histórico</button>
+</div>
+</section>
+<aside>
+<div class="card">
+<h2>Público atual</h2>
+<div class="statline">
+<div class="statitem"><span class="stat" id="total">—</span><small>Push ativo</small></div>
+<div class="statitem"><span class="stat" id="optins">—</span><small>Promoções autorizadas</small></div>
+<div class="statitem"><span class="stat" id="sem">—</span><small>Sem preferência registrada</small></div>
+<div class="statitem"><span class="stat" id="nao">—</span><small>Não autorizaram promoções</small></div>
+</div>
+<p class="note">Notificações de chat e atendimento são independentes. A autorização geral do celular não ativa automaticamente anúncios.</p>
+</div>
+<div class="card">
+<h2>Prévia no celular</h2>
+<div class="preview">
+<div class="appicon">Já</div>
+<div class="preview-content"><div class="fine">ConsultaJá24h · agora</div><div class="preview-title" id="prev-titulo"></div><div class="preview-message" id="prev-mensagem"></div></div>
+</div>
+<p class="fine">A aparência real varia entre iOS e Android. A API da Expo confirma o aceite do envio, não a exibição no aparelho.</p>
+</div>
+</aside>
+</div>
+</main>
+<script>
+'use strict';
+const API='https://triagem-api.onrender.com';
+const el=id=>document.getElementById(id);
+const title=el('titulo'),message=el('mensagem'),confirm=el('confirmar'),send=el('enviar');
+let publico=null,enviando=false;
+function headers(json=false){
+ const token=localStorage.getItem('token')||'';
+ const password=sessionStorage.getItem('adminPwd')||'';
+ return {...(token?{Authorization:'Bearer '+token}:{}),...(password?{'x-admin-password':password}:{}),...(json?{'Content-Type':'application/json'}:{})};
+}
+async function request(path,opts={}){
+ const res=await fetch(API+path,{...opts,headers:{...headers(!!opts.body),...(opts.headers||{})},cache:'no-store'});
+ const data=await res.json().catch(()=>({}));
+ if(!res.ok||data.ok===false) throw new Error(data.error||('HTTP '+res.status));
+ return data;
+}
+function status(msg,isError=false){
+ const e=el('status');e.textContent=msg;e.className='status show'+(isError?' error':'');
+}
+function refreshButton(){
+ send.disabled=enviando||!confirm.checked||!publico||Number(publico.promocionais)<=0||!title.value.trim()||!message.value.trim();
+ send.textContent=enviando?'Enviando…':'Enviar para '+(publico?.promocionais??'—')+' dispositivo(s)';
+}
+function preview(){
+ el('prev-titulo').textContent=title.value||'Título';
+ el('prev-mensagem').textContent=message.value||'Mensagem';
+ el('contador').textContent=message.value.length;
+ refreshButton();
+}
+function date(v){return v?new Date(v).toLocaleString('pt-BR'):'—'}
+async function loadPublico(){
+ const data=await request('/api/admin/push/publico');
+ publico=data;
+ el('total').textContent=data.push_ativos;
+ el('optins').textContent=data.promocionais;
+ el('sem').textContent=data.sem_preferencia;
+ el('nao').textContent=data.recusados;
+ refreshButton();
+}
+async function loadHistory(){
+ const data=await request('/api/admin/push/campanhas');
+ const container=el('historico');container.replaceChildren();
+ if(!data.campanhas?.length){container.textContent='Nenhum envio pelo painel ainda.';return;}
+ for(const item of data.campanhas){
+  const wrap=document.createElement('div');wrap.className='entry';
+  const t=document.createElement('div');t.className='entry-title';t.textContent=item.titulo;
+  const m=document.createElement('div');m.textContent=item.mensagem;
+  const meta=document.createElement('div');meta.className='entry-meta';
+  meta.textContent=date(item.criado_em)+' · '+item.status+' · Expo aceitou '+item.aceitos+' / '+item.elegiveis+' · Falhas '+item.falhas;
+  wrap.append(t,m,meta);container.append(wrap);
+ }
+}
+async function enviar(){
+ if(send.disabled||enviando||!publico)return;
+ const titulo=title.value.trim(),mensagem=message.value.trim(),destinos=Number(publico.promocionais);
+ if(!window.confirm('Enviar agora para até '+destinos+' dispositivo(s) autorizado(s)? O disparo é definitivo.'))return;
+ enviando=true;refreshButton();
+ const id=crypto.randomUUID();
+ try{
+  const data=await request('/api/admin/push/campanhas',{method:'POST',body:JSON.stringify({id,titulo,mensagem,publico:'marketing_autorizado'})});
+  status('Campanha concluída. A Expo aceitou '+data.aceitos+' envio(s) de '+data.elegiveis+' elegíveis. Falhas: '+data.falhas+'.\nA confirmação de entrega no aparelho depende da Expo/Apple/Google.');
+  confirm.checked=false;
+  await Promise.all([loadPublico(),loadHistory()]);
+ }catch(e){
+  status('Não foi possível confirmar o envio: '+e.message+'\nConfira o histórico antes de tentar novamente.',true);
+  await loadHistory().catch(()=>{});
+ }finally{enviando=false;refreshButton();}
+}
+title.addEventListener('input',preview);message.addEventListener('input',preview);
+confirm.addEventListener('change',refreshButton);send.addEventListener('click',enviar);
+el('atualizar').addEventListener('click',()=>Promise.all([loadPublico(),loadHistory()]).catch(e=>status(e.message,true)));
+preview();
+Promise.all([loadPublico(),loadHistory()]).catch(e=>{send.disabled=true;status('Acesso não autorizado ou serviço indisponível: '+e.message,true);});
+</script>
+</body>
+</html>

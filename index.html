@@ -139,6 +139,7 @@
     <div id="fila-lista"><div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><p>Nenhum paciente<br>aguardando atendimento</p></div></div>
     <div class="sidebar-title cj-side-first" id="renov-tab-btn" style="display:none" onclick="toggleRenovacoes()"><svg class="sidebar-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>Renovações <span class="fila-count" id="renov-count">0</span></div>
     <div id="renov-lista" style="display:none"></div>
+    <a id="admin-push-btn" href="/admin-notificacoes.html" class="cj-side-action" style="display:none;text-decoration:none;align-items:center">🔔 Campanhas do aplicativo</a>
     <button id="admin-manual-btn" class="cj-side-action" onclick="abrirAtendimentoManual()" style="display:none"><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>Novo atendimento manual</button>
     <button id="escala-prioridade-btn" class="cj-side-action" onclick="abrirEscalaPrioridade()" style="display:none"><svg class="cj-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Turnos prioritários</button>
     <!-- IDs legados para compatibilidade com funções do backend, sem seção de agendamento na UI médica. -->
@@ -1257,6 +1258,7 @@ document.getElementById('admin-medicos-lista').style.display='none';
 // Reset estado histórico geral — evita estado stale entre sessões
 histGeralVisible=false; histGeralMedicos=[]; histGeralCache={};
 document.getElementById('admin-hist-tab-btn').style.display='none';
+const pushBtnLogout=document.getElementById('admin-push-btn'); if(pushBtnLogout)pushBtnLogout.style.display='none';
 document.getElementById('admin-hist-filtros').style.display='none';
 document.getElementById('admin-hist-lista').style.display='none';
 document.getElementById('admin-hist-count').textContent='-';
@@ -2854,6 +2856,7 @@ const data=await apiFetch('/api/admin/medicos/pendentes',{_admin:true});
 if (!data.ok && data.ok !== undefined) return;
 // Só exibe área admin após confirmação de autenticação válida
 document.getElementById('admin-hist-tab-btn').style.display='flex';
+const pushBtn=document.getElementById('admin-push-btn'); if(pushBtn && isAdminAtual())pushBtn.style.display='flex';
 adminData=data.medicos||[];
 const count=adminData.length;
 if (count>0) { document.getElementById('admin-tab-btn').style.display='flex'; document.getElementById('admin-pendente-count').textContent=count; }
