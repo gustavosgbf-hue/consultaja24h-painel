@@ -141,6 +141,12 @@
   function iniciarGanhos() {
     var item = document.getElementById('cj-menu-ganhos');
     if (!item) return;
+    // No mobile, o item fica na barra lateral: fechá-la antes de mostrar os ganhos.
+    item.addEventListener('click', function () {
+      if (window.innerWidth <= 768 && typeof window.fecharSidebarMobile === 'function') {
+        window.fecharSidebarMobile();
+      }
+    });
     var ov = null, corpo = null, rodapeInfo = null, btnAtualizar = null, ultimoFoco = null, seq = 0;
 
     function montar() {

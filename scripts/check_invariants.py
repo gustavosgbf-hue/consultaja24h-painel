@@ -77,6 +77,9 @@ def main():
     add_h = set((b['handlers'] - a['handlers']).keys()) - PERMITIDOS_NOVOS['handlers']
     # As duas ações antigas de 'entrar em plantão' foram removidas da interface por decisão explícita do proprietário.
     rem_h.pop('togglePlantao()', None)
+    # Agendamentos não fazem parte do fluxo imediato; seção visual removida a pedido,
+    # preservando IDs legados e rotinas sem alterar endpoints.
+    rem_h.pop('toggleAgendamentos()', None)
     if rem_h: erros.append('handlers removidos: %s' % dict(rem_h))
     if add_h: erros.append('handlers novos não autorizados: %s' % sorted(add_h))
     sem_v = lambda xs: {x.split('?')[0] for x in xs}

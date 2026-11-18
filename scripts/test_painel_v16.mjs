@@ -85,7 +85,7 @@ for (const w of [320, 375, 390, 430]) {
     ok(await semRolagemH(page), 'sem rolagem horizontal da página');
     ok(await dentro(page, '#chat-mobile-header .cmh-btn, #chat-mobile-header .cmh-back'), 'botões do cabeçalho dentro da tela');
     ok(!(await page.isVisible('#chat-mobile-header .cmh-btn.red')), 'Encerrar fora da linha de botões (está no menu)');
-    ok(!(await page.isVisible('.nav .cj-fin-direct')) && await page.$eval('#cj-status-pop #cj-menu-ganhos', el => el.getAttribute('role') === 'menuitem'), 'Ganhos no menu pessoal, acessível também durante o chat');
+    ok(!(await page.isVisible('.nav .cj-fin-direct')) && await page.$eval('#sidebar-inner #cj-menu-ganhos', el => el.getAttribute('aria-haspopup') === 'dialog'), 'Ganhos na barra lateral, mesmo durante a consulta');
     ok(await page.$eval('#chat-mobile-header .cj16-dados', e => e.getAttribute('aria-label') === 'Dados do paciente'), 'Dados com aria-label');
     // Composer: cresce até 104px, sem rolagem horizontal
     const ta = page.locator('#chat-medico-textarea');
