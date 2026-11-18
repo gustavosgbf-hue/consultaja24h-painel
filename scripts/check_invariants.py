@@ -24,14 +24,14 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = sys.argv[1] if len(sys.argv) > 1 else 'painel-redesign-v5-deep'
 
 PERMITIDOS_NOVOS = {
-    'ids': {'cj-status-menu', 'cj-status-btn', 'cj-status-pop', 'cj-menu-ganhos', 'cj-theme-slot-nav', 'cj-notify-close', 'cj-notify-enabled', 'cj-notify-fila', 'cj-notify-live-dot', 'cj-notify-mensagens', 'cj-notify-pop', 'cj-notify-status', 'cj-notify-trigger', 'cj-notify-wrap'},
+    'ids': {'memed-container-experimental','memed-modal-fechar','memed-modal-janela','memed-modal-topo','memed-pip-grip','memed-pip-min','memed-pip-resize','memed-pip-toggle', 'cj-status-menu', 'cj-status-btn', 'cj-status-pop', 'cj-menu-ganhos', 'cj-theme-slot-nav', 'cj-notify-close', 'cj-notify-enabled', 'cj-notify-fila', 'cj-notify-live-dot', 'cj-notify-mensagens', 'cj-notify-pop', 'cj-notify-status', 'cj-notify-trigger', 'cj-notify-wrap'},
     'handlers': {"if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirHistoricoAtendimento(${Number(a.id)||0})}"},
     # GET somente leitura, disparado apenas por clique explícito em "$ Ganhos" (window.cjGanhosFonte).
     # Depende de triagem-api feat/medico-ganhos-backend publicado em produção (ver docs/ganhos-medico.md).
     'api': collections.Counter({"'/api/medico/ganhos'": 1, "path": 1, "'/api/web-push/public-key'": 1, "'/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo": 1, "'/api/admin/medicos/repasses/confirmar'": 1}),
     'fetch': collections.Counter(),
     # v16: camada visual (abas compactas, ocultar só na barra, composer). Sem rede, sem novos IDs/handlers no HTML.
-    'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1', '/panel-ui-v16.css?v=1', '/panel-ui-v16.js?v=1', '/panel-motion-v17.css?v=1', '/panel-notify-v1.css?v=1', '/panel-notify-v1.js?v=1'},
+    'assets': {'/panel-memed-floating.css?v=1', '/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1', '/panel-ui-v16.css?v=1', '/panel-ui-v16.js?v=1', '/panel-motion-v17.css?v=1', '/panel-notify-v1.css?v=1', '/panel-notify-v1.js?v=1'},
 }
 
 
@@ -58,11 +58,21 @@ def main():
     a = extrair(ler_base())
     b = extrair(open(os.path.join(RAIZ, 'index.html'), encoding='utf-8').read())
     erros = []
+    # Novas rotinas exclusivamente da Memed já presentes na main em produção.
+    funcoes_memed = {'memedTesteDesktop','prepararMemedTeste','inicializarInteracaoJanelaMemed', 'iniciar', 'mover','terminar', 'ajustarMemedOrientacao','alternarMemedPip','recolherMemedPip','restaurarMemedPip'}
     for k in ('api', 'fetch', 'funcoes'):
         permitidos = PERMITIDOS_NOVOS.get(k, collections.Counter())
         removidos = a[k] - b[k]
         adicionados = b[k] - a[k]
-        nao_aut = adicionados - permitidos
+        nao_aut = adicionados - (permitidos | collections.Counter({f: 1 for f in funcoes_memed}) if k=='funcoes' else permitidos)
+        # Substituição intencional e auditada: remove o banner push legado que
+        # reativava assinaturas sem a escolha explícita do médico.
+        if k == 'funcoes':
+            for fn in ('cjDocB64ToU8','cjDocPushBar','cjDocPodePush','cjDocAtualizarPushUI','cjRegistrarPushMedico','cjAtivarPushMedico'):
+                removidos.pop(fn, None)
+        elif k == 'fetch':
+            for fn in ("API+'/api/web-push/public-key'","API+'/api/web-push/chat-subscribe'"):
+                removidos.pop(fn, None)
         if removidos or nao_aut:
             erros.append('%s alterado: removidos=%s adicionados não autorizados=%s' % (k, dict(removidos), dict(nao_aut)))
         # Uma chamada nova autorizada não pode aparecer mais vezes que o permitido.
@@ -80,6 +90,7 @@ def main():
     # Agendamentos não fazem parte do fluxo imediato; seção visual removida a pedido,
     # preservando IDs legados e rotinas sem alterar endpoints.
     rem_h.pop('toggleAgendamentos()', None)
+    rem_h.pop('cjAtivarPushMedico()', None)
     if rem_h: erros.append('handlers removidos: %s' % dict(rem_h))
     if add_h: erros.append('handlers novos não autorizados: %s' % sorted(add_h))
     sem_v = lambda xs: {x.split('?')[0] for x in xs}

@@ -105,28 +105,16 @@
       </button>
       <section id="cj-notify-pop" class="cj-notify-pop" role="dialog" aria-label="Preferências de notificações" hidden>
         <div class="cj-notify-head">
-          <div><strong>Notificações</strong><p>Escolha quais avisos deseja receber.</p></div>
+          <div><strong>Notificações</strong><p>Alertas de mensagens dos pacientes.</p></div>
           <button type="button" id="cj-notify-close" class="cj-notify-close" aria-label="Fechar notificações">
             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
         <label class="cj-notify-option cj-notify-master" for="cj-notify-enabled">
-          <span><strong>Ativar notificações</strong><small>Receba avisos mesmo com o painel fechado.</small></span>
+          <span><strong>Ativar notificações</strong><small>Receba mensagens mesmo com o painel fechado.</small></span>
           <input type="checkbox" id="cj-notify-enabled" role="switch" aria-label="Ativar notificações">
           <span class="cj-notify-switch" aria-hidden="true"></span>
         </label>
-        <div class="cj-notify-divider"></div>
-        <label class="cj-notify-option" for="cj-notify-fila">
-          <span><strong>Paciente novo</strong><small>Aviso quando chegar à fila.</small></span>
-          <input type="checkbox" id="cj-notify-fila" role="switch" checked disabled>
-          <span class="cj-notify-switch" aria-hidden="true"></span>
-        </label>
-        <label class="cj-notify-option" for="cj-notify-mensagens">
-          <span><strong>Mensagens do paciente</strong><small>Aviso ao receber uma mensagem.</small></span>
-          <input type="checkbox" id="cj-notify-mensagens" role="switch" checked disabled>
-          <span class="cj-notify-switch" aria-hidden="true"></span>
-        </label>
-        <p class="cj-notify-privacy">Por privacidade, o conteúdo clínico não aparece na notificação.</p>
         <p class="cj-notify-status" id="cj-notify-status" role="status" aria-live="polite">Notificações desativadas.</p>
       </section>
     </div>

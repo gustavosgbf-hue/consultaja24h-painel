@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="/panel-ui-v16.css?v=1">
 <link rel="stylesheet" href="/panel-motion-v17.css?v=1">
 <link rel="stylesheet" href="/panel-notify-v1.css?v=1">
+<link rel="stylesheet" href="/panel-memed-floating.css?v=1">
 <script src="/panel-theme.js?v=3"></script>
 <script src="/panel-v6.js?v=3" defer></script>
 <script src="/panel-ui-v16.js?v=1" defer></script>
@@ -72,28 +73,16 @@
       </button>
       <section id="cj-notify-pop" class="cj-notify-pop" role="dialog" aria-label="Preferências de notificações" hidden>
         <div class="cj-notify-head">
-          <div><strong>Notificações</strong><p>Escolha quais avisos deseja receber.</p></div>
+          <div><strong>Notificações</strong><p>Alertas de mensagens dos pacientes.</p></div>
           <button type="button" id="cj-notify-close" class="cj-notify-close" aria-label="Fechar notificações">
             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
         <label class="cj-notify-option cj-notify-master" for="cj-notify-enabled">
-          <span><strong>Ativar notificações</strong><small>Receba avisos mesmo com o painel fechado.</small></span>
+          <span><strong>Ativar notificações</strong><small>Receba mensagens mesmo com o painel fechado.</small></span>
           <input type="checkbox" id="cj-notify-enabled" role="switch" aria-label="Ativar notificações">
           <span class="cj-notify-switch" aria-hidden="true"></span>
         </label>
-        <div class="cj-notify-divider"></div>
-        <label class="cj-notify-option" for="cj-notify-fila">
-          <span><strong>Paciente novo</strong><small>Aviso quando chegar à fila.</small></span>
-          <input type="checkbox" id="cj-notify-fila" role="switch" checked disabled>
-          <span class="cj-notify-switch" aria-hidden="true"></span>
-        </label>
-        <label class="cj-notify-option" for="cj-notify-mensagens">
-          <span><strong>Mensagens do paciente</strong><small>Aviso ao receber uma mensagem.</small></span>
-          <input type="checkbox" id="cj-notify-mensagens" role="switch" checked disabled>
-          <span class="cj-notify-switch" aria-hidden="true"></span>
-        </label>
-        <p class="cj-notify-privacy">Por privacidade, o conteúdo clínico não aparece na notificação.</p>
         <p class="cj-notify-status" id="cj-notify-status" role="status" aria-live="polite">Notificações desativadas.</p>
       </section>
     </div>
@@ -819,6 +808,8 @@ delete opts.json;
 }
 const res = await fetch(API + path, { ...opts, headers });
 if (res.status === 401) {
+// A expiração do JWT não equivale ao logout explícito. Notificações
+// consentidas devem continuar mesmo com o painel fechado ou deslogado.
 mostrarToast('Sessão expirada. Faça login novamente.', 'error');
 localStorage.removeItem('token');
 localStorage.removeItem('medico');
@@ -941,7 +932,7 @@ function getToken() { return localStorage.getItem('token')||''; }
 let agendInterval = null;
 function toggleAdminField() { const f=document.getElementById('field-admin-pwd'); f.style.display=f.style.display==='none'?'block':'none'; }
 function isAdminAtual() {
-return String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com'||!!sessionStorage.getItem('adminPwd');
+return String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com';
 }
 function podeEditarEscalaPrioridade() {
   const email=String(medico?.email||'').trim().toLowerCase();
@@ -1220,6 +1211,23 @@ mostrarToast('Atendimento assumido com sucesso!', 'success');
 } catch(e) { console.warn('assumiu param error:', e); }
 }, 800);
 }
+}
+
+// O clique no aviso não recarrega o painel com chats e prescrições em andamento.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', function (event) {
+    if (event.data?.type !== 'cj-medico-push-open') return;
+    let destino;
+    try { destino = new URL(String(event.data.url || '/'), location.origin); } catch (_) { return; }
+    if (destino.origin !== location.origin) return;
+    if (!document.body.classList.contains('app-autenticado')) return;
+    const atendimentoId = destino.searchParams.get('atendimento');
+    if (atendimentoId && Array.isArray(slots)) {
+      const i = slots.findIndex(s => s?.atendimento && String(s.atendimento.id) === atendimentoId);
+      if (i >= 0) { ativarSlot(i); return; }
+    }
+    if (typeof buscarFila === 'function') buscarFila();
+  });
 }
 
 function logout() {
@@ -3196,13 +3204,126 @@ function aguardarSdkMemed(timeoutMs = 20000) {
   });
 }
 
+function memedTesteDesktop(){return true;} // Container Memed validado em produção.
+function prepararMemedTeste(){
+  if(!document.getElementById('memed-modal-experimental')){
+    const modal=document.createElement('div');modal.id='memed-modal-experimental';
+    modal.innerHTML='<div id="memed-modal-janela"><div id="memed-modal-topo"><div class="memed-pip-left"><button type="button" id="memed-pip-grip" class="memed-pip-icon" title="Segure e arraste a janela" aria-label="Arrastar janela"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="6" cy="7" r="1.45"/><circle cx="12" cy="7" r="1.45"/><circle cx="18" cy="7" r="1.45"/><circle cx="6" cy="13" r="1.45"/><circle cx="12" cy="13" r="1.45"/><circle cx="18" cy="13" r="1.45"/></svg></button><span class="memed-pip-brand">Prescrição</span></div><div class="memed-pip-actions"><button type="button" class="memed-pip-icon" id="memed-pip-toggle" title="Alternar janela pequena e grande" aria-label="Alternar tamanho da janela"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 21h5v-5M3 3l7 7M21 21l-7-7"/></svg></button><button type="button" class="memed-pip-icon" id="memed-pip-min" title="Recolher para continuar no chat" aria-label="Recolher prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 15h8"/></svg></button><button type="button" class="memed-pip-icon" id="memed-modal-fechar" title="Fechar prescrição" aria-label="Fechar prescrição"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div></div><div id="memed-container-experimental"></div><button type="button" id="memed-pip-resize" aria-label="Arrastar para redimensionar janela" title="Arraste para ajustar o tamanho"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M19 5L5 19M11 19H5v-6M13 5h6v6"/></svg></button></div>';
+    document.body.appendChild(modal);
+    modal.querySelector('#memed-modal-fechar').addEventListener('click',fecharMemedDrawer);
+    modal.querySelector('#memed-pip-toggle').addEventListener('click',alternarMemedPip);
+    modal.querySelector('#memed-pip-min').addEventListener('click',recolherMemedPip);
+    inicializarInteracaoJanelaMemed(modal);
+    const restore=document.createElement('button');restore.id='memed-pip-restore';restore.type='button';restore.textContent='✚ Reabrir receita';restore.addEventListener('click',restaurarMemedPip);document.body.appendChild(restore);
+  }
+  return true;
+}
+
+
+function inicializarInteracaoJanelaMemed(modal){
+  // Pointer events work for touch and mouse. Only interact with dedicated handles,
+  // never the Memed iframe, so form gestures stay untouched.
+  const janela=modal.querySelector('#memed-modal-janela');
+  function iniciar(handle,mode){
+    handle.addEventListener('pointerdown',e=>{
+      if(!modal.classList.contains('pip') || modal.classList.contains('memed-landscape'))return;
+      if(mode==='move' && e.target.closest('button'))return;
+      if(e.button!==undefined&&e.button!==0)return;
+      e.preventDefault();
+      const startX=e.clientX,startY=e.clientY;
+      const originX=Number(modal.style.getPropertyValue('--memed-pip-x').replace('px',''))||0;
+      const originY=Number(modal.style.getPropertyValue('--memed-pip-y').replace('px',''))||0;
+      const width=janela.getBoundingClientRect().width;
+      const height=janela.getBoundingClientRect().height;
+      const maxW=Math.max(230,window.innerWidth-20);
+      const maxH=Math.max(240,window.innerHeight-105);
+      const pointer=e.pointerId;
+      try{handle.setPointerCapture(pointer)}catch(_){}
+      function mover(ev){
+        if(ev.pointerId!==pointer)return;
+        const dx=ev.clientX-startX,dy=ev.clientY-startY;
+        if(mode==='resize'){
+          const w=Math.max(230,Math.min(maxW,width-dx));
+          const h=Math.max(240,Math.min(maxH,height-dy));
+          modal.style.setProperty('--memed-pip-width',w+'px');
+          modal.style.setProperty('--memed-pip-height',h+'px');
+        }else{
+          // Keep the floating window within the visible screen.
+          const x=Math.max(-window.innerWidth+width+8,Math.min(0,originX+dx));
+          const y=Math.max(-window.innerHeight+height+75,Math.min(0,originY+dy));
+          modal.style.setProperty('--memed-pip-x',x+'px');
+          modal.style.setProperty('--memed-pip-y',y+'px');
+        }
+      }
+      function terminar(ev){
+        if(ev.pointerId!==pointer)return;
+        handle.removeEventListener('pointermove',mover);
+        handle.removeEventListener('pointerup',terminar);
+        handle.removeEventListener('pointercancel',terminar);
+        try{handle.releasePointerCapture(pointer)}catch(_){}
+      }
+      handle.addEventListener('pointermove',mover);
+      handle.addEventListener('pointerup',terminar);
+      handle.addEventListener('pointercancel',terminar);
+    });
+  }
+  iniciar(modal.querySelector('#memed-modal-topo'),'move');
+  iniciar(modal.querySelector('#memed-pip-resize'),'resize');
+}
+
+function ajustarMemedOrientacao(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  const landscape=window.innerWidth>window.innerHeight && window.innerHeight<=550;
+  const active=m.classList.contains('ativo')&&!m.classList.contains('recolhido');
+  // O SDK precisa receber uma área larga real para revelar os controles desktop.
+  m.classList.toggle('memed-landscape',landscape&&active);
+  if(landscape&&active){
+    if(!m.classList.contains('memed-landscape'))m.dataset.pipAntesPaisagem=m.classList.contains('pip')?'1':'0';
+    m.classList.remove('pip');
+    document.body.classList.add('memed-aberto');
+    m.style.removeProperty('--memed-pip-x');
+    m.style.removeProperty('--memed-pip-y');
+  }else if(active && m.dataset.pipAntesPaisagem==='1'){
+    m.classList.add('pip');
+    document.body.classList.remove('memed-aberto');
+  }
+  if(!landscape)m.dataset.pipAntesPaisagem=m.classList.contains('pip')?'1':'0';
+}
+window.addEventListener('resize',ajustarMemedOrientacao,{passive:true});
+window.addEventListener('orientationchange',()=>requestAnimationFrame(ajustarMemedOrientacao));
+
+function alternarMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');
+  if(!m)return;
+  const on=m.classList.toggle('pip');
+  m.classList.remove('recolhido');
+  document.getElementById('memed-pip-toggle').setAttribute('aria-label',on?'Expandir prescrição':'Reduzir para PiP');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  document.body.classList.toggle('memed-aberto',!on);
+  ajustarMemedOrientacao();
+}
+function recolherMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  m.classList.add('pip','recolhido');
+  document.getElementById('memed-pip-toggle').setAttribute('aria-label','Expandir prescrição');
+  document.getElementById('memed-pip-restore')?.classList.add('visivel');
+  document.body.classList.remove('memed-aberto');
+}
+function restaurarMemedPip(){
+  const m=document.getElementById('memed-modal-experimental');if(!m)return;
+  m.classList.add('ativo','pip');m.classList.remove('recolhido');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  document.body.classList.remove('memed-aberto');
+}
+
 function fecharMemedDrawer(ocultoPeloSdk) {
+  document.getElementById('memed-modal-experimental')?.classList.remove('ativo','pip','recolhido');
+  document.getElementById('memed-pip-restore')?.classList.remove('visivel');
+  const pipToggle=document.getElementById('memed-pip-toggle');if(pipToggle)pipToggle.setAttribute('aria-label','Reduzir para PiP');
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.remove('memed-aberto');
-  // [MEMED-CICLO] Quando o fechamento veio do próprio SDK (core:moduleHide), o módulo
-  // já está oculto. Chamar hide() de novo dentro do próprio handler é reentrante e é a
-  // causa provável de a 2ª prescrição só abrir após recarregar a página.
+  document.getElementById('memed-modal-experimental')?.classList.remove('memed-landscape');
   if (ocultoPeloSdk !== true) {
     try { MdHub.module.hide('plataforma.prescricao'); } catch(e) {}
   }
@@ -3210,9 +3331,13 @@ function fecharMemedDrawer(ocultoPeloSdk) {
 }
 
 function abrirMemedDrawer() {
+  const modal=document.getElementById('memed-modal-experimental');
+  modal?.classList.add('ativo');
+  if(modal?.classList.contains('recolhido'))restaurarMemedPip();
   const overlay = document.getElementById('memed-overlay');
   if (overlay) overlay.classList.remove('ativo');
   document.body.classList.add('memed-aberto');
+  ajustarMemedOrientacao();
 }
 
 async function aguardarComandoMemed(promessa, etapa, timeoutMs = 2500) {
@@ -3449,6 +3574,7 @@ async function abrirMemedCiclo() {
     script.type = 'text/javascript';
     script.setAttribute('data-color', '#b4e05a');
     script.setAttribute('data-token', memedToken);
+    if (prepararMemedTeste()) script.setAttribute('data-container', 'memed-container-experimental');
     script.src = 'https://partners.memed.com.br/integration.js';
 
     script.onload = async () => {
@@ -3813,17 +3939,6 @@ function abrirEdicaoPacienteMobile() {
 <script src="/memed-auto-chat.js?v=4"></script>
 <script src="/memed-open-fix-v4.js?v=8"></script>
 <script src="/admin-pacientes.js?v=1"></script>
-<script>
-// CJ24H-DOCTOR-WEB-PUSH-V1
-var cjDocPushBusy=false;var cjDocPushRegistered=false;
-function cjDocB64ToU8(v){var p='='.repeat((4-v.length%4)%4),b=(v+p).replace(/-/g,'+').replace(/_/g,'/'),r=atob(b),o=new Uint8Array(r.length);for(var i=0;i<r.length;i++)o[i]=r.charCodeAt(i);return o;}
-function cjDocPushBar(){var x=document.getElementById('cjPushDoctor');if(x)return x;x=document.createElement('div');x.id='cjPushDoctor';x.className='cj-push-doctor';x.innerHTML='<span class="cj-push-doctor__dot"></span><div class="cj-push-doctor__copy"><div class="cj-push-doctor__title">Mensagens do paciente em tempo real</div><div class="cj-push-doctor__sub">Receba um aviso mesmo com o painel em segundo plano.</div></div><button type="button" onclick="cjAtivarPushMedico()">Ativar</button>';document.body.appendChild(x);return x;}
-function cjDocPodePush(){return !!(window.isSecureContext&&'serviceWorker'in navigator&&'PushManager'in window&&'Notification'in window&&medico&&medico.id&&getToken());}
-function cjDocAtualizarPushUI(){var x=cjDocPushBar();if(!cjDocPodePush()){x.classList.remove('show');return}var b=x.querySelector('button');if(Notification.permission==='denied'){x.classList.add('show');if(b){b.textContent='Bloqueado';b.disabled=true}return}if(Notification.permission==='granted'){if(b){b.textContent='Ativado';b.disabled=true}x.classList.remove('show');if(!cjDocPushRegistered)cjRegistrarPushMedico(false);return}if(b){b.textContent='Ativar';b.disabled=false}x.classList.add('show');}
-async function cjRegistrarPushMedico(pedir){if(cjDocPushBusy||!cjDocPodePush())return false;cjDocPushBusy=true;try{var perm=Notification.permission;if(perm==='default'&&pedir)perm=await Notification.requestPermission();if(perm!=='granted'){cjDocAtualizarPushUI();return false}var reg=await navigator.serviceWorker.register('/push-sw.js',{scope:'/'});var kd=await (await fetch(API+'/api/web-push/public-key')).json();if(!kd.ok||!kd.publicKey)throw new Error('push_indisponivel');var sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:cjDocB64ToU8(kd.publicKey)});var r=await fetch(API+'/api/web-push/chat-subscribe',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({papel:'medico',medicoId:medico.id,subscription:sub.toJSON()})});var d=await r.json().catch(function(){return{}});if(!r.ok||!d.ok)throw new Error(d.error||'push_failed');cjDocPushRegistered=true;var bar=cjDocPushBar(),btn=bar.querySelector('button');if(btn){btn.textContent='Ativado';btn.disabled=true}bar.classList.remove('show');return true}catch(e){console.warn('[WEB-PUSH-MEDICO]',e);return false}finally{cjDocPushBusy=false}}
-async function cjAtivarPushMedico(){var bar=cjDocPushBar(),b=bar.querySelector('button');if(b){b.textContent='Ativando...';b.disabled=true}var ok=await cjRegistrarPushMedico(true);if(ok){if(b)b.textContent='Ativado';setTimeout(function(){bar.classList.remove('show')},700)}else{if(Notification.permission==='denied'){if(b){b.textContent='Bloqueado';b.disabled=true}}else if(b){b.textContent='Tentar novamente';b.disabled=false}}}window.cjAtivarPushMedico=cjAtivarPushMedico;
-(function(){setInterval(function(){try{if(document.body.classList.contains('app-autenticado')||getToken())cjDocAtualizarPushUI()}catch(e){}},2500)})();
-</script>
 
 <script>
 // CJ24H-PUSH-DEEPLINK-V2

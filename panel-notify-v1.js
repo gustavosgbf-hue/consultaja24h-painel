@@ -8,11 +8,10 @@
   window.__cjDoctorNotify = true;
   const byId = id => document.getElementById(id);
   const DEMO = document.documentElement.getAttribute('data-cj-theme-storage') === 'off';
-  const state = { enabled: false, fila: true, mensagens: true, busy: false, sub: null, loaded: false };
-  let trigger, popup, status, master, fila, mensagens, dot;
+  const state = { enabled: false, busy: false, sub: null, loaded: false };
+  let trigger, popup, status, master, dot;
   function api(path, body) {
-    if (DEMO) return Promise.resolve({ ok: true, ativo: !!(body?.fila || body?.mensagens),
-      fila: !!body?.fila, mensagens: !!body?.mensagens });
+    if (DEMO) return Promise.resolve({ ok: true, ativo: !!body?.mensagens, mensagens: !!body?.mensagens });
     if (typeof window.cjMedicoPushApi !== 'function') return Promise.reject(new Error('API não carregada'));
     return window.cjMedicoPushApi(path, body || {});
   }
@@ -23,9 +22,6 @@
   }
   function aplicar() {
     master.checked = state.enabled;
-    fila.checked = state.fila;
-    mensagens.checked = state.mensagens;
-    fila.disabled = mensagens.disabled = state.busy || !state.enabled;
     master.disabled = state.busy;
     dot.hidden = !state.enabled;
     if (!state.busy && !status.classList.contains('is-error')) {
@@ -74,10 +70,13 @@
       state.sub = sub;
       const r = await api('/api/web-push/medico/estado', { endpoint: sub.endpoint });
       if (r.ok) {
-        state.enabled = !!r.ativo;
-        state.fila = !!r.fila;
-        state.mensagens = !!r.mensagens;
-        if (!state.fila && !state.mensagens) { state.fila = true; state.mensagens = true; }
+        state.enabled = !!r.mensagens;
+        if (!state.enabled) {
+          // Aparelho compartilhado: inscrição antiga pode pertencer a outro médico.
+          // Ela não pode continuar recebendo mensagens após a troca de conta.
+          await sub.unsubscribe().catch(() => {});
+          state.sub = null;
+        }
         aplicar();
       }
     } catch (_) { state.loaded = false; }
@@ -85,13 +84,12 @@
   async function salvar() {
     if (!state.sub) throw new Error('Dispositivo ainda não registrado.');
     const r = await api('/api/web-push/medico/preferencias', {
-      subscription: state.sub.toJSON(), fila: state.enabled && state.fila,
-      mensagens: state.enabled && state.mensagens
+      subscription: state.sub.toJSON(), mensagens: state.enabled
     });
     if (!r?.ok) throw new Error(r?.error || 'Não foi possível salvar as preferências.');
   }
   async function ativar() {
-    if (DEMO) { state.enabled = true; if (!state.fila && !state.mensagens) state.fila = state.mensagens = true; aplicar(); return; }
+    if (DEMO) { state.enabled = true; aplicar(); return; }
     if (iphoneSemPwa()) throw new Error('No iPhone, abra este painel pelo ícone da Tela de Início: Safari → Compartilhar → Adicionar à Tela de Início.');
     if (!suportado()) throw new Error('Este navegador não oferece notificações web. Use Chrome no Android ou instale o painel na Tela de Início do iPhone.');
     if (Notification.permission === 'denied') throw new Error('Permissão bloqueada. Ative as notificações deste site nas configurações do dispositivo.');
@@ -102,13 +100,12 @@
     if (permissao !== 'granted') throw new Error('Permissão não concedida. As notificações permanecem desativadas.');
     state.sub = await subscription(false);
     if (!state.sub) throw new Error('Não foi possível registrar este dispositivo.');
-    if (!state.fila && !state.mensagens) state.fila = state.mensagens = true;
     state.enabled = true;
     await salvar();
   }
   async function alterarMaster(on) {
     if (state.busy) return;
-    const before = { enabled: state.enabled, fila: state.fila, mensagens: state.mensagens };
+    const before = { enabled: state.enabled };
     state.busy = true; aplicar(); mensagem(on ? 'Ativando…' : 'Desativando…');
     try {
       if (on) await ativar();
@@ -126,19 +123,6 @@
       state.busy = false; aplicar();
     }
   }
-  async function alterarCanal(canal, valor) {
-    if (state.busy || !state.enabled) return;
-    const before = { fila: state.fila, mensagens: state.mensagens, enabled: state.enabled };
-    state[canal] = valor;
-    if (!state.fila && !state.mensagens) state.enabled = false;
-    state.busy = true; aplicar(); mensagem('Salvando…');
-    try {
-      if (!DEMO) await salvar();
-      mensagem(state.enabled ? 'Preferências atualizadas.' : 'Notificações desativadas.', false, state.enabled);
-    } catch (e) {
-      Object.assign(state, before); mensagem(e?.message || 'Não foi possível salvar.', true);
-    } finally { state.busy = false; aplicar(); }
-  }
   function fechar() {
     popup.hidden = true;
     trigger.setAttribute('aria-expanded', 'false');
@@ -147,7 +131,7 @@
     window.cjFecharMenuStatus?.(false);
     popup.hidden = false;
     trigger.setAttribute('aria-expanded', 'true');
-    if (DEMO) mensagem('Demonstração: preferências simuladas. Nenhum aviso real será enviado.');
+    if (DEMO) mensagem('Notificações desativadas.');
     else if (iphoneSemPwa()) mensagem('iPhone: adicione o painel à Tela de Início e abra pelo ícone para ativar os avisos.');
     else if (!suportado()) mensagem('Notificações indisponíveis neste navegador.', true);
     else if (Notification.permission === 'denied') mensagem('Notificações bloqueadas nas configurações do navegador.', true);
@@ -160,11 +144,11 @@
   };
   // Ao sair da conta, revoga a permissão de entrega daquele endpoint local;
   // sem mexer em outros dispositivos do mesmo profissional.
-  window.cjMedicoPushOnLogout = function () {
-    if (!DEMO && state.sub && typeof window.cjMedicoPushApi === 'function') {
+  window.cjMedicoPushOnLogout = function (sessaoExpirada) {
+    if (!sessaoExpirada && !DEMO && state.sub && typeof window.cjMedicoPushApi === 'function') {
       // Inicia enquanto o JWT ainda existe (logout limpa localStorage em seguida).
       window.cjMedicoPushApi('/api/web-push/medico/preferencias', {
-        subscription: state.sub.toJSON(), fila: false, mensagens: false
+        subscription: state.sub.toJSON(), mensagens: false
       }).catch(function () {});
     }
     if (!DEMO && 'serviceWorker' in navigator) {
@@ -178,9 +162,8 @@
   function iniciar() {
     trigger = byId('cj-notify-trigger'); popup = byId('cj-notify-pop');
     status = byId('cj-notify-status'); master = byId('cj-notify-enabled');
-    fila = byId('cj-notify-fila'); mensagens = byId('cj-notify-mensagens');
     dot = byId('cj-notify-live-dot');
-    if (!trigger || !popup || !status || !master || !fila || !mensagens || !dot) return;
+    if (!trigger || !popup || !status || !master || !dot) return;
     aplicar();
     trigger.addEventListener('click', e => {
       e.stopPropagation(); if (popup.hidden) abrir(); else fechar();
@@ -191,8 +174,6 @@
       if (e.key === 'Escape' && !popup.hidden) { fechar(); trigger.focus(); }
     });
     master.addEventListener('change', () => alterarMaster(master.checked));
-    fila.addEventListener('change', () => alterarCanal('fila', fila.checked));
-    mensagens.addEventListener('change', () => alterarCanal('mensagens', mensagens.checked));
     // Se outro médico entrou neste navegador, releia o vínculo do dispositivo.
     window.addEventListener('pageshow', () => { state.loaded = false; });
     // A restauração da sessão pode ocorrer antes do nosso script defer;

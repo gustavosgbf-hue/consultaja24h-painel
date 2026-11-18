@@ -1,7 +1,7 @@
 # Sininho de notificações médicas (frontend, prévia local)
 
 ## Interface
-Um sino discreto na barra superior abre opções de notificações com um controle principal e dois independentes: Paciente novo e Mensagens do paciente. A escolha fica associada ao endpoint Web Push e ao médico autenticado no backend, por dispositivo. Sem mensagens clínicas na tela bloqueada.
+Um sino discreto na barra superior abre opções de notificações com um único controle para avisos de mensagens do paciente. Avisos de pacientes novos continuam exclusivamente pelo e-mail já existente. A escolha fica associada ao endpoint Web Push e ao médico autenticado no backend, por dispositivo. Sem mensagens clínicas na tela bloqueada.
 
 ## Android
 O médico acessa o painel por HTTPS no Chrome, toca no sino, ativa notificações e confirma a permissão nativa. É possível receber avisos enquanto a página não está aberta, sujeito a bateria, conectividade e configurações do SO.
