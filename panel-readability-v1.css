@@ -1,0 +1,120 @@
+/* ConsultaJá24h — contraste PDF, leitura responsiva e tabs fluidas. */
+html[data-theme="light"] .cmsg.medico .msg-arquivo-pdf,
+html[data-theme="light"] .msg-arquivo-pdf{
+ background:#fff!important;border:1px solid #d9e3df!important;color:#14201d!important;
+ opacity:1!important;filter:none!important;box-shadow:0 1px 3px rgba(18,43,32,.07)!important;
+}
+html[data-theme="light"] .cmsg.medico .msg-arquivo-pdf:hover,
+html[data-theme="light"] .msg-arquivo-pdf:hover{background:#f5faf7!important;border-color:#a8c5b8!important}
+html[data-theme="light"] .msg-arquivo-pdf .pdf-meta,
+html[data-theme="light"] .msg-arquivo-pdf .pdf-nome{
+ color:#14201d!important;opacity:1!important;filter:none!important;
+}
+html[data-theme="light"] .msg-arquivo-pdf .pdf-nome{font-weight:680!important}
+html[data-theme="light"] .msg-arquivo-pdf .pdf-sub{color:#5d7169!important;opacity:1!important}
+html[data-theme="light"] .msg-arquivo-pdf .pdf-arrow{color:#58756a!important;opacity:1!important}
+html[data-theme="light"] .msg-arquivo-pdf .pdf-ico{background:#fff0ee!important;color:#be3129!important;opacity:1!important}
+/* O contraste do link PDF precisa prevalecer sobre a regra geral dos links da bolha verde. */
+html[data-theme="light"] .cmsg.medico .bub a.msg-arquivo-pdf{color:#14201d!important;text-decoration:none!important}
+
+/* Controle do tamanho da leitura. Não usa zoom global: preservar botões e layout clínico. */
+html[data-theme]{--cj-read-size:1;--cj-read-chat:14px;--cj-read-pdf:12px;--cj-read-small:11px;--cj-read-timestamp:10px;--cj-read-meta:14px;--cj-read-pip:12px;--cj-read-clinic:16px;--cj-read-pront:14px;--cj-read-title:16px}
+html[data-theme] .cj-read-wrap{position:relative;display:flex;align-items:center;flex:0 0 auto}
+html[data-theme] .cj-read-trigger{
+ display:inline-flex;align-items:center;justify-content:center;gap:1px;
+ height:38px;min-width:38px;width:38px;flex:0 0 38px;padding:0;
+ border:1px solid var(--cj-top-chip-line);border-radius:11px;
+ background:var(--cj-top-chip);color:#fff;cursor:pointer;
+ font:700 12px/1 var(--cj-font,system-ui);letter-spacing:-.04em;
+ transition:background-color .16s ease,transform .14s ease;
+}
+html[data-theme] .cj-read-trigger .cj-read-big{font-size:17px;line-height:1}
+html[data-theme] .cj-read-trigger:hover,html[data-theme] .cj-read-trigger[aria-expanded="true"]{background:rgba(255,255,255,.14)}
+html[data-theme] .cj-read-trigger:active{transform:scale(.965)}
+html[data-theme] .cj-read-trigger:focus-visible{outline:2px solid #a2d6c6;outline-offset:2px}
+html[data-theme] .cj-read-pop{
+ position:absolute;right:0;top:calc(100% + 10px);z-index:5900;
+ width:min(300px,calc(100vw - 20px));box-sizing:border-box;padding:16px;
+ background:var(--cj-surface);color:var(--cj-text);border:1px solid var(--cj-border-2);
+ border-radius:16px;box-shadow:var(--cj-shadow-lg);
+ animation:cj17-pop-in .22s cubic-bezier(.22,1,.36,1) both;
+}
+html[data-theme] .cj-read-pop[hidden]{display:none!important}
+html[data-theme] .cj-read-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+html[data-theme] .cj-read-head strong{font-size:14px;line-height:1.3}
+html[data-theme] .cj-read-head p{font-size:11px;color:var(--cj-text-3);margin:4px 0 0}
+html[data-theme] .cj-read-close{border:0;background:none;color:var(--cj-text-2);font-size:18px;cursor:pointer;width:30px;height:30px;border-radius:9px}
+html[data-theme] .cj-read-close:hover{background:var(--cj-surface-2)}
+html[data-theme] .cj-read-range-line{display:flex;align-items:center;gap:12px;margin:17px 0 5px}
+html[data-theme] .cj-read-range-line .cj-read-low{font-size:12px;color:var(--cj-text-3)}
+html[data-theme] .cj-read-range-line .cj-read-high{font-size:21px;color:var(--cj-text)}
+/* Native input range — Safari uses iOS thumb, Chromium uses Android/desktop thumb. */
+html[data-theme] .cj-read-range{display:block;flex:1 1 0;min-width:0;width:100%;height:32px;accent-color:var(--cj-accent);cursor:pointer;touch-action:pan-x}
+html[data-theme] .cj-read-value{text-align:center;font-size:12px;color:var(--cj-text-2);font-weight:650;font-variant-numeric:tabular-nums}
+html[data-theme] .cj-read-reset{display:block;margin:10px auto 0;padding:7px 12px;border:1px solid var(--cj-border);border-radius:9px;background:var(--cj-surface);color:var(--cj-text-2);font-size:12px;cursor:pointer}
+html[data-theme] .cj-read-reset:hover{background:var(--cj-surface-2)}
+/* Escala do conteúdo lido, sem alterar o tamanho dos controles nem textos de documentação impressa. */
+html[data-theme] .chat-medico-msgs .cmsg .bub{font-size:var(--cj-read-chat)!important;line-height:1.48!important}
+html[data-theme] .chat-medico-msgs .msg-arquivo-pdf .pdf-nome{font-size:var(--cj-read-pdf)!important;line-height:1.38!important;white-space:normal!important;overflow-wrap:anywhere!important}
+html[data-theme] .chat-medico-msgs .msg-arquivo-pdf .pdf-sub{font-size:var(--cj-read-small)!important}
+html[data-theme] .chat-medico-msgs .cmsg .ts{font-size:var(--cj-read-timestamp)!important}
+html[data-theme] .triagem-item span,html[data-theme] #chat-dados-panel-body .triagem-item span{font-size:var(--cj-read-chat)!important}
+html[data-theme] #tab-clinico :is(p,label,.field-value),
+html[data-theme] #tab-prontuario :is(p,.pront-content,.pront-field),
+html[data-theme] .hist-card .hist-name{font-size:var(--cj-read-chat)!important}
+html[data-theme] #chat-pip-msgs .cmsg .bub{font-size:var(--cj-read-pip)!important}
+html[data-theme] .clinic-label{font-size:var(--cj-read-small)!important}
+html[data-theme] .pront-card-body{font-size:var(--cj-read-pront)!important}
+html[data-theme] .pront-meta{font-size:var(--cj-read-small)!important}
+html[data-theme] .pront-paciente{font-size:var(--cj-read-title)!important}
+html[data-theme] #tab-clinico textarea.clinic-input{font-size:var(--cj-read-clinic)!important}
+html[data-theme] #chat-mobile-header .cmh-nome{font-size:var(--cj-read-title)!important}
+
+@media(max-width:768px){
+ html[data-theme] .cj-read-trigger{height:36px;min-width:36px;width:36px;flex-basis:36px}
+ html[data-theme] .cj-read-pop{position:fixed;top:calc(var(--nav-h) + 5px);right:9px;max-width:calc(100vw - 18px)}
+ /* Zero scroll bouncing em containers externos. Scroll só na conversa ativa. */
+ html[data-theme] body.chat-fullscreen{overflow:hidden!important;overscroll-behavior-y:none!important}
+ html[data-theme] body.chat-fullscreen .app-body{overflow:hidden!important;min-height:0!important}
+ html[data-theme] body.chat-fullscreen .main{height:calc(var(--cj16-vvh,100dvh) - var(--nav-h))!important;max-height:calc(var(--cj16-vvh,100dvh) - var(--nav-h))!important;min-height:0!important;overscroll-behavior-y:none!important}
+ html[data-theme] body.chat-fullscreen.cj16-teclado .main{height:var(--cj16-vvh,100dvh)!important;max-height:var(--cj16-vvh,100dvh)!important}
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs:not([hidden]){
+  overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch;scroll-padding-bottom:12px;
+ }
+ /* A barra de navegação clínica fica disponível durante o chat sem rolar toda a página. */
+ html[data-theme] body.chat-fullscreen #state-atend>#atend-tabs{
+  display:flex!important;order:-2!important;flex:0 0 auto!important;
+  width:100%;max-width:100%;min-height:0!important;margin:0!important;border-radius:0!important;
+  padding:5px 8px!important;background:var(--cj-surface-2)!important;
+  border-bottom:1px solid var(--cj-border)!important;
+ }
+ html[data-theme] body.chat-fullscreen #atend-tabs .tab{min-height:35px!important;padding:0 7px!important;font-size:12px!important;gap:5px!important;min-width:0!important}
+ html[data-theme] body.chat-fullscreen #atend-tabs .tab svg{width:14px!important;height:14px!important;flex:none}
+ html[data-theme] body.chat-fullscreen #atend-tabs .tab{white-space:normal!important;line-height:1.15!important;text-align:center}
+}
+/* Segmento de vidro deslizante: geometria calculada no navegador, sem mudar as views. */
+html[data-theme] #atend-tabs{position:relative;isolation:isolate;overflow:hidden}
+html[data-theme] #atend-tabs .tab{position:relative;z-index:1;flex:1 1 0!important;min-width:0!important;transition:color .2s ease,transform .14s ease!important}
+html[data-theme] #atend-tabs .tab.active{background:transparent!important;box-shadow:none!important;color:var(--cj-text)!important}
+html[data-theme] #atend-tabs .tab:active{transform:scale(.98)}
+html[data-theme] #atend-tabs .cj-glass-indicator{
+ position:absolute;z-index:0;top:0;left:0;width:var(--cj-glass-w,100px);height:var(--cj-glass-h,38px);
+ transform:translate3d(var(--cj-glass-x,4px),var(--cj-glass-y,4px),0);
+ border-radius:12px;pointer-events:none;
+ background:color-mix(in srgb,var(--cj-surface) 82%,transparent);
+ border:1px solid color-mix(in srgb,var(--cj-border-2) 80%,transparent);
+ box-shadow:0 2px 9px rgba(0,0,0,.08),inset 0 1px 1px rgba(255,255,255,.3);
+ backdrop-filter:blur(12px) saturate(135%);-webkit-backdrop-filter:blur(12px) saturate(135%);
+ transition:transform .38s cubic-bezier(.2,.9,.2,1),width .38s cubic-bezier(.2,.9,.2,1),height .38s cubic-bezier(.2,.9,.2,1);
+}
+html[data-theme="dark"] #atend-tabs .cj-glass-indicator{background:rgba(255,255,255,.095);border-color:rgba(255,255,255,.13);box-shadow:0 3px 12px rgba(0,0,0,.22),inset 0 1px 1px rgba(255,255,255,.10)}
+html[data-theme] #atend-tabs .cj-glass-indicator.is-init{transition:none!important}
+@media(prefers-reduced-motion:reduce){html[data-theme] #atend-tabs .cj-glass-indicator{transition:none!important}html[data-theme] .cj-read-pop{animation:none!important}}
+/* Precedência sobre o legado fullscreen (v6, !important), para o slider afetar
+   o texto de fato em vez de apenas alterar o indicador numérico. */
+@media(max-width:768px){
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .cmsg .bub{font-size:var(--cj-read-chat)!important}
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .msg-arquivo-pdf .pdf-nome{font-size:var(--cj-read-pdf)!important}
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .msg-arquivo-pdf .pdf-sub{font-size:var(--cj-read-small)!important}
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .cmsg .ts{font-size:var(--cj-read-timestamp)!important}
+}
