@@ -547,3 +547,190 @@ html[data-theme] .nav .cj-fin-direct:focus-visible{outline:2px solid #9fd2bf;out
   /* O pequeno cadeado ocupava uma linha inteira e desalinhava o composer. */
   html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-sec-foot{display:none!important}
 }
+
+/* v12 — mobile clinic polish: comfortable chat density and no clipped names.
+   Only visual sizing, never changes medical message data or slot logic. */
+@media(max-width:768px){
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs.visivel{
+   max-height:89px!important;min-height:45px!important;
+   padding:5px 8px!important;gap:6px!important;
+   scroll-snap-type:x proximity;
+ }
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-tab-btn{
+   flex:0 0 auto!important;width:max-content!important;
+   min-width:145px!important;max-width:min(75vw,280px)!important;
+   padding:7px 10px!important;min-height:38px!important;
+   font-size:12px!important;line-height:1.3!important;
+   scroll-snap-align:start;overflow-wrap:anywhere;
+ }
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-name{
+   display:block!important;-webkit-line-clamp:unset!important;
+   -webkit-box-orient:initial!important;white-space:normal!important;
+   overflow:visible!important;text-overflow:clip!important;
+   overflow-wrap:anywhere!important;line-height:1.3!important;
+   font-weight:680!important;
+ }
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs:not([hidden]){
+   gap:8px!important;padding:12px 10px 16px!important;
+ }
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .cmsg{
+   max-width:80%!important;min-width:0!important;
+ }
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .cmsg .bub{
+   font-size:14px!important;line-height:1.42!important;
+   font-weight:460!important;padding:9px 11px!important;
+   border-radius:13px!important;overflow-wrap:anywhere;
+ }
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .cmsg .ts{
+   font-size:10px!important;margin-top:4px!important;
+ }
+ html[data-theme] body.chat-fullscreen .msg-arquivo-pdf{
+   padding:8px 10px!important;gap:8px!important;
+   border-radius:12px!important;min-width:0!important;max-width:100%!important;
+ }
+ html[data-theme] body.chat-fullscreen .msg-arquivo-pdf .pdf-ico{
+   height:34px!important;width:34px!important;border-radius:9px!important;
+ }
+ html[data-theme] body.chat-fullscreen .msg-arquivo-pdf .pdf-nome{
+   color:var(--cj-text)!important;font-size:12px!important;
+   text-overflow:clip!important;white-space:normal!important;
+   overflow-wrap:anywhere!important;
+ }
+ html[data-theme] body.chat-fullscreen .msg-arquivo-pdf .pdf-sub{
+   color:var(--cj-text-3)!important;font-size:11px!important;
+ }
+ html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-input{
+   position:relative!important;z-index:3!important;
+   padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))!important;
+ }
+}
+
+/* v13 — histórico mobile: leitura primeiro, detalhes clínicos depois.
+   O histórico deixava a triagem de ~960px antes das abas e parecia quebrado. */
+@media(max-width:768px){
+ html[data-theme] body.cj-history-view .main{
+   padding:8px 10px 24px!important;overflow-y:auto!important;overflow-x:hidden!important;
+   -webkit-overflow-scrolling:touch!important;
+ }
+ html[data-theme] body.cj-history-view #state-atend{
+   display:flex!important;flex-direction:column!important;gap:10px!important;
+   height:auto!important;min-height:0!important;overflow:visible!important;
+   padding:0!important;width:100%!important;max-width:100%!important;
+ }
+ html[data-theme] body.cj-history-view #state-atend>.atend-header{
+   order:0!important;flex:0 0 auto!important;
+   padding:16px!important;margin:0!important;min-height:0!important;gap:9px!important;
+   border-radius:14px!important;
+ }
+ html[data-theme] body.cj-history-view #state-atend>.slot-tabs,
+ html[data-theme] body.cj-history-view #chat-mobile-header,
+ html[data-theme] body.cj-history-view #state-atend>.triagem-box{
+   display:none!important;
+ }
+ html[data-theme] body.cj-history-view #state-atend>.tabs{
+   display:flex!important;order:1!important;flex:0 0 auto!important;
+   margin:0!important;width:100%!important;min-height:44px!important;
+ }
+ html[data-theme] body.cj-history-view #state-atend>.tab-panel{
+   order:2!important;flex:0 0 auto!important;width:100%!important;
+   min-height:0!important;height:auto!important;max-height:none!important;
+   overflow:visible!important;
+ }
+ html[data-theme] body.cj-history-view #state-atend>.tab-panel:not(.active){display:none!important}
+ html[data-theme] body.cj-history-view #state-atend>.tab-panel.active{
+   display:block!important;padding:0!important;
+ }
+ html[data-theme] body.cj-history-view #atend-actions-hist{
+   display:flex!important;flex-wrap:wrap!important;gap:8px!important;
+   justify-content:flex-start!important;overflow:visible!important;
+ }
+ html[data-theme] body.cj-history-view #atend-actions-hist>*{
+   flex:0 1 auto!important;width:auto!important;white-space:normal!important;
+   min-height:38px!important;font-size:12px!important;
+   padding:7px 10px!important;line-height:1.3!important;
+ }
+ html[data-theme] body.cj-history-view #state-atend .atend-nome{
+   font-size:1.05rem!important;line-height:1.3!important;overflow-wrap:anywhere!important;
+ }
+ html[data-theme] body.cj-history-view .hist-readonly-notice{
+   font-size:12px!important;line-height:1.5!important;
+   padding:11px 12px!important;white-space:normal!important;
+ }
+ html[data-theme] body.cj-history-view #tab-prontuario .pront-output,
+ html[data-theme] body.cj-history-view #tab-prontuario .pront-card,
+ html[data-theme] body.cj-history-view #tab-clinico .clinic-section{
+   max-width:100%!important;min-width:0!important;overflow-wrap:anywhere!important;
+ }
+ html[data-theme] body.cj-history-view #tab-prontuario .pront-card-body{
+   font-size:13px!important;line-height:1.6!important;white-space:pre-wrap!important;
+   overflow-wrap:anywhere!important;word-break:break-word!important;
+ }
+ html[data-theme] body.cj-history-view .chat-hist-overlay.open{
+   align-items:flex-end!important;
+ }
+ html[data-theme] body.cj-history-view .chat-hist-modal{
+   width:100%!important;max-width:100%!important;min-height:0!important;
+   max-height:86dvh!important;height:min(86dvh,720px)!important;
+   border-radius:18px 18px 0 0!important;overflow:hidden!important;
+   display:flex!important;flex-direction:column!important;
+ }
+ html[data-theme] body.cj-history-view .chat-hist-msgs{
+   flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;
+   padding:12px!important;
+ }
+}
+
+@media(max-width:768px){
+ html[data-theme] body.cj-history-view #atend-actions-hist{
+   display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
+   gap:7px!important;align-items:center!important;justify-content:flex-start!important;
+   padding:0!important;margin:0!important;
+ }
+ html[data-theme] body.cj-history-view #atend-actions-hist>*{
+   min-width:0!important;max-width:100%!important;width:auto!important;
+   padding:9px 12px!important;height:auto!important;min-height:38px!important;
+   border-radius:10px!important;flex:none!important;
+ }
+ html[data-theme] body.cj-history-view #atend-actions-hist [style*="display:none"],
+ html[data-theme] body.cj-history-view #atend-actions-hist [style*="display: none"]{display:none!important}
+ html[data-theme] body.cj-history-view #atend-actions-hist #btn-memed-hist:not([style*="display:none"]):not([style*="display: none"]){max-width:100%!important}
+ html[data-theme] body.cj-history-view .atend-meta{
+    display:flex!important;flex-wrap:wrap!important;gap:5px!important;
+ }
+ html[data-theme] body.cj-history-view .atend-meta .atend-tag{
+    font-size:11px!important;max-width:100%!important;white-space:normal!important;
+    overflow-wrap:anywhere!important;padding:5px 8px!important;
+ }
+}
+@media(max-width:768px){
+ html[data-theme] body.cj-history-view #atend-actions-hist{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:7px!important;width:100%!important;
+ }
+ html[data-theme] body.cj-history-view #atend-actions-hist>*:not([style*="display:none"]):not([style*="display: none"]){
+   width:100%!important;max-width:100%!important;min-height:39px!important;
+   display:flex!important;align-items:center!important;justify-content:center!important;
+   font-size:11.5px!important;line-height:1.2!important;padding:7px 8px!important;
+   white-space:normal!important;text-align:center!important;
+ }
+ html[data-theme] body.cj-history-view #atend-actions-hist #btn-memed-hist:not([style*="display:none"]):not([style*="display: none"]){
+   grid-column:1/-1;
+ }
+}
+
+/* Histórico médico próprio: mensagens antigas sem novo envio ou ações ativas. */
+html[data-theme] body.cj-history-view #tab-consulta .chat-medico-input,
+html[data-theme] body.cj-history-view #tab-consulta .chat-preview-wrap,
+html[data-theme] body.cj-history-view #tab-consulta .chat-sec-foot,
+html[data-theme] body.cj-history-view #tab-consulta #meet-section{
+ display:none!important;
+}
+html[data-theme] body.cj-history-view #tab-consulta.active .chat-medico-wrap{
+ display:flex!important;flex-direction:column!important;min-height:210px!important;
+ max-height:min(57dvh,530px)!important;height:min(57dvh,530px)!important;
+ overflow:hidden!important;border-radius:14px!important;
+}
+html[data-theme] body.cj-history-view #tab-consulta.active .chat-medico-msgs:not([hidden]){
+ display:flex!important;flex:1 1 0!important;min-height:0!important;
+ overflow-y:auto!important;padding:12px!important;
+}

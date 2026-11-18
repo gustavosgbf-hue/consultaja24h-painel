@@ -1467,6 +1467,8 @@ if (btnPreview) { btnPreview.disabled = false; btnPreview.textContent = 'Assumir
 
 function renderPainelAtendimento() {
 const p=atendimentoAtual; if (!p) return;
+// Visão histórica isolada da experiência de consulta ativa, sem mudar os dados.
+document.body.classList.toggle('cj-history-view', !!modoHistorico);
 const nome=p.nome||'-', tel=p.tel||'', tipo=p.tipo||'chat';
 document.getElementById('atend-nome').textContent=nome;
 const cmhNomeEl = document.getElementById('cmh-nome'); if(cmhNomeEl) cmhNomeEl.textContent=nome;
@@ -1589,6 +1591,12 @@ document.getElementById('btn-copiar').textContent='Copiar texto';
 document.getElementById('meet-section').style.display='none';
 document.getElementById('chat-section').style.display='none';
 document.getElementById('wpp-consulta-section').style.display='none';
+// Chat de atendimento encerrado: somente leitura. Render não abre polling.
+// Restrito ao histórico do próprio médico; histórico administrativo geral
+// mantém o chat oculto para não exibir conteúdo residual de outro slot.
+if (modoHistorico && p._origemHistorico === 'meu' && (tipo === 'chat' || tipo === 'video')) {
+  document.getElementById('chat-section').style.display='flex';
+}
 if (!modoHistorico) {
 // [UX] Vídeo AGORA também mostra o chat com anexos. Antes, consulta por vídeo só tinha o botão do
 // Meet — paciente não conseguia mandar foto/exame. Agora: meet-section no topo, chat-section abaixo.
@@ -2244,6 +2252,7 @@ if (data.ok) { document.getElementById('meetLinkAtualUrl').textContent=link; doc
 }
 
 function renderEstado() {
+document.body.classList.toggle('cj-history-view', !!modoHistorico);
 const offline=document.getElementById('state-offline'), empty=document.getElementById('state-empty'), atend=document.getElementById('state-atend');
 const fab=document.getElementById('fab-fila');
 // Há atendimento se o slot ativo tiver dados (ou modo histórico)

@@ -98,7 +98,7 @@ TEMPLATE = r'''<!doctype html>
   html.demo-embed .demo-bar{display:none}
   .demo-frame{position:fixed;inset:0;z-index:9500;display:none;align-items:center;justify-content:center;background:rgba(4,10,9,.72);backdrop-filter:blur(6px)}
   .demo-frame.open{display:flex}
-  .demo-phone{position:relative;width:390px;height:min(844px,calc(100vh - 60px));border-radius:42px;padding:12px;background:#111;box-shadow:0 30px 90px rgba(0,0,0,.5)}
+  .demo-phone{position:relative;box-sizing:border-box;width:390px;max-width:calc(100vw - 22px);height:min(844px,calc(100dvh - 48px));border-radius:42px;padding:12px;background:#111;box-shadow:0 30px 90px rgba(0,0,0,.5);overflow:hidden}
   .demo-phone iframe{width:100%;height:100%;border:0;border-radius:32px;background:#fff}
   .demo-frame-close{position:absolute;top:18px;right:18px;height:38px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font:700 13px 'Manrope',system-ui,sans-serif;cursor:pointer}
   /* ── Áreas EXCLUSIVAS da demo (dados fictícios) ── */

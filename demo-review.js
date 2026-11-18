@@ -170,6 +170,7 @@
   };
 
   function mostrarEstadoMain() {
+    document.body.classList.toggle('cj-history-view', !!estado.historico);
     var temAtend = estado.ativo >= 0 || !!estado.historico;
     $('state-offline').style.display = 'none';
     $('state-empty').style.display = !temAtend ? 'flex' : 'none';
@@ -527,7 +528,7 @@
   // Histórico aberto
   window.abrirHistoricoAtendimento = function (id) {
     var h = HISTORICO.find(function (x) { return x.id === id; }) || HISTORICO[0];
-    estado.historico = h; pararTimer();
+    estado.historico = h; pararTimer(); document.body.classList.remove('chat-fullscreen');
     $('atend-nome').textContent = h.nome;
     var tag = $('atend-tipo-tag'); tag.className = 'atend-tag ' + h.tipo; tag.innerHTML = ico(h.tipo === 'video' ? 'video' : 'chat') + (h.tipo === 'video' ? 'Vídeo' : 'Chat');
     $('atend-crm-tag').textContent = 'Encerrado ' + h.encerrado;
@@ -536,10 +537,22 @@
     $('atend-actions-live').style.display = 'none';
     $('atend-actions-hist').style.display = 'flex';
     $('btn-reabrir-atend').style.display = 'inline-flex';
-    $('btn-memed-hist').style.display = 'inline-flex';
+    $('btn-memed-hist').style.display = 'none'; // histórico de chat fictício não é renovação de receita
     $('hist-consulta-notice').style.display = 'flex';
     $('hist-clinico-notice').style.display = 'flex';
-    $('chat-section').style.display = 'none';
+    // Histórico da demo: conversa antiga isolada e somente para leitura.
+    // Não reutiliza dados do chat ativo, e nunca habilita o composer.
+    $('chat-section').style.display = 'flex';
+    var chatAntigo = $('chat-medico-msgs-historico');
+    if (!chatAntigo) {
+      chatAntigo = document.createElement('div');
+      chatAntigo.id = 'chat-medico-msgs-historico';
+      chatAntigo.className = 'chat-medico-msgs';
+      chatAntigo.dataset.slot = 'historico';
+      $('chat-section').insertBefore(chatAntigo, $('chat-preview-wrap'));
+    }
+    qsa('.chat-medico-msgs').forEach(function(c) { c.hidden = c !== chatAntigo; c.style.display = c === chatAntigo ? 'flex' : 'none'; });
+    chatAntigo.innerHTML = CHAT_INICIAL({ nome: h.nome, queixa: h.hda }).filter(function (m) { return !m.arquivo; }).map(msgHtml).join('');
     $('meet-section').style.display = 'none';
     $('chat-pip').classList.remove('visivel');
     preencherTriagem({ cpf: h.cpf, tel: h.tel, nasc: '-', email: '', idade: '-', sexo: '-', alergias: 'Nega', cronicas: 'Nega', medicacoes: '-', solicita: h.docs, queixa: h.hda });
