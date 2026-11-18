@@ -107,8 +107,6 @@ html[data-theme] .cj16-encerrar-nome strong{color:var(--cj-text);font-weight:750
     height:calc(var(--cj16-vvh,100dvh) - var(--nav-h))!important;max-height:calc(var(--cj16-vvh,100dvh) - var(--nav-h))!important;
     min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important
   }
-  /* Ganhos sai da barra durante o chat (mais espaço; nada muda no acesso pelo menu fora do chat) */
-  html[data-theme] body.chat-fullscreen .nav .cj-fin-direct{display:none!important}
   /* Com teclado aberto, a barra superior do app cede espaço ao chat */
   html[data-theme] body.chat-fullscreen.cj16-teclado .nav{display:none!important}
   html[data-theme] body.chat-fullscreen.cj16-teclado #state-atend{height:var(--cj16-vvh,100dvh)!important;max-height:var(--cj16-vvh,100dvh)!important}

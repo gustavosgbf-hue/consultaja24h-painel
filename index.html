@@ -56,22 +56,24 @@
     <a href="#" class="nav-brand cj-brand" aria-label="ConsultaJá24h · Painel médico"><span class="live-dot" id="nav-dot" hidden></span><span class="cj-wordmark">Consulta<span class="cj-wm-ja">Já</span>24h</span><span class="cj-brand-sep" aria-hidden="true"></span><span class="cj-brand-ctx">Painel médico</span></a>
     <div class="nav-spacer"></div>
     <span class="cj-theme-slot" id="cj-theme-slot-nav"></span>
-    <button type="button" class="cj-fin-direct" id="cj-menu-ganhos" aria-label="Meus ganhos" title="Meus ganhos" aria-haspopup="dialog">
-      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M8 15h3"/></svg>
-      <span class="cj-fin-direct-label">Ganhos</span>
-    </button>
     <!-- Menu compacto de status do médico. #btn-plantao, #plantao-txt, #nav-nome e .nav-logout
          mantêm IDs, classes e handlers originais; só mudaram de lugar (dentro do menu). -->
     <div class="cj-status-menu" id="cj-status-menu">
       <button type="button" class="cj-status-btn" id="cj-status-btn" aria-haspopup="true" aria-expanded="false" aria-controls="cj-status-pop">
         <span class="cj-avatar" aria-hidden="true"></span>
         <span class="nav-medico"><span class="cj-nav-greet">Olá, </span><strong id="nav-nome"></strong></span>
-        <span class="cj-sr">Status e opções da conta</span>
+        <span class="cj-sr">Opções da conta</span>
         <svg class="cj-i cj-status-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
       </button>
-      <div class="cj-status-pop" id="cj-status-pop" role="menu" aria-label="Status do médico" hidden>
+      <div class="cj-status-pop" id="cj-status-pop" role="menu" aria-label="Opções da conta" hidden>
         <!-- IDs legados preservados para compatibilidade JS; operação sem regime de plantão. -->
         <button class="plantao-btn offline" id="btn-plantao" hidden style="display:none!important" tabindex="-1" aria-hidden="true"><span id="plantao-txt">Disponível</span></button>
+        <button type="button" id="cj-menu-ganhos" class="cj-menu-item cj-menu-financeiro" role="menuitem" aria-haspopup="dialog" aria-label="Abrir meus ganhos">
+          <span class="cj-menu-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="14" rx="3"/><path d="M2.5 10h19M8 15h3"/></svg></span>
+          <span class="cj-menu-txt">Meus ganhos</span>
+          <svg class="cj-fin-menu-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <div class="cj-pop-sep" role="separator"></div>
         <button class="nav-logout" onclick="logout()" role="menuitem">Sair</button>
       </div>
     </div>

@@ -109,3 +109,25 @@ html[data-theme] :is(.cj-fin-direct,.cj-status-btn,.chat-medico-send,.chat-clip-
     scroll-behavior:auto!important;
   }
 }
+
+/* Acesso consistente ao financeiro: no perfil, nunca some ao assumir pacientes. */
+html[data-theme] .cj-status-pop .cj-menu-financeiro{
+  display:flex!important;align-items:center!important;gap:10px;
+  padding:0 11px!important;min-height:43px!important;
+  width:100%!important;background:transparent!important;
+  border:0!important;border-radius:10px!important;
+  font-size:13px!important;font-weight:700!important;
+  color:var(--cj-text)!important;cursor:pointer;
+}
+html[data-theme] .cj-status-pop .cj-menu-financeiro:hover{background:var(--cj-surface-2)!important}
+html[data-theme] .cj-status-pop .cj-menu-financeiro .cj-menu-ico{
+  display:inline-grid;place-items:center;width:22px;height:22px;
+  color:var(--cj-text-2)!important;background:transparent!important;
+}
+html[data-theme] .cj-status-pop .cj-menu-financeiro .cj-fin-menu-chevron{
+  margin-left:auto;flex:0 0 auto;color:var(--cj-text-4);
+  transition:transform var(--cj17-fast) var(--cj17-ease);
+}
+html[data-theme] .cj-status-pop .cj-menu-financeiro:hover .cj-fin-menu-chevron{
+  transform:translateX(2px);
+}
