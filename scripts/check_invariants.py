@@ -28,9 +28,9 @@ PERMITIDOS_NOVOS = {
     'handlers': set(),
     # GET somente leitura, disparado apenas por clique explícito em "$ Ganhos" (window.cjGanhosFonte).
     # Depende de triagem-api feat/medico-ganhos-backend publicado em produção (ver docs/ganhos-medico.md).
-    'api': collections.Counter({"'/api/medico/ganhos'": 1}),
+    'api': collections.Counter({"'/api/medico/ganhos'": 1, "'/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo": 1, "'/api/admin/medicos/repasses/confirmar'": 1}),
     'fetch': collections.Counter(),
-    'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1'},
+    'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1'},
 }
 
 

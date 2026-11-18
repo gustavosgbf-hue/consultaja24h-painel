@@ -336,3 +336,64 @@ html[data-theme] .cj-g-empty-txt{margin:0;font-size:.82rem;line-height:1.5;color
   html[data-theme] .cj-ganhos.open .cj-ganhos-modal{animation:cjGanhosIn .2s var(--cj-ease) both}
   @keyframes cjGanhosIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
+
+/* Financeiro compacto: anel de tempo do ciclo, não meta de faturamento. */
+html[data-theme] .cj-ganhos-modal{max-width:455px!important}
+html[data-theme] .cj-g-sub{font-size:.75rem}
+html[data-theme] .cj-fin-ringcard{display:flex;align-items:center;gap:22px;padding:22px 12px 20px}
+html[data-theme] .cj-fin-ring{width:142px;height:142px;flex:none;position:relative}
+html[data-theme] .cj-fin-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+html[data-theme] .cj-fin-ring circle{fill:none;stroke-width:9}
+html[data-theme] .cj-ring-bg{stroke:var(--cj-border-2)}
+html[data-theme] .cj-ring-fg{stroke:var(--cj-accent);stroke-linecap:round;stroke-dasharray:314.159;stroke-dashoffset:calc(314.159 * (1 - var(--cj-progress,0)));transition:stroke-dashoffset .95s cubic-bezier(.16,1,.3,1)}
+html[data-theme] .cj-fin-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+html[data-theme] .cj-fin-ring-center strong{font-size:2.15rem;line-height:1;font-weight:850;color:var(--cj-text);letter-spacing:-.07em}
+html[data-theme] .cj-fin-ring-center span{font-size:.67rem;font-weight:700;color:var(--cj-text-3)}
+html[data-theme] .cj-fin-ring-details{display:flex;flex-direction:column;min-width:0;gap:8px}
+html[data-theme] .cj-fin-kicker{font-size:.69rem;text-transform:uppercase;letter-spacing:.07em;font-weight:800;color:var(--cj-text-3)}
+html[data-theme] .cj-fin-main{font-size:clamp(1.4rem,4vw,1.85rem);line-height:1.12;letter-spacing:-.04em;color:var(--cj-text);font-weight:850}
+html[data-theme] .cj-fin-sub{font-size:.81rem;line-height:1.4;color:var(--cj-text-2);font-weight:650}
+html[data-theme] .cj-fin-date{font-size:.75rem;color:var(--cj-accent-ink);font-weight:700}
+html[data-theme] .cj-fin-footer{font-size:.69rem;color:var(--cj-text-4);border-top:1px solid var(--cj-border);padding-top:9px}
+html[data-theme] .cj-fin-history{font-size:.78rem;color:var(--cj-text-2)}
+html[data-theme] .cj-fin-history summary{cursor:pointer;padding:10px 3px;font-weight:750}
+html[data-theme] .cj-fin-history-list{display:grid;gap:5px}
+html[data-theme] .cj-fin-history-item{display:flex;justify-content:space-between;border-bottom:1px solid var(--cj-border);padding:7px 2px}
+@media(max-width:420px){
+ html[data-theme] .cj-fin-ringcard{gap:13px;padding:13px 0}
+ html[data-theme] .cj-fin-ring{width:115px;height:115px}
+ html[data-theme] .cj-fin-ring-center strong{font-size:1.8rem}
+ html[data-theme] .cj-fin-main{font-size:1.5rem}
+}
+@media(prefers-reduced-motion:reduce){html[data-theme] .cj-ring-fg{transition:none}}
+
+/* Administração de repasses: cartões compactos, visíveis em todas as larguras */
+html[data-theme] .cj-repasses-modal{max-width:565px;width:min(100%,565px);padding:24px}
+html[data-theme] .cj-repasses-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+html[data-theme] .cj-repasses-header h2{color:var(--cj-text);font-size:1.45rem;letter-spacing:-.045em;margin:0}
+html[data-theme] .cj-repasses-header p{margin:3px 0 0;color:var(--cj-text-3);font-size:.78rem}
+html[data-theme] .cj-repasses-close{border:0;border-radius:12px;background:var(--cj-surface-2);color:var(--cj-text);font-size:1.5rem;width:36px;height:36px;cursor:pointer}
+html[data-theme] .cj-repasses-filtro{display:flex;gap:8px;align-items:center;margin:18px 0}
+html[data-theme] .cj-repasses-filtro label{font-size:.79rem;color:var(--cj-text-2);font-weight:750}
+html[data-theme] .cj-repasses-filtro select{flex:1;min-width:0;padding:9px;border-radius:10px;background:var(--cj-surface-2);border:1px solid var(--cj-border);color:var(--cj-text);font:inherit}
+html[data-theme] .cj-repasses-refresh{border:1px solid var(--cj-border);color:var(--cj-text);background:var(--cj-surface);border-radius:10px;padding:9px;cursor:pointer}
+html[data-theme] .cj-repasses-body{display:grid;gap:12px;max-height:min(63vh,590px);overflow:auto}
+html[data-theme] .cj-repasses-summary{display:flex;flex-direction:column;gap:4px;padding:18px;border:1px solid var(--cj-accent-line);background:var(--cj-accent-soft);border-radius:17px}
+html[data-theme] .cj-repasses-summary span{font-size:.75rem;color:var(--cj-text-2);font-weight:750}
+html[data-theme] .cj-repasses-summary strong{font-size:1.9rem;color:var(--cj-text);letter-spacing:-.045em}
+html[data-theme] .cj-repasses-summary small{font-size:.75rem;color:var(--cj-text-3)}
+html[data-theme] .cj-repasses-list{display:grid;gap:8px}
+html[data-theme] .cj-repasses-item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--cj-border);border-radius:12px}
+html[data-theme] .cj-repasses-person{display:flex;flex-direction:column;gap:3px;min-width:0;overflow-wrap:anywhere}
+html[data-theme] .cj-repasses-person strong{font-size:.87rem;color:var(--cj-text)}
+html[data-theme] .cj-repasses-person span{font-size:.76rem;color:var(--cj-text-3)}
+html[data-theme] .cj-repasses-actions{flex:none;display:flex;align-items:center}
+html[data-theme] .cj-repasses-pay{background:var(--cj-primary);color:var(--cj-on-primary);font-weight:750;font-size:.75rem;border:0;padding:10px 12px;border-radius:10px;cursor:pointer}
+html[data-theme] .cj-repasses-pay:disabled{opacity:.48;cursor:default}
+html[data-theme] .cj-repasses-paid{font-size:.76rem;color:var(--cj-accent-ink);font-weight:750}
+html[data-theme] .cj-repasses-warning{font-size:.74rem;color:var(--cj-warn)}
+html[data-theme] .cj-repasses-note,.cj-repasses-caveat{font-size:.72rem;color:var(--cj-text-4);line-height:1.5}
+html[data-theme] .cj-repasses-empty{font-size:.84rem;color:var(--cj-text-2);padding:14px;text-align:center}
+@media(max-width:430px){html[data-theme] .cj-repasses-modal{padding:17px}html[data-theme] .cj-repasses-filtro{flex-wrap:wrap}html[data-theme] .cj-repasses-item{align-items:flex-start;flex-direction:column}html[data-theme] .cj-repasses-actions{align-self:flex-end}}
+
+html[data-theme] .cj-repasses-launch[hidden]{display:none!important}

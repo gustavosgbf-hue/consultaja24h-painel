@@ -77,6 +77,7 @@ TEMPLATE = r'''<!doctype html>
 <link rel="stylesheet" href="panel-v6.css">
 <script src="panel-theme.js"></script>
 <script src="panel-v6.js" defer></script>
+<script src="panel-repasses-admin.js" defer></script>
 <style>
   /* Barra de revisão (exclusiva da demo) */
   .demo-bar{position:fixed;left:16px;bottom:16px;z-index:9000;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
@@ -142,6 +143,7 @@ TEMPLATE = r'''<!doctype html>
       <option value="senha">Troca de senha</option>
       <option value="menu">Menu de status / plantão</option>
       <option value="ganhos">Ganhos (fictício)</option>
+      <option value="repasses">Repasses da equipe</option>
       <option value="ganhos404">Ganhos · indisponível (404)</option>
       <option value="manual">Atendimento manual (admin)</option>
       <option value="turnos">Turnos prioritários (admin)</option>

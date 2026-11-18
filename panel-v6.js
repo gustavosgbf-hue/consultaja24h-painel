@@ -237,59 +237,51 @@
 
     function estadoDados(d) {
       corpo.textContent = ''; corpo.setAttribute('aria-busy', 'false');
-      var inicio = dataBR(d.periodo.inicio);
-
-      var hero = el('section', 'cj-g-hero'); hero.setAttribute('aria-label', 'Hoje');
-      var hl = el('div', 'cj-g-hero-top');
-      hl.appendChild(el('span', 'cj-g-kpi-label', 'Ganho estimado hoje'));
-      hl.appendChild(chip('Estimativa', 'is-est'));
-      hero.appendChild(hl);
-      hero.appendChild(el('strong', 'cj-g-hero-val', brl(d.hoje.valor_centavos)));
-      var prod = el('span', 'cj-g-hero-det');
-      prod.appendChild(el('b', null, String(d.hoje.atendimentos)));
-      prod.appendChild(document.createTextNode(d.hoje.atendimentos === 1 ? ' atendimento contabilizado hoje' : ' atendimentos contabilizados hoje'));
-      hero.appendChild(prod);
-      corpo.appendChild(hero);
-
-      var grid = el('div', 'cj-g-grid');
-      grid.appendChild(kpi('Acumulado estimado', brl(d.total.valor_centavos), 'desde ' + inicio + ' · ' + atend(d.total.atendimentos)));
-      grid.appendChild(kpi('Situação', 'A receber', 'Pagamento: data a definir', 'is-status'));
-      corpo.appendChild(grid);
-
-      var sec = el('section', 'cj-g-sec'); sec.setAttribute('aria-labelledby', 'cj-g-q-tit');
-      var st = el('h3', 'cj-g-sec-title', 'Quinzenas'); st.id = 'cj-g-q-tit';
-      sec.appendChild(st);
-      if (!d.quinzenas.length) {
-        sec.appendChild(el('p', 'cj-g-muted cj-g-vazio', 'Nenhum atendimento contabilizado desde ' + inicio + '.'));
-      } else {
-        var ul = el('ul', 'cj-g-list');
-        d.quinzenas.forEach(function (q) {
-          var li = el('li', 'cj-g-q');
-          var a = el('div', 'cj-g-q-main');
-          var mm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(q.inicio);
-          var nome = (mm[3] === '01' ? '1ª' : '2ª') + ' quinzena · ' + MESES[+mm[2] - 1] + '/' + mm[1];
-          a.appendChild(el('span', 'cj-g-q-nome', nome));
-          a.appendChild(el('span', 'cj-g-q-per', dataBR(q.inicio).slice(0, 5) + ' a ' + dataBR(q.fim) + ' · ' + atend(q.atendimentos)));
-          var b = el('div', 'cj-g-q-side');
-          b.appendChild(el('strong', 'cj-g-q-val', brl(q.valor_centavos)));
-          b.appendChild(chip(q.data_pagamento ? 'Pagamento ' + dataBR(q.data_pagamento) : 'A receber · data a definir', 'is-pend'));
-          li.appendChild(a); li.appendChild(b);
-          ul.appendChild(li);
+      var atual=d.quinzena_atual || d.quinzenas.find(function(q){
+        var dt=(d.hoje.data||new Date().toISOString().slice(0,10));
+        return q.inicio<=dt&&dt<=q.fim;
+      }) || null;
+      var hoje=d.hoje.data||new Date().toISOString().slice(0,10);
+      var periodo=atual || d.quinzenas[0] || null;
+      var valor=periodo ? periodo.valor_centavos : 0;
+      // O arco indica SOMENTE avanço do calendário da quinzena, não meta financeira.
+      var fmt=function(v){return new Date(v+'T12:00:00Z').getTime();};
+      var andamento=periodo ? Math.min(1,Math.max(0,(fmt(hoje)-fmt(periodo.inicio)+86400000)/(fmt(periodo.fim)-fmt(periodo.inicio)+86400000))) : 0;
+      var ring=el('section','cj-fin-ringcard');
+      ring.setAttribute('aria-label','Resumo da quinzena');
+      var arco=el('div','cj-fin-ring');
+      arco.setAttribute('role','img');arco.setAttribute('aria-label',Math.round(andamento*100)+'% do período quinzenal transcorrido');
+      arco.innerHTML='<svg viewBox="0 0 120 120" aria-hidden="true"><circle class="cj-ring-bg" cx="60" cy="60" r="50"/><circle class="cj-ring-fg" cx="60" cy="60" r="50"/></svg>';
+      arco.querySelector('.cj-ring-fg').style.setProperty('--cj-progress',String(andamento));
+      var centro=el('div','cj-fin-ring-center');
+      centro.appendChild(el('strong',null,String(periodo?periodo.atendimentos:0)));
+      centro.appendChild(el('span',null,'consultas'));
+      arco.appendChild(centro);ring.appendChild(arco);
+      var texto=el('div','cj-fin-ring-details');
+      texto.appendChild(el('span','cj-fin-kicker','Nesta quinzena'));
+      texto.appendChild(el('strong','cj-fin-main',brl(valor)));
+      texto.appendChild(el('span','cj-fin-sub','Hoje: '+atend(d.hoje.atendimentos)+' · '+brl(d.hoje.valor_centavos)));
+      var pg=periodo?.data_pagamento||d.pagamento?.data_prevista||null;
+      texto.appendChild(el('span','cj-fin-date',periodo?.registrado_pago?'Repasse registrado como pago':(pg?'Previsão: '+dataBR(pg):'Data do repasse a confirmar')));
+      ring.appendChild(texto);
+      corpo.appendChild(ring);
+      var aviso=el('div','cj-fin-footer','Valores estimados · datas sujeitas a feriados locais');
+      corpo.appendChild(aviso);
+      if(d.quinzenas.length>1){
+        var details=el('details','cj-fin-history');
+        details.appendChild(el('summary',null,'Ver outras quinzenas'));
+        var ul=el('div','cj-fin-history-list');
+        d.quinzenas.filter(function(q){return !periodo||q.id!==periodo.id;}).forEach(function(q){
+          var linha=el('div','cj-fin-history-item');
+          linha.appendChild(el('span',null,dataBR(q.inicio).slice(0,5)+'–'+dataBR(q.fim).slice(0,5)));
+          linha.appendChild(el('strong',null,brl(q.valor_centavos)));
+          ul.appendChild(linha);
         });
-        sec.appendChild(ul);
+        details.appendChild(ul);corpo.appendChild(details);
       }
-      corpo.appendChild(sec);
-
-      var nota = el('div', 'cj-g-note');
-      nota.appendChild(el('p', null, 'Valores estimados a partir dos atendimentos registrados desde ' + inicio + '. Não representam pagamento efetuado nem repasse confirmado.'));
-      nota.appendChild(el('p', null, 'Fechamento quinzenal (1–15 e 16–fim do mês). A data de pagamento ainda será definida.'));
-      var nc = d.nao_contabilizados && inteiro(d.nao_contabilizados.total) ? d.nao_contabilizados.total : 0;
-      if (nc > 0) nota.appendChild(el('p', null, atend(nc) + (nc === 1 ? ' não entra' : ' não entram') + ' na estimativa (ex.: pagamento não confirmado, estorno ou fora da regra vigente).'));
-      corpo.appendChild(nota);
-
-      var hora = horaBR(d.atualizado_em);
-      rodapeInfo.textContent = hora ? 'Atualizado ' + hora : '';
-      btnAtualizar.disabled = false; btnAtualizar.textContent = 'Atualizar';
+      var hora=horaBR(d.atualizado_em);
+      rodapeInfo.textContent=hora?'Atualizado '+hora:'';
+      btnAtualizar.disabled=false;btnAtualizar.textContent='Atualizar';
     }
 
     function carregar() {

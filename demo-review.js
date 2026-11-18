@@ -151,6 +151,7 @@
     $('escala-prioridade-btn').style.display = adm ? 'flex' : 'none';
     qsa('[data-demo-perfil]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-demo-perfil') === perfil ? 'true' : 'false'); });
     renderTudo();
+    if(window.cjSyncFinanceAdmin)window.cjSyncFinanceAdmin();
     if (!silencioso) toast(adm ? 'Modo administrador (fictício)' : 'Modo médico (fictício)', 'info');
   }
 
@@ -555,9 +556,9 @@
     ],
     quinzenas: [
       { id: '2026-11-Q2', inicio: '2026-11-16', fim: '2026-11-30', atendimentos: 16, valor_centavos: 55888,
-        situacao: 'pendente_estimado', data_pagamento: null, data_pagamento_status: 'a_definir' }
+        situacao: 'pendente_estimado', data_pagamento: '2026-12-01', data_pagamento_status: 'previsao_provisoria' }
     ],
-    pagamento: { regra_definida: false, data_prevista: null, status: 'a_definir' },
+    pagamento: { regra_definida: true, data_prevista: '2026-12-01', status: 'previsao_provisoria' },
     nao_contabilizados: { total: 1, motivos: { pagamento_nao_confirmado: 1 } },
     atualizado_em: '2026-11-17T17:42:00.000Z'
   };
@@ -576,6 +577,20 @@
     var b = $('cj-status-btn'); if (b && $('cj-status-pop').hidden) b.click();
   }
 
+  // Administração — números inventados, nenhuma conexão com backend.
+  window.cjAdminFinanceMode = function () { return estado.perfil === 'admin'; };
+  window.cjRepassesFonte = function (periodo) {
+    return Promise.resolve({
+      ok:true, periodo:periodo, inicio:'2026-11-16',fim:'2026-11-30',fechado:false,
+      previsao:{data:'2026-12-01',provisorio:true},
+      medicos:[
+        {medico_id:11,nome:'Dra. Marina Lopes (fictícia)',atendimentos:4,valor_centavos:13972,registrado_pago:false},
+        {medico_id:12,nome:'Dr. Daniel Azevedo (fictício)',atendimentos:3,valor_centavos:8235,registrado_pago:false},
+        {medico_id:13,nome:'Dra. Luísa Carvalho (fictícia)',atendimentos:2,valor_centavos:6986,registrado_pago:false}
+      ]
+    });
+  };
+  window.cjRegistrarRepasse = function () { return Promise.resolve({ok:true,registrado_pago:true}); };
   // Prescrição (Memed não é carregada na demo)
   window.abrirMemed = function () { toast('A prescrição (Memed) não é carregada na demo', 'info'); };
   window.fecharMemedDrawer = function () {};
@@ -698,7 +713,8 @@
     senha: function () { garantirApp(); $('trocar-overlay').classList.add('open'); },
     menu: function () { garantirApp(); setTimeout(abrirMenuStatus, 0); },
     ganhos: function () { garantirApp(); abrirGanhosDemo('ok'); },
-    ganhos404: function () { garantirApp(); abrirGanhosDemo('indisponivel'); }
+    ganhos404: function () { garantirApp(); abrirGanhosDemo('indisponivel'); },
+    repasses: function () { garantirApp(); definirPerfil('admin', true); if(window.cjAbrirRepassesAdmin)window.cjAbrirRepassesAdmin(); }
   };
   function fecharModais() {
     qsa('.modal-overlay.open,.chat-hist-overlay.open,.trocar-overlay.open,.fila-preview.open').forEach(function (m) { m.classList.remove('open'); });

@@ -123,7 +123,7 @@ console.log('index.html (real, rede bloqueada)');
     pagamento: { regra_definida: false, data_prevista: null, status: 'a_definir' }, nao_contabilizados: { total: 2, motivos: { estorno: 2 } },
     atualizado_em: '2026-11-17T18:00:00.000Z' }) };
   await page.click('#cj-status-btn'); await page.click('#cj-menu-ganhos');
-  await page.waitForSelector('#cj-ganhos .cj-g-hero');
+  await page.waitForSelector('#cj-ganhos .cj-fin-ringcard');
   const t200 = await page.textContent('#cj-ganhos');
   ok(ganhosReqs.length === 2, 'reabrir = nova ação explícita = nova requisição');
   ok(t200.includes('R$\u00a0104,79') && t200.includes('R$\u00a043.103,62') && /3 atendimentos contabilizados hoje/.test(t200), 'valores do backend exibidos sem recalcular');
@@ -177,7 +177,7 @@ console.log('demo-review.html (desktop)');
   ok(await page.$eval('#chat-pip', e => getComputedStyle(e).visibility === 'visible'), 'PiP volta ao fechar o modal');
   // Ganhos (demo)
   await page.click('#cj-status-btn'); await page.click('#cj-menu-ganhos');
-  await page.waitForSelector('#cj-ganhos .cj-g-hero');
+  await page.waitForSelector('#cj-ganhos .cj-fin-ringcard');
   const tg = await page.textContent('#cj-ganhos');
   ok(tg.includes('fictícios'), 'ganhos (demo) rotulado como fictício');
   ok(tg.includes('R$\u00a0244,51') && tg.includes('R$\u00a0558,88') && /7 atendimentos contabilizados hoje/.test(tg) && /16 atendimentos/.test(tg), 'demo: dados fictícios consistentes');
@@ -229,8 +229,8 @@ for (const w of [320, 375, 390, 430]) {
     ok(await semRolagemHorizontal(page), 'nav sem rolagem horizontal');
     await shot(page, `mob-${w}-${tema}-menu`);
     await page.tap('#cj-menu-ganhos');
-    await page.waitForSelector('#cj-ganhos .cj-g-hero');
-    ok(await dentroDaTela(page, '#cj-ganhos .modal, #cj-ganhos .cj-g-q, #cj-ganhos .cj-g-actions .btn-confirm'), 'ganhos cabe na tela');
+    await page.waitForSelector('#cj-ganhos .cj-fin-ringcard');
+    ok(await dentroDaTela(page, '#cj-ganhos .modal, #cj-ganhos .cj-fin-ringcard, #cj-ganhos .cj-g-actions .btn-confirm'), 'ganhos cabe na tela');
     ok(await semRolagemHorizontal(page), 'ganhos sem rolagem horizontal');
     ok(await page.$eval('#chat-pip', e => getComputedStyle(e).visibility !== 'visible'), 'PiP oculto com ganhos aberto');
     await shot(page, `mob-${w}-${tema}-ganhos`);
