@@ -540,12 +540,37 @@
   };
   window.fecharChatHistorico = function () { $('chat-hist-overlay').classList.remove('open'); };
 
-  // Ganhos: só na demo, com valores fictícios mascarados. No painel real o item é desativado.
-  function ativarGanhosDemo() {
-    var g = $('cj-menu-ganhos'); if (!g) return;
-    g.disabled = false; g.removeAttribute('aria-disabled'); g.title = 'Demonstração com valores fictícios';
-    var n = g.querySelector('.cj-menu-note'); if (n) n.textContent = 'Fictício';
-    g.addEventListener('click', function () { $('demo-ganhos').classList.add('open'); });
+  // Ganhos: a UI é a REAL (panel-v6.js). Na demo a fonte é local e fictícia (sem rede).
+  // Cenário consistente: médico da regra padrão, hoje = 17/11/2026, vigência desde 16/11/2026.
+  // Os valores em centavos são escritos já prontos (como viriam do backend); nada é calculado aqui.
+  var GANHOS_FICTICIOS = {
+    ok: true, natureza: 'estimativa', moeda: 'BRL',
+    aviso: 'Valores estimados a partir dos atendimentos registrados. Não representam pagamento efetuado.',
+    periodo: { inicio: '2026-11-16', ate: '2026-11-17', fuso: 'America/Fortaleza' },
+    hoje: { data: '2026-11-17', atendimentos: 7, valor_centavos: 24451 },
+    total: { atendimentos: 16, valor_centavos: 55888, situacao: 'pendente_estimado' },
+    por_dia: [
+      { data: '2026-11-17', atendimentos: 7, valor_centavos: 24451 },
+      { data: '2026-11-16', atendimentos: 9, valor_centavos: 31437 }
+    ],
+    quinzenas: [
+      { id: '2026-11-Q2', inicio: '2026-11-16', fim: '2026-11-30', atendimentos: 16, valor_centavos: 55888,
+        situacao: 'pendente_estimado', data_pagamento: null, data_pagamento_status: 'a_definir' }
+    ],
+    pagamento: { regra_definida: false, data_prevista: null, status: 'a_definir' },
+    nao_contabilizados: { total: 1, motivos: { pagamento_nao_confirmado: 1 } },
+    atualizado_em: '2026-11-17T17:42:00.000Z'
+  };
+  var ganhosModo = 'ok'; // 'ok' | 'indisponivel' (simula 404 enquanto o backend não está publicado)
+  window.cjGanhosRotulo = 'Demonstração · valores fictícios';
+  window.cjGanhosFonte = function () {
+    return new Promise(function (resolve) {
+      setTimeout(function () { resolve(ganhosModo === 'ok' ? JSON.parse(JSON.stringify(GANHOS_FICTICIOS)) : {}); }, 350);
+    });
+  };
+  function abrirGanhosDemo(modo) {
+    ganhosModo = modo || 'ok';
+    if (window.cjAbrirGanhos) window.cjAbrirGanhos();
   }
   function abrirMenuStatus() {
     var b = $('cj-status-btn'); if (b && $('cj-status-pop').hidden) b.click();
@@ -672,7 +697,8 @@
     chathist: function () { garantirApp(); window.abrirChatHistorico(); },
     senha: function () { garantirApp(); $('trocar-overlay').classList.add('open'); },
     menu: function () { garantirApp(); setTimeout(abrirMenuStatus, 0); },
-    ganhos: function () { garantirApp(); $('demo-ganhos').classList.add('open'); }
+    ganhos: function () { garantirApp(); abrirGanhosDemo('ok'); },
+    ganhos404: function () { garantirApp(); abrirGanhosDemo('indisponivel'); }
   };
   function fecharModais() {
     qsa('.modal-overlay.open,.chat-hist-overlay.open,.trocar-overlay.open,.fila-preview.open').forEach(function (m) { m.classList.remove('open'); });
@@ -724,7 +750,7 @@
     $('inp-email').value = 'medico.demo@example.com';
     $('inp-senha').value = 'demo-sem-senha';
     definirPerfil(q.get('perfil') === 'admin' ? 'admin' : 'medico', true);
-    atualizarPlantaoUI(); ajustarMobile(); montarBarra(); ativarGanhosDemo();
+    atualizarPlantaoUI(); ajustarMobile(); montarBarra();
     var tela = q.get('tela') || 'login';
     if (tela !== 'login') aplicarTela(tela); else { var sel = $('demo-tela'); if (sel) sel.value = 'login'; }
   }

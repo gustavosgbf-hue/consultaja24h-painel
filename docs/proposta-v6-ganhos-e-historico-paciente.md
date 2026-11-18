@@ -1,6 +1,7 @@
 # Painel médico v6 — proposta: Ganhos e Histórico do paciente
 
-Status: **não implementado no sistema real**. Este documento registra a investigação de 17/11/2026 e o que falta no backend.
+Status: **Ganhos implementado** (frontend; deploy bloqueado até o backend estar em produção — ver [`ganhos-medico.md`](ganhos-medico.md)).
+Histórico do paciente: **não implementado no sistema real**. Este documento registra a investigação de 17/11/2026.
 Na `demo-review.html` existem apenas ilustrações com dados fictícios, rotuladas como tal.
 
 ## 1. Investigação dos endpoints (triagem-api, somente leitura)
@@ -48,5 +49,5 @@ UI pronta para receber esse endpoint: uma seção “Atendimentos anteriores” 
 
 ## 4. Itens da revisão v6 que dependem disto
 
-- (10) Ganhos com ícone `$`: menu pronto; dados reais pendentes do endpoint acima.
+- (10) Ganhos com ícone `$`: integrado a `GET /api/medico/ganhos` (contrato final difere da proposta da seção 2; ver `ganhos-medico.md`).
 - (11) Histórico de atendimentos anteriores do paciente: layout ilustrado na demo; implementação real pendente do endpoint acima.

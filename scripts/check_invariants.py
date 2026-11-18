@@ -3,7 +3,8 @@
 e o arquivo de trabalho atual.
 
 Invariantes verificados:
-  - chamadas apiFetch(...) e fetch(...) (endpoints)
+  - chamadas apiFetch(...) e fetch(...) (endpoints; permite apenas as NOVAS listadas em
+    PERMITIDOS_NOVOS['api'], com a contagem exata — nenhuma pode ser removida)
   - declarações de função JS
   - IDs de elementos (permite apenas IDs NOVOS listados em PERMITIDOS_NOVOS)
   - handlers on*="..." (multiconjunto; permite apenas os NOVOS listados)
@@ -25,6 +26,10 @@ BASE = sys.argv[1] if len(sys.argv) > 1 else 'painel-redesign-v5-deep'
 PERMITIDOS_NOVOS = {
     'ids': {'cj-status-menu', 'cj-status-btn', 'cj-status-pop', 'cj-menu-ganhos', 'cj-theme-slot-nav'},
     'handlers': set(),
+    # GET somente leitura, disparado apenas por clique explícito em "$ Ganhos" (window.cjGanhosFonte).
+    # Depende de triagem-api feat/medico-ganhos-backend publicado em produção (ver docs/ganhos-medico.md).
+    'api': collections.Counter({"'/api/medico/ganhos'": 1}),
+    'fetch': collections.Counter(),
     'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1'},
 }
 
@@ -53,8 +58,16 @@ def main():
     b = extrair(open(os.path.join(RAIZ, 'index.html'), encoding='utf-8').read())
     erros = []
     for k in ('api', 'fetch', 'funcoes'):
-        if a[k] != b[k]:
-            erros.append('%s alterado: removidos=%s adicionados=%s' % (k, dict(a[k] - b[k]), dict(b[k] - a[k])))
+        permitidos = PERMITIDOS_NOVOS.get(k, collections.Counter())
+        removidos = a[k] - b[k]
+        adicionados = b[k] - a[k]
+        nao_aut = adicionados - permitidos
+        if removidos or nao_aut:
+            erros.append('%s alterado: removidos=%s adicionados não autorizados=%s' % (k, dict(removidos), dict(nao_aut)))
+        # Uma chamada nova autorizada não pode aparecer mais vezes que o permitido.
+        for chave, n in permitidos.items():
+            if b[k][chave] > a[k][chave] + n:
+                erros.append('%s: %s excede o limite autorizado (%d)' % (k, chave, n))
     falt = a['ids'] - b['ids']
     novos = b['ids'] - a['ids'] - PERMITIDOS_NOVOS['ids']
     if falt: erros.append('IDs removidos: %s' % sorted(falt))
@@ -75,7 +88,8 @@ def main():
     if erros:
         print('FALHOU:\n  - ' + '\n  - '.join(erros))
         sys.exit(1)
-    print('OK: invariantes preservados (novos IDs: %s)' % sorted(b['ids'] - a['ids']))
+    print('OK: invariantes preservados (novos IDs: %s; novas chamadas autorizadas: %s)' % (
+        sorted(b['ids'] - a['ids']), dict(b['api'] - a['api'])))
 
 
 if __name__ == '__main__':

@@ -45,12 +45,6 @@
   /* ── Áreas EXCLUSIVAS da demo (dados fictícios) ── */
   .demo-ficticio{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:.68rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
     background:var(--cj-warn-soft);color:var(--cj-warn);border:1px solid var(--cj-warn-line)}
-  .demo-ganhos .modal{max-width:440px}
-  .demo-ganhos-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 4px}
-  .demo-kpi{padding:14px;border-radius:14px;border:1px solid var(--cj-border);background:var(--cj-surface-2)}
-  .demo-kpi span{display:block;font-size:.72rem;font-weight:750;color:var(--cj-text-3);margin-bottom:6px}
-  .demo-kpi b{font-size:1.25rem;font-weight:800;letter-spacing:-.03em;color:var(--cj-text);font-variant-numeric:tabular-nums}
-  .demo-kpi--wide{grid-column:1/-1}
   .demo-nota{font-size:.78rem;line-height:1.5;color:var(--cj-text-3);margin-top:12px}
   .cj-demo-prev .demo-prev-lista{list-style:none;margin:0;padding:0;display:grid;gap:6px}
   .cj-demo-prev .demo-prev-lista li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:12px;border:1px solid var(--cj-border);background:var(--cj-surface-2);font-size:.82rem;color:var(--cj-text-2)}
@@ -113,8 +107,9 @@
         </div>
         <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()" role="menuitem"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
         <div class="cj-pop-sep" role="separator"></div>
-        <button type="button" class="cj-menu-item" id="cj-menu-ganhos" role="menuitem" aria-disabled="true" disabled title="Aguardando integração com dados financeiros oficiais">
-          <span class="cj-menu-ico" aria-hidden="true">$</span><span class="cj-menu-txt">Ganhos</span><span class="cj-menu-note">Em breve</span>
+        <!-- Ganhos (somente leitura): panel-v6.js abre o modal e só então chama window.cjGanhosFonte(). -->
+        <button type="button" class="cj-menu-item" id="cj-menu-ganhos" role="menuitem" aria-haspopup="dialog">
+          <span class="cj-menu-ico" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3v18"/><path d="M16.5 7.5c-.6-1.5-2.3-2.5-4.5-2.5-2.5 0-4.3 1.3-4.3 3.2 0 4.6 9 2.4 9 7.2 0 2-1.9 3.4-4.7 3.4-2.4 0-4.2-1-4.9-2.7"/></svg></span><span class="cj-menu-txt">Ganhos</span><span class="cj-menu-note">Estimativa</span>
         </button>
         <div class="cj-pop-sep" role="separator"></div>
         <button class="nav-logout" onclick="logout()" role="menuitem">Sair</button>
@@ -571,6 +566,7 @@
       <option value="senha">Troca de senha</option>
       <option value="menu">Menu de status / plantão</option>
       <option value="ganhos">Ganhos (fictício)</option>
+      <option value="ganhos404">Ganhos · indisponível (404)</option>
       <option value="manual">Atendimento manual (admin)</option>
       <option value="turnos">Turnos prioritários (admin)</option>
     </select>
@@ -582,22 +578,6 @@
   <button type="button" id="demo-tema">Alternar tema</button>
   <button type="button" id="demo-mobile">Ver em mobile</button>
   <button type="button" id="demo-recolher" aria-expanded="false" title="Mostrar/ocultar controles">Controles</button>
-</div>
-
-<div class="modal-overlay demo-ganhos" id="demo-ganhos" onclick="if(event.target===this)this.classList.remove('open')">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="demo-ganhos-titulo">
-    <span class="demo-ficticio">Demonstração · valores fictícios</span>
-    <div class="modal-title" id="demo-ganhos-titulo" style="margin-top:10px">Ganhos</div>
-    <div class="modal-sub">Ilustração de layout. No painel real este item fica indisponível até existir uma fonte oficial de dados financeiros.</div>
-    <div class="demo-ganhos-grid">
-      <div class="demo-kpi"><span>Produtividade hoje</span><b>7 atend.</b></div>
-      <div class="demo-kpi"><span>Valor do dia</span><b>R$ 000,00</b></div>
-      <div class="demo-kpi demo-kpi--wide"><span>Total a receber no período</span><b>R$ 0.000,00</b></div>
-      <div class="demo-kpi demo-kpi--wide"><span>Próximo pagamento</span><b>dd/mm/aaaa</b></div>
-    </div>
-    <div class="demo-nota">Todos os números são fictícios e mascarados de propósito. Não existe hoje endpoint de ganhos para médicos nem regra oficial de calendário de pagamento (quinzenal ou outra) no backend; a integração real fica pendente.</div>
-    <div class="modal-actions"><button class="btn-confirm" type="button" onclick="document.getElementById('demo-ganhos').classList.remove('open')">Fechar</button></div>
-  </div>
 </div>
 
 <div class="demo-frame" id="demo-frame" role="dialog" aria-label="Pré-visualização mobile (390 × 844)">

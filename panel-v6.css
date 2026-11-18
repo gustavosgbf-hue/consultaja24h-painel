@@ -6,7 +6,7 @@
      1. Wordmark        2. Login            3. Switch de tema
      4. Menu de status  5. Slots ativos     6. Header mobile / ações
      7. Nomes completos 8. Camadas: modais × PiP
-     9. Movimento       10. Documentos
+     9. Movimento       10. Documentos      11. Ganhos (modal somente leitura)
    ========================================================================== */
 
 /* ── 1. Wordmark: texto exato "ConsultaJá24h", sem ícone, sem itálico ───── */
@@ -124,6 +124,7 @@ html[data-theme] .cj-status-pop :is(.cj-menu-item,.nav-logout){
   border:0!important;background:transparent!important;color:var(--cj-text-2)!important;font-size:.86rem!important;font-weight:700!important;text-align:left;cursor:pointer
 }
 html[data-theme] .cj-status-pop :is(.cj-menu-item:not(:disabled),.nav-logout):hover{background:var(--cj-hover)!important;color:var(--cj-text)!important}
+html[data-theme] .cj-menu-ico svg{display:block}
 html[data-theme] .cj-menu-ico{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--cj-accent-soft);color:var(--cj-accent-ink);font-weight:800;font-size:.85rem}
 html[data-theme] .cj-menu-txt{flex:1}
 html[data-theme] .cj-menu-note{font-size:.68rem;font-weight:750;padding:2px 8px;border-radius:999px;background:var(--cj-surface-3);color:var(--cj-text-3)}
@@ -265,3 +266,73 @@ html[data-theme] #modal-encerrar .modal-field>label{display:block;margin-bottom:
 html[data-theme] #cg-docs{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px!important}
 html[data-theme] #cg-docs .check-opt{justify-content:flex-start;border-radius:12px!important;min-height:44px}
 html[data-theme] #cg-docs .check-opt.selected{box-shadow:inset 0 0 0 1px var(--cj-accent)}
+
+/* ── 11. Ganhos (modal somente leitura, estimativa) ─────────────────────── */
+html[data-theme] .cj-ganhos .cj-ganhos-modal{max-width:460px;width:calc(100% - 32px);box-sizing:border-box;outline:none}
+html[data-theme] .cj-g-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+html[data-theme] .cj-g-ico{flex:0 0 auto;display:grid;place-items:center;width:42px;height:42px;border-radius:14px;
+  background:var(--cj-accent-soft);color:var(--cj-accent-ink);box-shadow:inset 0 0 0 1px var(--cj-accent-line)}
+html[data-theme] .cj-g-titles{flex:1;min-width:0}
+html[data-theme] .cj-g-title{margin:2px 0 4px!important;line-height:1.15}
+html[data-theme] .cj-g-sub{margin:0;font-size:.84rem;line-height:1.45;color:var(--cj-text-3);font-weight:500}
+html[data-theme] .cj-g-close{flex:0 0 auto;display:grid;place-items:center;width:40px;height:40px;margin:-6px -8px 0 0;border-radius:12px;border:0;background:transparent;color:var(--cj-text-3);cursor:pointer}
+html[data-theme] .cj-g-close:hover{background:var(--cj-hover);color:var(--cj-text)}
+html[data-theme] .cj-ganhos :is(.cj-g-close,.cj-g-btn):focus-visible{outline:none;box-shadow:var(--cj-ring)!important}
+html[data-theme] .cj-g-demo{display:inline-flex;margin:-6px 0 14px;padding:3px 10px;border-radius:999px;font-size:.68rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  background:var(--cj-warn-soft);color:var(--cj-warn);border:1px solid var(--cj-warn-line)}
+html[data-theme] .cj-g-body{display:grid;gap:14px}
+html[data-theme] .cj-g-hero{position:relative;overflow:hidden;padding:18px 18px 16px;border-radius:18px;border:1px solid var(--cj-accent-line);
+  background:linear-gradient(160deg,var(--cj-accent-soft),transparent 75%),var(--cj-surface-2)}
+html[data-theme] .cj-g-hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+html[data-theme] .cj-g-hero-val{display:block;margin:8px 0 6px;font-size:2rem;font-weight:800;letter-spacing:-.04em;line-height:1.05;color:var(--cj-text);font-variant-numeric:tabular-nums}
+html[data-theme] .cj-g-hero-det{font-size:.82rem;color:var(--cj-text-3);font-weight:600}
+html[data-theme] .cj-g-hero-det b{color:var(--cj-text);font-variant-numeric:tabular-nums}
+html[data-theme] .cj-g-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html[data-theme] .cj-g-kpi{display:flex;flex-direction:column;gap:4px;min-width:0;padding:14px;border-radius:16px;border:1px solid var(--cj-border);background:var(--cj-surface-2)}
+html[data-theme] .cj-g-kpi-label{font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--cj-text-3)}
+html[data-theme] .cj-g-kpi-val{font-size:1.18rem;font-weight:800;letter-spacing:-.03em;color:var(--cj-text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+html[data-theme] .cj-g-kpi-det{font-size:.76rem;line-height:1.35;color:var(--cj-text-3);font-weight:600}
+html[data-theme] .cj-g-kpi.is-status .cj-g-kpi-val{color:var(--cj-warn)}
+html[data-theme] .cj-g-chip{display:inline-flex;align-items:center;white-space:nowrap;padding:3px 9px;border-radius:999px;font-size:.68rem;font-weight:800;letter-spacing:.02em;border:1px solid transparent}
+html[data-theme] .cj-g-chip.is-est{background:var(--cj-surface);color:var(--cj-accent-ink);border-color:var(--cj-accent-line)}
+html[data-theme] .cj-g-chip.is-pend{background:var(--cj-warn-soft);color:var(--cj-warn);border-color:var(--cj-warn-line)}
+html[data-theme] .cj-g-sec-title{margin:4px 0 8px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cj-text-3)}
+html[data-theme] .cj-g-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+html[data-theme] .cj-g-q{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--cj-border);background:var(--cj-surface)}
+html[data-theme] .cj-g-q-main,html[data-theme] .cj-g-q-side{display:flex;flex-direction:column;gap:3px;min-width:0}
+html[data-theme] .cj-g-q-side{align-items:flex-end;text-align:right}
+html[data-theme] .cj-g-q-nome{font-size:.88rem;font-weight:750;color:var(--cj-text)}
+html[data-theme] .cj-g-q-per{font-size:.76rem;color:var(--cj-text-3);font-weight:600;font-variant-numeric:tabular-nums}
+html[data-theme] .cj-g-q-val{font-size:1rem;font-weight:800;letter-spacing:-.02em;color:var(--cj-text);font-variant-numeric:tabular-nums}
+html[data-theme] .cj-g-note{padding:12px 14px;border-radius:14px;background:var(--cj-surface-3);color:var(--cj-text-3);font-size:.76rem;line-height:1.5}
+html[data-theme] .cj-g-note p{margin:0}
+html[data-theme] .cj-g-note p+p{margin-top:6px}
+html[data-theme] .cj-g-muted{color:var(--cj-text-3)}
+html[data-theme] .cj-g-vazio{margin:0;font-size:.84rem}
+html[data-theme] .cj-g-actions{display:flex;align-items:center;gap:8px}
+html[data-theme] .cj-g-upd{margin-right:auto;font-size:.74rem;font-weight:600;color:var(--cj-text-4);font-variant-numeric:tabular-nums}
+html[data-theme] .cj-g-btn:disabled{opacity:.55;cursor:default}
+/* Carregando: blocos estáticos (sem animação infinita) */
+html[data-theme] .cj-g-skel{display:grid;gap:10px}
+html[data-theme] .cj-g-skel span{display:block;border-radius:16px;background:var(--cj-surface-3)}
+html[data-theme] .cj-g-skel-hero{height:112px}
+html[data-theme] .cj-g-skel-row{height:58px;opacity:.7}
+/* Indisponível: sem valores, sem "R$ 0,00" */
+html[data-theme] .cj-g-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 18px;border-radius:18px;border:1px dashed var(--cj-border-2);background:var(--cj-surface-2)}
+html[data-theme] .cj-g-empty-ico{display:grid;place-items:center;width:44px;height:44px;margin-bottom:6px;border-radius:50%;background:var(--cj-surface-3);color:var(--cj-text-4)}
+html[data-theme] .cj-g-empty-title{font-size:.98rem;font-weight:800;color:var(--cj-text)}
+html[data-theme] .cj-g-empty-txt{margin:0;font-size:.82rem;line-height:1.5;color:var(--cj-text-2);max-width:320px}
+@media(max-width:768px){
+  html[data-theme] .cj-ganhos .cj-ganhos-modal{width:100%}
+  html[data-theme] .cj-g-hero-val{font-size:1.75rem}
+}
+@media(max-width:380px){
+  html[data-theme] .cj-g-grid{grid-template-columns:1fr}
+  html[data-theme] .cj-g-q{flex-direction:column;align-items:stretch}
+  html[data-theme] .cj-g-q-side{flex-direction:row;align-items:center;justify-content:space-between;text-align:left}
+  html[data-theme] .cj-g-chip.is-pend{white-space:normal}
+}
+@media(prefers-reduced-motion:no-preference){
+  html[data-theme] .cj-ganhos.open .cj-ganhos-modal{animation:cjGanhosIn .2s var(--cj-ease) both}
+  @keyframes cjGanhosIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
