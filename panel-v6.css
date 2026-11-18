@@ -516,3 +516,34 @@ html[data-theme] .nav .cj-fin-direct:focus-visible{outline:2px solid #9fd2bf;out
  html[data-theme] .cj-fin-ring-center strong{font-size:1.65rem!important}
  html[data-theme] .cj-fin-ring-details{gap:5px!important}
 }
+
+/* Mobile/chat v10: composer compacto SEM sacrificar espaco da conversa.
+   A mensagem tem area de rolagem propria; o chat ocupa a altura restante. */
+@media(max-width:768px){
+  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-wrap{
+    display:flex!important;flex-direction:column!important;
+    min-height:0!important;overflow:hidden!important;height:auto!important;
+    flex:1 1 0!important;margin:0!important;
+  }
+  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs:not([hidden]){
+    display:flex!important;flex:1 1 0!important;min-height:0!important;
+    overflow-y:auto!important;overscroll-behavior:contain;
+  }
+  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-input{
+    display:flex!important;flex:0 0 auto!important;align-items:center!important;
+    min-height:56px!important;gap:8px!important;padding:7px 10px calc(7px + env(safe-area-inset-bottom,0px))!important;
+    border-top:1px solid var(--cj-border)!important;background:var(--cj-surface)!important;
+  }
+  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-input textarea{
+    height:40px!important;min-height:40px!important;max-height:104px!important;
+    box-sizing:border-box!important;min-width:0!important;flex:1 1 0!important;
+    border-radius:12px!important;padding:9px 12px!important;
+    font-size:16px!important;line-height:21px!important;overflow-y:auto!important;
+  }
+  html[data-theme] body.chat-fullscreen #tab-consulta.active :is(.chat-clip-btn,.chat-medico-send){
+    flex:0 0 40px!important;width:40px!important;height:40px!important;
+    border-radius:12px!important;min-width:40px!important;
+  }
+  /* O pequeno cadeado ocupava uma linha inteira e desalinhava o composer. */
+  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-sec-foot{display:none!important}
+}

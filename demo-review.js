@@ -365,10 +365,33 @@
       ? '<div class="cmsg ' + m.autor + '"><div class="bub-wrap">' + corpo + '<div class="ts">' + m.hora + '</div></div></div>'
       : '<div class="cmsg ' + m.autor + '"><div class="bub-wrap"><div class="bub">' + corpo + '</div><div class="ts">' + m.hora + '</div></div></div>';
   }
+  // A demo precisa criar também o DOM do 3º, 4º... atendimento.
+  // A implementação de produção já faz isso em garantirSlotDom().
+  function garantirChatContainer(indice) {
+    var id = 'chat-medico-msgs-' + indice;
+    var c = $(id);
+    if (c) return c;
+    var wrap = $('chat-section');
+    var anchor = $('chat-preview-wrap');
+    if (!wrap || !anchor) return null;
+    c = document.createElement('div');
+    c.className = 'chat-medico-msgs';
+    c.id = id;
+    c.dataset.slot = String(indice);
+    c.hidden = true;
+    wrap.insertBefore(c, anchor);
+    return c;
+  }
   function renderChat() {
     var s = estado.slots[estado.ativo]; if (!s) return;
-    qsa('.chat-medico-msgs').forEach(function (c) { c.hidden = c.getAttribute('data-slot') !== String(estado.ativo); });
-    var c = $('chat-medico-msgs-' + estado.ativo);
+    var c = garantirChatContainer(estado.ativo);
+    if (!c) return;
+    qsa('.chat-medico-msgs').forEach(function (el) {
+      var ativa = el === c;
+      el.hidden = !ativa;
+      // O CSS original insere display:inline via JS e requer sync explícito.
+      el.style.display = ativa ? 'flex' : 'none';
+    });
     c.innerHTML = s.msgs.map(msgHtml).join('');
     c.scrollTop = c.scrollHeight;
     renderPip();
