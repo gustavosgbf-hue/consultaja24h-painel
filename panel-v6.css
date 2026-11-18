@@ -397,3 +397,53 @@ html[data-theme] .cj-repasses-empty{font-size:.84rem;color:var(--cj-text-2);padd
 @media(max-width:430px){html[data-theme] .cj-repasses-modal{padding:17px}html[data-theme] .cj-repasses-filtro{flex-wrap:wrap}html[data-theme] .cj-repasses-item{align-items:flex-start;flex-direction:column}html[data-theme] .cj-repasses-actions{align-self:flex-end}}
 
 html[data-theme] .cj-repasses-launch[hidden]{display:none!important}
+
+/* v8: menu da conta compacto e orientado a tarefas, não card de dashboard */
+html[data-theme] .cj-status-pop{
+ width:270px!important;max-width:calc(100vw - 24px)!important;
+ padding:7px!important;border-radius:17px!important;
+ box-shadow:0 18px 44px rgba(0,0,0,.19)!important;
+}
+html[data-theme] .cj-pop-availability{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:6px 8px 7px;min-height:43px;
+}
+html[data-theme] .cj-pop-availability .cj-pop-state{
+ display:inline-flex;align-items:center;gap:7px;font-size:.81rem;font-weight:720;white-space:nowrap;
+ color:var(--cj-text-2);
+}
+html[data-theme] .cj-pop-availability .cj-status-dot{width:8px;height:8px;flex:none;border:1.5px solid var(--cj-text-4)}
+html[data-theme] .cj-status-menu[data-plantao="on"] .cj-pop-availability .cj-status-dot{background:var(--cj-accent);border-color:var(--cj-accent)}
+html[data-theme] .cj-status-pop #btn-plantao.plantao-btn{
+ width:auto!important;min-height:34px!important;height:34px!important;flex:none;
+ padding:0 10px!important;gap:6px!important;margin:0!important;border-radius:9px!important;
+ font-size:.73rem!important;line-height:1!important;letter-spacing:0!important;
+ font-weight:740!important;box-shadow:none!important;background:var(--cj-surface-2)!important;
+ border:1px solid var(--cj-border)!important;color:var(--cj-text)!important;
+}
+html[data-theme] .cj-status-pop #btn-plantao.online{color:var(--cj-danger)!important}
+html[data-theme] .cj-status-pop #btn-plantao.offline:hover{background:var(--cj-accent-soft)!important;color:var(--cj-accent-ink)!important}
+html[data-theme] .cj-status-pop #btn-plantao.online:hover{background:var(--cj-danger-soft)!important}
+html[data-theme] .cj-pop-action-icon{flex:none;opacity:.65}
+html[data-theme] .cj-status-pop .cj-pop-sep{margin:3px 6px!important}
+html[data-theme] .cj-status-pop :is(.cj-menu-item,.nav-logout){
+ min-height:39px!important;padding:0 11px!important;border-radius:10px!important;
+ font-size:.82rem!important;gap:9px!important;font-weight:675!important;
+}
+html[data-theme] .cj-status-pop .cj-menu-ico{
+ width:22px;height:22px;background:transparent!important;color:var(--cj-text-2)!important;
+}
+html[data-theme] .cj-status-pop .cj-menu-ico svg{width:17px;height:17px}
+html[data-theme] .cj-status-pop .nav-logout{color:var(--cj-text-3)!important}
+@media(max-width:768px){
+ html[data-theme] .cj-status-pop{
+  position:fixed!important;top:calc(var(--cj-nav-h) + 7px)!important;
+  right:12px!important;left:auto!important;
+  width:min(300px,calc(100vw - 24px))!important;
+ }
+}
+@media(max-width:360px){
+ html[data-theme] .cj-pop-availability{gap:5px;padding-left:4px;padding-right:4px}
+ html[data-theme] .cj-pop-availability .cj-pop-state{font-size:.77rem}
+ html[data-theme] .cj-status-pop #btn-plantao.plantao-btn{padding:0 8px!important;font-size:.72rem!important}
+}

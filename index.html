@@ -64,15 +64,14 @@
         <svg class="cj-i cj-status-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <div class="cj-status-pop" id="cj-status-pop" role="menu" aria-label="Status do médico" hidden>
-        <div class="cj-pop-head">
-          <span class="cj-pop-label">Status</span>
-          <span class="cj-pop-state"><span class="cj-status-dot"></span><span class="cj-status-on">Em plantão · recebendo pacientes</span><span class="cj-status-off">Fora do plantão</span></span>
+        <div class="cj-pop-availability">
+          <span class="cj-pop-state"><span class="cj-status-dot"></span><span class="cj-status-on">Em plantão</span><span class="cj-status-off">Fora do plantão</span></span>
+          <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()" role="menuitem"><span id="plantao-txt">Entrar em plantão</span><svg class="cj-pop-action-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
         </div>
-        <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()" role="menuitem"><div class="plantao-indicator"></div><span id="plantao-txt">Entrar em plantão</span></button>
         <div class="cj-pop-sep" role="separator"></div>
         <!-- Ganhos (somente leitura): panel-v6.js abre o modal e só então chama window.cjGanhosFonte(). -->
         <button type="button" class="cj-menu-item" id="cj-menu-ganhos" role="menuitem" aria-haspopup="dialog">
-          <span class="cj-menu-ico" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3v18"/><path d="M16.5 7.5c-.6-1.5-2.3-2.5-4.5-2.5-2.5 0-4.3 1.3-4.3 3.2 0 4.6 9 2.4 9 7.2 0 2-1.9 3.4-4.7 3.4-2.4 0-4.2-1-4.9-2.7"/></svg></span><span class="cj-menu-txt">Ganhos</span><span class="cj-menu-note">Estimativa</span>
+          <span class="cj-menu-ico" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3v18"/><path d="M16.5 7.5c-.6-1.5-2.3-2.5-4.5-2.5-2.5 0-4.3 1.3-4.3 3.2 0 4.6 9 2.4 9 7.2 0 2-1.9 3.4-4.7 3.4-2.4 0-4.2-1-4.9-2.7"/></svg></span><span class="cj-menu-txt">Ganhos</span>
         </button>
         <div class="cj-pop-sep" role="separator"></div>
         <button class="nav-logout" onclick="logout()" role="menuitem">Sair</button>
