@@ -450,14 +450,6 @@ html[data-theme] .offline-badge>div{background:var(--cj-text-4)!important}
 html[data-theme] .offline-state .plantao-btn{background:var(--cj-primary)!important;border-color:transparent!important;color:var(--cj-on-primary)!important;min-height:46px;padding:0 22px 0 18px!important;font-size:.9rem!important;box-shadow:0 10px 24px rgba(15,107,80,.18)}
 html[data-theme] .offline-state .plantao-btn .plantao-indicator{border-color:currentColor!important}
 
-/* Abas de múltiplos atendimentos */
-html[data-theme] .slot-tabs{border-bottom:0!important;padding-bottom:0!important;margin-bottom:14px!important;gap:6px!important}
-html[data-theme] .slot-tab-btn{
-  min-height:38px;padding:0 14px!important;border-radius:var(--cj-r-pill)!important;border:1px solid var(--cj-border)!important;background:var(--cj-surface)!important;color:var(--cj-text-2)!important;font-size:.82rem!important;font-weight:700!important;box-shadow:var(--cj-shadow-xs)
-}
-html[data-theme] .slot-tab-btn.active{background:var(--cj-text)!important;color:var(--cj-bg)!important;border-color:transparent!important}
-html[data-theme] .slot-tab-btn .slot-dot{animation:none!important;background:var(--cj-accent)!important}
-html[data-theme] .slot-badge-nova{background:#e5484d!important;animation:none!important}
 
 /* Cabeçalho do atendimento */
 html[data-theme] .atend-header{
@@ -546,14 +538,6 @@ html[data-theme] .cmsg.medico .ts::before{filter:none;opacity:.9}
 html[data-theme] .cmsg.sistema .bub,html[data-theme] .cmsg.system .bub{background:transparent!important;border:1px dashed var(--cj-border-2)!important;color:var(--cj-text-3)!important;box-shadow:none}
 html[data-theme] .chat-vazio{color:var(--cj-text-3)!important;font-weight:600}
 html[data-theme] .chat-vazio svg{color:var(--cj-text-4)}
-html[data-theme] .chat-medico-input{padding:12px 14px!important;gap:8px!important;background:var(--cj-surface)!important;border-top:1px solid var(--cj-border)!important;backdrop-filter:none!important}
-html[data-theme] .chat-medico-input textarea{
-  min-height:44px!important;padding:11px 16px!important;border-radius:14px!important;background:var(--cj-surface-2)!important;border:1px solid var(--cj-border)!important;color:var(--cj-text)!important;font-weight:500!important
-}
-html[data-theme] .chat-medico-input textarea:focus{border-color:var(--cj-accent)!important;background:var(--cj-input)!important;box-shadow:var(--cj-ring)}
-html[data-theme] .chat-medico-send{width:44px!important;height:44px!important;border-radius:14px!important;background:var(--cj-primary)!important;color:var(--cj-on-primary)!important;box-shadow:none!important}
-html[data-theme] .chat-medico-send:hover{background:var(--cj-primary-hover)!important;filter:none}
-html[data-theme] .chat-clip-btn{width:44px!important;height:44px!important;border-radius:14px!important;background:transparent!important;border:1px solid var(--cj-border)!important;color:var(--cj-text-3)!important}
 html[data-theme] .chat-clip-btn:hover{color:var(--cj-text)!important;background:var(--cj-surface-3)!important}
 html[data-theme] .chat-sec-foot{color:var(--cj-text-4)!important;background:var(--cj-surface)!important}
 html[data-theme] .chat-preview-wrap{background:var(--cj-surface-2)!important;border-top:1px solid var(--cj-border)!important}
@@ -723,9 +707,6 @@ html[data-theme] #chat-mobile-header .cmh-nome{color:var(--cj-text)!important;fo
 html[data-theme] #chat-mobile-header .cmh-meta{color:var(--cj-text-3)!important;font-weight:600}
 html[data-theme] #chat-mobile-header .cmh-timer{color:var(--cj-accent-ink)!important}
 html[data-theme] #chat-mobile-header .chat-online-dot{animation:none!important;background:var(--cj-accent)!important}
-html[data-theme] #chat-mobile-header .cmh-btn{min-height:36px;border-radius:11px!important;background:var(--cj-surface)!important;border:1px solid var(--cj-border-2)!important;color:var(--cj-text-2)!important;font-weight:750!important}
-html[data-theme] #chat-mobile-header .cmh-btn.green{background:var(--cj-primary)!important;border-color:transparent!important;color:var(--cj-on-primary)!important}
-html[data-theme] #chat-mobile-header .cmh-btn.red{background:var(--cj-danger-soft)!important;border-color:var(--cj-danger-line)!important;color:var(--cj-danger)!important}
 html[data-theme] #chat-dados-overlay{background:var(--cj-overlay)!important}
 html[data-theme] #chat-dados-panel,html[data-theme] #chat-dados-panel-header{background:var(--cj-surface)!important}
 html[data-theme] #chat-dados-panel{border-top:1px solid var(--cj-border)!important;border-radius:22px 22px 0 0!important}

@@ -5,7 +5,7 @@
 - Remove os elementos da Memed (overlay/loading) — a demo não carrega Memed.
 - Troca nomes reais citados em textos de interface por textos genéricos.
 - Reaproveita o CSS real: panel-base.css + panel-experience-v3.css + panel-ds-v5.css + panel-v6.css
-  e o JS visual panel-theme.js + panel-v6.js (menu de status; sem rede).
+  + panel-ui-v16.css e o JS visual panel-theme.js + panel-v6.js + panel-ui-v16.js (sem rede).
 - A lógica da demo fica em demo-review.js (dados 100% fictícios, sem rede).
 
 Uso:  python3 scripts/build_demo_review.py
@@ -63,7 +63,7 @@ TEMPLATE = r'''<!doctype html>
 <html lang="pt-BR" data-cj-theme-storage="off">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"/>
 <meta name="robots" content="noindex,nofollow"/>
 <meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'; frame-src 'self'; object-src 'none'; base-uri 'none'">
 <title>Demo de revisão · Painel médico · ConsultaJá24h</title>
@@ -75,8 +75,10 @@ TEMPLATE = r'''<!doctype html>
 <link rel="stylesheet" href="panel-experience-v3.css">
 <link rel="stylesheet" href="panel-ds-v5.css">
 <link rel="stylesheet" href="panel-v6.css">
+<link rel="stylesheet" href="panel-ui-v16.css">
 <script src="panel-theme.js"></script>
 <script src="panel-v6.js" defer></script>
+<script src="panel-ui-v16.js" defer></script>
 <script src="panel-repasses-admin.js" defer></script>
 <style>
   /* Barra de revisão (exclusiva da demo) */
@@ -126,7 +128,8 @@ TEMPLATE = r'''<!doctype html>
       <option value="triagem">Atendimento · triagem</option>
       <option value="avaliacao">Avaliação clínica</option>
       <option value="prontuario">Prontuário</option>
-      <option value="multi">Dois atendimentos</option>
+      <option value="multi">Vários atendimentos (4)</option>
+      <option value="ocultos">Abas ocultas + mensagem nova</option>
       <option value="historico">Histórico</option>
       <option value="renovacoes">Renovações e admin</option>
     </select>
@@ -140,7 +143,7 @@ TEMPLATE = r'''<!doctype html>
       <option value="regulatorios">Dados de prescrição</option>
       <option value="chathist">Chat da consulta</option>
       <option value="senha">Troca de senha</option>
-      <option value="menu">Menu de status / plantão</option>
+      <option value="menu">Menu da conta</option>
       <option value="ganhos">Ganhos (fictício)</option>
       <option value="repasses">Repasses da equipe</option>
       <option value="ganhos404">Ganhos · indisponível (404)</option>

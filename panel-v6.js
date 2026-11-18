@@ -1,8 +1,8 @@
 /* ConsultaJá24h — painel médico v6 · interações visuais.
  * - Abre/fecha o menu compacto de status (#cj-status-menu).
- * - NÃO chama API diretamente, NÃO altera plantão/status/fila/Memed/sessão.
- *   O item "Entrar/Sair do plantão" é o próprio #btn-plantao original,
- *   com o handler original togglePlantao(): só executa com clique explícito do médico.
+ * - NÃO chama API diretamente, NÃO altera status/fila/Memed/sessão.
+ *   O painel opera por fila: não há indicador visual de plantão (#btn-plantao segue
+ *   oculto no DOM apenas por compatibilidade de IDs legados).
  * - Ganhos ($): modal somente leitura. Os dados vêm de window.cjGanhosFonte()
  *   (no index.html: apiFetch('/api/medico/ganhos'); na demo: dados fictícios locais),
  *   chamada APENAS quando o médico clica em "Ganhos" ou em "Atualizar".
@@ -66,17 +66,6 @@
     });
   }
 
-  // Badge discreto: apenas LÊ a classe que a lógica original aplica em #btn-plantao
-  // ('plantao-btn online' | 'plantao-btn offline') e espelha em data-plantao no menu.
-  function iniciarBadgePlantao() {
-    var menu = document.getElementById('cj-status-menu');
-    var b = document.getElementById('btn-plantao');
-    if (!menu || !b) return;
-    var sync = function () { menu.setAttribute('data-plantao', b.classList.contains('online') ? 'on' : 'off'); };
-    sync();
-    try { new MutationObserver(sync).observe(b, { attributes: true, attributeFilter: ['class'] }); } catch (_) {}
-  }
-
   // ── Ganhos (somente leitura, estimativa) ────────────────────────────────
   var SVG_NS = 'http://www.w3.org/2000/svg';
   function svgDolar(cls) {
@@ -110,6 +99,23 @@
   function atend(n) { return n + (n === 1 ? ' atendimento' : ' atendimentos'); }
   function inteiro(v) { return typeof v === 'number' && isFinite(v) && Math.floor(v) === v && v >= 0; }
   var ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
+  // "Hoje" no fuso America/Fortaleza (UTC-3, sem horário de verão) em AAAA-MM-DD.
+  function hojeFortaleza(agora) {
+    var d = agora instanceof Date ? agora : new Date();
+    try {
+      var p = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Fortaleza', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d);
+      var g = function (t) { var x = p.filter(function (y) { return y.type === t; })[0]; return x ? x.value : ''; };
+      var r = g('year') + '-' + g('month') + '-' + g('day');
+      if (ISO_RE.test(r)) return r;
+    } catch (_) {}
+    return new Date(d.getTime() - 3 * 3600000).toISOString().slice(0, 10);
+  }
+  // Diferença em dias corridos entre duas datas AAAA-MM-DD (independe de fuso).
+  function diasEntre(a, b) {
+    var pa = a.split('-').map(Number), pb = b.split('-').map(Number);
+    return Math.round((Date.UTC(pb[0], pb[1] - 1, pb[2]) - Date.UTC(pa[0], pa[1] - 1, pa[2])) / 86400000);
+  }
+  window.cjHojeFortaleza = hojeFortaleza;
 
   // Valida o contrato de GET /api/medico/ganhos. Qualquer desvio => "indisponível" (nunca zero enganoso).
   function validarGanhos(d) {
@@ -237,39 +243,48 @@
 
     function estadoDados(d) {
       corpo.textContent = ''; corpo.setAttribute('aria-busy', 'false');
-      var atual=d.quinzena_atual || d.quinzenas.find(function(q){
-        var dt=(d.hoje.data||new Date().toISOString().slice(0,10));
-        return q.inicio<=dt&&dt<=q.fim;
-      }) || null;
-      var hoje=d.hoje.data||new Date().toISOString().slice(0,10);
+      // Data de referência: a do backend (já no fuso de Fortaleza) ou o "hoje" local de Fortaleza.
+      // Nunca toISOString() (UTC): após 21h em Fortaleza ele já aponta o dia seguinte.
+      var hoje=ISO_RE.test(d.hoje.data||'')?d.hoje.data:hojeFortaleza();
+      var atual=d.quinzena_atual || d.quinzenas.find(function(q){ return q.inicio<=hoje&&hoje<=q.fim; }) || null;
       var periodo=atual || d.quinzenas[0] || null;
       var valor=periodo ? periodo.valor_centavos : 0;
-      // O arco indica SOMENTE avanço do calendário da quinzena, não meta financeira.
-      var fmt=function(v){return new Date(v+'T12:00:00Z').getTime();};
-      var andamento=periodo ? Math.min(1,Math.max(0,(fmt(hoje)-fmt(periodo.inicio)+86400000)/(fmt(periodo.fim)-fmt(periodo.inicio)+86400000))) : 0;
-      // Barra = proporção de dias transcorridos na quinzena. Nunca simula
-      // metas financeiras, taxa de produtividade ou percentual de repasse.
+      // Barra = SOMENTE dias transcorridos da quinzena. Nunca simula meta financeira,
+      // produtividade ou percentual de repasse.
+      var totalDias=periodo ? diasEntre(periodo.inicio,periodo.fim)+1 : 0;
+      var diaAtual=periodo ? Math.max(0,Math.min(totalDias,diasEntre(periodo.inicio,hoje)+1)) : 0;
+      var andamento=totalDias ? diaAtual/totalDias : 0;
       var resumo=el('section','cj-fin-summary');
       resumo.setAttribute('aria-label','Resumo de ganhos da quinzena');
-      resumo.appendChild(el('span','cj-fin-kicker','Valor estimado da quinzena'));
+      resumo.appendChild(el('span','cj-fin-kicker',periodo?'Quinzena '+dataBR(periodo.inicio).slice(0,5)+' a '+dataBR(periodo.fim).slice(0,5)+' · estimativa':'Quinzena atual · estimativa'));
       resumo.appendChild(el('strong','cj-fin-main',brl(valor)));
-      var pg=periodo?.data_pagamento||d.pagamento?.data_prevista||null;
-      var data=periodo?.registrado_pago?'Pagamento registrado':(pg?'Previsão de repasse · '+dataBR(pg):'Data do repasse a confirmar');
-      resumo.appendChild(el('span','cj-fin-date',data));
-      var progress=el('div','cj-fin-progress');
-      progress.setAttribute('role','progressbar');
-      progress.setAttribute('aria-valuemin','0');
-      progress.setAttribute('aria-valuemax','100');
-      progress.setAttribute('aria-valuenow',String(Math.round(andamento*100)));
-      progress.setAttribute('aria-label','Dias decorridos da quinzena');
-      var trilho=el('div','cj-fin-progress-track');
-      var preenchimento=el('span','cj-fin-progress-fill');
-      preenchimento.style.setProperty('--cj-progress',String(andamento));
-      trilho.appendChild(preenchimento);progress.appendChild(trilho);
-      var legenda=el('div','cj-fin-progress-legend');
-      legenda.appendChild(el('span',null,'Progresso da quinzena'));
-      legenda.appendChild(el('span',null,periodo ? dataBR(periodo.fim).slice(0,5) : ''));
-      progress.appendChild(legenda);resumo.appendChild(progress);
+      var pg=(periodo&&periodo.data_pagamento)||(d.pagamento&&d.pagamento.data_prevista)||null;
+      var repasse=el('div','cj-fin-repasse');
+      if(periodo&&periodo.registrado_pago){
+        repasse.appendChild(el('span','cj-fin-repasse-label','Repasse'));
+        repasse.appendChild(el('strong','cj-fin-repasse-val','Pagamento registrado'));
+      }else{
+        repasse.appendChild(el('span','cj-fin-repasse-label','Repasse previsto'));
+        repasse.appendChild(el('strong','cj-fin-repasse-val',pg?dataBR(pg):'A confirmar'));
+      }
+      resumo.appendChild(repasse);
+      if(periodo&&totalDias>0){
+        var progress=el('div','cj-fin-progress');
+        progress.setAttribute('role','progressbar');
+        progress.setAttribute('aria-valuemin','0');
+        progress.setAttribute('aria-valuemax',String(totalDias));
+        progress.setAttribute('aria-valuenow',String(diaAtual));
+        progress.setAttribute('aria-valuetext','Dia '+diaAtual+' de '+totalDias+' da quinzena');
+        progress.setAttribute('aria-label','Dias decorridos da quinzena');
+        var trilho=el('div','cj-fin-progress-track');
+        var preenchimento=el('span','cj-fin-progress-fill');
+        preenchimento.style.setProperty('--cj-progress',String(andamento));
+        trilho.appendChild(preenchimento);progress.appendChild(trilho);
+        var legenda=el('div','cj-fin-progress-legend');
+        legenda.appendChild(el('span',null,'Dia '+diaAtual+' de '+totalDias));
+        legenda.appendChild(el('span',null,'Fecha em '+dataBR(periodo.fim).slice(0,5)));
+        progress.appendChild(legenda);resumo.appendChild(progress);
+      }
       resumo.appendChild(el('span','cj-fin-sub','Hoje: '+atend(d.hoje.atendimentos)+' · '+brl(d.hoje.valor_centavos)));
       corpo.appendChild(resumo);
       var aviso=el('div','cj-fin-footer','Valores estimados · datas sujeitas a feriados locais');
@@ -317,7 +332,7 @@
     window.cjFecharGanhos = fechar;
   }
 
-  function iniciar() { iniciarMenuStatus(); iniciarBadgePlantao(); iniciarGanhos(); }
+  function iniciar() { iniciarMenuStatus(); iniciarGanhos(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
 })();

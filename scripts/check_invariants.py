@@ -30,7 +30,8 @@ PERMITIDOS_NOVOS = {
     # Depende de triagem-api feat/medico-ganhos-backend publicado em produção (ver docs/ganhos-medico.md).
     'api': collections.Counter({"'/api/medico/ganhos'": 1, "'/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo": 1, "'/api/admin/medicos/repasses/confirmar'": 1}),
     'fetch': collections.Counter(),
-    'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1'},
+    # v16: camada visual (abas compactas, ocultar só na barra, composer). Sem rede, sem novos IDs/handlers no HTML.
+    'assets': {'/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1', '/panel-ui-v16.css?v=1', '/panel-ui-v16.js?v=1'},
 }
 
 

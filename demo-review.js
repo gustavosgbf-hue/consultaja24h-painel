@@ -53,7 +53,11 @@
     { id: 'd4', nome: 'Pedro Henrique Alves', tipo: 'chat', status: 'assumido', medico_nome: 'Dr. Lucas Teixeira', criado_em: minAtras(18), idade: '52 anos', sexo: 'Masculino',
       cpf: '000.777.888-99', nasc: '05/06/1974', tel: '(85) 90000-0004', email: 'pedro.demo@example.com',
       alergias: 'Nega', cronicas: 'Diabetes tipo 2', medicacoes: 'Metformina 850 mg', solicita: 'Renovação',
-      queixa: 'Renovação de receita de uso contínuo.' }
+      queixa: 'Renovação de receita de uso contínuo.' },
+    { id: 'd5', nome: 'Ana Luíza Lima', tipo: 'chat', status: 'aguardando', criado_em: minAtras(15), idade: '23 anos', sexo: 'Feminino',
+      cpf: '000.999.000-11', nasc: '30/01/2003', tel: '(85) 90000-0005', email: 'analuiza.demo@example.com',
+      alergias: 'Nega', cronicas: 'Asma leve', medicacoes: 'Salbutamol se necessário', solicita: 'Avaliação',
+      queixa: 'Tosse seca há 5 dias, piora à noite. Sem febre.' }
   ];
   var RENOVACOES = [
     { id: 'r1', nome: 'Marcos Vinícius Rocha', tipo: 'renovacao_digital', criado_em: minAtras(9), triagem: 'Levotiroxina 50 mcg — uso contínuo há 4 anos.', receita: true },
@@ -271,7 +275,7 @@
     if (!lista.length) { $('hist-lista').innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
     $('hist-lista').innerHTML = lista.map(function (a) {
       if (a.recuperado) return '<div class="hist-card" style="cursor:default"><div class="hist-card-nome">' + esc(a.nome) + '</div><div class="hist-card-meta">Atendimento histórico recuperado · ' + a.inicio + ' a ' + a.fim + '<br>Registro anterior à recuperação do banco. Sem prontuário digital disponível.</div></div>';
-      return '<div class="hist-card cj-hist-minimal" onclick="abrirHistoricoAtendimento(' + a.id + ')"><div class="cj-hist-name-row"><div class="hist-card-nome">' + esc(a.nome) + '</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></div><div class="hist-card-meta">' + ico(a.tipo === 'video' ? 'video' : 'chat') + ' ' + (a.tipo === 'video' ? 'Vídeo' : 'Chat') + ' · ' + esc(a.encerrado) + '</div></div>';
+      return '<div class="hist-card cj-hist-minimal" onclick="abrirHistoricoAtendimento(' + a.id + ')" role="button" tabindex="0" aria-label="Abrir atendimento anterior de ' + esc(a.nome) + '"><div class="cj-hist-name-row"><div class="hist-card-nome">' + esc(a.nome) + '</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></div><div class="hist-card-meta">' + ico(a.tipo === 'video' ? 'video' : 'chat') + ' ' + (a.tipo === 'video' ? 'Vídeo' : 'Chat') + ' · ' + esc(a.encerrado) + '</div></div>';
     }).join('');
   };
   window.toggleHistorico = function () {
@@ -329,11 +333,18 @@
 
   function renderSlots() {
     var wrap = $('slot-tabs');
+    // Mesma camada do painel real (panel-ui-v16.js): rótulo curto, ocultar só na barra, contador de não lidas.
+    if (window.cjSlotsUI) {
+      window.cjSlotsUI.render(wrap, estado.slots.map(function (s, i) {
+        return { idx: i, id: s.p.id, nome: s.p.nome, tipo: s.p.tipo, temNova: !!s.nova && i !== estado.ativo, naoLidas: i !== estado.ativo ? (s.naoLidas || 0) : 0 };
+      }), estado.ativo, function (i) { window.ativarSlot(i); });
+      return;
+    }
     if (estado.slots.length < 2) { wrap.classList.remove('visivel'); wrap.innerHTML = ''; return; }
     wrap.classList.add('visivel');
     wrap.innerHTML = estado.slots.map(function (s, i) {
       var novaMsg = !!s.nova && i !== estado.ativo;
-      return '<button type="button" class="slot-tab-btn ' + (i === estado.ativo ? 'active' : '') + '" onclick="ativarSlot(' + i + ')" aria-pressed="' + (i === estado.ativo) + '" aria-label="' + esc('Atendimento ' + (i + 1) + ': ' + s.p.nome + (novaMsg ? ' (nova mensagem)' : '')) + '"> <span class="slot-dot"></span><span class="slot-name">' + ico(s.p.tipo === 'video' ? 'video' : 'chat') + ' ' + (i === estado.ativo ? 'Atual' : esc(s.p.nome)) + '</span>' + (novaMsg ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '') + '</button>';
+      return '<button type="button" class="slot-tab-btn ' + (i === estado.ativo ? 'active' : '') + '" onclick="ativarSlot(' + i + ')" aria-pressed="' + (i === estado.ativo) + '" aria-label="' + esc('Atendimento ' + (i + 1) + ': ' + s.p.nome + (novaMsg ? ' (nova mensagem)' : '')) + '"> <span class="slot-dot"></span><span class="slot-name">' + ico(s.p.tipo === 'video' ? 'video' : 'chat') + ' ' + esc(s.p.nome.split(' ')[0]) + '</span>' + (novaMsg ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '') + '</button>';
     }).join('');
   }
 
@@ -401,7 +412,7 @@
 
   window.ativarSlot = function (i) {
     var s = estado.slots[i]; if (!s) return;
-    estado.ativo = i; estado.historico = null; s.nova = false;
+    estado.ativo = i; estado.historico = null; s.nova = false; s.naoLidas = 0;
     var p = s.p;
     $('atend-nome').textContent = p.nome; $('cmh-nome').textContent = p.nome;
     var tag = $('atend-tipo-tag'); tag.className = 'atend-tag ' + p.tipo; tag.innerHTML = ico(p.tipo === 'video' ? 'video' : 'chat') + (p.tipo === 'video' ? 'Vídeo' : 'Chat');
@@ -437,9 +448,16 @@
     s.msgs.push({ autor: 'medico', texto: txt, hora: hora }); ta.value = ''; renderChat();
     setTimeout(function () {
       s.msgs.push({ autor: 'paciente', texto: RESPOSTAS[s.msgs.length % RESPOSTAS.length], hora: hora });
-      if (estado.slots[estado.ativo] === s) renderChat(); else { s.nova = true; renderSlots(); }
+      if (estado.slots[estado.ativo] === s) renderChat(); else { s.nova = true; s.naoLidas = (s.naoLidas || 0) + 1; renderSlots(); }
       var aba = qsa('.tab')[0]; if (aba && !aba.classList.contains('active')) $('tab-consulta-badge').classList.add('visivel');
     }, 1400);
+  };
+  // Demo: chega mensagem do paciente em um atendimento (ativo ou não). Só memória local.
+  window.demoMensagemPaciente = function (id, texto) {
+    var s = estado.slots.find(function (x) { return x.p.id === id; }); if (!s) return;
+    var h = new Date(); var hora = String(h.getHours()).padStart(2, '0') + ':' + String(h.getMinutes()).padStart(2, '0');
+    s.msgs.push({ autor: 'paciente', texto: texto || 'Doutora, a tosse piorou um pouco agora.', hora: hora });
+    if (estado.slots[estado.ativo] === s) renderChat(); else { s.nova = true; s.naoLidas = (s.naoLidas || 0) + 1; renderSlots(); }
   };
   window.enviarMensagemPip = function () {
     var ta = $('chat-pip-textarea'); $('chat-medico-textarea').value = ta.value; ta.value = ''; window.enviarMensagemMedico();
@@ -734,7 +752,13 @@
     triagem: function () { abrirAtend(); window.switchTab('consulta'); if (isMobile()) { window.abrirDadosPacienteSheet(); } else { var t = $('triagem-body'); if (t.classList.contains('collapsed')) window.toggleTriagem(); $('state-atend').scrollTop = 0; } },
     avaliacao: function () { abrirAtend(); qsa('.doc-check')[0].classList.add('checked'); qsa('.doc-check')[1].classList.add('checked'); window.switchTab('clinico'); },
     prontuario: function () { abrirAtend(); if (!$('cl-conduta').value) window.inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.'); window.switchTab('prontuario'); },
-    multi: function () { garantirApp(); estado.plantao = true; atualizarPlantaoUI(); window.assumirAtendimento('d1'); window.assumirAtendimento('d2'); window.assumirAtendimento('d3'); window.switchTab('consulta'); },
+    multi: function () { garantirApp(); limparAtend(); ['d1', 'd2', 'd3', 'd5'].forEach(function (id) { window.assumirAtendimento(id); }); window.ativarSlot(0); window.switchTab('consulta'); },
+    ocultos: function () {
+      TELAS.multi();
+      // Oculta "Carlos N." e "Ana L. L." da barra (consultas seguem ativas) e simula mensagem nova num oculto.
+      if (window.cjSlotsUI) { window.cjSlotsUI.ocultar('d2'); window.cjSlotsUI.ocultar('d5'); }
+      window.demoMensagemPaciente('d5'); window.demoMensagemPaciente('d5', 'Consigo enviar foto da receita antiga?');
+    },
     historico: function () { garantirApp(); estado.plantao = true; atualizarPlantaoUI(); if (!estado.vis.hist) window.toggleHistorico(); window.abrirHistoricoAtendimento(901); },
     renovacoes: function () { garantirApp(); definirPerfil('admin', true); estado.plantao = true; limparAtend(); estado.vis.renov = true; $('renov-lista').style.display = 'block'; if (!estado.vis.histGeral) window.toggleHistoricoGeral(); if (!estado.vis.admin) window.toggleAdmin(); if (isMobile()) window.toggleSidebarMobile(); else $('sidebar-inner').scrollTop = 0; }
   };
