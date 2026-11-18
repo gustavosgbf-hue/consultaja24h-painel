@@ -53,6 +53,10 @@
     <a href="#" class="nav-brand cj-brand" aria-label="ConsultaJá24h · Painel médico"><span class="live-dot" id="nav-dot" hidden></span><span class="cj-wordmark">Consulta<span class="cj-wm-ja">Já</span>24h</span><span class="cj-brand-sep" aria-hidden="true"></span><span class="cj-brand-ctx">Painel médico</span></a>
     <div class="nav-spacer"></div>
     <span class="cj-theme-slot" id="cj-theme-slot-nav"></span>
+    <button type="button" class="cj-fin-direct" id="cj-menu-ganhos" aria-label="Meus ganhos" title="Meus ganhos" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M8 15h3"/></svg>
+      <span class="cj-fin-direct-label">Ganhos</span>
+    </button>
     <!-- Menu compacto de status do médico. #btn-plantao, #plantao-txt, #nav-nome e .nav-logout
          mantêm IDs, classes e handlers originais; só mudaram de lugar (dentro do menu). -->
     <div class="cj-status-menu" id="cj-status-menu">
@@ -64,16 +68,8 @@
         <svg class="cj-i cj-status-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <div class="cj-status-pop" id="cj-status-pop" role="menu" aria-label="Status do médico" hidden>
-        <div class="cj-pop-availability">
-          <span class="cj-pop-state"><span class="cj-status-dot"></span><span class="cj-status-on">Em plantão</span><span class="cj-status-off">Fora do plantão</span></span>
-          <button class="plantao-btn offline" id="btn-plantao" onclick="togglePlantao()" role="menuitem"><span id="plantao-txt">Entrar em plantão</span><svg class="cj-pop-action-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-        </div>
-        <div class="cj-pop-sep" role="separator"></div>
-        <!-- Ganhos (somente leitura): panel-v6.js abre o modal e só então chama window.cjGanhosFonte(). -->
-        <button type="button" class="cj-menu-item" id="cj-menu-ganhos" role="menuitem" aria-haspopup="dialog">
-          <span class="cj-menu-ico" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3v18"/><path d="M16.5 7.5c-.6-1.5-2.3-2.5-4.5-2.5-2.5 0-4.3 1.3-4.3 3.2 0 4.6 9 2.4 9 7.2 0 2-1.9 3.4-4.7 3.4-2.4 0-4.2-1-4.9-2.7"/></svg></span><span class="cj-menu-txt">Ganhos</span>
-        </button>
-        <div class="cj-pop-sep" role="separator"></div>
+        <!-- IDs legados preservados para compatibilidade JS; operação sem regime de plantão. -->
+        <button class="plantao-btn offline" id="btn-plantao" hidden style="display:none!important" tabindex="-1" aria-hidden="true"><span id="plantao-txt">Disponível</span></button>
         <button class="nav-logout" onclick="logout()" role="menuitem">Sair</button>
       </div>
     </div>
@@ -142,15 +138,13 @@
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="fecharSidebarMobile()"></div>
 
 <main class="main" id="main-content">
-  <div class="offline-state" id="state-offline">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    <h2>Você está offline</h2><p>Entre em plantão para receber e visualizar pacientes na fila.</p>
-    <div class="offline-badge"><div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)"></div>Plantão inativo</div>
-    <button class="plantao-btn offline" style="margin-top:16px" onclick="togglePlantao()"><div class="plantao-indicator"></div><span>Entrar em plantão</span></button>
-  </div>
-  <div class="empty-state" id="state-empty" style="display:none">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-    <h2>Fila vazia</h2><p>Nenhum paciente aguardando no momento.</p>
+  <div class="offline-state" id="state-offline" hidden aria-hidden="true"></div>
+  <div class="empty-state" id="state-empty" style="display:none" role="status">
+    <div class="cj-empty-minimal">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18M3 12h12M3 17h8"/><circle cx="19" cy="17" r="2"/></svg>
+      <h2>Sem consultas em andamento</h2>
+      <p>Quando houver pacientes, eles aparecerão na fila.</p>
+    </div>
   </div>
   <div id="state-atend" style="display:none">
     <!-- MULTI CONSULT: seletor de atendimentos -->
@@ -211,9 +205,6 @@
       <div class="cmh-info">
         <div class="cmh-nome" id="cmh-nome">-</div>
         <div class="cmh-meta">
-          <div class="chat-online-dot" style="width:6px;height:6px;border-radius:50%"></div>
-          <span>Chat ativo</span>
-          <span>·</span>
           <span class="cmh-timer" id="cmh-timer">00:00</span>
         </div>
       </div>
@@ -722,7 +713,7 @@ function renderSlotTabs() {
 const wrap = document.getElementById('slot-tabs');
 if (!wrap) return;
 const ativos = slots.filter(Boolean);
-if (ativos.length < 2) { wrap.classList.remove('visivel'); return; }
+if (!ativos.length) { wrap.classList.remove('visivel'); wrap.innerHTML=''; return; }
 wrap.classList.add('visivel');
 wrap.innerHTML = slots.map((s, i) => {
 if (!s) return '';
@@ -1144,12 +1135,9 @@ const btnEscala=document.getElementById('escala-prioridade-btn');
 if(btnEscala)btnEscala.style.display=podeEditarEscalaPrioridade()?'block':'none';
 if (adminAtual) { carregarMedicosPendentes(); buscarRenovacoes(); }
 mostrarToast('Bem-vindo, '+medico.nome.split(' ')[0]+'!', 'success');
-if (medico.status_online) {
-  plantaoAtivo=true;
-  document.getElementById('btn-plantao').className='plantao-btn online';
-  document.getElementById('plantao-txt').textContent='Sair do plantão';
-  iniciarPollingFila();
-}
+// No consultation-on-duty mode: queue is available throughout the authenticated session.
+plantaoAtivo=true;
+iniciarPollingFila();
 setTimeout(function() {
 setupMobileSidebar();      // drawer mobile: fecha e ajusta
 restoreSidebarState();     // desktop: restaura colapso se salvo - aqui o DOM já está montado
@@ -1180,7 +1168,8 @@ mostrarToast('Atendimento assumido com sucesso!', 'success');
 }
 
 function logout() {
-if (plantaoAtivo) sairPlantao();
+pararPollingFila();
+plantaoAtivo=false;
 // Para polling de todos os slots antes de sair
 slots.forEach((_, i) => pararPollingSlot(i));
 slots.length = 0; slots.push(null, null); slotAtivo = 0;
@@ -1329,7 +1318,7 @@ setTimeout(() => railBadge.classList.remove('animar'), 350);
 railBadge.classList.remove('visivel', 'animar');
 }
 }
-if (!plantaoAtivo&&!atendimentoAtual) { lista.innerHTML='<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>'; return; }
+
 if (filaData.length===0) { lista.innerHTML='<div class="fila-vazia"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Fila vazia</p></div>'; return; }
 try {
 lista.innerHTML=filaData.map(p=>{
@@ -2267,8 +2256,7 @@ return;
 // Sem atendimento ativo em nenhum slot
 atend.style.display='none';
 if(fab) fab.style.display = isMobile() ? 'flex' : 'none';
-if (!plantaoAtivo) { offline.style.display='flex'; empty.style.display='none'; }
-else { offline.style.display='none'; empty.style.display=filaData.length===0?'flex':'none'; }
+offline.style.display='none'; empty.style.display=filaData.length===0?'flex':'none';
 }
 function iniciarTimer() {
 if (timerInterval) { clearInterval(timerInterval); timerInterval=null; }
@@ -3443,7 +3431,7 @@ if(a.historico_recuperado){
 }
 const encerrado=a.encerrado_em?new Date(a.encerrado_em).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'-';
 const tipo=a.tipo||'chat', tipoIcon=cjIco(tipo==='video'?'video':'chat'), temPront=!!a.prontuario_salvo;
-return `<div class="hist-card" onclick="abrirHistoricoAtendimento(${Number(a.id)||0})"><div class="hist-card-nome">${escHtml(a.nome||'-')}</div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${escHtml(encerrado)}<br>CPF: ${escHtml(a.cpf||'-')} · Tel.: ${escHtml(a.tel||'-')}</div>${temPront?'<div class="hist-card-pront-badge">'+cjIco('file')+'Prontuário salvo</div>':''}</div>`;
+return `<div class="hist-card cj-hist-minimal" onclick="abrirHistoricoAtendimento(${Number(a.id)||0})" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirHistoricoAtendimento(${Number(a.id)||0})}" aria-label="Abrir atendimento anterior de ${escAttr(a.nome||'Paciente')}"><div class="cj-hist-name-row"><div class="hist-card-nome">${escHtml(a.nome||'-')}</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></div><div class="hist-card-meta">${tipoIcon} ${tipo==='video'?'Vídeo':'Chat'} · ${escHtml(encerrado)}</div></div>`;
 }).join('');
 }
 
@@ -3607,7 +3595,7 @@ return idade>=0&&idade<=130?idade+' anos':'';
 document.addEventListener('visibilitychange', function(){
 if(document.hidden) return;
 if(!medico) return;
-if(plantaoAtivo) buscarFila();
+buscarFila();
 buscarAgendamentos();
 // [FIX-SLOTS] Ao voltar para a aba, atualiza AMBOS os slots (cada um com seu capturedSlot).
 // Antes, só o slot ativo era atualizado — paciente do outro slot ficava com mensagens em atraso.

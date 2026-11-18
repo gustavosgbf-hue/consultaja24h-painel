@@ -447,3 +447,72 @@ html[data-theme] .cj-status-pop .nav-logout{color:var(--cj-text-3)!important}
  html[data-theme] .cj-pop-availability .cj-pop-state{font-size:.77rem}
  html[data-theme] .cj-status-pop #btn-plantao.plantao-btn{padding:0 8px!important;font-size:.72rem!important}
 }
+
+/* Operação por fila: a interface não oferece status de plantão. */
+html[data-theme] .cj-status-badge,html[data-theme] .cj-pop-availability,
+html[data-theme] #btn-plantao{display:none!important}
+html[data-theme] #state-offline{display:none!important}
+html[data-theme] .cj-status-pop{width:232px!important}
+html[data-theme] .cj-status-pop .cj-pop-sep:first-of-type{display:none}
+html[data-theme] .cj-status-pop .cj-menu-item,html[data-theme] .cj-status-pop .nav-logout{min-height:42px!important}
+html[data-theme] .empty-state{background:transparent!important;border:none!important;box-shadow:none!important}
+html[data-theme] .cj-empty-minimal{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:360px;padding:18px;color:var(--cj-text-3);text-align:center}
+html[data-theme] .cj-empty-minimal svg{width:26px;height:26px;opacity:.6;color:var(--cj-accent-ink)}
+html[data-theme] .cj-empty-minimal h2{color:var(--cj-text)!important;font-size:1.1rem!important;line-height:1.4!important;font-weight:730!important;letter-spacing:-.02em!important;margin:6px 0 0!important}
+html[data-theme] .cj-empty-minimal p{color:var(--cj-text-3)!important;font-size:.84rem!important;line-height:1.6!important;margin:0!important;max-width:320px}
+html[data-theme] .cj-hist-minimal{padding:13px 15px!important;min-height:73px;border-radius:14px!important}
+html[data-theme] .cj-hist-name-row{display:flex;align-items:start;justify-content:space-between;gap:12px}
+html[data-theme] .cj-hist-name-row svg{flex:none;color:var(--cj-text-4)}
+html[data-theme] .cj-hist-minimal .hist-card-nome{font-size:.91rem!important;line-height:1.35}
+html[data-theme] .cj-hist-minimal .hist-card-meta{font-size:.73rem!important;margin-top:5px!important}
+html[data-theme] .cj-hist-minimal:hover{border-color:var(--cj-accent-line)!important;background:var(--cj-surface-2)!important}
+/* Chat: manter pacientes paralelos permanentemente acessíveis em uma faixa mínima. */
+@media(max-width:768px){
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs.visivel{
+   display:flex!important;position:relative;z-index:4;flex-wrap:nowrap!important;flex-shrink:0!important;
+   overflow-x:auto!important;overflow-y:hidden!important;gap:6px!important;max-height:72px!important;
+   padding:6px 10px!important;scrollbar-width:none;background:var(--cj-surface)!important;
+ }
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs.visivel::-webkit-scrollbar{display:none}
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-tab-btn{
+   display:flex!important;flex:1 0 min(42vw,185px)!important;max-width:250px!important;width:auto!important;
+   min-height:38px!important;height:auto!important;padding:6px 10px!important;align-self:center;
+   border-radius:10px!important;font-size:.73rem!important;line-height:1.2!important;
+ }
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-name{
+   display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;
+   overflow:hidden!important;line-height:1.2!important;font-weight:650!important;
+ }
+ html[data-theme] #chat-mobile-header .cmh-meta{font-size:.69rem!important;opacity:.65}
+ html[data-theme] #chat-mobile-header .cmh-btn{min-height:36px!important;font-size:.74rem!important;font-weight:680!important}
+ html[data-theme] body.chat-fullscreen #chat-mobile-header{row-gap:5px!important;padding-bottom:7px!important}
+ html[data-theme] #chat-mobile-header .cmh-actions{gap:5px!important}
+}
+
+/* Ganhos: acesso direto com um toque na barra, sem abrir menu. */
+html[data-theme] .nav .cj-fin-direct{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:42px;height:40px;padding:0 12px!important;border:1px solid var(--cj-top-chip-line)!important;border-radius:12px;background:var(--cj-top-chip)!important;color:#fff!important;font-size:.77rem;font-weight:700;cursor:pointer}
+html[data-theme] .nav .cj-fin-direct:hover{background:rgba(255,255,255,.13)!important}
+html[data-theme] .nav .cj-fin-direct:focus-visible{outline:2px solid #9fd2bf;outline-offset:3px}
+@media(max-width:768px){html[data-theme] .nav .cj-fin-direct{width:40px;min-width:40px;padding:0!important}html[data-theme] .nav .cj-fin-direct-label{display:none}}
+/* Ajuste fino mobile — densidade visual sem sacrificar toque ou leitura. */
+@media(max-width:430px){
+ html[data-theme] .nav{padding-left:8px!important;padding-right:8px!important;gap:4px!important}
+ html[data-theme] .nav-brand .cj-wordmark{font-size:clamp(.85rem,3.8vw,1rem)!important;white-space:nowrap!important}
+ html[data-theme] .nav .cj-fin-direct{width:36px!important;min-width:36px!important;height:36px!important;border-radius:10px!important}
+ html[data-theme] .cj-status-btn{min-height:36px!important;padding:2px 5px 2px 2px!important;gap:3px!important}
+ html[data-theme] .cj-status-btn .cj-avatar{width:28px!important;height:28px!important}
+ html[data-theme] #nav-fila-btn{width:36px!important;min-width:36px!important;height:36px!important}
+ html[data-theme] .cj-theme-slot{flex:0 0 auto!important}
+}
+@media(max-width:768px){
+ html[data-theme] body.chat-fullscreen{overflow-x:clip!important}
+ html[data-theme] body.chat-fullscreen #chat-mobile-header{padding:5px 9px 7px!important;row-gap:4px!important}
+ html[data-theme] #chat-mobile-header .cmh-btn{min-height:34px!important}
+ html[data-theme] #chat-mobile-header .cmh-nome{font-size:.86rem!important;line-height:1.25!important}
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs.visivel{max-height:53px!important;padding:4px 8px!important}
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-tab-btn{min-height:35px!important;padding:4px 8px!important;border-radius:9px!important;font-size:.72rem!important}
+ html[data-theme] .cj-fin-ringcard{padding:12px 4px!important;gap:12px!important}
+ html[data-theme] .cj-fin-ring{width:96px!important;height:96px!important}
+ html[data-theme] .cj-fin-ring-center strong{font-size:1.65rem!important}
+ html[data-theme] .cj-fin-ring-details{gap:5px!important}
+}

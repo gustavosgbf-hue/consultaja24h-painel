@@ -25,7 +25,7 @@ BASE = sys.argv[1] if len(sys.argv) > 1 else 'painel-redesign-v5-deep'
 
 PERMITIDOS_NOVOS = {
     'ids': {'cj-status-menu', 'cj-status-btn', 'cj-status-pop', 'cj-menu-ganhos', 'cj-theme-slot-nav'},
-    'handlers': set(),
+    'handlers': {"if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirHistoricoAtendimento(${Number(a.id)||0})}"},
     # GET somente leitura, disparado apenas por clique explícito em "$ Ganhos" (window.cjGanhosFonte).
     # Depende de triagem-api feat/medico-ganhos-backend publicado em produção (ver docs/ganhos-medico.md).
     'api': collections.Counter({"'/api/medico/ganhos'": 1, "'/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo": 1, "'/api/admin/medicos/repasses/confirmar'": 1}),
@@ -74,6 +74,8 @@ def main():
     if novos: erros.append('IDs novos não autorizados: %s' % sorted(novos))
     rem_h = a['handlers'] - b['handlers']
     add_h = set((b['handlers'] - a['handlers']).keys()) - PERMITIDOS_NOVOS['handlers']
+    # As duas ações antigas de 'entrar em plantão' foram removidas da interface por decisão explícita do proprietário.
+    rem_h.pop('togglePlantao()', None)
     if rem_h: erros.append('handlers removidos: %s' % dict(rem_h))
     if add_h: erros.append('handlers novos não autorizados: %s' % sorted(add_h))
     sem_v = lambda xs: {x.split('?')[0] for x in xs}

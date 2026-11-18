@@ -120,7 +120,6 @@ TEMPLATE = r'''<!doctype html>
   <label><span>Tela</span>
     <select id="demo-tela" aria-label="Tela">
       <option value="login">Login</option>
-      <option value="offline">Plantão inativo</option>
       <option value="vazia">Fila vazia</option>
       <option value="fila">Fila de pacientes</option>
       <option value="chat">Atendimento · chat</option>

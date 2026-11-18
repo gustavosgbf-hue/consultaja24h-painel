@@ -91,7 +91,7 @@
 
   // ── Estado ───────────────────────────────────────────────────────────────
   var estado = {
-    perfil: 'medico', medico: MEDICOS.medico, plantao: false,
+    perfil: 'medico', medico: MEDICOS.medico, plantao: true,
     slots: [], ativo: -1, historico: null, timer: null, seg: 252,
     vis: { renov: true, agend: false, admin: false, hist: false, histGeral: false }
   };
@@ -120,7 +120,7 @@
   }
   window.logout = function () {
     pararTimer();
-    estado.slots = []; estado.ativo = -1; estado.historico = null; estado.plantao = false;
+    estado.slots = []; estado.ativo = -1; estado.historico = null; estado.plantao = true;
     document.body.classList.remove('app-autenticado', 'chat-fullscreen');
     $('screen-app').style.display = 'none';
     $('screen-login').style.display = 'flex';
@@ -171,8 +171,8 @@
 
   function mostrarEstadoMain() {
     var temAtend = estado.ativo >= 0 || !!estado.historico;
-    $('state-offline').style.display = !estado.plantao && !temAtend ? 'flex' : 'none';
-    $('state-empty').style.display = estado.plantao && !temAtend ? 'flex' : 'none';
+    $('state-offline').style.display = 'none';
+    $('state-empty').style.display = !temAtend ? 'flex' : 'none';
     $('state-atend').style.display = temAtend ? 'block' : 'none';
   }
 
@@ -182,12 +182,12 @@
     var lista = $('fila-lista');
     var itens = FILA.filter(function (p) { return isAdmin() || String(p.tipo).indexOf('renovacao') !== 0; });
     var aguardando = itens.filter(function (p) { return p.status === 'aguardando'; }).length;
-    $('fila-count').textContent = estado.plantao ? aguardando : 0;
+    $('fila-count').textContent = aguardando;
     $('nav-fila-badge').textContent = aguardando;
-    $('nav-fila-badge').classList.toggle('visivel', estado.plantao && aguardando > 0);
+    $('nav-fila-badge').classList.toggle('visivel', aguardando > 0);
     $('rail-badge').textContent = aguardando;
-    $('rail-badge').classList.toggle('visivel', estado.plantao && aguardando > 0);
-    if (!estado.plantao && !estado.slots.length) { lista.innerHTML = '<div class="fila-vazia"><p>Entre em plantão para ver a fila</p></div>'; return; }
+    $('rail-badge').classList.toggle('visivel', aguardando > 0);
+
     if (!itens.length) { lista.innerHTML = '<div class="fila-vazia"><p>Nenhum paciente<br>aguardando atendimento</p></div>'; return; }
     lista.innerHTML = itens.map(function (p) {
       var mins = minutos(p.criado_em);
@@ -269,7 +269,7 @@
     if (!lista.length) { $('hist-lista').innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
     $('hist-lista').innerHTML = lista.map(function (a) {
       if (a.recuperado) return '<div class="hist-card" style="cursor:default"><div class="hist-card-nome">' + esc(a.nome) + '</div><div class="hist-card-meta">Atendimento histórico recuperado · ' + a.inicio + ' a ' + a.fim + '<br>Registro anterior à recuperação do banco. Sem prontuário digital disponível.</div></div>';
-      return '<div class="hist-card" onclick="abrirHistoricoAtendimento(' + a.id + ')"><div class="hist-card-nome">' + esc(a.nome) + '</div><div class="hist-card-meta">' + ico(a.tipo === 'video' ? 'video' : 'chat') + ' ' + (a.tipo === 'video' ? 'Vídeo' : 'Chat') + ' · ' + esc(a.encerrado) + '<br>CPF: ' + esc(a.cpf) + ' · Tel.: ' + esc(a.tel) + '</div>' + (a.pront ? '<div class="hist-card-pront-badge">' + ico('file') + 'Prontuário salvo</div>' : '') + '</div>';
+      return '<div class="hist-card cj-hist-minimal" onclick="abrirHistoricoAtendimento(' + a.id + ')"><div class="cj-hist-name-row"><div class="hist-card-nome">' + esc(a.nome) + '</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></div><div class="hist-card-meta">' + ico(a.tipo === 'video' ? 'video' : 'chat') + ' ' + (a.tipo === 'video' ? 'Vídeo' : 'Chat') + ' · ' + esc(a.encerrado) + '</div></div>';
     }).join('');
   };
   window.toggleHistorico = function () {
@@ -316,7 +316,6 @@
     var p = FILA.find(function (x) { return x.id === id; }); if (!p) return;
     var idx = estado.slots.findIndex(function (s) { return s.p.id === id; });
     if (idx < 0) {
-      if (estado.slots.length >= 2) { toast('Limite de 2 atendimentos simultâneos', 'error'); return; }
       estado.slots.push({ p: p, msgs: CHAT_INICIAL(p) });
       idx = estado.slots.length - 1;
     }
@@ -328,7 +327,7 @@
 
   function renderSlots() {
     var wrap = $('slot-tabs');
-    if (estado.slots.length < 2) { wrap.classList.remove('visivel'); wrap.innerHTML = ''; return; }
+    if (!estado.slots.length) { wrap.classList.remove('visivel'); wrap.innerHTML = ''; return; }
     wrap.classList.add('visivel');
     wrap.innerHTML = estado.slots.map(function (s, i) {
       var novaMsg = !!s.nova && i !== estado.ativo;
@@ -691,14 +690,14 @@
   // ── Barra de revisão ─────────────────────────────────────────────────────
   var TELAS = {
     login: function () { window.logout(); },
-    offline: function () { garantirApp(); estado.plantao = false; limparAtend(); },
+
     vazia: function () { garantirApp(); FILA = []; estado.plantao = true; limparAtend(); },
     fila: function () { garantirApp(); estado.plantao = true; limparAtend(); if (isMobile()) window.toggleSidebarMobile(); },
     chat: function () { abrirAtend(); window.switchTab('consulta'); },
     triagem: function () { abrirAtend(); window.switchTab('consulta'); if (isMobile()) { window.abrirDadosPacienteSheet(); } else { var t = $('triagem-body'); if (t.classList.contains('collapsed')) window.toggleTriagem(); $('state-atend').scrollTop = 0; } },
     avaliacao: function () { abrirAtend(); qsa('.doc-check')[0].classList.add('checked'); qsa('.doc-check')[1].classList.add('checked'); window.switchTab('clinico'); },
     prontuario: function () { abrirAtend(); if (!$('cl-conduta').value) window.inserirConduta('Paciente orientado sobre sinais de alarme. Retorno se piora clínica.'); window.switchTab('prontuario'); },
-    multi: function () { garantirApp(); estado.plantao = true; atualizarPlantaoUI(); window.assumirAtendimento('d1'); window.assumirAtendimento('d2'); window.switchTab('consulta'); },
+    multi: function () { garantirApp(); estado.plantao = true; atualizarPlantaoUI(); window.assumirAtendimento('d1'); window.assumirAtendimento('d2'); window.assumirAtendimento('d3'); window.switchTab('consulta'); },
     historico: function () { garantirApp(); estado.plantao = true; atualizarPlantaoUI(); if (!estado.vis.hist) window.toggleHistorico(); window.abrirHistoricoAtendimento(901); },
     renovacoes: function () { garantirApp(); definirPerfil('admin', true); estado.plantao = true; limparAtend(); estado.vis.renov = true; $('renov-lista').style.display = 'block'; if (!estado.vis.histGeral) window.toggleHistoricoGeral(); if (!estado.vis.admin) window.toggleAdmin(); if (isMobile()) window.toggleSidebarMobile(); else $('sidebar-inner').scrollTop = 0; }
   };
