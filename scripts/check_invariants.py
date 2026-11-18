@@ -31,7 +31,7 @@ PERMITIDOS_NOVOS = {
     'api': collections.Counter({"'/api/medico/ganhos'": 1, "path": 1, "'/api/web-push/public-key'": 1, "'/api/admin/medicos/repasses?periodo='+encodeURIComponent(periodo": 1, "'/api/admin/medicos/repasses/confirmar'": 1}),
     'fetch': collections.Counter(),
     # v16: camada visual (abas compactas, ocultar só na barra, composer). Sem rede, sem novos IDs/handlers no HTML.
-    'assets': {'/panel-memed-floating.css?v=1', '/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1', '/panel-ui-v16.css?v=1', '/panel-ui-v16.js?v=1', '/panel-motion-v17.css?v=1', '/panel-notify-v1.css?v=1', '/panel-notify-v1.js?v=1', '/panel-readability-v1.css?v=1', '/panel-readability-v1.js?v=1'},
+    'assets': {'/panel-memed-floating.css?v=1', '/panel-v6.css?v=1', '/panel-v6.js?v=1', '/panel-repasses-admin.js?v=1', '/panel-ui-v16.css?v=1', '/panel-ui-v16.js?v=1', '/panel-motion-v17.css?v=1', '/panel-notify-v1.css?v=1', '/panel-notify-v1.js?v=1', '/panel-readability-v1.css?v=2', '/panel-readability-v1.js?v=2'},
 }
 
 
