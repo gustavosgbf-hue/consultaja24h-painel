@@ -29,7 +29,7 @@
 <option value="normalizado">Funcionamento normalizado</option>
 <option value="seguranca">Atualização de segurança</option>
 </select>
-<p class="note">Para envio a todos, o conteúdo é exclusivamente operacional e usa modelos fixos. Não utilize esses avisos para divulgar consultas, preços ou ofertas.</p>
+<p class="note">Os modelos são sugestões: edite o título e a mensagem livremente para comunicar fatos técnicos reais. Avisos gerais não devem divulgar consultas, preços ou ofertas.</p>
 </div>
 <label for="titulo">Título da notificação</label>
 <input id="titulo" maxlength="90" value="🩺 Precisa falar com um médico?" autocomplete="off">
@@ -85,7 +85,7 @@ function destinatarios(){return Number(isTecnico()?publico?.push_ativos:publico?
 function atualizarFinalidade(){
  const tecnico=isTecnico();
  el('tech-wrap').style.display=tecnico?'block':'none';
- title.readOnly=tecnico;message.readOnly=tecnico;
+ title.readOnly=false;message.readOnly=false;
  if(tecnico){
   const modelo=tecnicoModelos[el('modelo-tecnico').value];
   title.value=modelo.titulo;message.value=modelo.mensagem;
@@ -150,7 +150,7 @@ async function enviar(){
  enviando=true;refreshButton();
  const id=crypto.randomUUID();
  try{
-  const data=await request('/api/admin/push/campanhas',{method:'POST',body:JSON.stringify({id,titulo,mensagem,publico:el('publico').value,...(isTecnico()?{modelo_tecnico:el('modelo-tecnico').value}:{})})});
+  const data=await request('/api/admin/push/campanhas',{method:'POST',body:JSON.stringify({id,titulo,mensagem,publico:el('publico').value,...(isTecnico()?{modelo_tecnico:el('modelo-tecnico').value,confirmacao_tecnica:true}:{})})});
   status('Campanha concluída. A Expo aceitou '+data.aceitos+' envio(s) de '+data.elegiveis+' elegíveis. Falhas: '+data.falhas+'.\nA confirmação de entrega no aparelho depende da Expo/Apple/Google.');
   confirm.checked=false;
   await Promise.all([loadPublico(),loadHistory()]);
