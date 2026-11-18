@@ -9,14 +9,14 @@
  function stored(){try{return limit(Number(localStorage.getItem(KEY)||1));}catch(_){return 1;}}
  function aplicar(n,remember){
  n=limit(n);root.style.setProperty('--cj-read-size',String(n));
- const sizes={'--cj-read-chat':14,'--cj-read-pdf':12,'--cj-read-small':11,'--cj-read-timestamp':10,'--cj-read-meta':14,'--cj-read-pip':12,'--cj-read-pront':14,'--cj-read-title':16};
+ const sizes={'--cj-read-chat':14,'--cj-read-pdf':12,'--cj-read-small':11,'--cj-read-timestamp':10,'--cj-read-meta':14,'--cj-read-pip':12,'--cj-read-pront':14,'--cj-read-title':16,'--cj-read-fila-name':15,'--cj-read-fila-desc':13,'--cj-read-nav':13,'--cj-read-hist-name':14,'--cj-read-hist-meta':12,'--cj-read-heading':17,'--cj-read-patient-title':22,'--cj-read-tab':13,'--cj-read-clinic-label':12,'--cj-read-actions':13,'--cj-read-button':12};
  Object.keys(sizes).forEach(key=>root.style.setProperty(key,(Math.round(sizes[key]*n*100)/100)+'px'));
  // Input >=16px no iOS: impede zoom automático do Safari ao focar um campo clínico.
  root.style.setProperty('--cj-read-clinic',Math.max(16,Math.round(16*n*100)/100)+'px');
  if(range)range.value=String(Math.round(n*100));if(output)output.textContent=Math.round(n*100)+'%';
  if(remember)try{localStorage.setItem(KEY,String(n));}catch(_){}
  }
- function close(){if(!pop)return;pop.hidden=true;btn.setAttribute('aria-expanded','false');}
+ function close(){if(!pop)return;pop.hidden=true;btn.setAttribute('aria-expanded','false');document.body.classList.remove('cj-read-open');}
  function setupRead(){
    const marker=document.getElementById('cj-notify-wrap');
    if(!marker)return;
@@ -28,7 +28,7 @@
    marker.parentElement.insertBefore(wrap,marker);
    btn=wrap.querySelector('button');pop=wrap.querySelector('.cj-read-pop');range=wrap.querySelector('input');output=wrap.querySelector('.cj-read-value');
    aplicar(stored(),false);
-   btn.addEventListener('click',e=>{e.stopPropagation();const will=pop.hidden;document.getElementById('cj-notify-pop')?.setAttribute('hidden','');document.getElementById('cj-notify-trigger')?.setAttribute('aria-expanded','false');if(will){pop.hidden=false;btn.setAttribute('aria-expanded','true');}else close();});
+   btn.addEventListener('click',e=>{e.stopPropagation();const will=pop.hidden;document.getElementById('cj-notify-pop')?.setAttribute('hidden','');document.getElementById('cj-notify-trigger')?.setAttribute('aria-expanded','false');if(will){pop.hidden=false;btn.setAttribute('aria-expanded','true');document.body.classList.add('cj-read-open');}else close();});
    wrap.querySelector('.cj-read-close').addEventListener('click',()=>{close();btn.focus();});
    wrap.querySelector('.cj-read-reset').addEventListener('click',()=>aplicar(1,true));
    range.addEventListener('input',()=>aplicar(Number(range.value)/100,true));

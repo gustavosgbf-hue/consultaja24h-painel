@@ -118,3 +118,55 @@ html[data-theme] #atend-tabs .cj-glass-indicator.is-init{transition:none!importa
  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .msg-arquivo-pdf .pdf-sub{font-size:var(--cj-read-small)!important}
  html[data-theme] body.chat-fullscreen #tab-consulta.active .chat-medico-msgs .cmsg .ts{font-size:var(--cj-read-timestamp)!important}
 }
+
+/* O seletor Aa deve ficar ACIMA do overlay da fila mobile.
+ * A nav possui backdrop-filter e cria contexto de empilhamento próprio:
+ * aumentar o z-index apenas no popup não resolve. */
+@media(max-width:768px){
+ html[data-theme] body.cj-read-open #screen-app>.nav{z-index:210!important}
+ html[data-theme] body.cj-read-open .cj-read-pop{z-index:211!important}
+}
+/* Mesma escala na fila, no histórico e nas principais áreas do atendimento.
+ * Mantém a largura e a altura mínima dos controles; apenas texto muda. */
+html[data-theme] .sidebar-inner .sidebar-title,
+html[data-theme] #sidebar-inner .cj-side-action,
+html[data-theme] #sidebar-inner #cj-menu-ganhos{font-size:var(--cj-read-nav)!important;line-height:1.4!important}
+html[data-theme] #sidebar-inner>.sidebar-title:first-child{font-size:var(--cj-read-heading)!important}
+html[data-theme] #sidebar-inner .pc-nome,
+html[data-theme] #fila-lista .pc-nome,
+html[data-theme] #renov-lista .pc-nome{font-size:var(--cj-read-fila-name)!important;line-height:1.36!important}
+html[data-theme] #sidebar-inner .pc-queixa,
+html[data-theme] #fila-lista .pc-queixa,
+html[data-theme] #renov-lista .pc-queixa{font-size:var(--cj-read-fila-desc)!important;line-height:1.45!important}
+html[data-theme] #sidebar-inner .pc-tempo,
+html[data-theme] #sidebar-inner .pc-tipo,
+html[data-theme] #sidebar-inner .fila-count{font-size:var(--cj-read-small)!important}
+html[data-theme] #sidebar-inner .fila-vazia,
+html[data-theme] #sidebar-inner .btn-assumir,
+html[data-theme] #sidebar-inner .hist-card-action{font-size:var(--cj-read-button)!important}
+html[data-theme] #sidebar-inner .cj-hist-minimal .hist-card-nome,
+html[data-theme] #sidebar-inner .hist-card-nome,
+html[data-theme] #sidebar-inner .cj-hist-nome{font-size:var(--cj-read-hist-name)!important;line-height:1.4!important}
+html[data-theme] #sidebar-inner .cj-hist-minimal .hist-card-meta,
+html[data-theme] #sidebar-inner .hist-card-meta,
+html[data-theme] #sidebar-inner .cj-hist-meta{font-size:var(--cj-read-hist-meta)!important}
+html[data-theme] #state-atend .atend-nome{font-size:var(--cj-read-patient-title)!important;line-height:1.2!important;overflow-wrap:anywhere}
+html[data-theme] #state-atend .atend-tag,
+html[data-theme] #state-atend .atend-timer{font-size:var(--cj-read-small)!important}
+html[data-theme] #state-atend #atend-tabs .tab{font-size:var(--cj-read-tab)!important}
+html[data-theme] #state-atend .slot-tab-btn .slot-name{font-size:var(--cj-read-tab)!important}
+html[data-theme] #state-atend :is(.clinic-section-title,.docs-title,.pront-title){font-size:var(--cj-read-heading)!important;line-height:1.35!important}
+html[data-theme] #tab-clinico .clinic-label{font-size:var(--cj-read-clinic-label)!important}
+html[data-theme] #tab-clinico .cj-hint,
+html[data-theme] #tab-clinico .docs-hint{font-size:var(--cj-read-small)!important}
+html[data-theme] #tab-clinico .conduta-btn,
+html[data-theme] #tab-clinico .doc-check,
+html[data-theme] #tab-clinico .doc-check .dc-text{font-size:var(--cj-read-actions)!important}
+html[data-theme] #tab-prontuario .pront-card-title{font-size:var(--cj-read-small)!important}
+html[data-theme] #state-atend :is(.btn-ver-chat,.btn-copiar,.btn-gerar,.btn-prescrever,.btn-voltar-hist){font-size:var(--cj-read-actions)!important}
+html[data-theme] #chat-mobile-header .cmh-nome{font-size:var(--cj-read-title)!important}
+@media(max-width:768px){
+ /* Evita estourar o topo se nome muito longo e texto grande. */
+ html[data-theme] #state-atend .atend-nome{font-size:var(--cj-read-title)!important}
+ html[data-theme] #state-atend #atend-tabs .tab{font-size:var(--cj-read-tab)!important}
+}
