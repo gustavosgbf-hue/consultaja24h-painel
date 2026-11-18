@@ -265,8 +265,9 @@
   // ── Históricos ───────────────────────────────────────────────────────────
   window.renderHistorico = function () {
     var q = (($('hist-busca') || {}).value || '').toLowerCase().trim();
-    var lista = q ? HISTORICO.filter(function (a) { return (a.nome || '').toLowerCase().indexOf(q) >= 0 || (a.cpf || '').indexOf(q) >= 0; }) : HISTORICO;
-    $('hist-count').textContent = HISTORICO.length;
+    var acessiveis=HISTORICO.filter(function(a){return !a.recuperado;});
+    var lista = q ? acessiveis.filter(function (a) { return (a.nome || '').toLowerCase().indexOf(q) >= 0 || (a.cpf || '').indexOf(q) >= 0; }) : acessiveis;
+    $('hist-count').textContent = HISTORICO.filter(function(a){return !a.recuperado;}).length;
     if (!lista.length) { $('hist-lista').innerHTML = '<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
     $('hist-lista').innerHTML = lista.map(function (a) {
       if (a.recuperado) return '<div class="hist-card" style="cursor:default"><div class="hist-card-nome">' + esc(a.nome) + '</div><div class="hist-card-meta">Atendimento histórico recuperado · ' + a.inicio + ' a ' + a.fim + '<br>Registro anterior à recuperação do banco. Sem prontuário digital disponível.</div></div>';
@@ -328,11 +329,11 @@
 
   function renderSlots() {
     var wrap = $('slot-tabs');
-    if (!estado.slots.length) { wrap.classList.remove('visivel'); wrap.innerHTML = ''; return; }
+    if (estado.slots.length < 2) { wrap.classList.remove('visivel'); wrap.innerHTML = ''; return; }
     wrap.classList.add('visivel');
     wrap.innerHTML = estado.slots.map(function (s, i) {
       var novaMsg = !!s.nova && i !== estado.ativo;
-      return '<button type="button" class="slot-tab-btn ' + (i === estado.ativo ? 'active' : '') + '" onclick="ativarSlot(' + i + ')" aria-pressed="' + (i === estado.ativo) + '" aria-label="' + esc('Atendimento ' + (i + 1) + ': ' + s.p.nome + (novaMsg ? ' (nova mensagem)' : '')) + '"> <span class="slot-dot"></span><span class="slot-name">' + ico(s.p.tipo === 'video' ? 'video' : 'chat') + ' ' + esc(s.p.nome) + '</span>' + (novaMsg ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '') + '</button>';
+      return '<button type="button" class="slot-tab-btn ' + (i === estado.ativo ? 'active' : '') + '" onclick="ativarSlot(' + i + ')" aria-pressed="' + (i === estado.ativo) + '" aria-label="' + esc('Atendimento ' + (i + 1) + ': ' + s.p.nome + (novaMsg ? ' (nova mensagem)' : '')) + '"> <span class="slot-dot"></span><span class="slot-name">' + ico(s.p.tipo === 'video' ? 'video' : 'chat') + ' ' + (i === estado.ativo ? 'Atual' : esc(s.p.nome)) + '</span>' + (novaMsg ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '') + '</button>';
     }).join('');
   }
 

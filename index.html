@@ -713,7 +713,7 @@ function renderSlotTabs() {
 const wrap = document.getElementById('slot-tabs');
 if (!wrap) return;
 const ativos = slots.filter(Boolean);
-if (!ativos.length) { wrap.classList.remove('visivel'); wrap.innerHTML=''; return; }
+if (ativos.length < 2) { wrap.classList.remove('visivel'); wrap.innerHTML=''; return; }
 wrap.classList.add('visivel');
 wrap.innerHTML = slots.map((s, i) => {
 if (!s) return '';
@@ -723,7 +723,7 @@ const tipo = cjIco(s.atendimento.tipo === 'video' ? 'video' : 'chat');
 // [UX] Badge "nova msg" só aparece na tab inativa
 const novaMsg = s.temMsgNova && i !== slotAtivo;
 const badge = novaMsg ? '<span class="slot-badge-nova" title="Nova mensagem"></span>' : '';
-return `<button type="button" class="slot-tab-btn ${i === slotAtivo ? 'active' : ''}" onclick="ativarSlot(${i})" aria-pressed="${i === slotAtivo}" aria-label="${escAttr('Atendimento ' + (i + 1) + ': ' + nome + (novaMsg ? ' (nova mensagem)' : ''))}"> <span class="slot-dot"></span><span class="slot-name">${tipo} ${escHtml(nome)}</span>${badge}</button>`;
+return `<button type="button" class="slot-tab-btn ${i === slotAtivo ? 'active' : ''}" onclick="ativarSlot(${i})" aria-pressed="${i === slotAtivo}" aria-label="${escAttr('Atendimento ' + (i + 1) + ': ' + nome + (novaMsg ? ' (nova mensagem)' : ''))}"> <span class="slot-dot"></span><span class="slot-name">${tipo} ${i===slotAtivo?'Atual':escHtml(nome)}</span>${badge}</button>`;
 }).join('');
 }
 
@@ -3005,7 +3005,7 @@ async function buscarHistorico() {
 try {
 const data=await apiFetch('/api/historico'); if (!data.ok) return;
 histData=data.historico||[];
-document.getElementById('hist-count').textContent=histData.length;
+document.getElementById('hist-count').textContent=histData.filter(a=>!a.historico_recuperado).length;
 if (histVisible) renderHistorico();
 } catch(e) {}
 }
@@ -3430,7 +3430,8 @@ function toggleHistorico() { histVisible=!histVisible; document.getElementById('
 function renderHistorico() {
 const container=document.getElementById('hist-lista');
 const q=(document.getElementById('hist-busca')?.value||'').toLowerCase().trim();
-const lista=q?histData.filter(a=>(a.nome||'').toLowerCase().includes(q)||(a.cpf||'').includes(q)||(a.tel||'').includes(q)):histData;
+const historicoConsultas=histData.filter(a=>!a.historico_recuperado);
+const lista=q?historicoConsultas.filter(a=>(a.nome||'').toLowerCase().includes(q)||(a.cpf||'').includes(q)||(a.tel||'').includes(q)):historicoConsultas;
 if (!lista.length) { container.innerHTML='<div class="fila-vazia" style="padding:14px 12px"><p>Nenhum atendimento encontrado</p></div>'; return; }
 container.innerHTML=lista.map((a)=>{
 if(a.historico_recuperado){

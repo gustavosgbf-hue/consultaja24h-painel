@@ -734,3 +734,23 @@ html[data-theme] body.cj-history-view #tab-consulta.active .chat-medico-msgs:not
  display:flex!important;flex:1 1 0!important;min-height:0!important;
  overflow-y:auto!important;padding:12px!important;
 }
+
+/* v15 — ganhos em barra horizontal em vez de anel */
+html[data-theme] .cj-fin-summary{display:flex;flex-direction:column;gap:9px;padding:17px 5px 13px}
+html[data-theme] .cj-fin-summary .cj-fin-main{font-size:clamp(1.75rem,5.5vw,2.25rem);font-weight:850;line-height:1.12}
+html[data-theme] .cj-fin-summary .cj-fin-date{font-size:.83rem;font-weight:750}
+html[data-theme] .cj-fin-progress{display:flex;flex-direction:column;gap:7px;margin:10px 0 2px}
+html[data-theme] .cj-fin-progress-track{width:100%;height:5px;border-radius:999px;background:var(--cj-border-2);overflow:hidden}
+html[data-theme] .cj-fin-progress-fill{display:block;width:100%;height:100%;border-radius:inherit;background:var(--cj-accent);transform:scaleX(var(--cj-progress,0));transform-origin:left center;transition:transform .8s cubic-bezier(.2,.9,.2,1)}
+html[data-theme] .cj-fin-progress-legend{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.69rem;color:var(--cj-text-3);font-weight:650}
+html[data-theme] .cj-fin-summary .cj-fin-sub{font-size:.78rem;color:var(--cj-text-2)}
+@media(prefers-reduced-motion:reduce){html[data-theme] .cj-fin-progress-fill{transition:none}}
+/* Abas acima do nome do paciente também no fullscreen mobile. */
+@media(max-width:768px){
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs{order:-4!important}
+ html[data-theme] body.chat-fullscreen #state-atend>#chat-mobile-header{order:-3!important}
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs.visivel{max-height:70px!important;min-height:44px!important;padding:5px 9px!important}
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-tab-btn{max-width:min(70vw,258px)!important}
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-tab-btn.active{min-width:94px!important;width:94px!important;flex:0 0 94px!important;max-width:94px!important}
+ html[data-theme] body.chat-fullscreen #state-atend>.slot-tabs .slot-tab-btn.active .slot-name{white-space:nowrap!important;font-size:.75rem!important}
+}

@@ -247,24 +247,31 @@
       // O arco indica SOMENTE avanço do calendário da quinzena, não meta financeira.
       var fmt=function(v){return new Date(v+'T12:00:00Z').getTime();};
       var andamento=periodo ? Math.min(1,Math.max(0,(fmt(hoje)-fmt(periodo.inicio)+86400000)/(fmt(periodo.fim)-fmt(periodo.inicio)+86400000))) : 0;
-      var ring=el('section','cj-fin-ringcard');
-      ring.setAttribute('aria-label','Resumo da quinzena');
-      var arco=el('div','cj-fin-ring');
-      arco.setAttribute('role','img');arco.setAttribute('aria-label',Math.round(andamento*100)+'% do período quinzenal transcorrido');
-      arco.innerHTML='<svg viewBox="0 0 120 120" aria-hidden="true"><circle class="cj-ring-bg" cx="60" cy="60" r="50"/><circle class="cj-ring-fg" cx="60" cy="60" r="50"/></svg>';
-      arco.querySelector('.cj-ring-fg').style.setProperty('--cj-progress',String(andamento));
-      var centro=el('div','cj-fin-ring-center');
-      centro.appendChild(el('strong',null,String(periodo?periodo.atendimentos:0)));
-      centro.appendChild(el('span',null,'consultas'));
-      arco.appendChild(centro);ring.appendChild(arco);
-      var texto=el('div','cj-fin-ring-details');
-      texto.appendChild(el('span','cj-fin-kicker','Nesta quinzena'));
-      texto.appendChild(el('strong','cj-fin-main',brl(valor)));
-      texto.appendChild(el('span','cj-fin-sub','Hoje: '+atend(d.hoje.atendimentos)+' · '+brl(d.hoje.valor_centavos)));
+      // Barra = proporção de dias transcorridos na quinzena. Nunca simula
+      // metas financeiras, taxa de produtividade ou percentual de repasse.
+      var resumo=el('section','cj-fin-summary');
+      resumo.setAttribute('aria-label','Resumo de ganhos da quinzena');
+      resumo.appendChild(el('span','cj-fin-kicker','Valor estimado da quinzena'));
+      resumo.appendChild(el('strong','cj-fin-main',brl(valor)));
       var pg=periodo?.data_pagamento||d.pagamento?.data_prevista||null;
-      texto.appendChild(el('span','cj-fin-date',periodo?.registrado_pago?'Repasse registrado como pago':(pg?'Previsão: '+dataBR(pg):'Data do repasse a confirmar')));
-      ring.appendChild(texto);
-      corpo.appendChild(ring);
+      var data=periodo?.registrado_pago?'Pagamento registrado':(pg?'Previsão de repasse · '+dataBR(pg):'Data do repasse a confirmar');
+      resumo.appendChild(el('span','cj-fin-date',data));
+      var progress=el('div','cj-fin-progress');
+      progress.setAttribute('role','progressbar');
+      progress.setAttribute('aria-valuemin','0');
+      progress.setAttribute('aria-valuemax','100');
+      progress.setAttribute('aria-valuenow',String(Math.round(andamento*100)));
+      progress.setAttribute('aria-label','Dias decorridos da quinzena');
+      var trilho=el('div','cj-fin-progress-track');
+      var preenchimento=el('span','cj-fin-progress-fill');
+      preenchimento.style.setProperty('--cj-progress',String(andamento));
+      trilho.appendChild(preenchimento);progress.appendChild(trilho);
+      var legenda=el('div','cj-fin-progress-legend');
+      legenda.appendChild(el('span',null,'Progresso da quinzena'));
+      legenda.appendChild(el('span',null,periodo ? dataBR(periodo.fim).slice(0,5) : ''));
+      progress.appendChild(legenda);resumo.appendChild(progress);
+      resumo.appendChild(el('span','cj-fin-sub','Hoje: '+atend(d.hoje.atendimentos)+' · '+brl(d.hoje.valor_centavos)));
+      corpo.appendChild(resumo);
       var aviso=el('div','cj-fin-footer','Valores estimados · datas sujeitas a feriados locais');
       corpo.appendChild(aviso);
       if(d.quinzenas.length>1){
