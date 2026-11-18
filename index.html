@@ -1355,6 +1355,16 @@ function nomeEspecialidadeImediataPainel(valor){
   return ({pediatria:'Pediatria',geriatria:'Geriatria',psiquiatria:'Psiquiatria'})[String(valor||'').toLowerCase()]||'';
 }
 
+// O cadastro pode ser antigo e ser pago hoje: o tempo da fila não é a idade do registro.
+// Aguardando: pagamento aprovado; assumido: início da consulta.
+function minutosFilaPaciente(p) {
+  const marco = p.status === 'assumido'
+    ? (p.assumido_em || p.pagamento_confirmado_em || p.criado_em)
+    : (p.pagamento_confirmado_em || p.criado_em);
+  const instante = new Date(marco).getTime();
+  return Number.isFinite(instante) ? Math.max(0, Math.floor((Date.now() - instante) / 60000)) : 0;
+}
+
 function renderFila() {
 const lista=document.getElementById('fila-lista');
 const count=document.getElementById('fila-count');
@@ -1393,8 +1403,7 @@ lista.innerHTML=filaData.map(p=>{
 const nome=p.nome||'Paciente', tipo=p.tipo||'chat';
 const nomeSafe=escHtml(String(nome));
 const triagemSafe=escHtml(obterQueixaPaciente(p));
-const criado=p.criado_em||new Date().toISOString();
-const mins=Math.floor((Date.now()-new Date(criado))/60000);
+const mins=minutosFilaPaciente(p);
 const tempoClass=mins>=10?'critico':mins>=5?'urgente':'';
 const isAtual = slots.some(s => s && !modoHistorico && String(s.atendimento.id) === String(p.id));
 // meuAssumido: assumido por mim mas não é o atendimento ativo agora
@@ -1470,7 +1479,7 @@ function abrirPreviewFila(id) {
 const p = filaData.find(f=>String(f.id)===String(id));
 if (!p) return;
 const tipo = p.tipo||'chat';
-const mins = Math.floor((Date.now()-new Date(p.criado_em).getTime())/60000);
+const mins = minutosFilaPaciente(p);
 document.getElementById('fp-nome').textContent = p.nome||'-';
 document.getElementById('fp-meta').textContent = (tipo==='video'?'Vídeo':'Chat') + ' · ' + mins + ' min na fila' + (p.cpf?' · CPF: '+p.cpf:'');
 document.getElementById('fp-queixa').textContent = obterQueixaPaciente(p);
@@ -2765,7 +2774,7 @@ const container=document.getElementById('renov-lista');
 if (!container) return;
 if (!renovData.length) { container.innerHTML='<div class="fila-vazia" style="padding:14px 12px"><p>Nenhuma renovação pendente</p></div>'; return; }
 container.innerHTML=renovData.map(r=>{
-const mins=Math.floor((Date.now()-new Date(r.criado_em||Date.now()))/60000);
+const mins=minutosFilaPaciente(r);
 const tipoLabel=r.tipo==='renovacao_fisica'?'Física':'Digital';
 const triagemSafe=escHtml(r.triagem||r.medicacoes||'-');
 const nomeSafe=escHtml(r.nome||'Paciente');
