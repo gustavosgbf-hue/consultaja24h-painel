@@ -76,6 +76,7 @@ TEMPLATE = r'''<!doctype html>
 <link rel="stylesheet" href="panel-ds-v5.css">
 <link rel="stylesheet" href="panel-v6.css">
 <link rel="stylesheet" href="panel-ui-v16.css">
+<link rel="stylesheet" href="panel-motion-v17.css">
 <script src="panel-theme.js"></script>
 <script src="panel-v6.js" defer></script>
 <script src="panel-ui-v16.js" defer></script>

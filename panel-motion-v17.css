@@ -1,0 +1,111 @@
+/* ConsultaJá24h — v17 Motion Language
+ * Subtle, interruptible feedback: transform/opacity, no layout-driven animation.
+ * Sensitive clinical actions retain their existing click handlers and confirmation.
+ */
+html[data-theme]{
+  --cj17-ease:cubic-bezier(.22,1,.36,1);
+  --cj17-ease-soft:cubic-bezier(.2,.75,.3,1);
+  --cj17-fast:140ms;
+  --cj17-regular:220ms;
+  --cj17-panel:290ms;
+}
+@keyframes cj17-fade-in{
+  from{opacity:0}to{opacity:1}
+}
+@keyframes cj17-pop-in{
+  from{opacity:0;transform:translate3d(0,7px,0) scale(.975)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes cj17-sheet-up{
+  from{opacity:.45;transform:translate3d(0,30px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes cj17-tab-appear{
+  from{opacity:.6;transform:translate3d(0,4px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+/* Floating menus: depth, slightly softer entry than an abrupt display switch */
+html[data-theme] .cj16-menu:not([hidden]),
+html[data-theme] .cj-status-pop:not([hidden]){
+  transform-origin:top right;
+  animation:cj17-pop-in var(--cj17-regular) var(--cj17-ease) both;
+}
+html[data-theme] .cj16-menu-item,
+html[data-theme] .cj-menu-item,
+html[data-theme] .nav-logout{
+  transition:background-color var(--cj17-fast) ease,color var(--cj17-fast) ease!important;
+}
+/* Patient drawer: backdrop fades, sheet rises, never animates height */
+html[data-theme] .cj16-sheet:not([hidden]){
+  animation:cj17-fade-in var(--cj17-regular) ease both;
+}
+html[data-theme] .cj16-sheet:not([hidden]) .cj16-sheet-panel{
+  animation:cj17-sheet-up var(--cj17-panel) var(--cj17-ease) both;
+}
+/* Dialogs: restrained entrance. Excludes Memed iframe content, external portals. */
+html[data-theme] .modal-overlay.open,
+html[data-theme] .chat-hist-overlay.open,
+html[data-theme] .fila-preview.open,
+html[data-theme] .trocar-overlay.open{
+  animation:cj17-fade-in var(--cj17-regular) ease both;
+}
+html[data-theme] :is(.modal-overlay.open,.chat-hist-overlay.open,.fila-preview.open,.trocar-overlay.open)
+:is(.modal,.cj-ganhos-modal,.cj-repasses-modal,.chat-hist-modal,.fila-preview-card,.trocar-modal){
+  animation:cj17-pop-in var(--cj17-panel) var(--cj17-ease) both;
+}
+@media(max-width:768px){
+  html[data-theme] :is(.modal-overlay.open,.chat-hist-overlay.open,.fila-preview.open,.trocar-overlay.open)
+  :is(.modal,.cj-ganhos-modal,.cj-repasses-modal,.chat-hist-modal,.fila-preview-card,.trocar-modal){
+    animation:cj17-sheet-up var(--cj17-panel) var(--cj17-ease) both;
+  }
+}
+/* Active tab feels selected immediately; the panel contents breathe gently. */
+html[data-theme] .slot-tab-btn,
+html[data-theme] .cj16-slot-more,
+html[data-theme] :is(.cj16-more-btn,.cj16-icon-btn,.cj16-btn){
+  transition:transform var(--cj17-fast) var(--cj17-ease-soft),
+    background-color var(--cj17-regular) ease,
+    border-color var(--cj17-regular) ease,
+    color var(--cj17-fast) ease,
+    box-shadow var(--cj17-regular) ease!important;
+}
+html[data-theme] :is(.slot-tab-btn,.cj16-slot-more,.cj16-more-btn,.cj16-icon-btn,.cj16-btn):active:not(:disabled){
+  transform:scale(.965);
+}
+html[data-theme] :is(#tab-consulta,#tab-clinico,#tab-prontuario).tab-panel.active{
+  animation:cj17-fade-in var(--cj17-fast) ease both;
+}
+html[data-theme] .cj-fin-progress-fill{
+  transition:transform 850ms var(--cj17-ease)!important;
+}
+html[data-theme] #hist-lista .hist-card.cj-hist-minimal,
+html[data-theme] .cj16-sheet-item{
+  transition:background-color var(--cj17-regular) ease, border-color var(--cj17-regular) ease;
+}
+/* Click feedback for non-destructive controls, never shrink the clinical page. */
+html[data-theme] :is(.cj-fin-direct,.cj-status-btn,.chat-medico-send,.chat-clip-btn,.cmh-btn,.cj-theme-toggle){
+  transition:transform var(--cj17-fast) var(--cj17-ease-soft),
+    background-color var(--cj17-regular) ease,
+    border-color var(--cj17-regular) ease,
+    box-shadow var(--cj17-regular) ease!important;
+}
+html[data-theme] :is(.cj-fin-direct,.cj-status-btn,.chat-medico-send,.chat-clip-btn,.cmh-btn):active:not(:disabled){
+  transform:scale(.965);
+}
+/* Hover lift is pointer-specific; touch users don't get stuck hover states. */
+@media(hover:hover) and (pointer:fine){
+  html[data-theme] :is(.cj-fin-direct,.cj16-btn,.cj16-more-btn,.chat-medico-send):hover:not(:disabled){
+    transform:translateY(-1px);
+  }
+}
+/* Avoid overlay animations becoming an obstacle for assistive / motion-sensitive users. */
+@media(prefers-reduced-motion:reduce){
+  html[data-theme] *,
+  html[data-theme] *::before,
+  html[data-theme] *::after{
+    animation-duration:0.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:0.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
