@@ -231,6 +231,10 @@
           <div class="triagem-item triagem-item--queixa"><label>Relato informado na triagem</label><span id="tr-queixa">-</span></div>
         </div>
       </section>
+      <section class="triagem-section" id="admin-renovacao-detalhes" style="display:none" aria-label="Documentação da renovação de receita">
+        <div class="triagem-section-head"><span class="triagem-section-title">Renovação de receita · Análise administrativa</span></div>
+        <div id="admin-renovacao-conteudo" style="padding:12px 0;line-height:1.55"></div>
+      </section>
     </div><!-- /triagem-body -->
     </div>
     <!-- [MOBILE-UX] Header compacto do chat fullscreen -->
@@ -1548,6 +1552,61 @@ if (btnPreview) { btnPreview.disabled = false; btnPreview.textContent = 'Assumir
 }
 }
 
+function renderizarDetalhesRenovacaoAdmin(p) {
+  const secao=document.getElementById('admin-renovacao-detalhes');
+  const conteudo=document.getElementById('admin-renovacao-conteudo');
+  if(!secao||!conteudo) return;
+  if(!isAdminAtual() || !String(p?.tipo||'').startsWith('renovacao_')) {
+    secao.style.display='none';
+    conteudo.replaceChildren();
+    return;
+  }
+  secao.style.display='';
+  const dados=normalizarObj(p.questionario);
+  const anexos=normalizarObj(p.anexos_urls);
+  const endereco=normalizarObj(p.endereco_envio);
+  const criarLinha=(rotulo,valor) => {
+    const linha=document.createElement('div');
+    linha.style.cssText='padding:6px 0;border-bottom:1px solid rgba(140,160,150,.18);font-size:12px;overflow-wrap:anywhere';
+    const nome=document.createElement('strong');
+    nome.textContent=rotulo+': ';
+    linha.appendChild(nome);
+    const texto=document.createElement('span');
+    texto.textContent=valor===true?'Sim':valor===false?'Não':String(valor??'Não informado');
+    linha.appendChild(texto);
+    conteudo.appendChild(linha);
+  };
+  const criarLink=(rotulo,url) => {
+    const limpa=safeUrl(url);
+    if(!limpa) return;
+    const a=document.createElement('a');
+    a.href=limpa; a.target='_blank'; a.rel='noopener noreferrer';
+    a.textContent=rotulo+' ↗';
+    a.style.cssText='display:inline-flex;align-items:center;min-height:39px;padding:8px 12px;margin:5px 8px 8px 0;border-radius:10px;border:1px solid rgba(22,199,131,.5);color:#16c783;font-weight:700;font-size:12px';
+    conteudo.appendChild(a);
+  };
+  conteudo.replaceChildren();
+  criarLink('Abrir receita anterior (PDF/imagem)',anexos.receita_anterior);
+  criarLink('Abrir documento de identificação',anexos.documento);
+  if(!safeUrl(anexos.receita_anterior)) criarLinha('Receita anterior','Anexo não encontrado');
+  criarLinha('Medicamentos informados',p.medicacoes || 'Não informado');
+  criarLinha('E-mail para prescrição',p.email || 'Não informado');
+  const labels={
+    tipo_receita:'Tipo de receita informado',
+    condicao_diagnostico:'Condição/diagnóstico',tempo_uso:'Tempo de uso',
+    mudanca_dose:'Mudança de dose',efeitos_colaterais:'Efeitos colaterais',
+    informacoes_importantes:'Informações importantes',medico_original:'Médico prescritor',
+    acompanhamento:'Acompanhamento médico',laudo_diagnostico:'Laudo/diagnóstico',
+    origem_pedido:'Origem do pedido',medicamento_declarado:'Medicamento declarado',
+    peso_atual_kg:'Peso (kg)',altura_cm:'Altura (cm)',declara_uso_previo:'Uso prévio',
+    declara_receita_anterior:'Possui receita anterior',declara_avaliacao:'Ciente da avaliação'
+  };
+  const keys=Object.keys(dados).filter(k=>dados[k]!==null && dados[k]!==undefined && dados[k]!=='');
+  if(!keys.length) criarLinha('Questionário clínico','Não recebido do formulário; avaliar receita anterior antes de decidir');
+  else keys.forEach(k=>criarLinha(labels[k]||k,dados[k]));
+  const partes=['rua','numero','complemento','bairro','cidade','uf','cep'].filter(k=>endereco[k]).map(k=>String(endereco[k]));
+  criarLinha('Endereço de entrega',partes.length?partes.join(' · '):p.tipo==='renovacao_digital'?'Não solicitado para receita digital':'Não informado');
+}
 function renderPainelAtendimento() {
 const p=atendimentoAtual; if (!p) return;
 // Visão histórica isolada da experiência de consulta ativa, sem mudar os dados.
@@ -1560,7 +1619,7 @@ const especialidadeAtendimento=String(p.especialidade_solicitada||'').toLowerCas
 const especialidadeAtendimentoNome=nomeEspecialidadeImediataPainel(especialidadeAtendimento);
 tipoTag.textContent=especialidadeAtendimentoNome
   ? `${especialidadeAtendimentoNome} · ${tipo==='video'?'vídeo':'chat'}${p.fallback_decisao==='clinico'?' · clínico':''}`
-  : (tipo==='video'?'Consulta por vídeo':'Consulta por chat');
+  : (isAdminAtual() && String(tipo).startsWith('renovacao_') ? (tipo==='renovacao_fisica'?'Renovação de receita física':'Renovação de receita digital') : tipo==='video'?'Consulta por vídeo':'Consulta por chat');
 tipoTag.className='atend-tag '+tipo;
 document.getElementById('atend-crm-tag').textContent='CRM '+(medico.crm||'-');
 document.getElementById('atend-hist-badge').style.display=modoHistorico?'inline-flex':'none';
@@ -1614,6 +1673,8 @@ if (linkPacEl && linkPacWrap && p.id) {
   linkPacEl.tabIndex = adminHistoricoGeral ? 0 : -1;
   linkPacWrap.style.display = (!modoHistorico || adminHistoricoGeral) ? '' : 'none';
 }
+
+renderizarDetalhesRenovacaoAdmin(p);
 const idadeNascimento = calcularIdadeNascimento(p.data_nascimento);
 document.getElementById('tr-idade').textContent=idadeNascimento||p.idade||'-';
 document.getElementById('tr-sexo').textContent=p.sexo||'-';
