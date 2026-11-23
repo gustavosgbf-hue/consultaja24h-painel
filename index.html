@@ -379,6 +379,12 @@
         <div class="check-opt" onclick="toggleCheck(this)">🚫 Nenhum</div>
       </div>
     </div>
+    <div class="modal-field" id="avaliacao-app-admin-info" style="display:none" aria-live="polite">
+      <label>Avaliação do aplicativo · App Store / Google Play</label>
+      <div style="padding:11px 13px;border-radius:12px;background:rgba(22,199,131,.08);border:1px solid rgba(22,199,131,.23);font-size:12px;line-height:1.55;color:inherit">
+        <strong>Automática para todos os médicos.</strong> Ao detectar o encerramento de uma consulta no aplicativo, o app pode solicitar uma avaliação na loja (iOS/Android), sem depender da opção abaixo. O convite respeita intervalo de 90 dias por paciente e dispositivo; a loja pode não exibir a janela. Não há confirmação de exibição ou de avaliação enviada.
+      </div>
+    </div>
     <div class="modal-field" id="avaliacao-google-field" style="display:none">
       <label>Avaliação do atendimento</label>
       <div class="check-group">
@@ -2684,6 +2690,8 @@ const campoAvaliacao=document.getElementById('avaliacao-google-field');
 const opcaoAvaliacao=document.getElementById('avaliacao-google-opt');
 const souGustavo=String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com';
 if(campoAvaliacao) campoAvaliacao.style.display=souGustavo?'block':'none';
+const avisoAvaliacaoApp=document.getElementById('avaliacao-app-admin-info');
+if(avisoAvaliacaoApp) avisoAvaliacaoApp.style.display=isAdmin?'block':'none';
 if(opcaoAvaliacao) opcaoAvaliacao.classList.remove('selected');
 // Pre-seleciona "Atendido" por padrão
 const primeiroStatus = document.querySelector('#rg-status .radio-opt');
