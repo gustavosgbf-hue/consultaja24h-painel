@@ -2691,7 +2691,7 @@ const opcaoAvaliacao=document.getElementById('avaliacao-google-opt');
 const souGustavo=String(medico?.email||'').trim().toLowerCase()==='gustavosgbf@gmail.com';
 if(campoAvaliacao) campoAvaliacao.style.display=souGustavo?'block':'none';
 const avisoAvaliacaoApp=document.getElementById('avaliacao-app-admin-info');
-if(avisoAvaliacaoApp) avisoAvaliacaoApp.style.display=isAdmin?'block':'none';
+if(avisoAvaliacaoApp) avisoAvaliacaoApp.style.display=isAdminAtual()?'block':'none';
 if(opcaoAvaliacao) opcaoAvaliacao.classList.remove('selected');
 // Pre-seleciona "Atendido" por padrão
 const primeiroStatus = document.querySelector('#rg-status .radio-opt');
