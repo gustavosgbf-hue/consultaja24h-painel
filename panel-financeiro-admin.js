@@ -149,8 +149,11 @@ function avisos(d){
  if(taxa)add('Taxas de pagamento não configuradas.','A margem ainda não desconta a tarifa do PagBank/Stripe em '+int(taxa)+' pagamentos.');
  if(p.imposto_nao_configurado)add('Imposto não configurado.','A margem ainda não desconta imposto sobre a receita.');
  if(p.repasse_antes_da_regra_vigente)add('Repasse sem regra antes de 16/11.',int(p.repasse_antes_da_regra_vigente)+' pagamentos ficam fora da margem (marcados com *).');
- const outros=(p.medico_nao_identificado||0)+(p.repasse_sem_regra||0);
- if(outros)add('Margem pendente.',int(outros)+' consultas ainda sem médico ou sem regra de repasse (marcadas com *).');
+ if(p.repasse_estimado_regra_atual)add('Repasse estimado antes de 16/11.',int(p.repasse_estimado_regra_atual)+' consultas usam a regra de repasse atual como estimativa.');
+ const antPend=d.anterior?.total?.margem_pendente||0,antPag=d.anterior?.total?.pagamentos||0;
+ if(antPag&&antPend/antPag>.05)add('Comparação parcial.','No período anterior, '+int(antPend)+' de '+int(antPag)+' pagamentos estão sem margem apurada; leia o "Investir mais compensa?" com cautela.');
+ const outros=(p.medico_nao_identificado||0)+(p.repasse_sem_regra||0)+(p.consulta_nao_encerrada||0);
+ if(outros)add('Margem pendente.',int(outros)+' consultas ainda em aberto, sem médico ou sem regra de repasse (marcadas com *).');
  (d.fontes_gasto||[]).forEach(f=>{if(d.ate>f.ultimo)add('Gasto '+(f.canal==='google_ads'?'do Google Ads':f.canal)+' até '+dataBR(f.ultimo)+'.','Dias seguintes ainda sem custo importado; o resultado desses dias está superestimado.');});
  const g=d.coleta?.google_ads;if(g&&g.configurado&&!g.ok)add('Coleta do Google Ads com falha.','Última tentativa: '+(g.erro||'erro'));
  return box.childNodes.length?box:null;
