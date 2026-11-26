@@ -29,7 +29,7 @@
 <script src="/panel-notify-v1.js?v=1" defer></script>
 <script src="/panel-repasses-admin.js?v=1" defer></script>
 <script src="/panel-financeiro-admin.js?v=2" defer></script>
-<script src="/panel-autopilot-admin.js?v=1" defer></script>
+<script src="/panel-autopilot-admin.js?v=2" defer></script>
 <script src="/panel-readability-v1.js?v=2" defer></script>
 </head>
 <body>
@@ -845,6 +845,7 @@ window.cjGanhosFonte = function () { return apiFetch('/api/medico/ganhos'); };
 // Financeiro administrativo. A autorização de verdade é sempre verificada no servidor.
 window.cjAutopilotFonte = function () { return apiFetch('/api/admin/autopilot'); };
 window.cjAutopilotDecidir = function (id, acao) { return apiFetch('/api/admin/autopilot/decisao/'+encodeURIComponent(id), { method:'POST', json:{ acao } }); };
+window.cjAutopilotLimites = function (dados) { return apiFetch('/api/admin/autopilot/limites', { method:'POST', json:dados }); };
 window.cjAutopilotModo = function (modo, confirmacao) { return apiFetch('/api/admin/autopilot/modo', { method:'POST', json:{ modo, confirmacao } }); };
 window.cjIntegracaoToken = function (escopo) { return apiFetch('/api/admin/integracoes/token', { method:'POST', json:{ escopo } }); };
 window.cjFinanceiroFonte = function (de, ate) { return apiFetch('/api/admin/financeiro?de='+encodeURIComponent(de)+'&ate='+encodeURIComponent(ate)); };

@@ -86,6 +86,24 @@ function render(d){
   ic.appendChild(box);corpo.appendChild(ic);
  }
 
+ const lc=card('Limites','Autorização de investimento e tamanho máximo de cada passo. O script no Google Ads tem travas técnicas próprias (até R$ 1.500/dia e 15% por passo); vale sempre o mais restritivo.');
+ const campos=[['orcamento_teto','Teto de orçamento (R$/dia)',1,cfg.orcamento_teto],['orcamento_piso','Piso de orçamento (R$/dia)',1,cfg.orcamento_piso],
+  ['passo_orcamento','Passo máximo de orçamento (%)',100,cfg.passo_orcamento],['passo_tcpa','Passo máximo de CPA (%)',100,cfg.passo_tcpa],
+  ['tcpa_min','CPA desejado mínimo (R$)',1,cfg.tcpa_min],['tcpa_max','CPA desejado máximo (R$)',1,cfg.tcpa_max]];
+ const grid=novo('div','cj-fin-inc');const inputs={};
+ campos.forEach(([k,rot,mult,v])=>{const w=novo('label');w.style.display='flex';w.style.flexDirection='column';w.style.gap='4px';w.appendChild(novo('span',null,rot));
+  const i=novo('input');i.type='number';i.step=mult===100?'1':'0.01';i.value=v==null?'':String(Math.round(v*mult*100)/100);
+  i.style.cssText='padding:7px 9px;border-radius:10px;background:var(--cj-surface-2);border:1px solid var(--cj-border);color:var(--cj-text);font:inherit;font-size:.82rem';
+  inputs[k]=[i,mult];w.appendChild(i);grid.appendChild(w);});
+ lc.appendChild(grid);
+ const salvar=botao('Salvar limites','cj-fin-refresh',async()=>{
+  const body={};for(const k in inputs){const [i,mult]=inputs[k];body[k]=Number(String(i.value).replace(',','.'))/mult;}
+  try{const r=await window.cjAutopilotLimites(body);if(!r?.ok)throw Error(r?.error==='valores_fora_da_faixa'?'Valores fora da faixa (passos de 1% a 15%, orçamento de R$ 100 a R$ 1.500).':(r?.error||'falhou'));carregar();}
+  catch(e){window.alert('Não foi possível salvar: '+(e.message||''));}
+ });salvar.style.marginTop='12px';lc.appendChild(salvar);
+ lc.appendChild(novo('p','cj-fin-note','Janela de conversão por clique usada para validar a origem dos pagamentos: '+(cfg.janela_clique_dias||30)+' dias'+(cfg.janela_clique_dias?' (lida do Google Ads)':' (padrão, até o primeiro envio do script)')+'.'));
+ corpo.appendChild(lc);
+
  const mc=card('Modo do Autopilot','Em simulação o Autopilot só registra propostas. A execução também depende da trava MODO_LOCAL dentro do script no Google Ads.');
  const linha=novo('div');linha.style.display='flex';linha.style.gap='8px';linha.style.flexWrap='wrap';linha.style.alignItems='center';
  if(cfg.modo==='execucao'){linha.appendChild(botao('Voltar para simulação','cj-fin-refresh',()=>mudarModo('simulacao')));}
