@@ -31,7 +31,9 @@ function abrir(){if(!isAdmin())return;construir();overlay.classList.add('open');
 async function carregar(){
  if(!isAdmin()){close();return}
  const atual=++nonce;corpo.textContent='';corpo.appendChild(novo('p','cj-fin-empty','Carregando…'));
- try{const d=await window.cjAutopilotFonte();if(atual!==nonce)return;if(!d||d.ok!==true)throw Error(d?.error||'indisponível');render(d);}
+ try{
+  const [d,ind,coo,mp]=await Promise.all([window.cjAutopilotFonte(),window.cjAutopilotIndicadores().catch(()=>null),window.cjCoortes().catch(()=>null),window.cjModoProprietario().catch(()=>null)]);
+  if(atual!==nonce)return;if(!d||d.ok!==true)throw Error(d?.error||'indisponível');d._ind=ind;d._coo=coo;d._mp=mp;render(d);}
  catch(err){if(atual!==nonce)return;corpo.textContent='';corpo.appendChild(novo('p','cj-fin-empty','Autopilot indisponível agora. '+(err.message||'')));}
 }
 function card(titulo,sub){const c=novo('section','cj-fin-card');c.appendChild(novo('h3',null,titulo));if(sub)c.appendChild(novo('p',null,sub));return c;}
@@ -78,7 +80,7 @@ function render(d){
   const ic=card('Leitura do último ciclo');const box=novo('div','cj-fin-avisos');
   ins.forEach(i=>{
    const e=novo('div','cj-fin-aviso');
-   if(i.codigo==='economia_google'&&i.dados){const x=i.dados;e.textContent='Base ('+x.janela_dias+' dias, cliques novos do Google): '+x.pagamentos+' pagamentos, '+x.novos+' novos. Margem média '+brl(x.margem_media)+', retorno esperado por novo '+brl(x.ltv_margem_novo)+', valor por pagamento '+brl(x.valor_por_pagamento)+'. CPA real médio '+brl(x.cpa_medio)+', marginal '+brl(x.cpa_marginal)+(x.elasticidade?' (elasticidade '+String(x.elasticidade.b).replace('.',',')+')':'')+'.';}
+   if(i.codigo==='economia_google'&&i.dados){const x=i.dados;e.textContent='Base ('+x.janela_dias+' dias, cliques novos do Google): '+x.pagamentos+' pagamentos, '+x.novos+' novos. Margem média '+brl(x.margem_media)+', retorno esperado por novo '+brl(x.ltv_margem_novo)+', valor por pagamento '+brl(x.valor_por_pagamento)+'. CPA real médio '+brl(x.cpa_medio)+', marginal '+brl(x.cpa_marginal)+(x.elasticidade?' (elasticidade '+String(x.elasticidade.b).replace('.',',')+')':'')+'.'+(x.cenarios&&x.cenarios.length?' Valor por pagamento conforme sua participação nas imediatas: '+x.cenarios.map(c=>Math.round(c.participacao*100)+'% → '+brl(c.valor_por_pagamento)).join(', ')+'.':'');}
    else if(i.codigo==='horarios'&&i.dados){const f=h=>String(h.hora).padStart(2,'0')+'h ('+brl(h.resultado/100)+')';e.textContent='Horários com melhor resultado: '+i.dados.melhores.map(f).join(', ')+'. Piores: '+i.dados.piores.map(f).join(', ')+'. Só leitura: o Autopilot não altera programação de anúncios.';}
    else e.textContent=i.mensagem;
    box.appendChild(e);
@@ -87,7 +89,7 @@ function render(d){
  }
 
  const lc=card('Limites','Autorização de investimento e tamanho máximo de cada passo. O script no Google Ads tem travas técnicas próprias (até R$ 1.500/dia e 15% por passo); vale sempre o mais restritivo.');
- const campos=[['orcamento_teto','Teto de orçamento (R$/dia)',1,cfg.orcamento_teto],['orcamento_piso','Piso de orçamento (R$/dia)',1,cfg.orcamento_piso],
+ const campos=[['orcamento_habitual','Orçamento habitual (R$/dia)',1,cfg.orcamento_habitual],['orcamento_teto','Faixa com evidência até (R$/dia)',1,cfg.orcamento_teto],['orcamento_excepcional','Excepcional, com sua aprovação (R$/dia)',1,cfg.orcamento_excepcional],['orcamento_piso','Piso de orçamento (R$/dia)',1,cfg.orcamento_piso],['participacao_prevista','Sua participação prevista nas imediatas (%)',100,cfg.participacao_prevista],
   ['passo_orcamento','Passo máximo de orçamento (%)',100,cfg.passo_orcamento],['passo_tcpa','Passo máximo de CPA (%)',100,cfg.passo_tcpa],
   ['tcpa_min','CPA desejado mínimo (R$)',1,cfg.tcpa_min],['tcpa_max','CPA desejado máximo (R$)',1,cfg.tcpa_max]];
  const grid=novo('div','cj-fin-inc');const inputs={};
@@ -96,13 +98,69 @@ function render(d){
   i.style.cssText='padding:7px 9px;border-radius:10px;background:var(--cj-surface-2);border:1px solid var(--cj-border);color:var(--cj-text);font:inherit;font-size:.82rem';
   inputs[k]=[i,mult];w.appendChild(i);grid.appendChild(w);});
  lc.appendChild(grid);
+ const cong=novo('div');cong.style.cssText='display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.8rem;color:var(--cj-text-2)';
+ const chk=(k,rot)=>{const l=novo('label');l.style.cssText='display:flex;gap:6px;align-items:center';const c=novo('input');c.type='checkbox';c.checked=cfg[k]!==false;inputs['__'+k]=c;l.appendChild(c);l.appendChild(document.createTextNode(rot));cong.appendChild(l);};
+ chk('congelar_orcamento','Manter orçamento atual (congelado)');chk('congelar_tcpa','Manter CPA atual (congelado)');lc.appendChild(cong);
+ if((cfg.testes_planejados||[]).length)lc.appendChild(novo('p','cj-fin-note','Testes planejados: '+cfg.testes_planejados.map(t=>t.nota+' (R$ '+t.para+')').join('; ')+'. Só são propostos com o CPA descongelado e sem outra mudança em curso.'));
  const salvar=botao('Salvar limites','cj-fin-refresh',async()=>{
-  const body={};for(const k in inputs){const [i,mult]=inputs[k];body[k]=Number(String(i.value).replace(',','.'))/mult;}
-  try{const r=await window.cjAutopilotLimites(body);if(!r?.ok)throw Error(r?.error==='valores_fora_da_faixa'?'Valores fora da faixa (passos de 1% a 15%, orçamento de R$ 100 a R$ 1.500).':(r?.error||'falhou'));carregar();}
+  const body={};for(const k in inputs){if(k.startsWith('__')){body[k.slice(2)]=inputs[k].checked;continue}const [i,mult]=inputs[k];const raw=String(i.value).trim();body[k]=raw===''?null:Number(raw.replace(',','.'))/mult;}
+  try{const r=await window.cjAutopilotLimites(body);if(!r?.ok)throw Error(r?.error==='valores_fora_da_faixa'?'Valores fora da faixa (passos de 1% a 15%, orçamento de R$ 100 a R$ 500).':r?.error==='ordem_invalida'?'Ordem inválida: piso ≤ habitual ≤ faixa com evidência ≤ excepcional.':(r?.error||'falhou'));carregar();}
   catch(e){window.alert('Não foi possível salvar: '+(e.message||''));}
  });salvar.style.marginTop='12px';lc.appendChild(salvar);
  lc.appendChild(novo('p','cj-fin-note','Janela de conversão por clique usada para validar a origem dos pagamentos: '+(cfg.janela_clique_dias||30)+' dias'+(cfg.janela_clique_dias?' (lida do Google Ads)':' (padrão, até o primeiro envio do script)')+'.'));
  corpo.appendChild(lc);
+
+ // Modo proprietário
+ const mp=d._mp;const pc2=card('Modo proprietário','Reserva as consultas imediatas para você por poucos minutos. Se você não assumir, saem do plantão ou acumulam, vão automaticamente para a equipe.');
+ if(mp&&mp.ok){
+  const m=mp.modo||{};const p7=mp.participacao_7d||{};
+  const st=novo('p','cj-fin-leitura',(m.ativo?'Ligado até '+quando(m.ate)+', reserva de '+m.minutos_reserva+' min.':'Desligado'+(m.desligado_motivo&&m.desligado_motivo!=='manual'?' (automaticamente: '+({prazo_encerrado:'prazo encerrado',fora_do_plantao:'você saiu do plantão',reservas_expiradas:'reservas expiraram sem você assumir'}[m.desligado_motivo]||m.desligado_motivo)+')':'')+'.')+' Nos últimos 7 dias você atendeu '+(p7.total?Math.round(p7.fracao*100)+'% ('+p7.suas+' de '+p7.total+')':'0')+' das imediatas.');
+  pc2.appendChild(st);
+  const lin=novo('div');lin.style.cssText='display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px';
+  if(m.ativo)lin.appendChild(botao('Liberar para a equipe agora','cj-fin-refresh',()=>alternarProprietario(false)));
+  else{const h=novo('select');[1,2,3,4].forEach(x=>{const o=novo('option',null,x+' h');o.value=x;if(x===2)o.selected=true;h.appendChild(o)});h.style.cssText='padding:7px;border-radius:10px;background:var(--cj-surface-2);border:1px solid var(--cj-border);color:var(--cj-text);font:inherit';
+   lin.appendChild(h);lin.appendChild(botao('Priorizar imediatas para mim','cj-fin-refresh',()=>alternarProprietario(true,Number(h.value))));}
+  pc2.appendChild(lin);
+ }else pc2.appendChild(novo('p','cj-fin-empty','Indisponível.'));
+ corpo.appendChild(pc2);
+
+ // Indicadores diários
+ const ind=d._ind;const icard=card('Indicadores diários da campanha',ind?.observacao||'');
+ if(ind&&ind.ok&&ind.dias.length){
+  const wrap=novo('div','cj-fin-tabela-wrap');const t=novo('table','cj-fin-tabela');
+  const cols=['Dia','Gasto','Impr.','Cliques','CPC','Parcela','Perda class.','Perda orç.','Pagtos','Google','Novos','Recorr.','CPA real'];
+  const th=novo('thead');const tr=novo('tr');cols.forEach(c=>tr.appendChild(novo('th',null,c)));th.appendChild(tr);t.appendChild(th);
+  const tb=novo('tbody');const pctx=v=>v==null?'–':Math.round(v*100)+'%';
+  const marcos={};(ind.marcos||[]).forEach(m=>{(marcos[m.dia]||(marcos[m.dia]=[])).push(m.tipo)});
+  ind.dias.slice().reverse().forEach(x=>{const r=novo('tr');
+   const dd=novo('td',null,x.dia.slice(8,10)+'/'+x.dia.slice(5,7)+(x.parcial?' *':''));if(marcos[x.dia]){dd.title=marcos[x.dia].join(', ');dd.style.fontWeight='750';dd.textContent+=' ●';}r.appendChild(dd);
+   [brl(x.custo),x.impressoes,x.cliques,x.cpc==null?'–':brl(x.cpc),pctx(x.parcela),pctx(x.perdida_classificacao),pctx(x.perdida_orcamento),x.pagamentos,x.pagamentos_google,x.novos,x.recorrentes,x.cpa_real==null?'–':brl(x.cpa_real)].forEach(v=>r.appendChild(novo('td',null,String(v))));
+   tb.appendChild(r);});
+  t.appendChild(tb);wrap.appendChild(t);icard.appendChild(wrap);
+  const ml=(ind.marcos||[]).slice(-12).reverse();
+  if(ml.length)icard.appendChild(novo('p','cj-fin-note','● Marcos: '+ml.map(m=>m.dia.slice(8,10)+'/'+m.dia.slice(5,7)+' '+m.tipo+(m.origem&&m.fonte==='google_ads'?' ('+String(m.origem).toLowerCase().replace(/_/g,' ')+')':'')).join(' · ')+'. * dia ainda parcial. CPA real = gasto ÷ pagamentos com clique do Google.'));
+  const add=novo('div');add.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:10px';
+  const di=novo('input');di.type='date';const de=novo('input');de.placeholder='Marco (ex.: landing otimizada publicada)';de.style.minWidth='260px';
+  [di,de].forEach(i=>{i.style.cssText+=';padding:7px 9px;border-radius:10px;background:var(--cj-surface-2);border:1px solid var(--cj-border);color:var(--cj-text);font:inherit;font-size:.8rem'});
+  add.appendChild(di);add.appendChild(de);add.appendChild(botao('Adicionar marco','cj-fin-chip',async()=>{if(!di.value||!de.value.trim())return;const r=await window.cjAutopilotMarco(di.value,de.value.trim());if(r?.ok)carregar();}));
+  icard.appendChild(add);
+ }else icard.appendChild(novo('p','cj-fin-empty','Os indicadores aparecem após o próximo envio do script.'));
+ corpo.appendChild(icard);
+
+ // Coortes
+ const coo=d._coo;const cc=card('Coortes de aquisição','Pacientes conquistados em cada mês e a margem que geram depois da primeira compra. Retornos que vieram por novo clique pago ficam fora (contados como readquiridos), para não somar duas vezes.');
+ if(coo&&coo.ok&&coo.coortes.length){
+  const wrap=novo('div','cj-fin-tabela-wrap');const t=novo('table','cj-fin-tabela');
+  const cols=['Mês','Canal','Pacientes','Voltaram 30d','60d','90d','Margem/pac. 30d','60d','90d','Readquiridos 90d'];
+  const th=novo('thead');const tr=novo('tr');cols.forEach(c=>tr.appendChild(novo('th',null,c)));th.appendChild(tr);t.appendChild(th);
+  const tb=novo('tbody');const rot={google_ads:'Google (clique novo)',app:'Aplicativo',outros:'Outros'};
+  const pct=(c,j)=>c['madura_'+j]?Math.round((c['taxa_retorno_'+j]||0)*100)+'%':'(parcial)';
+  const mpac=(c,j)=>c['madura_'+j]?brl((c['margem_por_paciente_'+j]||0)/100):'(parcial)';
+  coo.coortes.slice().reverse().forEach(c=>{const r=novo('tr');[c.mes.slice(5,7)+'/'+c.mes.slice(0,4),rot[c.canal]||c.canal,c.pacientes,pct(c,30),pct(c,60),pct(c,90),mpac(c,30),mpac(c,60),mpac(c,90),c.readquiridos_90].forEach(v=>r.appendChild(novo('td',null,String(v))));tb.appendChild(r);});
+  t.appendChild(tb);wrap.appendChild(t);cc.appendChild(wrap);
+  const vf=coo.valor_futuro_google;cc.appendChild(novo('p','cj-fin-note',vf?'Valor futuro usado pelo Autopilot por paciente novo do Google: '+brl(vf.centavos/100)+' ('+vf.janela+' dias, '+vf.pacientes+' pacientes).':'Ainda não há coortes do Google maduras o bastante para o valor futuro; o Autopilot não soma valor futuro.'));
+ }else cc.appendChild(novo('p','cj-fin-empty','Coortes indisponíveis agora.'));
+ corpo.appendChild(cc);
 
  const mc=card('Modo do Autopilot','Em simulação o Autopilot só registra propostas. A execução também depende da trava MODO_LOCAL dentro do script no Google Ads.');
  const linha=novo('div');linha.style.display='flex';linha.style.gap='8px';linha.style.flexWrap='wrap';linha.style.alignItems='center';
@@ -124,6 +182,7 @@ function render(d){
  });
  ig.appendChild(box);corpo.appendChild(ig);
 }
+async function alternarProprietario(ativo,horas){try{const r=await window.cjModoProprietarioDefinir(ativo,horas);if(!r?.ok)throw Error(r?.error||'falhou');carregar();}catch(e){window.alert('Não foi possível alterar: '+(e.message||''));}}
 async function decidir(id,acao){try{const r=await window.cjAutopilotDecidir(id,acao);if(!r?.ok)throw Error(r?.error||'falhou');carregar();}catch(e){window.alert('Não foi possível registrar: '+(e.message||''));}}
 async function mudarModo(modo,confirmacao){try{const r=await window.cjAutopilotModo(modo,confirmacao);if(!r?.ok)throw Error(r?.error||'falhou');carregar();}catch(e){window.alert('Não foi possível mudar o modo: '+(e.message||''));}}
 async function gerar(escopo){

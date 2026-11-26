@@ -29,7 +29,7 @@
 <script src="/panel-notify-v1.js?v=1" defer></script>
 <script src="/panel-repasses-admin.js?v=1" defer></script>
 <script src="/panel-financeiro-admin.js?v=2" defer></script>
-<script src="/panel-autopilot-admin.js?v=2" defer></script>
+<script src="/panel-autopilot-admin.js?v=3" defer></script>
 <script src="/panel-readability-v1.js?v=2" defer></script>
 </head>
 <body>
@@ -846,6 +846,11 @@ window.cjGanhosFonte = function () { return apiFetch('/api/medico/ganhos'); };
 window.cjAutopilotFonte = function () { return apiFetch('/api/admin/autopilot'); };
 window.cjAutopilotDecidir = function (id, acao) { return apiFetch('/api/admin/autopilot/decisao/'+encodeURIComponent(id), { method:'POST', json:{ acao } }); };
 window.cjAutopilotLimites = function (dados) { return apiFetch('/api/admin/autopilot/limites', { method:'POST', json:dados }); };
+window.cjAutopilotIndicadores = function () { return apiFetch('/api/admin/autopilot/indicadores?dias=30'); };
+window.cjAutopilotMarco = function (dia, descricao) { return apiFetch('/api/admin/autopilot/marcos', { method:'POST', json:{ dia, descricao } }); };
+window.cjCoortes = function () { return apiFetch('/api/admin/financeiro/coortes?meses=9'); };
+window.cjModoProprietario = function () { return apiFetch('/api/admin/modo-proprietario'); };
+window.cjModoProprietarioDefinir = function (ativo, horas) { return apiFetch('/api/admin/modo-proprietario', { method:'POST', json:{ ativo, horas, minutos_reserva: 3 } }); };
 window.cjAutopilotModo = function (modo, confirmacao) { return apiFetch('/api/admin/autopilot/modo', { method:'POST', json:{ modo, confirmacao } }); };
 window.cjIntegracaoToken = function (escopo) { return apiFetch('/api/admin/integracoes/token', { method:'POST', json:{ escopo } }); };
 window.cjFinanceiroFonte = function (de, ate) { return apiFetch('/api/admin/financeiro?de='+encodeURIComponent(de)+'&ate='+encodeURIComponent(ate)); };
