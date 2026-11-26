@@ -3779,7 +3779,7 @@ if (a.tipo === 'chat' || a.tipo === 'video') {
 const container = msgsContainer(slotAtivo);
 const slot = slots[slotAtivo];
 if (container) container.innerHTML = '<div class="chat-vazio"><span>Carregando conversa...</span></div>';
-fetch(`${API}/api/chat/${a.id}`)
+fetch(`${API}/api/chat/${a.id}`, { headers: { 'Authorization': 'Bearer ' + getToken() } })
 .then(r=>safeJson(r))
 .then(data=>{
 if (!container || !slot) return;
