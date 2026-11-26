@@ -2355,14 +2355,19 @@ async function enviarArquivoUnico(file, atendId) {
   } catch(e) { mostrarToast('Erro ao enviar arquivo', 'error'); }
 }
 
-function copiarLinkPaciente() {
-  const el = document.getElementById('tr-link-paciente');
-  if (!el || !el.href || el.href === '#') return;
-  navigator.clipboard?.writeText(el.href).catch(() => {
-    const ta = document.createElement('textarea'); ta.value = el.href;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-  });
-  mostrarToast('Link copiado!', 'success');
+async function copiarLinkPaciente() {
+  const id = Number(atendimentoAtual && atendimentoAtual.id);
+  if (!id) return;
+  try {
+    const res = await fetch(API + '/api/medico/atendimento/' + id + '/link-paciente', {
+      method:'POST', headers:{Authorization:'Bearer ' + getToken()}
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok || !data.link) throw new Error(data.error || 'Falha ao gerar link');
+    try { await navigator.clipboard.writeText(data.link); }
+    catch (_) { _fallbackCopy(data.link); }
+    mostrarToast('Link seguro copiado!', 'success');
+  } catch(e) { mostrarToast(e.message || 'Não foi possível gerar o link.', 'error'); }
 }
 function copiarEmailPaciente() {
 var email = (atendimentoAtual && atendimentoAtual.email) ? atendimentoAtual.email : '';
