@@ -88,7 +88,7 @@ function render(d){
   ic.appendChild(box);corpo.appendChild(ic);
  }
 
- const lc=card('Limites','Autorização de investimento e tamanho máximo de cada passo. O script no Google Ads tem travas técnicas próprias (até R$ 1.500/dia e 15% por passo); vale sempre o mais restritivo.');
+ const lc=card('Limites','Autorização de investimento e tamanho máximo de cada passo. O script no Google Ads tem travas técnicas próprias (até R$ 500/dia e 15% por passo); vale sempre o mais restritivo.');
  const campos=[['orcamento_habitual','Orçamento habitual (R$/dia)',1,cfg.orcamento_habitual],['orcamento_teto','Faixa com evidência até (R$/dia)',1,cfg.orcamento_teto],['orcamento_excepcional','Excepcional, com sua aprovação (R$/dia)',1,cfg.orcamento_excepcional],['orcamento_piso','Piso de orçamento (R$/dia)',1,cfg.orcamento_piso],['participacao_prevista','Sua participação prevista nas imediatas (%)',100,cfg.participacao_prevista],
   ['passo_orcamento','Passo máximo de orçamento (%)',100,cfg.passo_orcamento],['passo_tcpa','Passo máximo de CPA (%)',100,cfg.passo_tcpa],
   ['tcpa_min','CPA desejado mínimo (R$)',1,cfg.tcpa_min],['tcpa_max','CPA desejado máximo (R$)',1,cfg.tcpa_max]];
@@ -130,7 +130,7 @@ function render(d){
   const wrap=novo('div','cj-fin-tabela-wrap');const t=novo('table','cj-fin-tabela');
   const cols=['Dia','Gasto','Impr.','Cliques','CPC','Parcela','Perda class.','Perda orç.','Pagtos','Google','Novos','Recorr.','CPA real'];
   const th=novo('thead');const tr=novo('tr');cols.forEach(c=>tr.appendChild(novo('th',null,c)));th.appendChild(tr);t.appendChild(th);
-  const tb=novo('tbody');const pctx=v=>v==null?'–':Math.round(v*100)+'%';
+  const tb=novo('tbody');const pctx=v=>v==null?'–':(v>0&&v<0.1)?'<10%':(v>0.9&&v<1)?'>90%':Math.round(v*100)+'%';
   const marcos={};(ind.marcos||[]).forEach(m=>{(marcos[m.dia]||(marcos[m.dia]=[])).push(m.tipo)});
   ind.dias.slice().reverse().forEach(x=>{const r=novo('tr');
    const dd=novo('td',null,x.dia.slice(8,10)+'/'+x.dia.slice(5,7)+(x.parcial?' *':''));if(marcos[x.dia]){dd.title=marcos[x.dia].join(', ');dd.style.fontWeight='750';dd.textContent+=' ●';}r.appendChild(dd);
